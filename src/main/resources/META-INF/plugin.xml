@@ -1,0 +1,26 @@
+<idea-plugin>
+    <id>org.example.VisualDebuggerPoC</id>
+    <name>Visual Debugger Poc</name>
+    <vendor email="tim.kraeuterr@gmail.com" url="https://timkraeuter.github.io//">Test</vendor>
+
+    <description><![CDATA[
+    POC Visual debugger.<br>
+    Must be longer than this.
+    ]]></description>
+
+    <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+
+        <action id="DebugPOCAction" class="DebugPOCAction" text="PopupTest">
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
+        </action>
+    </actions>
+</idea-plugin>
