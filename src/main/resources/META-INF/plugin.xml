@@ -19,7 +19,7 @@
     <actions>
         <!-- Add your actions here -->
 
-        <action id="DebugPOCAction" class="DebugPOCAction" text="PopupTest">
+        <action id="DebugPOCAction" class="DebugPOCAction" text="Attach to Debugging Process">
             <add-to-group group-id="ToolsMenu" anchor="first"/>
         </action>
     </actions>
