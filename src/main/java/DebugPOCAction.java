@@ -6,10 +6,8 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
 import com.intellij.xdebugger.XDebuggerManager;
-import com.intellij.xdebugger.frame.XCompositeNode;
-import com.intellij.xdebugger.frame.XDebuggerTreeNodeHyperlink;
-import com.intellij.xdebugger.frame.XStackFrame;
-import com.intellij.xdebugger.frame.XValueChildrenList;
+import com.intellij.xdebugger.XSourcePosition;
+import com.intellij.xdebugger.frame.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +39,42 @@ public class DebugPOCAction extends AnAction {
                     currentStackFrame.computeChildren(new XCompositeNode() {
                         @Override
                         public void addChildren(@NotNull XValueChildrenList children, boolean last) {
-                            System.out.println(children);
+                            for (int i = 0; i < children.size(); i++) {
+                                XValue value = children.getValue(i);
+                                System.out.println(value);
+                                value.computeChildren(new XCompositeNode() {
+                                    @Override
+                                    public void addChildren(@NotNull XValueChildrenList children, boolean last) {
+                                        System.out.println(children);
+                                        // We need Type, fields and associations
+                                    }
+
+                                    @Override
+                                    public void tooManyChildren(int remaining) {
+
+                                    }
+
+                                    @Override
+                                    public void setAlreadySorted(boolean alreadySorted) {
+
+                                    }
+
+                                    @Override
+                                    public void setErrorMessage(@NotNull String errorMessage) {
+
+                                    }
+
+                                    @Override
+                                    public void setErrorMessage(@NotNull String errorMessage, @Nullable XDebuggerTreeNodeHyperlink link) {
+
+                                    }
+
+                                    @Override
+                                    public void setMessage(@NotNull String message, @Nullable Icon icon, @NotNull SimpleTextAttributes attributes, @Nullable XDebuggerTreeNodeHyperlink link) {
+
+                                    }
+                                });
+                            }
                         }
 
                         @Override
