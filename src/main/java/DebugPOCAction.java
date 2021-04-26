@@ -8,6 +8,7 @@ import com.intellij.xdebugger.XDebugSessionListener;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.*;
+import com.intellij.xdebugger.impl.ui.XValueTextProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,13 +41,18 @@ public class DebugPOCAction extends AnAction {
                         @Override
                         public void addChildren(@NotNull XValueChildrenList children, boolean last) {
                             for (int i = 0; i < children.size(); i++) {
-                                XValue value = children.getValue(i);
-                                System.out.println(value);
+                                XNamedValue value = (XNamedValue) children.getValue(i);
+                                System.out.println(value.getClass());
                                 value.computeChildren(new XCompositeNode() {
                                     @Override
                                     public void addChildren(@NotNull XValueChildrenList children, boolean last) {
+                                        System.out.println(value);
                                         System.out.println(children);
                                         // We need Type, fields and associations
+                                        for (int i = 0; i < children.size(); i++) {
+                                            XNamedValue value2 = (XNamedValue) children.getValue(i);
+                                            System.out.println(value2);
+                                        }
                                     }
 
                                     @Override
