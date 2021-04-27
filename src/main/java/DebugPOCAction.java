@@ -1,22 +1,15 @@
 import com.intellij.debugger.engine.JavaValue;
-import com.intellij.debugger.engine.evaluation.EvaluationContextImpl;
+import com.intellij.debugger.engine.evaluation.EvaluateException;
 import com.intellij.debugger.ui.impl.watch.FieldDescriptorImpl;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.util.NlsSafe;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
 import com.intellij.xdebugger.XDebuggerManager;
-import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.*;
-import com.intellij.xdebugger.frame.presentation.XValuePresentation;
-import com.intellij.xdebugger.impl.ui.XValueTextProvider;
-import com.intellij.xdebugger.impl.ui.tree.nodes.XValueTextRendererBase;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,18 +42,19 @@ public class DebugPOCAction extends AnAction {
                         public void addChildren(@NotNull XValueChildrenList children, boolean last) {
                             for (int i = 0; i < children.size(); i++) {
                                 JavaValue value = (JavaValue) children.getValue(i);
-                                String typeName = value.getDescriptor().getValue().type().name();// fully qualified name of the type.
                                 value.computeChildren(new XCompositeNode() {
                                     @Override
                                     public void addChildren(@NotNull XValueChildrenList children, boolean last) {
                                         // We need Type, fields and associations
                                         for (int i = 0; i < children.size(); i++) {
-                                            JavaValue value2 = (JavaValue) children.getValue(i);
-                                            value2.getDescriptor().isPrimitive();
-                                            if (value2.getDescriptor().isPrimitive()) {
-                                                FieldDescriptorImpl fieldDescriptor = (FieldDescriptorImpl) value2.getDescriptor();
-                                                // fieldDescriptor.calcValue();
+                                            JavaValue innerValue = (JavaValue) children.getValue(i);
+                                            if (innerValue.getDescriptor() instanceof FieldDescriptorImpl) {
+                                                FieldDescriptorImpl fieldDescriptor = (FieldDescriptorImpl) innerValue.getDescriptor();
+                                                System.out.println("Is field!");
                                             }
+                                            System.out.println("Type name: " + getType(innerValue));
+                                            System.out.println("Value: " + getValue(innerValue));
+
                                         }
                                     }
 
@@ -116,6 +110,28 @@ public class DebugPOCAction extends AnAction {
             });
         } else {
             System.out.println("No debugging session active!");
+        }
+    }
+
+    private String getValue(final JavaValue value) {
+        if (value.getDescriptor().isValueReady()) {
+            return value.getDescriptor().getValue().toString();
+        }
+        try {
+            return value.getDescriptor().calcValue(value.getEvaluationContext()).toString();
+        } catch (EvaluateException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getType(final JavaValue value) {
+        if (value.getDescriptor().isValueReady()) {
+            return value.getDescriptor().getValue().toString();
+        }
+        try {
+            return value.getDescriptor().calcValue(value.getEvaluationContext()).type().name();
+        } catch (EvaluateException e) {
+            throw new RuntimeException(e);
         }
     }
 
