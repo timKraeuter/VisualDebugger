@@ -20,7 +20,7 @@
     <actions>
         <!-- Add your actions here -->
 
-        <action id="DebugPOCAction" class="DebugPOCAction" text="Attach to Debugging Process">
+        <action id="DebugPOCAction" class="no.hvl.tk.visualDebugger.DebuggerVisualizerAction" text="Attach to Debugging Process">
             <add-to-group group-id="ToolsMenu" anchor="first"/>
         </action>
     </actions>

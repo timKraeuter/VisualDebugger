@@ -1,8 +1,7 @@
-package sample;
+package no.hvl.tk.visualDebugger.sample;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Vector;
 
 public class Product extends ComponentCommon {

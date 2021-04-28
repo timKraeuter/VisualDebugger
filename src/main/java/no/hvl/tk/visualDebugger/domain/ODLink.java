@@ -1,4 +1,4 @@
-package domain;
+package no.hvl.tk.visualDebugger.domain;
 
 /**
  * Represents a link in an object diagram.

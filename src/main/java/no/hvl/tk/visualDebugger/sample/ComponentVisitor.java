@@ -1,4 +1,4 @@
-package sample;
+package no.hvl.tk.visualDebugger.sample;
 
 public interface ComponentVisitor {
 	void handle(Material material);

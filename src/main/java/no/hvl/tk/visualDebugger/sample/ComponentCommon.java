@@ -1,4 +1,4 @@
-package sample;
+package no.hvl.tk.visualDebugger.sample;
 
 public abstract class ComponentCommon implements Component {
 	private final String name;

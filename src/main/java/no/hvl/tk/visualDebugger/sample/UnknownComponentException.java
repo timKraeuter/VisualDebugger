@@ -1,4 +1,4 @@
-package sample;
+package no.hvl.tk.visualDebugger.sample;
 
 public class UnknownComponentException extends RuntimeException {
 	public UnknownComponentException(final String string) {

@@ -1,4 +1,4 @@
-package domain;
+package no.hvl.tk.visualDebugger.domain;
 
 /**
  * Represent the attribute value of an object in an object diagram.

@@ -1,4 +1,4 @@
-package sample;
+package no.hvl.tk.visualDebugger.sample;
 
 import java.util.Vector;
 

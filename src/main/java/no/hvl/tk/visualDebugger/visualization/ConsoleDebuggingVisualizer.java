@@ -1,6 +1,9 @@
-package visualization;
+package no.hvl.tk.visualDebugger.visualization;
 
 public class ConsoleDebuggingVisualizer implements DebuggingVisualizer {
+    public ConsoleDebuggingVisualizer() {
+    }
+
     @Override
     public DebuggingVisualizer addObject(String type, String name) {
         return null;

@@ -1,4 +1,4 @@
-package sample;
+package no.hvl.tk.visualDebugger.sample;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
