@@ -10,4 +10,6 @@ public interface DebuggingVisualizer {
     DebuggingVisualizer addLinkToObject(String objectFromName, String objectToName, String linkName);
 
     void finishVisualization();
+
+    void addPrimitiveRootValue(String variableName, String type, String value);
 }

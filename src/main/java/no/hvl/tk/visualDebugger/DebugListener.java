@@ -70,8 +70,8 @@ public class DebugListener implements XDebugSessionListener {
     }
 
     private class MyXCompositeNode implements XCompositeNode {
-        private DebuggingVisualizer debuggingVisualizer;
-        private int depth;
+        private final DebuggingVisualizer debuggingVisualizer;
+        private final int depth;
 
         public MyXCompositeNode(
                 final DebuggingVisualizer debuggingVisualizer,
@@ -84,29 +84,38 @@ public class DebugListener implements XDebugSessionListener {
         public void addChildren(@NotNull XValueChildrenList children, boolean last) {
             for (int i = 0; i < children.size(); i++) {
                 JavaValue value = (JavaValue) children.getValue(i);
-                String typeName = getType(value);
+                this.handleValue(value);
                 // Value and type finished?
                 // Get Variable/Object name now.
-                System.out.println("Type name: " + typeName);
-                if (PrimitiveTypes.isNonBoxedPrimitiveType(typeName)) {
-                    System.out.println("Value: " + getNonBoxedPrimitiveValue(value));
-                }
-                if (PrimitiveTypes.isBoxedPrimitiveType(typeName)) {
-                    System.out.println("Value unboxed: " + getBoxedPrimitiveValue(value));
-                }
-                if (depth == 0) {
+                if (this.depth == 0) {
                     return;
                 }
             }
+            this.debuggingVisualizer.finishVisualization();
+        }
+
+        private void handleValue(final JavaValue value) {
+            final String variableName = value.getName();
+            String typeName = getType(value);
+            if (PrimitiveTypes.isNonBoxedPrimitiveType(typeName)) {
+                final String varValue = getNonBoxedPrimitiveValue(value);
+                this.debuggingVisualizer.addPrimitiveRootValue(variableName, typeName, varValue);
+            }
+            if (PrimitiveTypes.isBoxedPrimitiveType(typeName)) {
+                final String varValue = getBoxedPrimitiveValue(value);
+                this.debuggingVisualizer.addPrimitiveRootValue(variableName, typeName, varValue);
+            }
+
+            // Handle object case here.
         }
 
         private String getBoxedPrimitiveValue(JavaValue value) {
             try {
                 final ObjectReferenceImpl value1 = (ObjectReferenceImpl) value.getDescriptor().calcValue(value.getEvaluationContext());
-                final Field valueField = value1.referenceType().allFields().stream()
-                                               .filter(field -> "value".equals(field.name()))
-                                               .findFirst()
-                                               .get(); // Should always have a "value" field.
+                @SuppressWarnings("OptionalGetWithoutIsPresent") final Field valueField = value1.referenceType().allFields().stream()
+                                                                                                .filter(field -> "value".equals(field.name()))
+                                                                                                .findFirst()
+                                                                                                .get(); // Should always have a "value" field.
                 final Value aValue = value1.getValue(valueField);
                 return aValue.toString();
             } catch (EvaluateException e) {
