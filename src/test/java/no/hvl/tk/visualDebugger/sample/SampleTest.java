@@ -26,7 +26,7 @@ public class SampleTest {
     }
 
     @Test
-    void testWithObjectVariables() {
+    void testWithOneLayerObjectVariables() {
         Material aMaterial = Material.create("stringValue", 42);
         System.out.println(aMaterial);
         System.out.println(aMaterial);

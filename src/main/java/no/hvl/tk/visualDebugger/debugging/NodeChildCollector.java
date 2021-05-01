@@ -1,6 +1,7 @@
-package no.hvl.tk.visualDebugger;
+package no.hvl.tk.visualDebugger.debugging;
 
 import com.intellij.debugger.engine.JavaValue;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.frame.XDebuggerTreeNodeHyperlink;

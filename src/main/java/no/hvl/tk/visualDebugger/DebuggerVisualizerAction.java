@@ -6,7 +6,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
-import no.hvl.tk.visualDebugger.visualization.ConsoleDebuggingVisualizer;
+import no.hvl.tk.visualDebugger.debugging.DebugListener;
+import no.hvl.tk.visualDebugger.debugging.visualization.ConsoleDebuggingVisualizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

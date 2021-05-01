@@ -9,6 +9,9 @@ import java.util.Set;
  */
 public class ODObject {
 
+    private final String type;
+    private final String variableName;
+
     /**
      * All attributes of this object.
      */
@@ -19,9 +22,11 @@ public class ODObject {
      */
     private final Set<ODLink> links;
 
-    public ODObject() {
-        attributeValues = new HashSet<>();
-        links = new HashSet<>();
+    public ODObject(final String type, final String variableName) {
+        this.type = type;
+        this.variableName = variableName;
+        this.attributeValues = new HashSet<>();
+        this.links = new HashSet<>();
     }
 
     /**

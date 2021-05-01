@@ -1,28 +1,38 @@
-package no.hvl.tk.visualDebugger.visualization;
+package no.hvl.tk.visualDebugger.debugging.visualization;
 
+import no.hvl.tk.visualDebugger.domain.ODAttributeValue;
+import no.hvl.tk.visualDebugger.domain.ODObject;
 import no.hvl.tk.visualDebugger.domain.ODPrimitiveRootValue;
 import no.hvl.tk.visualDebugger.domain.ObjectDiagram;
 
 public class ConsoleDebuggingVisualizer implements DebuggingVisualizer {
-    private final ObjectDiagram diagram;
+    private ObjectDiagram diagram;
 
     public ConsoleDebuggingVisualizer() {
         this.diagram = new ObjectDiagram();
     }
 
     @Override
-    public DebuggingVisualizer addObject(String type, String name) {
-        return null;
+    public DebuggingVisualizer addObject(ODObject object) {
+        this.diagram.addObject(object);
+        return this;
     }
 
     @Override
-    public DebuggingVisualizer addAttributeToObject(String objectName, String fieldName, String fieldValue) {
-        return null;
+    public DebuggingVisualizer addAttributeToObject(ODObject object, String fieldName, String fieldValue) {
+        assert this.diagram.getObjects().contains(object);
+        object.addAttribute(new ODAttributeValue(fieldName, fieldValue));
+        return this;
     }
 
     @Override
     public DebuggingVisualizer addLinkToObject(String objectFromName, String objectToName, String linkName) {
         return null;
+    }
+
+    @Override
+    public void addPrimitiveRootValue(final String variableName, final String type, final String value) {
+        diagram.addPrimitiveRootValue(new ODPrimitiveRootValue(variableName, type, value));
     }
 
     @Override
@@ -37,7 +47,7 @@ public class ConsoleDebuggingVisualizer implements DebuggingVisualizer {
     }
 
     @Override
-    public void addPrimitiveRootValue(final String variableName, final String type, final String value) {
-        diagram.addPrimitiveRootValue(new ODPrimitiveRootValue(variableName, type, value));
+    public void reset() {
+        this.diagram = new ObjectDiagram();
     }
 }
