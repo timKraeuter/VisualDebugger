@@ -19,15 +19,13 @@ public class CounterBasedLock {
     }
 
     public synchronized void increaseCounter() {
-        final int i = counter.incrementAndGet();
-        System.out.println("Counter: " + i);
+        counter.incrementAndGet();
     }
 
     public synchronized void decreaseCounter() {
         final int i = counter.decrementAndGet();
         System.out.println("Counter: " + i);
         if (i == 0) {
-            System.out.println("Unlocked!");
             lock.unlock();
         }
     }

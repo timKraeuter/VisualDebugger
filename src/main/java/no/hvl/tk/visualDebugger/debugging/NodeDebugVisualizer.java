@@ -112,8 +112,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
                                                                                             .filter(field -> "value".equals(field.name()))
                                                                                             .findFirst()
                                                                                             .get(); // Should always have a "value" field.
-            final JavaValue aValue = (JavaValue) value1.getValue(valueField);
-            return this.getNonBoxedPrimitiveValue(aValue);
+            return value1.getValue(valueField).toString();
         } catch (EvaluateException e) {
             LOGGER.error(e);
             throw new RuntimeException(e);
