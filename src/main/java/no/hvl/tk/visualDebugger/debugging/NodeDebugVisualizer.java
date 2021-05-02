@@ -25,6 +25,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
     private final DebuggingVisualizer debuggingVisualizer;
     private final int depth;
 
+    private CounterBasedLock lock;
     /**
      * Parent. Null if at root.
      */
@@ -32,13 +33,19 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
     public NodeDebugVisualizer(
             final DebuggingVisualizer debuggingVisualizer,
-            final int depth) {
-        this(debuggingVisualizer, depth, null);
+            final int depth,
+            final CounterBasedLock lock) {
+        this(debuggingVisualizer, depth, lock, null);
     }
 
-    public NodeDebugVisualizer(final DebuggingVisualizer debuggingVisualizer, final int depth, final ODObject parent) {
+    public NodeDebugVisualizer(
+            final DebuggingVisualizer debuggingVisualizer,
+            final int depth,
+            CounterBasedLock lock,
+            final ODObject parent) {
         this.debuggingVisualizer = debuggingVisualizer;
         this.depth = depth;
+        this.lock = lock;
         this.parent = parent;
     }
 
@@ -48,6 +55,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
             JavaValue value = (JavaValue) children.getValue(i);
             this.handleValue(value);
         }
+        this.lock.decreaseCounter();
     }
 
     void handleValue(final JavaValue value) {
@@ -67,7 +75,25 @@ public class NodeDebugVisualizer implements XCompositeNode {
         if (depth > 0) {
             final ODObject object = new ODObject(typeName, variableName);
             this.debuggingVisualizer.addObject(object);
-            value.computeChildren(new NodeDebugVisualizer(this.debuggingVisualizer, depth - 1, object));
+            increaseCounterIfNeeded(value);
+            final NodeDebugVisualizer nodeDebugVisualizer = new NodeDebugVisualizer(this.debuggingVisualizer, depth - 1, this.lock, object);
+            value.computeChildren(nodeDebugVisualizer);
+        }
+    }
+
+    private void increaseCounterIfNeeded(final JavaValue value) {
+        try {
+            final Value calcedValue = value.getDescriptor().calcValue(value.getEvaluationContext());
+            if (calcedValue instanceof ObjectReferenceImpl) {
+                ObjectReferenceImpl obRef = (ObjectReferenceImpl) calcedValue;
+                final int fieldSize = obRef.referenceType().allFields().size();
+                if (fieldSize != 0) {
+                    this.lock.increaseCounter();
+                }
+            }
+        } catch (EvaluateException e) {
+            LOGGER.error(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -86,8 +112,8 @@ public class NodeDebugVisualizer implements XCompositeNode {
                                                                                             .filter(field -> "value".equals(field.name()))
                                                                                             .findFirst()
                                                                                             .get(); // Should always have a "value" field.
-            final Value aValue = value1.getValue(valueField);
-            return aValue.toString();
+            final JavaValue aValue = (JavaValue) value1.getValue(valueField);
+            return this.getNonBoxedPrimitiveValue(aValue);
         } catch (EvaluateException e) {
             LOGGER.error(e);
             throw new RuntimeException(e);

@@ -27,11 +27,6 @@ public class DebuggingVisualizerMock implements DebuggingVisualizer {
     }
 
     @Override
-    public void reset() {
-
-    }
-
-    @Override
     public void addPrimitiveRootValue(final String variableName, final String type, final String value) {
     }
 }

@@ -1,9 +1,11 @@
 package no.hvl.tk.visualDebugger.debugging;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.util.concurrency.Semaphore;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
 import com.intellij.xdebugger.frame.XStackFrame;
+import no.hvl.tk.visualDebugger.debugging.visualization.ConsoleDebuggingVisualizer;
 import no.hvl.tk.visualDebugger.debugging.visualization.DebuggingVisualizer;
 
 import java.util.Objects;
@@ -15,22 +17,19 @@ public class DebugListener implements XDebugSessionListener {
 
     private XDebugSession debugSession;
     private int depth;
-    private DebuggingVisualizer debuggingVisualizer;
 
-    public DebugListener(final XDebugSession debugSession, final DebuggingVisualizer debuggingVisualizer) {
-        this(debugSession, debuggingVisualizer, default_debugging_depth);
+    public DebugListener(final XDebugSession debugSession) {
+        this(debugSession, default_debugging_depth);
     }
 
     public DebugListener(
             final XDebugSession debugSession,
-            final DebuggingVisualizer debuggingVisualizer,
             final int depth) {
         if (depth < 0) {
             throw new IllegalArgumentException("Debugging depth cannot be negative.");
         }
         Objects.requireNonNull(debugSession, "Debug session must not be null.");
         this.debugSession = debugSession;
-        this.debuggingVisualizer = debuggingVisualizer;
         this.depth = depth;
     }
 
@@ -41,9 +40,18 @@ public class DebugListener implements XDebugSessionListener {
         final XStackFrame currentStackFrame = debugSession.getCurrentStackFrame();
         Objects.requireNonNull(currentStackFrame, "Stack frame unexpectedly was null.");
 
-        final NodeDebugVisualizer debugVisualizer = new NodeDebugVisualizer(this.debuggingVisualizer, this.depth);
-        currentStackFrame.computeChildren(debugVisualizer);
-        this.debuggingVisualizer.finishVisualization();
-        this.debuggingVisualizer.reset();
+        final DebuggingVisualizer debuggingVisualizer = new ConsoleDebuggingVisualizer();
+        final CounterBasedLock lock = new CounterBasedLock();
+        final NodeDebugVisualizer nodeVisualizer = new NodeDebugVisualizer(
+                debuggingVisualizer,
+                this.depth,
+                lock);
+        // Happens in a different thread!
+        currentStackFrame.computeChildren(nodeVisualizer);
+        new Thread(() -> {
+            // Wait for the computation to be over
+            lock.lock();
+            debuggingVisualizer.finishVisualization();
+        }).start();
     }
 }

@@ -3,6 +3,7 @@ package no.hvl.tk.visualDebugger.domain;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.StringJoiner;
 
 /**
  * Represents an Object in an object diagram.
@@ -49,5 +50,15 @@ public class ODObject {
 
     public void addAttribute(ODAttributeValue attributeToAdd) {
         this.attributeValues.add(attributeToAdd);
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", ODObject.class.getSimpleName() + "[", "]")
+                .add("type='" + type + "'")
+                .add("variableName='" + variableName + "'")
+                .add("attributeValues=" + attributeValues)
+                .add("links=" + links)
+                .toString();
     }
 }

@@ -11,7 +11,7 @@ public class NodeDebugVisualizerTest {
 
     @BeforeEach
     void setUp() {
-        nodeDebugVisualizer = new NodeDebugVisualizer(new DebuggingVisualizerMock(), 0);
+        nodeDebugVisualizer = new NodeDebugVisualizer(new DebuggingVisualizerMock(), 0, new CounterBasedLock());
     }
 
     @Test

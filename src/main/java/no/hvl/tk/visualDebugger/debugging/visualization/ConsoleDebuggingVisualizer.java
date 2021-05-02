@@ -1,5 +1,6 @@
 package no.hvl.tk.visualDebugger.debugging.visualization;
 
+import com.intellij.util.concurrency.Semaphore;
 import no.hvl.tk.visualDebugger.domain.ODAttributeValue;
 import no.hvl.tk.visualDebugger.domain.ODObject;
 import no.hvl.tk.visualDebugger.domain.ODPrimitiveRootValue;
@@ -44,10 +45,8 @@ public class ConsoleDebuggingVisualizer implements DebuggingVisualizer {
                     primitiveRootValue.getValue(),
                     primitiveRootValue.getType());
         }
-    }
-
-    @Override
-    public void reset() {
-        this.diagram = new ObjectDiagram();
+        for (final ODObject object : diagram.getObjects()) {
+            System.out.println(object);
+        }
     }
 }

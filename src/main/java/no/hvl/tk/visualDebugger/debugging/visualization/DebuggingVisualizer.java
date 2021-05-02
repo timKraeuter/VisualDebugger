@@ -14,7 +14,4 @@ public interface DebuggingVisualizer {
     void addPrimitiveRootValue(String variableName, String type, String value);
 
     void finishVisualization();
-
-    void reset();
-
 }

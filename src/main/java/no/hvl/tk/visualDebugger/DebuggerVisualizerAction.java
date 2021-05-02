@@ -29,7 +29,7 @@ public class DebuggerVisualizerAction extends AnAction {
         final XDebugSession debugSession = getDebugSessionIfExists();
 
         if (debugSession != null) {
-            debugSession.addSessionListener(new DebugListener(debugSession, new ConsoleDebuggingVisualizer()));
+            debugSession.addSessionListener(new DebugListener(debugSession));
         } else {
             System.out.println("No debugging session active!");
         }
