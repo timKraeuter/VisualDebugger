@@ -52,9 +52,13 @@ public class ODObject {
         this.attributeValues.add(attributeToAdd);
     }
 
+    public String getVariableName() {
+        return variableName;
+    }
+
     @Override
     public String toString() {
-        return new StringJoiner(", ", ODObject.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", "Object[", "]")
                 .add("type='" + type + "'")
                 .add("variableName='" + variableName + "'")
                 .add("attributeValues=" + attributeValues)

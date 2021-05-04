@@ -1,6 +1,10 @@
 package no.hvl.tk.visualDebugger.sample;
 
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SampleTest {
     @Test
@@ -44,5 +48,23 @@ public class SampleTest {
         System.out.println("123");
         System.out.println("123");
         System.out.println("123");
+    }
+
+    @Test
+    void collectionTest() {
+        CollectionHolder holder = new CollectionHolder(Lists.newArrayList("1", "2", "3"));
+        System.out.println(holder);
+        System.out.println(holder);
+        System.out.println(holder);
+        System.out.println(holder);
+        System.out.println("123");
+    }
+
+    private class CollectionHolder {
+        private final List<String> list;
+
+        public CollectionHolder(List<String> list) {
+            this.list = list;
+        }
     }
 }

@@ -17,7 +17,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public class NodeDebugVisualizer implements XCompositeNode {
     private static final Logger LOGGER = Logger.getInstance(NodeDebugVisualizer.class);
@@ -75,10 +78,18 @@ public class NodeDebugVisualizer implements XCompositeNode {
         if (depth > 0) {
             final ODObject object = new ODObject(typeName, variableName);
             this.debuggingVisualizer.addObject(object);
+            if (this.parent != null) {
+               this.debuggingVisualizer.addLinkToObject(this.parent, object, this.getLinkType(), variableName);
+            }
             increaseCounterIfNeeded(value);
             final NodeDebugVisualizer nodeDebugVisualizer = new NodeDebugVisualizer(this.debuggingVisualizer, depth - 1, this.lock, object);
             value.computeChildren(nodeDebugVisualizer);
         }
+    }
+
+    private String getLinkType() {
+        // TODO implement get link type
+        return null;
     }
 
     private void increaseCounterIfNeeded(final JavaValue value) {
@@ -120,9 +131,6 @@ public class NodeDebugVisualizer implements XCompositeNode {
     }
 
     private String getNonBoxedPrimitiveValue(final JavaValue value) {
-        if (value.getDescriptor().isValueReady()) {
-            return value.getDescriptor().getValue().toString();
-        }
         try {
             return value.getDescriptor().calcValue(value.getEvaluationContext()).toString();
         } catch (EvaluateException e) {
@@ -132,9 +140,6 @@ public class NodeDebugVisualizer implements XCompositeNode {
     }
 
     private String getType(final JavaValue value) {
-        if (value.getDescriptor().isValueReady()) {
-            return value.getDescriptor().getValue().type().name();
-        }
         try {
             return value.getDescriptor().calcValue(value.getEvaluationContext()).type().name();
         } catch (EvaluateException e) {
@@ -145,21 +150,26 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
     @Override
     public void tooManyChildren(int remaining) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setAlreadySorted(boolean alreadySorted) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setErrorMessage(@NotNull String errorMessage) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setErrorMessage(@NotNull String errorMessage, @Nullable XDebuggerTreeNodeHyperlink link) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setMessage(@NotNull String message, @Nullable Icon icon, @NotNull SimpleTextAttributes attributes, @Nullable XDebuggerTreeNodeHyperlink link) {
+        throw new UnsupportedOperationException();
     }
 }

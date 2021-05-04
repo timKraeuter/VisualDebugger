@@ -1,10 +1,7 @@
 package no.hvl.tk.visualDebugger.debugging.visualization;
 
 import com.intellij.util.concurrency.Semaphore;
-import no.hvl.tk.visualDebugger.domain.ODAttributeValue;
-import no.hvl.tk.visualDebugger.domain.ODObject;
-import no.hvl.tk.visualDebugger.domain.ODPrimitiveRootValue;
-import no.hvl.tk.visualDebugger.domain.ObjectDiagram;
+import no.hvl.tk.visualDebugger.domain.*;
 
 public class ConsoleDebuggingVisualizer implements DebuggingVisualizer {
     private ObjectDiagram diagram;
@@ -27,8 +24,11 @@ public class ConsoleDebuggingVisualizer implements DebuggingVisualizer {
     }
 
     @Override
-    public DebuggingVisualizer addLinkToObject(String objectFromName, String objectToName, String linkName) {
-        return null;
+    public DebuggingVisualizer addLinkToObject(ODObject from, ODObject to, String linkType, String variableName) {
+        assert this.diagram.getObjects().contains(from);
+        assert this.diagram.getObjects().contains(to);
+        from.addLink(new ODLink(from, to, linkType, variableName));
+        return this;
     }
 
     @Override

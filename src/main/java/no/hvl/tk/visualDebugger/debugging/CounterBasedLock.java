@@ -24,7 +24,6 @@ public class CounterBasedLock {
 
     public synchronized void decreaseCounter() {
         final int i = counter.decrementAndGet();
-        System.out.println("Counter: " + i);
         if (i == 0) {
             lock.unlock();
         }
