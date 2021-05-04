@@ -38,11 +38,9 @@ public class SampleTest {
 
     @Test
     void testMultiLayerObjectVariables() {
-        Material mat1 = Material.create("mat1Name", 1);
-        Material mat2 = Material.create("mat2Name", 2);
         final Product product = Product.create("productName", 3);
-        product.addPart(mat1, 1);
-        product.addPart(mat2, 1);
+        product.addPart(Material.create("mat1Name", 1), 1);
+        product.addPart(Material.create("mat2Name", 2), 1);
         System.out.println("123");
         System.out.println("123");
         System.out.println("123");

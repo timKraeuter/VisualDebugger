@@ -7,6 +7,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.frame.XDebuggerTreeNodeHyperlink;
 import com.intellij.xdebugger.frame.XValueChildrenList;
+import com.intellij.xdebugger.frame.XValuePlace;
 import com.jetbrains.jdi.ObjectReferenceImpl;
 import com.sun.jdi.Field;
 import com.sun.jdi.Value;
@@ -83,6 +84,8 @@ public class NodeDebugVisualizer implements XCompositeNode {
             }
             increaseCounterIfNeeded(value);
             final NodeDebugVisualizer nodeDebugVisualizer = new NodeDebugVisualizer(this.debuggingVisualizer, depth - 1, this.lock, object);
+            // Calling compute presentation fixes and Value not beeing ready error.
+            value.computePresentation(new NOPXValueNode(), XValuePlace.TREE);
             value.computeChildren(nodeDebugVisualizer);
         }
     }

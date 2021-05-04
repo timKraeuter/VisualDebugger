@@ -2,11 +2,13 @@ package no.hvl.tk.visualDebugger;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import no.hvl.tk.visualDebugger.debugging.DebugListener;
+import no.hvl.tk.visualDebugger.debugging.NodeDebugVisualizer;
 import no.hvl.tk.visualDebugger.debugging.visualization.ConsoleDebuggingVisualizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 
 public class DebuggerVisualizerAction extends AnAction {
+    private static final Logger LOGGER = Logger.getInstance(DebuggerVisualizerAction.class);
 
     @Override
     public void update(AnActionEvent e) {
@@ -31,7 +34,7 @@ public class DebuggerVisualizerAction extends AnAction {
         if (debugSession != null) {
             debugSession.addSessionListener(new DebugListener(debugSession));
         } else {
-            System.out.println("No debugging session active!");
+            LOGGER.info("No debugging session active but plugin was invoked.");
         }
     }
 
