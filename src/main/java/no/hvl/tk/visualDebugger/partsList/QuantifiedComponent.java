@@ -1,13 +1,8 @@
-package no.hvl.tk.visualDebugger.sample;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
+package no.hvl.tk.visualDebugger.partsList;
 
 public class QuantifiedComponent {
-	private static final String QuantityOpenBracket = "(";
-	private static final String QuantityCloseBracket = ")";
-	
-	public static QuantifiedComponent createQuantifiedComponent(final int quantity, final Component component) {
+
+	public static QuantifiedComponent create(final int quantity, final Component component) {
 		return new QuantifiedComponent(quantity, component);
 	}
 	
@@ -46,20 +41,10 @@ public class QuantifiedComponent {
 	
 	@Override
 	public String toString() {
-		return this.getComponent().toString() + QuantityOpenBracket + this.getQuantity() + QuantityCloseBracket;
-	}
-	
-	public int getNumberOfMaterials() {
-		return this.getComponent().getNumberOfMaterials() * this.getQuantity();
+		return String.format("%s x %s", this.getQuantity(), this.component.getName());
 	}
 	
 	public int getPrice() {
-		return this.quantity * this.component.getOverallPrice();
-	}
-	
-	public Map<Component, QuantifiedComponent> getMaterialList() {
-		final Map<Component, QuantifiedComponent> materialList = new LinkedHashMap<>();
-		materialList.put(this.component, this);
-		return null;
+		return this.quantity * this.component.getOverallCost();
 	}
 }

@@ -1,4 +1,4 @@
-package no.hvl.tk.visualDebugger.sample;
+package no.hvl.tk.visualDebugger.partsList.exception;
 
 public class CycleException extends RuntimeException {
 	

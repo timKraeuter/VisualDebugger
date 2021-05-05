@@ -1,11 +1,9 @@
-package no.hvl.tk.visualDebugger.sample;
+package no.hvl.tk.visualDebugger.partsList;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.compress.utils.Sets;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
