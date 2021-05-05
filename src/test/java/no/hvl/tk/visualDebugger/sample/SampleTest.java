@@ -1,10 +1,13 @@
 package no.hvl.tk.visualDebugger.sample;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.compress.utils.Sets;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SampleTest {
     @Test
@@ -50,12 +53,35 @@ public class SampleTest {
 
     @Test
     void collectionTest() {
+        // Primitive Values end up as list attributes
         CollectionHolder holder = new CollectionHolder(Lists.newArrayList("1", "2", "3"));
         System.out.println(holder);
         System.out.println(holder);
         System.out.println(holder);
         System.out.println(holder);
         System.out.println("123");
+    }
+
+    @Test
+    void collectionNonPrimitiveTest() {
+        // Lists work even with objects
+        ArrayList<Material> materialsList = Lists.newArrayList(
+                Material.create("1", 10),
+                Material.create("2", 20),
+                Material.create("3", 30));
+        System.out.println(materialsList);
+        System.out.println(materialsList);
+        System.out.println(materialsList);
+        System.out.println(materialsList);
+        // Lists work even with objects
+        Set<Material> materialsSet = Sets.newHashSet(
+                Material.create("1", 10),
+                Material.create("2", 20),
+                Material.create("3", 30));
+        System.out.println(materialsSet);
+        System.out.println(materialsSet);
+        System.out.println(materialsSet);
+        System.out.println(materialsSet);
     }
 
     private class CollectionHolder {

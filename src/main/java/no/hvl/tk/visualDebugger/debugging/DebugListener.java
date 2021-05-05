@@ -13,7 +13,7 @@ import java.util.Objects;
 public class DebugListener implements XDebugSessionListener {
     private static final Logger LOGGER = Logger.getInstance(DebugListener.class);
 
-    public static final int default_debugging_depth = 3;
+    public static final int default_debugging_depth = 10; // TODO increased to 10 for testing
 
     private XDebugSession debugSession;
     private int depth;

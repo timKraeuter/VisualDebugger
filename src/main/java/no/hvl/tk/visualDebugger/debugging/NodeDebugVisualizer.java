@@ -18,10 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 public class NodeDebugVisualizer implements XCompositeNode {
     private static final Logger LOGGER = Logger.getInstance(NodeDebugVisualizer.class);
@@ -59,7 +56,9 @@ public class NodeDebugVisualizer implements XCompositeNode {
             JavaValue value = (JavaValue) children.getValue(i);
             this.handleValue(value);
         }
-        this.lock.decreaseCounter();
+        if (last) {
+            this.lock.decreaseCounter();
+        }
     }
 
     void handleValue(final JavaValue value) {
@@ -80,7 +79,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
             final ODObject object = new ODObject(typeName, variableName);
             this.debuggingVisualizer.addObject(object);
             if (this.parent != null) {
-               this.debuggingVisualizer.addLinkToObject(this.parent, object, this.getLinkType(), variableName);
+                this.debuggingVisualizer.addLinkToObject(this.parent, object, this.getLinkType(), variableName);
             }
             increaseCounterIfNeeded(value);
             final NodeDebugVisualizer nodeDebugVisualizer = new NodeDebugVisualizer(this.debuggingVisualizer, depth - 1, this.lock, object);
@@ -123,9 +122,9 @@ public class NodeDebugVisualizer implements XCompositeNode {
         try {
             final ObjectReferenceImpl value1 = (ObjectReferenceImpl) value.getDescriptor().calcValue(value.getEvaluationContext());
             @SuppressWarnings("OptionalGetWithoutIsPresent") final Field valueField = value1.referenceType().allFields().stream()
-                                                                                            .filter(field -> "value".equals(field.name()))
-                                                                                            .findFirst()
-                                                                                            .get(); // Should always have a "value" field.
+                    .filter(field -> "value".equals(field.name()))
+                    .findFirst()
+                    .get(); // Should always have a "value" field.
             return value1.getValue(valueField).toString();
         } catch (EvaluateException e) {
             LOGGER.error(e);

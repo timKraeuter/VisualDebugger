@@ -19,11 +19,12 @@ public class CounterBasedLock {
     }
 
     public synchronized void increaseCounter() {
-        counter.incrementAndGet();
+        final int i = counter.incrementAndGet();
     }
 
     public synchronized void decreaseCounter() {
         final int i = counter.decrementAndGet();
+        assert i >= 0 : "Lock counter decreases below 0!";
         if (i == 0) {
             lock.unlock();
         }
