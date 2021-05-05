@@ -79,7 +79,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
             final ODObject object = new ODObject(typeName, variableName);
             this.debuggingVisualizer.addObject(object);
             if (this.parent != null) {
-                this.debuggingVisualizer.addLinkToObject(this.parent, object, this.getLinkType(), variableName);
+                this.debuggingVisualizer.addLinkToObject(this.parent, object, this.getLinkType(value));
             }
             increaseCounterIfNeeded(value);
             final NodeDebugVisualizer nodeDebugVisualizer = new NodeDebugVisualizer(this.debuggingVisualizer, depth - 1, this.lock, object);
@@ -89,9 +89,8 @@ public class NodeDebugVisualizer implements XCompositeNode {
         }
     }
 
-    private String getLinkType() {
-        // TODO implement get link type
-        return null;
+    private String getLinkType(JavaValue value) {
+        return value.getName();
     }
 
     private void increaseCounterIfNeeded(final JavaValue value) {

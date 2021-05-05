@@ -24,10 +24,10 @@ public class ConsoleDebuggingVisualizer implements DebuggingVisualizer {
     }
 
     @Override
-    public DebuggingVisualizer addLinkToObject(ODObject from, ODObject to, String linkType, String variableName) {
+    public DebuggingVisualizer addLinkToObject(ODObject from, ODObject to, String linkType) {
         assert this.diagram.getObjects().contains(from);
         assert this.diagram.getObjects().contains(to);
-        from.addLink(new ODLink(from, to, linkType, variableName));
+        from.addLink(new ODLink(from, to, linkType));
         return this;
     }
 

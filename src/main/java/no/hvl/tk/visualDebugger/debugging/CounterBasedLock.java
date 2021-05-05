@@ -19,7 +19,7 @@ public class CounterBasedLock {
     }
 
     public synchronized void increaseCounter() {
-        final int i = counter.incrementAndGet();
+        counter.incrementAndGet();
     }
 
     public synchronized void decreaseCounter() {

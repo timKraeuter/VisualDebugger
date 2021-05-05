@@ -9,7 +9,7 @@ public interface DebuggingVisualizer {
     // Maybe we need type here because "1" not equal to 1.
     DebuggingVisualizer addAttributeToObject(ODObject object, String fieldName, String fieldValue);
 
-    DebuggingVisualizer addLinkToObject(ODObject from, ODObject to, String linkType, String variableName);
+    DebuggingVisualizer addLinkToObject(ODObject from, ODObject to, String linkType);
 
     void addPrimitiveRootValue(String variableName, String type, String value);
 

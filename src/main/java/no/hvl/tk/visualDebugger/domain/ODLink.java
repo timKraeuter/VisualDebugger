@@ -11,20 +11,14 @@ public class ODLink {
      * Name of the association this link is typed in.
      */
     private final String type;
-    private final String variableName;
 
     private final ODObject from;
     private final ODObject to;
 
-    public ODLink(ODObject from, ODObject to, String type, String variableName) {
+    public ODLink(ODObject from, ODObject to, String type) {
         this.from = from;
         this.to = to;
         this.type = type;
-        this.variableName = variableName;
-    }
-
-    public String getVariableName() {
-        return variableName;
     }
 
     public String getType() {
@@ -43,7 +37,6 @@ public class ODLink {
     public String toString() {
         return new StringJoiner(", ", "Link[", "]")
                 .add("type='" + type + "'")
-                .add("variableName='" + variableName + "'")
                 .add("from=" + from.getVariableName())
                 .add("to=" + to.getVariableName())
                 .toString();

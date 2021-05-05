@@ -65,7 +65,7 @@ public class SampleTest {
     @Test
     void collectionNonPrimitiveTest() {
         // Lists work even with objects
-        ArrayList<Material> materialsList = Lists.newArrayList(
+        List<Material> materialsList = Lists.newArrayList(
                 Material.create("1", 10),
                 Material.create("2", 20),
                 Material.create("3", 30));

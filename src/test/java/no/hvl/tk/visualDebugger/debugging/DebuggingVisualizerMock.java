@@ -18,7 +18,7 @@ public class DebuggingVisualizerMock implements DebuggingVisualizer {
     }
 
     @Override
-    public DebuggingVisualizer addLinkToObject(ODObject from, ODObject to, String linkType, String variableName) {
+    public DebuggingVisualizer addLinkToObject(ODObject from, ODObject to, String linkType) {
         return null;
     }
 
