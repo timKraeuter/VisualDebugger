@@ -48,5 +48,7 @@ public class ConsoleDebuggingVisualizer implements DebuggingVisualizer {
         for (final ODObject object : diagram.getObjects()) {
             System.out.println(object);
         }
+        // print new line.
+        System.out.println();
     }
 }

@@ -13,15 +13,15 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.java</depends>
 
+    <projectListeners>
+        <listener class="no.hvl.tk.visualDebugger.DebuggVisualizerListener"
+                  topic="com.intellij.xdebugger.XDebuggerManagerListener"/>
+    </projectListeners>
+
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
     </extensions>
 
     <actions>
-        <!-- Add your actions here -->
-
-        <action id="DebugPOCAction" class="no.hvl.tk.visualDebugger.DebuggerVisualizerAction" text="Attach to Debugging Process">
-            <add-to-group group-id="ToolsMenu" anchor="first"/>
-        </action>
     </actions>
 </idea-plugin>
