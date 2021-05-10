@@ -7,7 +7,7 @@ public interface DebuggingVisualizer {
     DebuggingVisualizer addObject(ODObject object);
 
     // Maybe we need type here because "1" not equal to 1.
-    DebuggingVisualizer addAttributeToObject(ODObject object, String fieldName, String fieldValue);
+    DebuggingVisualizer addAttributeToObject(ODObject object, String fieldName, String fieldValue, String fieldType);
 
     DebuggingVisualizer addLinkToObject(ODObject from, ODObject to, String linkType);
 

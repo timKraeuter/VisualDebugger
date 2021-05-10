@@ -9,25 +9,20 @@ public class ODAttributeValue {
     // Maybe add type here
 
     private final String attributeName;
+    private final String attributeType;
     private final String attributeValue;
 
-    public ODAttributeValue(String attributeName, String attributeValue) {
+    public ODAttributeValue(String attributeName, String attributeType, String attributeValue) {
         this.attributeName = attributeName;
+        this.attributeType = attributeType;
         this.attributeValue = attributeValue;
-    }
-
-    public String getAttributeName() {
-        return attributeName;
-    }
-
-    public String getAttributeValue() {
-        return attributeValue;
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", "Attribute:[", "]")
                 .add("name='" + attributeName + "'")
+                .add("type='" + attributeType + "'")
                 .add("value='" + attributeValue + "'")
                 .toString();
     }

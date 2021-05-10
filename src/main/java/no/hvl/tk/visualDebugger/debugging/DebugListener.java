@@ -54,4 +54,9 @@ public class DebugListener implements XDebugSessionListener {
             debuggingVisualizer.finishVisualization();
         }).start();
     }
+
+    @Override
+    public void stackFrameChanged() {
+        System.out.println("Stack frame changed");
+    }
 }

@@ -109,11 +109,11 @@ public class NodeDebugVisualizer implements XCompositeNode {
         }
     }
 
-    private void addValueToDiagram(final String variableName, final String typeName, final String varValue) {
+    private void addValueToDiagram(final String variableOrFieldName, final String typeName, final String varValue) {
         if (Objects.isNull(this.parent)) {
-            this.debuggingVisualizer.addPrimitiveRootValue(variableName, typeName, varValue);
+            this.debuggingVisualizer.addPrimitiveRootValue(variableOrFieldName, typeName, varValue);
         } else {
-            this.debuggingVisualizer.addAttributeToObject(this.parent, typeName, varValue);
+            this.debuggingVisualizer.addAttributeToObject(this.parent, variableOrFieldName,  varValue, typeName);
         }
     }
 

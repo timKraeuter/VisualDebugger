@@ -1,6 +1,5 @@
 package no.hvl.tk.visualDebugger.debugging.visualization;
 
-import com.intellij.util.concurrency.Semaphore;
 import no.hvl.tk.visualDebugger.domain.*;
 
 public class ConsoleDebuggingVisualizer implements DebuggingVisualizer {
@@ -17,9 +16,9 @@ public class ConsoleDebuggingVisualizer implements DebuggingVisualizer {
     }
 
     @Override
-    public DebuggingVisualizer addAttributeToObject(ODObject object, String fieldName, String fieldValue) {
+    public DebuggingVisualizer addAttributeToObject(ODObject object, String fieldName, String fieldValue, String fieldType) {
         assert this.diagram.getObjects().contains(object);
-        object.addAttribute(new ODAttributeValue(fieldName, fieldValue));
+        object.addAttribute(new ODAttributeValue(fieldName, fieldType, fieldValue));
         return this;
     }
 

@@ -13,7 +13,7 @@ public class DebuggingVisualizerMock implements DebuggingVisualizer {
     }
 
     @Override
-    public DebuggingVisualizer addAttributeToObject(ODObject object, final String fieldName, final String fieldValue) {
+    public DebuggingVisualizer addAttributeToObject(ODObject object, String fieldName, String fieldValue, String fieldType) {
         return this;
     }
 
