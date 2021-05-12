@@ -26,4 +26,16 @@ public class ODAttributeValue {
                 .add("value='" + attributeValue + "'")
                 .toString();
     }
+
+    public String getAttributeName() {
+        return attributeName;
+    }
+
+    public String getAttributeType() {
+        return attributeType;
+    }
+
+    public String getAttributeValue() {
+        return attributeValue;
+    }
 }

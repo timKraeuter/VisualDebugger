@@ -56,6 +56,10 @@ public class ODObject {
         return variableName;
     }
 
+    public String getType() {
+        return type;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", "Object[", "]")
