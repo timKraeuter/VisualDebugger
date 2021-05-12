@@ -18,6 +18,11 @@
                   topic="com.intellij.xdebugger.XDebuggerManagerListener"/>
     </projectListeners>
 
+    <actions>
+        <group id="DebugVisualizer.VisualizerToolbar" popup="false">
+        </group>
+    </actions>
+
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
     </extensions>
