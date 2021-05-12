@@ -11,8 +11,10 @@ repositories {
 }
 
 dependencies {
+    // https://mvnrepository.com/artifact/net.sourceforge.plantuml/plantuml
+    implementation group: 'net.sourceforge.plantuml', name: 'plantuml', version: '8059'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.9.0'
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }

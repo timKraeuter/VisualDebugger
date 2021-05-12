@@ -8,14 +8,13 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.content.Content;
-import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
 import com.intellij.xdebugger.frame.XStackFrame;
 import no.hvl.tk.visualDebugger.DebuggVisualizerListener;
-import no.hvl.tk.visualDebugger.debugging.visualization.ConsoleDebuggingVisualizer;
 import no.hvl.tk.visualDebugger.debugging.visualization.DebuggingVisualizer;
+import no.hvl.tk.visualDebugger.debugging.visualization.PlantUmlVisualizer;
 
 import javax.swing.*;
 import java.util.Objects;
@@ -53,7 +52,7 @@ public class DebugListener implements XDebugSessionListener {
 
         initUI();
 
-        final DebuggingVisualizer debuggingVisualizer = new ConsoleDebuggingVisualizer();
+        final DebuggingVisualizer debuggingVisualizer = new PlantUmlVisualizer();
         final CounterBasedLock lock = new CounterBasedLock();
         final NodeDebugVisualizer nodeVisualizer = new NodeDebugVisualizer(
                 debuggingVisualizer,

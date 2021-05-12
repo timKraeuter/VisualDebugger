@@ -1,40 +1,9 @@
 package no.hvl.tk.visualDebugger.debugging.visualization;
 
-import no.hvl.tk.visualDebugger.domain.*;
+import no.hvl.tk.visualDebugger.domain.ODObject;
+import no.hvl.tk.visualDebugger.domain.ODPrimitiveRootValue;
 
-public class ConsoleDebuggingVisualizer implements DebuggingVisualizer {
-    private ObjectDiagram diagram;
-
-    public ConsoleDebuggingVisualizer() {
-        this.diagram = new ObjectDiagram();
-    }
-
-    @Override
-    public DebuggingVisualizer addObject(ODObject object) {
-        this.diagram.addObject(object);
-        return this;
-    }
-
-    @Override
-    public DebuggingVisualizer addAttributeToObject(ODObject object, String fieldName, String fieldValue, String fieldType) {
-        assert this.diagram.getObjects().contains(object);
-        object.addAttribute(new ODAttributeValue(fieldName, fieldType, fieldValue));
-        return this;
-    }
-
-    @Override
-    public DebuggingVisualizer addLinkToObject(ODObject from, ODObject to, String linkType) {
-        assert this.diagram.getObjects().contains(from);
-        assert this.diagram.getObjects().contains(to);
-        from.addLink(new ODLink(from, to, linkType));
-        return this;
-    }
-
-    @Override
-    public void addPrimitiveRootValue(final String variableName, final String type, final String value) {
-        diagram.addPrimitiveRootValue(new ODPrimitiveRootValue(variableName, type, value));
-    }
-
+public class ConsoleDebuggingVisualizer extends InformationCollectorVisualizer {
     @Override
     public void finishVisualization() {
         for (final ODPrimitiveRootValue primitiveRootValue : diagram.getPrimitiveRootValues()) {

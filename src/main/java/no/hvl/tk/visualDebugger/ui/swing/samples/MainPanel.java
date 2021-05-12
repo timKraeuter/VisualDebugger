@@ -1,4 +1,4 @@
-package no.hvl.tk.visualDebugger.ui;
+package no.hvl.tk.visualDebugger.ui.swing.samples;
 
 import javax.swing.*;
 
