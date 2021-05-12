@@ -8,8 +8,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -75,6 +73,7 @@ public class ObjectPanel extends JPanel {
         frame.getContentPane().add(mainPanel);
         frame.pack();
         frame.setLocationByPlatform(true);
+        frame.setSize(900, 900);
         frame.setVisible(true);
     }
 }
