@@ -1,7 +1,10 @@
 package no.hvl.tk.visualDebugger.ui.swing.samples;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class Test extends JPanel {
 
@@ -11,20 +14,23 @@ public class Test extends JPanel {
 
     private static void createAndShowGui() {
         final JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(3, 1));
-        panel.setSize(300, 300);
-        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        panel.add(new JLabel("1"));
-        panel.add(new JSeparator());
-        panel.add(new JLabel("2"));
-        panel.add(new JLabel("3"));
-
+        try {
+            final BufferedImage image = ImageIO.read(new File("C:\\Temp/test.png"));
+            final ImageIcon icon = new ImageIcon(image);
+            final JLabel imageLabel = new JLabel(icon);
+            imageLabel.setIcon(icon);
+            imageLabel.setIcon(icon);
+            imageLabel.setIcon(icon);
+            panel.add(imageLabel);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         JFrame frame = new JFrame("Test swing");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(panel);
         frame.pack();
         frame.setLocationByPlatform(true);
-        frame.setSize(300, 300);
+        frame.setSize(900, 900);
         frame.setVisible(true);
     }
 }

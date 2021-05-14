@@ -11,9 +11,9 @@ import com.intellij.xdebugger.frame.XValuePlace;
 import com.jetbrains.jdi.ObjectReferenceImpl;
 import com.sun.jdi.Field;
 import com.sun.jdi.Value;
+import no.hvl.tk.visualDebugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visualDebugger.domain.ODObject;
 import no.hvl.tk.visualDebugger.domain.PrimitiveTypes;
-import no.hvl.tk.visualDebugger.debugging.visualization.DebuggingVisualizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +23,7 @@ import java.util.Objects;
 public class NodeDebugVisualizer implements XCompositeNode {
     private static final Logger LOGGER = Logger.getInstance(NodeDebugVisualizer.class);
 
-    private final DebuggingVisualizer debuggingVisualizer;
+    private final DebuggingInfoVisualizer debuggingInfoCollector;
     private final int depth;
 
     private CounterBasedLock lock;
@@ -33,18 +33,18 @@ public class NodeDebugVisualizer implements XCompositeNode {
     private final ODObject parent;
 
     public NodeDebugVisualizer(
-            final DebuggingVisualizer debuggingVisualizer,
+            final DebuggingInfoVisualizer debuggingInfoCollector,
             final int depth,
             final CounterBasedLock lock) {
-        this(debuggingVisualizer, depth, lock, null);
+        this(debuggingInfoCollector, depth, lock, null);
     }
 
     public NodeDebugVisualizer(
-            final DebuggingVisualizer debuggingVisualizer,
+            final DebuggingInfoVisualizer debuggingInfoCollector,
             final int depth,
             CounterBasedLock lock,
             final ODObject parent) {
-        this.debuggingVisualizer = debuggingVisualizer;
+        this.debuggingInfoCollector = debuggingInfoCollector;
         this.depth = depth;
         this.lock = lock;
         this.parent = parent;
@@ -77,12 +77,12 @@ public class NodeDebugVisualizer implements XCompositeNode {
         // Handle object case here.
         if (depth > 0) {
             final ODObject object = new ODObject(typeName, variableName);
-            this.debuggingVisualizer.addObject(object);
+            this.debuggingInfoCollector.addObject(object);
             if (this.parent != null) {
-                this.debuggingVisualizer.addLinkToObject(this.parent, object, this.getLinkType(value));
+                this.debuggingInfoCollector.addLinkToObject(this.parent, object, this.getLinkType(value));
             }
             increaseCounterIfNeeded(value);
-            final NodeDebugVisualizer nodeDebugVisualizer = new NodeDebugVisualizer(this.debuggingVisualizer, depth - 1, this.lock, object);
+            final NodeDebugVisualizer nodeDebugVisualizer = new NodeDebugVisualizer(this.debuggingInfoCollector, depth - 1, this.lock, object);
             // Calling compute presentation fixes and Value not beeing ready error.
             value.computePresentation(new NOPXValueNode(), XValuePlace.TREE);
             value.computeChildren(nodeDebugVisualizer);
@@ -111,9 +111,9 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
     private void addValueToDiagram(final String variableOrFieldName, final String typeName, final String varValue) {
         if (Objects.isNull(this.parent)) {
-            this.debuggingVisualizer.addPrimitiveRootValue(variableOrFieldName, typeName, varValue);
+            this.debuggingInfoCollector.addPrimitiveRootValue(variableOrFieldName, typeName, varValue);
         } else {
-            this.debuggingVisualizer.addAttributeToObject(this.parent, variableOrFieldName,  varValue, typeName);
+            this.debuggingInfoCollector.addAttributeToObject(this.parent, variableOrFieldName, varValue, typeName);
         }
     }
 

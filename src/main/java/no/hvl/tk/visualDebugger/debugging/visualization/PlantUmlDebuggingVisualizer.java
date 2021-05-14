@@ -1,30 +1,52 @@
 package no.hvl.tk.visualDebugger.debugging.visualization;
 
+import com.intellij.openapi.diagnostic.Logger;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 import no.hvl.tk.visualDebugger.domain.ODAttributeValue;
 import no.hvl.tk.visualDebugger.domain.ODObject;
+import no.hvl.tk.visualDebugger.domain.ObjectDiagram;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PlantUmlVisualizer extends InformationCollectorVisualizer {
+public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
+    private static final Logger LOGGER = Logger.getInstance(PlantUmlDebuggingVisualizer.class);
+    private final JPanel pluginUI;
+    private final JLabel currentImage;
+
+    public PlantUmlDebuggingVisualizer(JPanel jPanel) {
+        this.pluginUI = jPanel;
+        currentImage = new JLabel();
+        pluginUI.add(currentImage);
+    }
+
     @Override
     public void finishVisualization() {
+        System.out.println("Visualisation finished");
         final String plantUMLString = toPlantUMLString();
-
-        System.out.println(plantUMLString);
         try {
-            System.out.println(toSVG(plantUMLString));
+            final byte[] pngData = toPNG(plantUMLString);
+            addImageToUI(pngData);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         }
+        // Reset diagram
+        this.diagram = new ObjectDiagram();
+    }
+
+    private void addImageToUI(byte[] pngData) throws IOException {
+        ByteArrayInputStream input = new ByteArrayInputStream(pngData);
+        final ImageIcon image = new ImageIcon(ImageIO.read(input));
+        currentImage.setIcon(image);
     }
 
     private String toPlantUMLString() {
@@ -66,14 +88,11 @@ public class PlantUmlVisualizer extends InformationCollectorVisualizer {
         return type.substring(type.lastIndexOf(".") + 1);
     }
 
-    private String toSVG(String plantUMLDescription) throws IOException {
+    private byte[] toPNG(String plantUMLDescription) throws IOException {
         SourceStringReader reader = new SourceStringReader(plantUMLDescription);
-        final ByteArrayOutputStream os = new ByteArrayOutputStream();
-        // Write the first image to "os"
-        reader.generateImage(os, new FileFormatOption(FileFormat.SVG));
-        os.close();
-
-        // The XML is stored into svg
-        return os.toString(StandardCharsets.UTF_8);
+        try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            reader.outputImage(outputStream, new FileFormatOption(FileFormat.PNG));
+            return outputStream.toByteArray();
+        }
     }
 }

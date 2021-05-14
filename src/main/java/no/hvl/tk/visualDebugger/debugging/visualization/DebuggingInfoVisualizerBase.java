@@ -2,28 +2,28 @@ package no.hvl.tk.visualDebugger.debugging.visualization;
 
 import no.hvl.tk.visualDebugger.domain.*;
 
-public abstract class InformationCollectorVisualizer implements DebuggingVisualizer {
+public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisualizer {
     protected ObjectDiagram diagram;
 
-    public InformationCollectorVisualizer() {
+    public DebuggingInfoVisualizerBase() {
         this.diagram = new ObjectDiagram();
     }
 
     @Override
-    public DebuggingVisualizer addObject(ODObject object) {
+    public DebuggingInfoVisualizer addObject(ODObject object) {
         this.diagram.addObject(object);
         return this;
     }
 
     @Override
-    public DebuggingVisualizer addAttributeToObject(ODObject object, String fieldName, String fieldValue, String fieldType) {
+    public DebuggingInfoVisualizer addAttributeToObject(ODObject object, String fieldName, String fieldValue, String fieldType) {
         assert this.diagram.getObjects().contains(object);
         object.addAttribute(new ODAttributeValue(fieldName, fieldType, fieldValue));
         return this;
     }
 
     @Override
-    public DebuggingVisualizer addLinkToObject(ODObject from, ODObject to, String linkType) {
+    public DebuggingInfoVisualizer addLinkToObject(ODObject from, ODObject to, String linkType) {
         assert this.diagram.getObjects().contains(from);
         assert this.diagram.getObjects().contains(to);
         from.addLink(new ODLink(from, to, linkType));

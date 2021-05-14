@@ -13,8 +13,9 @@ import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
 import com.intellij.xdebugger.frame.XStackFrame;
 import no.hvl.tk.visualDebugger.DebuggVisualizerListener;
-import no.hvl.tk.visualDebugger.debugging.visualization.DebuggingVisualizer;
-import no.hvl.tk.visualDebugger.debugging.visualization.PlantUmlVisualizer;
+import no.hvl.tk.visualDebugger.debugging.visualization.DebuggingInfoVisualizer;
+import no.hvl.tk.visualDebugger.debugging.visualization.PlantUmlDebuggingVisualizer;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Objects;
@@ -25,8 +26,10 @@ public class DebugListener implements XDebugSessionListener {
 
     public static final int default_debugging_depth = 10; // TODO increased to 10 for testing
 
-    private XDebugSession debugSession;
-    private int depth;
+    private final XDebugSession debugSession;
+    private final int depth;
+    private JPanel userInterface;
+    private DebuggingInfoVisualizer debuggingVisualizer;
 
     public DebugListener(final XDebugSession debugSession) {
         this(debugSession, default_debugging_depth);
@@ -46,16 +49,15 @@ public class DebugListener implements XDebugSessionListener {
     @Override
     public void sessionPaused() {
         LOGGER.debug("Next step in debugger!");
+        initUIIfNeeded();
 
         final XStackFrame currentStackFrame = debugSession.getCurrentStackFrame();
         Objects.requireNonNull(currentStackFrame, "Stack frame unexpectedly was null.");
 
-        initUI();
-
-        final DebuggingVisualizer debuggingVisualizer = new PlantUmlVisualizer();
+        final DebuggingInfoVisualizer debuggingInfoCollector = getDebuggingInfoVisualizer();
         final CounterBasedLock lock = new CounterBasedLock();
         final NodeDebugVisualizer nodeVisualizer = new NodeDebugVisualizer(
-                debuggingVisualizer,
+                debuggingInfoCollector,
                 this.depth,
                 lock);
         // Happens in a different thread!
@@ -63,8 +65,16 @@ public class DebugListener implements XDebugSessionListener {
         new Thread(() -> {
             // Wait for the computation to be over
             lock.lock();
-            debuggingVisualizer.finishVisualization();
+            debuggingInfoCollector.finishVisualization();
         }).start();
+    }
+
+    @NotNull
+    private DebuggingInfoVisualizer getDebuggingInfoVisualizer() {
+        if (debuggingVisualizer == null) {
+            debuggingVisualizer = new PlantUmlDebuggingVisualizer(userInterface);
+        }
+        return debuggingVisualizer;
     }
 
     @Override
@@ -72,29 +82,32 @@ public class DebugListener implements XDebugSessionListener {
         System.out.println("Stack frame changed");
     }
 
-    private void initUI() {
-        final JPanel panel = new JPanel();
-        panel.add(new JLabel("Test", SwingConstants.CENTER));
+    private void initUIIfNeeded() {
+        if (userInterface != null) {
+            return;
+        }
+        userInterface = new JPanel();
+        SimpleToolWindowPanel uiContainer = new SimpleToolWindowPanel(false, true);
 
-        final SimpleToolWindowPanel container = new SimpleToolWindowPanel(false, true);
         final ActionManager actionManager = ActionManager.getInstance();
         ActionToolbar actionToolbar = actionManager.createActionToolbar(
                 "DebugVisualizer.VisualizerToolbar",
                 (DefaultActionGroup) actionManager.getAction("DebugVisualizer.VisualizerToolbar"),
                 false
         );
-        actionToolbar.setTargetComponent(panel);
-        container.setToolbar(actionToolbar.getComponent());
-        container.setContent(panel);
+        actionToolbar.setTargetComponent(userInterface);
+        uiContainer.setToolbar(actionToolbar.getComponent());
+        uiContainer.setContent(userInterface);
 
         RunnerLayoutUi ui = debugSession.getUI();
         Content content = ui.createContent(
                 CONTENT_ID,
-                container,
+                uiContainer,
                 "Visual Debugger",
                 IconLoader.getIcon("/icons/viz.png", DebuggVisualizerListener.class),
                 null);
         content.setCloseable(false);
         UIUtil.invokeLaterIfNeeded(() -> ui.addContent(content));
+        LOGGER.debug("UI initialized!");
     }
 }

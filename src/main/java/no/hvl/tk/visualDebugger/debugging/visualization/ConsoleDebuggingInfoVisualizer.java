@@ -2,8 +2,9 @@ package no.hvl.tk.visualDebugger.debugging.visualization;
 
 import no.hvl.tk.visualDebugger.domain.ODObject;
 import no.hvl.tk.visualDebugger.domain.ODPrimitiveRootValue;
+import no.hvl.tk.visualDebugger.domain.ObjectDiagram;
 
-public class ConsoleDebuggingVisualizer extends InformationCollectorVisualizer {
+public class ConsoleDebuggingInfoVisualizer extends DebuggingInfoVisualizerBase {
     @Override
     public void finishVisualization() {
         for (final ODPrimitiveRootValue primitiveRootValue : diagram.getPrimitiveRootValues()) {
@@ -18,5 +19,7 @@ public class ConsoleDebuggingVisualizer extends InformationCollectorVisualizer {
         }
         // print new line.
         System.out.println();
+        // Reset diagram
+        this.diagram = new ObjectDiagram();
     }
 }
