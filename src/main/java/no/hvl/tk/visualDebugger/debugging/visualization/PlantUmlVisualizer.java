@@ -30,6 +30,8 @@ public class PlantUmlVisualizer extends InformationCollectorVisualizer {
     private String toPlantUMLString() {
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("@startuml\n");
+        // Use this so we are not dependent on a Graphviz/Dot installation on the host machine.
+        stringBuilder.append("!pragma layout smetana\n");
         final Set<Pair<Integer, Integer>> links = new HashSet<>();
 
         // Add objects with attributes and collect links. They habe to be added after objects.
