@@ -1,5 +1,7 @@
 package no.hvl.tk.visualDebugger.domain;
 
+import com.google.common.base.Objects;
+
 import java.util.StringJoiner;
 
 /**
@@ -31,11 +33,20 @@ public class ODAttributeValue {
         return attributeName;
     }
 
-    public String getAttributeType() {
-        return attributeType;
-    }
-
     public String getAttributeValue() {
         return attributeValue;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ODAttributeValue that = (ODAttributeValue) o;
+        return Objects.equal(attributeName, that.attributeName) && Objects.equal(attributeType, that.attributeType) && Objects.equal(attributeValue, that.attributeValue);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(attributeName, attributeType, attributeValue);
     }
 }

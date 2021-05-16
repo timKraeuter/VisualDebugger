@@ -15,5 +15,11 @@ public class PartsListTest {
         folding_wall_table.addPart(Material.create("Wood screw D4 x 45mm", 1), 10);
         // Real cost is 71. Forgot the assemblyCost of 5.
         assertEquals(71, folding_wall_table.getOverallCost());
+        System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
     }
 }

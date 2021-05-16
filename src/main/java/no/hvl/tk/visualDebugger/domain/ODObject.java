@@ -1,5 +1,7 @@
 package no.hvl.tk.visualDebugger.domain;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -8,7 +10,7 @@ import java.util.StringJoiner;
 /**
  * Represents an Object in an object diagram.
  */
-public class ODObject {
+public class ODObject implements Comparable<ODObject> {
 
     private final String type;
     private final String variableName;
@@ -68,5 +70,22 @@ public class ODObject {
                 .add("attributeValues=" + attributeValues)
                 .add("links=" + links)
                 .toString();
+    }
+
+    @Override
+    public int compareTo(@NotNull ODObject object) {
+        final int nameCompareResult = this.variableName.compareTo(object.variableName);
+        if (nameCompareResult != 0) {
+            return nameCompareResult;
+        }
+        final int typeCompareResult = this.type.compareTo(object.type);
+        if (typeCompareResult != 0) {
+            return typeCompareResult;
+        }
+        return Integer.compare(attributeHashCodeSum(this.attributeValues), attributeHashCodeSum(object.attributeValues));
+    }
+
+    private int attributeHashCodeSum(Set<ODAttributeValue> attrValues) {
+        return attrValues.stream().mapToInt(ODAttributeValue::hashCode).sum();
     }
 }

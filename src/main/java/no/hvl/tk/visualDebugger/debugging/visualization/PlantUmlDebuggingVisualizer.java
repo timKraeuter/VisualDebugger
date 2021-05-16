@@ -16,7 +16,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     private static final Logger LOGGER = Logger.getInstance(PlantUmlDebuggingVisualizer.class);
@@ -55,8 +57,12 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         stringBuilder.append("!pragma layout smetana\n");
         final Set<Pair<Integer, Integer>> links = new HashSet<>();
 
+        // Sort ojects so the visualisation does not change when there are no objects changes.
+        final List<ODObject> sortedObjects = diagram.getObjects().stream()
+                .sorted()
+                .collect(Collectors.toList());
         // Add objects with attributes and collect links. They habe to be added after objects.
-        for (final ODObject object : diagram.getObjects()) {
+        for (final ODObject object : sortedObjects) {
             stringBuilder.append(String.format("object \"%s:%s\" as %s",
                     object.getVariableName(),
                     this.shortenTypeName(object.getType()),
