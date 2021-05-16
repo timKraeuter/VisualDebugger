@@ -31,7 +31,6 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
     @Override
     public void finishVisualization() {
-        System.out.println("Visualisation finished");
         final String plantUMLString = toPlantUMLString();
         try {
             final byte[] pngData = toPNG(plantUMLString);

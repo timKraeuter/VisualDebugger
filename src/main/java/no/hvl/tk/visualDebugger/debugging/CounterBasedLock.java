@@ -15,17 +15,21 @@ public class CounterBasedLock {
     }
 
     public void lock() {
+        // System.out.println("Attempting to lock" + this);
         this.lock.lock();
     }
 
     public synchronized void increaseCounter() {
-        counter.incrementAndGet();
+        final int i = counter.incrementAndGet();
+//        System.out.println("Counter increased to " + i);
     }
 
     public synchronized void decreaseCounter() {
         final int i = counter.decrementAndGet();
+//        System.out.println("Counter decreased to " + i);
         assert i >= 0 : "Lock counter decreases below 0!";
         if (i == 0) {
+//            System.out.println("Lock unlocked " + this);
             lock.unlock();
         }
     }

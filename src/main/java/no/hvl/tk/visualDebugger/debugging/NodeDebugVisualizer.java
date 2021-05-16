@@ -4,16 +4,15 @@ import com.intellij.debugger.engine.JavaValue;
 import com.intellij.debugger.engine.evaluation.EvaluateException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.xdebugger.frame.XCompositeNode;
-import com.intellij.xdebugger.frame.XDebuggerTreeNodeHyperlink;
-import com.intellij.xdebugger.frame.XValueChildrenList;
-import com.intellij.xdebugger.frame.XValuePlace;
+import com.intellij.xdebugger.frame.*;
+import com.intellij.xdebugger.frame.presentation.XValuePresentation;
 import com.jetbrains.jdi.ObjectReferenceImpl;
 import com.sun.jdi.Field;
 import com.sun.jdi.Value;
 import no.hvl.tk.visualDebugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visualDebugger.domain.ODObject;
 import no.hvl.tk.visualDebugger.domain.PrimitiveTypes;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,16 +60,16 @@ public class NodeDebugVisualizer implements XCompositeNode {
         }
     }
 
-    void handleValue(final JavaValue value) {
-        final String variableName = value.getName();
-        String typeName = getType(value);
+    void handleValue(final JavaValue jValue) {
+        final String variableName = jValue.getName();
+        String typeName = getType(jValue);
         if (PrimitiveTypes.isNonBoxedPrimitiveType(typeName)) {
-            final String varValue = getNonBoxedPrimitiveValue(value);
+            final String varValue = getNonBoxedPrimitiveValue(jValue);
             addValueToDiagram(variableName, typeName, varValue);
             return;
         }
         if (PrimitiveTypes.isBoxedPrimitiveType(typeName)) {
-            final String varValue = getBoxedPrimitiveValue(value);
+            final String varValue = getBoxedPrimitiveValue(jValue);
             this.addValueToDiagram(variableName, typeName, varValue);
             return;
         }
@@ -79,34 +78,56 @@ public class NodeDebugVisualizer implements XCompositeNode {
             final ODObject object = new ODObject(typeName, variableName);
             this.debuggingInfoCollector.addObject(object);
             if (this.parent != null) {
-                this.debuggingInfoCollector.addLinkToObject(this.parent, object, this.getLinkType(value));
+                this.debuggingInfoCollector.addLinkToObject(this.parent, object, this.getLinkType(jValue));
             }
-            increaseCounterIfNeeded(value);
+            this.lock.increaseCounter();
             final NodeDebugVisualizer nodeDebugVisualizer = new NodeDebugVisualizer(this.debuggingInfoCollector, depth - 1, this.lock, object);
             // Calling compute presentation fixes and Value not beeing ready error.
-            value.computePresentation(new NOPXValueNode(), XValuePlace.TREE);
-            value.computeChildren(nodeDebugVisualizer);
+            jValue.computePresentation(new NOPXValueNode(), XValuePlace.TREE);
+            jValue.computeChildren(nodeDebugVisualizer);
+            // Add children might not get called. Then we have to decrease the counter.
+            jValue.computePresentation(new XValueNode() {
+                @Override
+                public void setPresentation(@Nullable Icon icon, @NonNls @Nullable String type, @NonNls @NotNull String value, boolean hasChildren) {
+                    this.decreaseCounterIfNeeded(jValue, hasChildren);
+                }
+
+                @Override
+                public void setPresentation(@Nullable Icon icon, @NotNull XValuePresentation presentation, boolean hasChildren) {
+                    this.decreaseCounterIfNeeded(jValue, hasChildren);
+                }
+
+                @Override
+                public void setPresentation(@Nullable Icon icon, @NonNls @Nullable String type, @NonNls @NotNull String separator, @NonNls @Nullable String value, boolean hasChildren) {
+                    this.decreaseCounterIfNeeded(jValue, hasChildren);
+                }
+
+                @Override
+                public void setFullValueEvaluator(@NotNull XFullValueEvaluator fullValueEvaluator) {
+                }
+
+
+                private void decreaseCounterIfNeeded(final JavaValue value, boolean hasChildren) {
+                    try {
+                        final Value calcedValue = value.getDescriptor().calcValue(value.getEvaluationContext());
+                        if (calcedValue instanceof ObjectReferenceImpl) {
+                            ObjectReferenceImpl obRef = (ObjectReferenceImpl) calcedValue;
+                            final int fieldSize = obRef.referenceType().allFields().size();
+                            if (fieldSize == 0 || !hasChildren) {
+                                NodeDebugVisualizer.this.lock.decreaseCounter();
+                            }
+                        }
+                    } catch (EvaluateException e) {
+                        LOGGER.error(e);
+                        throw new RuntimeException(e);
+                    }
+                }
+            }, XValuePlace.TREE);
         }
     }
 
     private String getLinkType(JavaValue value) {
         return value.getName();
-    }
-
-    private void increaseCounterIfNeeded(final JavaValue value) {
-        try {
-            final Value calcedValue = value.getDescriptor().calcValue(value.getEvaluationContext());
-            if (calcedValue instanceof ObjectReferenceImpl) {
-                ObjectReferenceImpl obRef = (ObjectReferenceImpl) calcedValue;
-                final int fieldSize = obRef.referenceType().allFields().size();
-                if (fieldSize != 0) {
-                    this.lock.increaseCounter();
-                }
-            }
-        } catch (EvaluateException e) {
-            LOGGER.error(e);
-            throw new RuntimeException(e);
-        }
     }
 
     private void addValueToDiagram(final String variableOrFieldName, final String typeName, final String varValue) {
