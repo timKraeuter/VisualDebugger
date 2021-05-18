@@ -5,9 +5,9 @@ import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 import no.hvl.tk.visualDebugger.domain.ODAttributeValue;
+import no.hvl.tk.visualDebugger.domain.ODLink;
 import no.hvl.tk.visualDebugger.domain.ODObject;
 import no.hvl.tk.visualDebugger.domain.ObjectDiagram;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -55,7 +55,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         stringBuilder.append("@startuml\n");
         // Use this so we are not dependent on a Graphviz/Dot installation on the host machine.
         stringBuilder.append("!pragma layout smetana\n");
-        final Set<Pair<Integer, Integer>> links = new HashSet<>();
+        final Set<ODLink> links = new HashSet<>();
 
         // Sort ojects so the visualisation does not change when there are no objects changes.
         final List<ODObject> sortedObjects = diagram.getObjects().stream()
@@ -81,10 +81,14 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
             } else {
                 stringBuilder.append("\n");
             }
-            object.getLinks().forEach(odLink -> links.add(Pair.of(odLink.getFrom().hashCode(), odLink.getTo().hashCode())));
+            links.addAll(object.getLinks());
         }
         // Add links
-        links.forEach(pair -> stringBuilder.append(String.format("%s --> %s\n", pair.getLeft(), pair.getRight())));
+        links.forEach(link -> stringBuilder.append(
+                String.format("%s --> %s : %s\n",
+                        link.getFrom().hashCode(),
+                        link.getTo().hashCode(),
+                        link.getType())));
         stringBuilder.append("@enduml\n");
         return stringBuilder.toString();
     }
