@@ -55,13 +55,51 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         stringBuilder.append("@startuml\n");
         // Use this so we are not dependent on a Graphviz/Dot installation on the host machine.
         stringBuilder.append("!pragma layout smetana\n");
-        final Set<ODLink> links = new HashSet<>();
 
+        final Set<ODLink> links = new HashSet<>();
         // Sort ojects so the visualisation does not change when there are no objects changes.
-        final List<ODObject> sortedObjects = diagram.getObjects().stream()
-                .sorted()
-                .collect(Collectors.toList());
-        // Add objects with attributes and collect links. They habe to be added after objects.
+        final List<ODObject> sortedObjects = diagram.getObjects()
+                                                    .stream()
+                                                    .sorted()
+                                                    .collect(Collectors.toList());
+
+        // Add objects with attributes and collect links. They have to be added after objects.
+        addObjectsToDiagramAndCollectLinks(stringBuilder, links, sortedObjects);
+
+        // Add links.
+        addLinksToDiagram(stringBuilder, links);
+
+        // Add primitive root values if there are any.
+        if (!this.diagram.getPrimitiveRootValues().isEmpty()) {
+            addPrimitiveRootValuesToDiagram(stringBuilder);
+        }
+
+        stringBuilder.append("@enduml\n");
+        return stringBuilder.toString();
+    }
+
+    private void addPrimitiveRootValuesToDiagram(StringBuilder stringBuilder) {
+        stringBuilder.append(String.format("object \"%s\" as %s", "LocalPrimitiveVars", "primitiveRootValues"));
+        stringBuilder.append(" {\n");
+        this.diagram.getPrimitiveRootValues()
+                    .stream()
+                    .sorted()
+                    .forEach(primitiveRootValue -> stringBuilder.append(
+                            String.format("%s=%s\n",
+                                    primitiveRootValue.getVariableName(),
+                                    primitiveRootValue.getValue())));
+        stringBuilder.append("}\n");
+    }
+
+    private void addLinksToDiagram(StringBuilder stringBuilder, Set<ODLink> links) {
+        links.forEach(link -> stringBuilder.append(
+                String.format("%s --> %s : %s\n",
+                        link.getFrom().hashCode(),
+                        link.getTo().hashCode(),
+                        link.getType())));
+    }
+
+    private void addObjectsToDiagramAndCollectLinks(StringBuilder stringBuilder, Set<ODLink> links, List<ODObject> sortedObjects) {
         for (final ODObject object : sortedObjects) {
             stringBuilder.append(String.format("object \"%s:%s\" as %s",
                     object.getVariableName(),
@@ -70,27 +108,19 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
             if (object.getAttributeValues().size() > 0) {
                 stringBuilder.append(" {\n");
                 object.getAttributeValues().stream()
-                        // Sort so that objects with the same type have the same order of attributes
-                        .sorted(Comparator.comparing(ODAttributeValue::getAttributeName))
-                        .forEach(odAttributeValue -> stringBuilder.append(
-                                String.format(
-                                        "%s=%s\n",
-                                        odAttributeValue.getAttributeName(),
-                                        odAttributeValue.getAttributeValue())));
+                      // Sort so that objects with the same type have the same order of attributes
+                      .sorted(Comparator.comparing(ODAttributeValue::getAttributeName))
+                      .forEach(odAttributeValue -> stringBuilder.append(
+                              String.format(
+                                      "%s=%s\n",
+                                      odAttributeValue.getAttributeName(),
+                                      odAttributeValue.getAttributeValue())));
                 stringBuilder.append("}\n");
             } else {
                 stringBuilder.append("\n");
             }
             links.addAll(object.getLinks());
         }
-        // Add links
-        links.forEach(link -> stringBuilder.append(
-                String.format("%s --> %s : %s\n",
-                        link.getFrom().hashCode(),
-                        link.getTo().hashCode(),
-                        link.getType())));
-        stringBuilder.append("@enduml\n");
-        return stringBuilder.toString();
     }
 
     private Object shortenTypeName(String type) {
