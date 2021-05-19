@@ -1,11 +1,7 @@
 package no.hvl.tk.visualDebugger;
 
-import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import com.intellij.openapi.util.IconLoader;
-import com.intellij.ui.content.Content;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManagerListener;

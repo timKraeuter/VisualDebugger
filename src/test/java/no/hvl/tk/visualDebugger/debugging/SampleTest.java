@@ -1,9 +1,12 @@
-package no.hvl.tk.visualDebugger.partsList;
+package no.hvl.tk.visualDebugger.debugging;
 
 import com.google.common.collect.Lists;
+import no.hvl.tk.visualDebugger.partsList.Material;
+import no.hvl.tk.visualDebugger.partsList.Product;
 import org.apache.commons.compress.utils.Sets;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -50,18 +53,44 @@ public class SampleTest {
     }
 
     @Test
-    void collectionTest() {
-        // Primitive Values end up as list attributes
-        CollectionHolder holder = new CollectionHolder(Lists.newArrayList("1", "2", "3"));
-        System.out.println(holder);
-        System.out.println(holder);
-        System.out.println(holder);
-        System.out.println(holder);
-        System.out.println("123");
+    void primitiveCollectionTest() {
+        // Each list value ends up as an attribute at the moment.
+        CollectionHolder<String> stringHolder = new CollectionHolder<>(Lists.newArrayList("1", "2", "3"));
+        CollectionHolder<Integer> intHolder = new CollectionHolder<>(Lists.newArrayList(1, 2, 3));
+        System.out.println(stringHolder);
+        System.out.println(stringHolder);
+        System.out.println(stringHolder);
+        System.out.println(intHolder);
+        System.out.println(intHolder);
     }
 
     @Test
-    void collectionNonPrimitiveTest() {
+    void nonPrimitiveCollectionTest() {
+        // Each list value ends up as an attribute at the moment.
+        CollectionHolder<Material> materialHolder = new CollectionHolder<>(Lists.newArrayList(
+                Material.create("1", 10),
+                Material.create("2", 20),
+                Material.create("3", 30)));
+        System.out.println(materialHolder);
+        System.out.println(materialHolder);
+        System.out.println(materialHolder);
+    }
+
+    @Test
+    void primitiveCollectionAtRootTest() {
+        // Lists work even with objects
+        List<String> stringList = Lists.newArrayList("1", "2", "3");
+        List<Integer> intList = Lists.newArrayList(1, 2, 3);
+        System.out.println(stringList);
+        System.out.println(stringList);
+        System.out.println(stringList);
+        System.out.println(intList);
+        System.out.println(intList);
+        System.out.println(intList);
+    }
+
+    @Test
+    void nonPrimitiveCollectionAtRootTest() {
         // Lists work even with objects
         List<Material> materialsList = Lists.newArrayList(
                 Material.create("1", 10),
@@ -80,13 +109,5 @@ public class SampleTest {
         System.out.println(materialsSet);
         System.out.println(materialsSet);
         System.out.println(materialsSet);
-    }
-
-    private class CollectionHolder {
-        private final List<String> list;
-
-        public CollectionHolder(List<String> list) {
-            this.list = list;
-        }
     }
 }

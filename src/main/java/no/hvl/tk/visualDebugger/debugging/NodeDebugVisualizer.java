@@ -3,6 +3,7 @@ package no.hvl.tk.visualDebugger.debugging;
 import com.intellij.debugger.engine.JavaValue;
 import com.intellij.debugger.engine.evaluation.EvaluateException;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.Pair;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.xdebugger.frame.*;
 import com.intellij.xdebugger.frame.presentation.XValuePresentation;
@@ -30,23 +31,26 @@ public class NodeDebugVisualizer implements XCompositeNode {
      * Parent. Null if at root.
      */
     private final ODObject parent;
+    private String inheritedLinkType;
 
     public NodeDebugVisualizer(
             final DebuggingInfoVisualizer debuggingInfoCollector,
             final int depth,
             final CounterBasedLock lock) {
-        this(debuggingInfoCollector, depth, lock, null);
+        this(debuggingInfoCollector, depth, lock, null, "");
     }
 
     public NodeDebugVisualizer(
             final DebuggingInfoVisualizer debuggingInfoCollector,
             final int depth,
             CounterBasedLock lock,
-            final ODObject parent) {
+            final ODObject parent,
+            String inheritedLinkType) {
         this.debuggingInfoCollector = debuggingInfoCollector;
         this.depth = depth;
         this.lock = lock;
         this.parent = parent;
+        this.inheritedLinkType = inheritedLinkType;
     }
 
     @Override
@@ -75,17 +79,21 @@ public class NodeDebugVisualizer implements XCompositeNode {
         }
         // Handle object case here.
         if (depth > 0) {
-            final ODObject object = new ODObject(typeName, variableName);
-            this.debuggingInfoCollector.addObject(object);
-            if (this.parent != null) {
-                this.debuggingInfoCollector.addLinkToObject(this.parent, object, this.getLinkType(jValue));
-            }
+            final Pair<ODObject, String> parentAndHasCollectionSkipped = addObjectAndLinksToDiagram(
+                    jValue,
+                    variableName,
+                    typeName);
             this.lock.increaseCounter();
-            final NodeDebugVisualizer nodeDebugVisualizer = new NodeDebugVisualizer(this.debuggingInfoCollector, depth - 1, this.lock, object);
-            // Calling compute presentation fixes and Value not beeing ready error.
+            final NodeDebugVisualizer nodeDebugVisualizer = new NodeDebugVisualizer(
+                    this.debuggingInfoCollector,
+                    depth - 1,
+                    this.lock,
+                    parentAndHasCollectionSkipped.getFirst(),
+                    parentAndHasCollectionSkipped.getSecond());
+            // Calling compute presentation fixes a value not being ready error.
             jValue.computePresentation(new NOPXValueNode(), XValuePlace.TREE);
             jValue.computeChildren(nodeDebugVisualizer);
-            // Add children might not get called. Then we have to decrease the counter.
+            // Decrease the counter here if computeChildren() will not be called on the new debug node.
             jValue.computePresentation(new XValueNode() {
                 @Override
                 public void setPresentation(@Nullable Icon icon, @NonNls @Nullable String type, @NonNls @NotNull String value, boolean hasChildren) {
@@ -97,6 +105,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
                     this.decreaseCounterIfNeeded(jValue, hasChildren);
                 }
 
+                @SuppressWarnings("UnstableApiUsage")
                 @Override
                 public void setPresentation(@Nullable Icon icon, @NonNls @Nullable String type, @NonNls @NotNull String separator, @NonNls @Nullable String value, boolean hasChildren) {
                     this.decreaseCounterIfNeeded(jValue, hasChildren);
@@ -126,7 +135,25 @@ public class NodeDebugVisualizer implements XCompositeNode {
         }
     }
 
+    private Pair<ODObject, String> addObjectAndLinksToDiagram(JavaValue jValue, String variableName, String typeName) {
+        // Skip lists and sets. They will be unfolded. Remember the original link type.
+        if ((typeName.endsWith("Set") || typeName.endsWith("List")) && parent != null) {
+            return Pair.create(parent, this.getLinkType(jValue));
+        }
+        // Normal objects
+        final ODObject object = new ODObject(typeName, variableName);
+        this.debuggingInfoCollector.addObject(object);
+        if (this.parent != null) {
+            this.debuggingInfoCollector.addLinkToObject(this.parent, object, this.getLinkType(jValue));
+        }
+        return Pair.create(object, "");
+    }
+
     private String getLinkType(JavaValue value) {
+        // When skipping over collections we want to use the original link name for each subsequent link.
+        if (!this.inheritedLinkType.isEmpty()) {
+            return this.inheritedLinkType;
+        }
         return value.getName();
     }
 
@@ -142,9 +169,9 @@ public class NodeDebugVisualizer implements XCompositeNode {
         try {
             final ObjectReferenceImpl value1 = (ObjectReferenceImpl) value.getDescriptor().calcValue(value.getEvaluationContext());
             @SuppressWarnings("OptionalGetWithoutIsPresent") final Field valueField = value1.referenceType().allFields().stream()
-                    .filter(field -> "value".equals(field.name()))
-                    .findFirst()
-                    .get(); // Should always have a "value" field.
+                                                                                            .filter(field -> "value".equals(field.name()))
+                                                                                            .findFirst()
+                                                                                            .get(); // Should always have a "value" field.
             return value1.getValue(valueField).toString();
         } catch (EvaluateException e) {
             LOGGER.error(e);
@@ -182,7 +209,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
     @Override
     public void setErrorMessage(@NotNull String errorMessage) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(errorMessage);
     }
 
     @Override
