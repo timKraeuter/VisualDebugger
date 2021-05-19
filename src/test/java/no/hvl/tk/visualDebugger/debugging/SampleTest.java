@@ -6,8 +6,9 @@ import no.hvl.tk.visualDebugger.partsList.Product;
 import org.apache.commons.compress.utils.Sets;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class SampleTest {
@@ -110,5 +111,20 @@ public class SampleTest {
         System.out.println(materialsSet);
         System.out.println(materialsSet);
         System.out.println(materialsSet);
+    }
+
+
+    @Test
+    void mapTest() {
+        final Map<String, String> someMap = new HashMap<>();
+        someMap.put("key1", "value1");
+        someMap.put("key2", "value2");
+        someMap.put("key3", "value3");
+        System.out.println(someMap);
+        System.out.println(someMap);
+        System.out.println(someMap);
+        System.out.println(someMap);
+        System.out.println(someMap);
+        System.out.println(someMap);
     }
 }
