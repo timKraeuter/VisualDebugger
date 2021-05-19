@@ -34,14 +34,15 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     @Override
     public void finishVisualization() {
         final String plantUMLString = toPlantUMLString();
+        System.out.println(plantUMLString);
+        // Reset diagram
+        this.diagram = new ObjectDiagram();
         try {
             final byte[] pngData = toPNG(plantUMLString);
             addImageToUI(pngData);
         } catch (IOException e) {
             LOGGER.error(e);
         }
-        // Reset diagram
-        this.diagram = new ObjectDiagram();
     }
 
     private void addImageToUI(byte[] pngData) throws IOException {

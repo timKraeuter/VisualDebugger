@@ -10,6 +10,7 @@ import com.intellij.xdebugger.frame.presentation.XValuePresentation;
 import com.jetbrains.jdi.ObjectReferenceImpl;
 import com.sun.jdi.Field;
 import com.sun.jdi.Value;
+import no.hvl.tk.visualDebugger.Settings;
 import no.hvl.tk.visualDebugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visualDebugger.domain.ODObject;
 import no.hvl.tk.visualDebugger.domain.PrimitiveTypes;
@@ -137,7 +138,9 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
     private Pair<ODObject, String> addObjectAndLinksToDiagram(JavaValue jValue, String variableName, String typeName) {
         // Skip lists and sets. They will be unfolded. Remember the original link type.
-        if ((typeName.endsWith("Set") || typeName.endsWith("List")) && parent != null) {
+        if (Settings.skipCollectionVisualization
+                && (typeName.endsWith("Set") || typeName.endsWith("List"))
+                && parent != null) {
             return Pair.create(parent, this.getLinkType(jValue));
         }
         // Normal objects
