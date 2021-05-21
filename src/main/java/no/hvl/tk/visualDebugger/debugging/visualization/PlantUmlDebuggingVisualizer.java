@@ -1,6 +1,7 @@
 package no.hvl.tk.visualDebugger.debugging.visualization;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.ui.components.JBScrollPane;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
@@ -11,6 +12,8 @@ import no.hvl.tk.visualDebugger.domain.ObjectDiagram;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,18 +26,17 @@ import java.util.stream.Collectors;
 public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     private static final Logger LOGGER = Logger.getInstance(PlantUmlDebuggingVisualizer.class);
     private final JPanel pluginUI;
-    private final JLabel currentImage;
+    private JScrollPane imagePane;
 
     public PlantUmlDebuggingVisualizer(JPanel jPanel) {
         this.pluginUI = jPanel;
-        currentImage = new JLabel();
-        pluginUI.add(currentImage);
     }
 
     @Override
     public void finishVisualization() {
         final String plantUMLString = toPlantUMLString();
-        System.out.println(plantUMLString);
+        // System.out.println(plantUMLString);
+        System.out.println("vis finished");
         // Reset diagram
         this.diagram = new ObjectDiagram();
         try {
@@ -47,8 +49,26 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
     private void addImageToUI(byte[] pngData) throws IOException {
         ByteArrayInputStream input = new ByteArrayInputStream(pngData);
-        final ImageIcon image = new ImageIcon(ImageIO.read(input));
-        currentImage.setIcon(image);
+        final BufferedImage image = ImageIO.read(input);
+
+        if (imagePane != null) {
+            pluginUI.remove(imagePane);
+        }
+        // Basically this:
+        // https://stackoverflow.com/questions/7298817/making-image-scrollable-in-jframe-contentpane/7299067
+        JPanel canvas = new JPanel() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(image, 0, 0, null);
+            }
+        };
+        canvas.setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
+        imagePane = new JBScrollPane(canvas);
+        pluginUI.setLayout(new BorderLayout());
+        pluginUI.add(imagePane, BorderLayout.CENTER);
     }
 
     private String toPlantUMLString() {

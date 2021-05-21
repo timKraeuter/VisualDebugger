@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class SampleTest {
+public class DebuggingScenariosTest {
     @Test
     void testPrimitiveVariables() {
         byte aByte1 = 0;
