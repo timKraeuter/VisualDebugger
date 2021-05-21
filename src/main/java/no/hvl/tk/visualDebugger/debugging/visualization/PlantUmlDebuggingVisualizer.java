@@ -35,7 +35,6 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     public void finishVisualization() {
         final String plantUMLString = toPlantUMLString();
         // System.out.println(plantUMLString);
-        System.out.println("vis finished");
         // Reset diagram
         this.diagram = new ObjectDiagram();
         try {

@@ -12,6 +12,8 @@ import java.util.StringJoiner;
  */
 public class ODObject implements Comparable<ODObject> {
 
+    private final long id;
+
     private final String type;
     private final String variableName;
 
@@ -25,7 +27,8 @@ public class ODObject implements Comparable<ODObject> {
      */
     private final Set<ODLink> links;
 
-    public ODObject(final String type, final String variableName) {
+    public ODObject(long id, final String type, final String variableName) {
+        this.id = id;
         this.type = type;
         this.variableName = variableName;
         this.attributeValues = new HashSet<>();
@@ -74,18 +77,19 @@ public class ODObject implements Comparable<ODObject> {
 
     @Override
     public int compareTo(@NotNull ODObject object) {
-        final int nameCompareResult = this.variableName.compareTo(object.variableName);
-        if (nameCompareResult != 0) {
-            return nameCompareResult;
-        }
-        final int typeCompareResult = this.type.compareTo(object.type);
-        if (typeCompareResult != 0) {
-            return typeCompareResult;
-        }
-        return Integer.compare(attributeHashCodeSum(this.attributeValues), attributeHashCodeSum(object.attributeValues));
+        return Long.compare(this.id, object.id);
     }
 
-    private int attributeHashCodeSum(Set<ODAttributeValue> attrValues) {
-        return attrValues.stream().mapToInt(ODAttributeValue::hashCode).sum();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ODObject odObject = (ODObject) o;
+        return id == odObject.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(this.id);
     }
 }

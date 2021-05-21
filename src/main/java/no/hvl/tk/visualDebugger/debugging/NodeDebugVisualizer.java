@@ -144,12 +144,22 @@ public class NodeDebugVisualizer implements XCompositeNode {
             return Pair.create(parent, this.getLinkType(jValue));
         }
         // Normal objects
-        final ODObject object = new ODObject(typeName, variableName);
+        final ODObject object = new ODObject(this.getObjectId(jValue), typeName, variableName);
         this.debuggingInfoCollector.addObject(object);
         if (this.parent != null) {
             this.debuggingInfoCollector.addLinkToObject(this.parent, object, this.getLinkType(jValue));
         }
         return Pair.create(object, "");
+    }
+
+    private long getObjectId(JavaValue jValue) {
+        try {
+            final ObjectReferenceImpl value = (ObjectReferenceImpl) jValue.getDescriptor().calcValue(jValue.getEvaluationContext());
+            return value.uniqueID();
+        } catch (EvaluateException e) {
+            LOGGER.error(e);
+            throw new RuntimeException(e);
+        }
     }
 
     private String getLinkType(JavaValue value) {

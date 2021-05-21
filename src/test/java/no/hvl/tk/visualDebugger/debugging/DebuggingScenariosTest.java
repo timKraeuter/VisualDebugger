@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import no.hvl.tk.visualDebugger.partsList.Material;
 import no.hvl.tk.visualDebugger.partsList.Product;
 import org.apache.commons.compress.utils.Sets;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -126,5 +127,47 @@ public class DebuggingScenariosTest {
         System.out.println(someMap);
         System.out.println(someMap);
         System.out.println(someMap);
+    }
+
+
+    @Test
+    void duplicateObjectsTest() {
+        final Material mat1 = Material.create("123", 2);
+        final List<Material> materials = Lists.newArrayList(mat1, mat1);
+        System.out.println(materials);
+        System.out.println(materials);
+        System.out.println(materials);
+        System.out.println(materials);
+        System.out.println(materials);
+        System.out.println(materials);
+        System.out.println(materials);
+    }
+
+
+    @Test
+    void testScrolling() {
+        final Product prod1 = makeProductWith2Mats();
+        final Product prod2 = makeProductWith2Mats();
+        final Product prod3 = makeProductWith2Mats();
+        final Product prod4 = makeProductWith2Mats();
+        final Product prod5 = makeProductWith2Mats();
+        final Product prod6 = makeProductWith2Mats();
+        final Product prod7 = makeProductWith2Mats();
+        final Product prod8 = makeProductWith2Mats();
+        System.out.println(prod8);
+        System.out.println(prod8);
+        System.out.println(prod8);
+        System.out.println(prod8);
+        System.out.println(prod8);
+    }
+
+    @NotNull
+    private Product makeProductWith2Mats() {
+        final Material mat1 = Material.create("123", 2);
+        final Material mat2 = Material.create("123", 2);
+        Product product = Product.create("123", 1);
+        product.addPart(mat1, 1);
+        product.addPart(mat2, 2);
+        return product;
     }
 }
