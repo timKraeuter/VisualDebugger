@@ -13,7 +13,6 @@ import no.hvl.tk.visualDebugger.domain.ObjectDiagram;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -49,14 +48,13 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
     private void addImageToUI(byte[] pngData) throws IOException {
         ByteArrayInputStream input = new ByteArrayInputStream(pngData);
-        final BufferedImage image = ImageIO.read(input);
-        final ImageIcon imageIcon = new ImageIcon(image);
+        final ImageIcon imageIcon = new ImageIcon(ImageIO.read(input));
 
         if (imgLabel == null) {
             imgLabel = new JLabel(imageIcon);
-            final JBScrollPane jbScrollPane = new JBScrollPane(imgLabel);
+            final JBScrollPane scrollPane = new JBScrollPane(imgLabel);
             pluginUI.setLayout(new BorderLayout());
-            pluginUI.add(jbScrollPane, BorderLayout.CENTER);
+            pluginUI.add(scrollPane, BorderLayout.CENTER);
         } else {
             imgLabel.setIcon(imageIcon);
         }
