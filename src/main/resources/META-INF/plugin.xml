@@ -1,11 +1,11 @@
 <idea-plugin>
     <id>org.example.VisualDebuggerPoC</id>
-    <name>Visual Debugger Poc</name>
+    <name>Visual Debugger</name>
     <vendor email="tim.kraeuterr@gmail.com" url="https://timkraeuter.github.io//">Test</vendor>
 
     <description><![CDATA[
-    POC Visual debugger.<br>
-    Must be longer than this.
+    Visual debugger.<br>
+    Visualizes the variables in the debugging windows as a UML object diagram.
     ]]></description>
 
     <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
