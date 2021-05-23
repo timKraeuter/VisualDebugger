@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Objects;
+import java.util.Optional;
 
 public class NodeDebugVisualizer implements XCompositeNode {
     private static final Logger LOGGER = Logger.getInstance(NodeDebugVisualizer.class);
@@ -67,7 +68,14 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
     void handleValue(final JavaValue jValue) {
         final String variableName = jValue.getName();
-        String typeName = getType(jValue);
+        Optional<String> maybeTypeName = getTypeIfExists(jValue);
+        if (maybeTypeName.isEmpty()) {
+            // If type is null the value of the variable is null
+            this.addValueToDiagram(variableName, null, null);
+            return;
+        }
+        final String typeName = maybeTypeName.get();
+
         if (PrimitiveTypes.isNonBoxedPrimitiveType(typeName)) {
             final String varValue = getNonBoxedPrimitiveValue(jValue);
             addValueToDiagram(variableName, typeName, varValue);
@@ -201,9 +209,13 @@ public class NodeDebugVisualizer implements XCompositeNode {
         }
     }
 
-    private String getType(final JavaValue value) {
+    private Optional<String> getTypeIfExists(final JavaValue value) {
         try {
-            return value.getDescriptor().calcValue(value.getEvaluationContext()).type().name();
+            final Value calcedValue = value.getDescriptor().calcValue(value.getEvaluationContext());
+            if (calcedValue == null) {
+                return Optional.empty();
+            }
+            return Optional.of(calcedValue.type().name());
         } catch (EvaluateException e) {
             LOGGER.error(e);
             throw new RuntimeException(e);
@@ -222,16 +234,20 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
     @Override
     public void setErrorMessage(@NotNull String errorMessage) {
-        throw new UnsupportedOperationException(errorMessage);
+        LOGGER.error(errorMessage);
     }
 
     @Override
     public void setErrorMessage(@NotNull String errorMessage, @Nullable XDebuggerTreeNodeHyperlink link) {
-        throw new UnsupportedOperationException();
+        LOGGER.error(errorMessage);
     }
 
     @Override
-    public void setMessage(@NotNull String message, @Nullable Icon icon, @NotNull SimpleTextAttributes attributes, @Nullable XDebuggerTreeNodeHyperlink link) {
-        throw new UnsupportedOperationException();
+    public void setMessage(
+            @NotNull String message,
+            @Nullable Icon icon,
+            @NotNull SimpleTextAttributes attributes,
+            @Nullable XDebuggerTreeNodeHyperlink link) {
+        LOGGER.debug(message);
     }
 }
