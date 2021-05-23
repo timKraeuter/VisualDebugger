@@ -104,7 +104,7 @@ public class DebugListener implements XDebugSessionListener {
                 CONTENT_ID,
                 uiContainer,
                 "Visual Debugger",
-                IconLoader.getIcon("/icons/viz.png", DebuggVisualizerListener.class),
+                IconLoader.getIcon("/icons/icon_16x16.png", DebuggVisualizerListener.class),
                 null);
         content.setCloseable(false);
         UIUtil.invokeLaterIfNeeded(() -> ui.addContent(content));
