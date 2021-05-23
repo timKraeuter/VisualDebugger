@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>org.example.VisualDebuggerPoC</id>
     <name>Visual Debugger</name>
-    <vendor email="tim.kraeuterr@gmail.com" url="https://timkraeuter.github.io//">Test</vendor>
+    <vendor email="tim.kraeuterr@gmail.com" url="https://timkraeuter.github.io//">Tim Kräuter</vendor>
 
     <description><![CDATA[
     Visual debugger.<br>
