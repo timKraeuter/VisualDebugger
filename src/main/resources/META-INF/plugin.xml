@@ -4,8 +4,8 @@
     <vendor email="tim.kraeuterr@gmail.com" url="https://timkraeuter.github.io//">Tim Kräuter</vendor>
 
     <description><![CDATA[
-    Visual debugger.<br>
-    Visualizes the variables in the debugging windows as a UML object diagram.
+    A plugin that visualizes the variables during a debugging session as a UML object diagram.
+    It will launch automatically when debugging is in progress.
     ]]></description>
 
     <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
