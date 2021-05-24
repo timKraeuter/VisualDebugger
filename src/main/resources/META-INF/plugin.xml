@@ -1,5 +1,5 @@
 <idea-plugin>
-    <id>org.example.VisualDebuggerPoC</id>
+    <id>no.hvl.tk.visualDebugger</id>
     <name>Visual Debugger</name>
     <vendor email="tim.kraeuterr@gmail.com" url="https://timkraeuter.github.io//">Tim Kräuter</vendor>
 

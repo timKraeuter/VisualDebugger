@@ -24,7 +24,7 @@ intellij {
     plugins = ['com.intellij.java']
 }
 patchPluginXml {
-    changeNotes """First release."""
+    changeNotes """Id updated."""
 }
 test {
     useJUnitPlatform()
