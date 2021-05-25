@@ -170,4 +170,23 @@ public class DebuggingScenariosTest {
         product.addPart(mat2, 2);
         return product;
     }
+
+
+    @Test
+    void testObjectCycle() {
+        // Does not crash but will probably call 10 times until the depth is reached.
+        class Cycle {
+            public Cycle next;
+        }
+
+        Cycle c1 = new Cycle();
+        Cycle c2 = new Cycle();
+        c1.next = c2;
+        c2.next = c1;
+
+        System.out.println(c1);
+        System.out.println(c1);
+        System.out.println(c1);
+        System.out.println(c1);
+    }
 }
