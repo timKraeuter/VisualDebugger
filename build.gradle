@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.0'
+version '1.2'
 
 repositories {
     mavenCentral()
@@ -24,7 +24,7 @@ intellij {
     plugins = ['com.intellij.java']
 }
 patchPluginXml {
-    changeNotes """Id updated."""
+    changeNotes """Artefact distribution fixed."""
 }
 test {
     useJUnitPlatform()

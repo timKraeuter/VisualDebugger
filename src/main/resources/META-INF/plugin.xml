@@ -5,7 +5,10 @@
 
     <description><![CDATA[
     A plugin that visualizes the variables during a debugging session as a UML object diagram.
-    It will launch automatically when debugging is in progress.
+    The plugin is used alongside normal debugging. Set a breakpoint for debugging and start the debugging as usual in the IDE.
+     The plugin will automatically create a visual debugging toolbar in the debug window, as shown in the screenshot.
+     All variables in the scope of a debugging session will be visualized as an object diagram.
+     Currently, the plugin will visualize object information up to a depth of 10.
     ]]></description>
 
     <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
