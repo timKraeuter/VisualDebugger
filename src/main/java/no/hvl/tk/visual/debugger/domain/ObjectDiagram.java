@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ObjectDiagram {
-    private Set<ODObject> objects;
-    private Set<ODPrimitiveRootValue> primitiveRootValues;
+    private final Set<ODObject> objects;
+    private final Set<ODPrimitiveRootValue> primitiveRootValues;
 
     public ObjectDiagram() {
         this.objects = new HashSet<>();
