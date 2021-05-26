@@ -25,7 +25,7 @@ public class DebugListener implements XDebugSessionListener {
     private static final Logger LOGGER = Logger.getInstance(DebugListener.class);
     private static final String CONTENT_ID = "no.hvl.tk.VisualDebugger";
 
-    public static final int default_debugging_depth = 10; // TODO increased to 10 for testing
+    public static final int DEFAULT_DEBUGGING_DEPTH = 10; // Defaults to 10 but should be configurable in the future.
 
     private final XDebugSession debugSession;
     private final int depth;
@@ -33,7 +33,7 @@ public class DebugListener implements XDebugSessionListener {
     private DebuggingInfoVisualizer debuggingVisualizer;
 
     public DebugListener(final XDebugSession debugSession) {
-        this(debugSession, default_debugging_depth);
+        this(debugSession, DEFAULT_DEBUGGING_DEPTH);
     }
 
     public DebugListener(

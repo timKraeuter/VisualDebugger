@@ -93,7 +93,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                     .stream()
                     .sorted()
                     .forEach(primitiveRootValue -> stringBuilder.append(
-                            String.format("%s=%s\n",
+                            String.format("%s=%s%n",
                                     primitiveRootValue.getVariableName(),
                                     primitiveRootValue.getValue())));
         stringBuilder.append("}\n");
@@ -101,7 +101,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
     private void addLinksToDiagram(StringBuilder stringBuilder, Set<ODLink> links) {
         links.forEach(link -> stringBuilder.append(
-                String.format("%s --> %s : %s\n",
+                String.format("%s --> %s : %s%n",
                         link.getFrom().hashCode(),
                         link.getTo().hashCode(),
                         link.getType())));
@@ -113,14 +113,14 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                     object.getVariableName(),
                     this.shortenTypeName(object.getType()),
                     object.hashCode()));
-            if (object.getAttributeValues().size() > 0) {
+            if (object.getAttributeValues().isEmpty()) {
                 stringBuilder.append(" {\n");
                 object.getAttributeValues().stream()
                       // Sort so that objects with the same type have the same order of attributes
                       .sorted(Comparator.comparing(ODAttributeValue::getAttributeName))
                       .forEach(odAttributeValue -> stringBuilder.append(
                               String.format(
-                                      "%s=%s\n",
+                                      "%s=%s%n",
                                       odAttributeValue.getAttributeName(),
                                       odAttributeValue.getAttributeValue())));
                 stringBuilder.append("}\n");

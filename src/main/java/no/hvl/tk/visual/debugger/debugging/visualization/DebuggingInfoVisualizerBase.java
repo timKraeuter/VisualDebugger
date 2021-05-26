@@ -5,7 +5,7 @@ import no.hvl.tk.visual.debugger.domain.*;
 public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisualizer {
     protected ObjectDiagram diagram;
 
-    public DebuggingInfoVisualizerBase() {
+    DebuggingInfoVisualizerBase() {
         this.diagram = new ObjectDiagram();
     }
 

@@ -7,5 +7,5 @@ public class Settings {
     /**
      * Decides if the visualisation of nodes for sets and lists should be skipped.
      */
-    public static final boolean skipCollectionVisualization = true;
+    public static final boolean SKIP_COLLECTION_VISUALIZATION = true;
 }

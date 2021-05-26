@@ -148,7 +148,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
     private Pair<ODObject, String> addObjectAndLinksToDiagram(JavaValue jValue, String variableName, String typeName) {
         // Skip lists and sets. They will be unfolded. Remember the original link type.
-        if (Settings.skipCollectionVisualization
+        if (Settings.SKIP_COLLECTION_VISUALIZATION
                 && (typeName.endsWith("Set") || typeName.endsWith("List"))
                 && parent != null) {
             return Pair.create(parent, this.getLinkType(jValue));

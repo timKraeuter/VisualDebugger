@@ -39,8 +39,4 @@ public enum PrimitiveTypes {
         }
         return typeNames.contains(typeName);
     }
-
-    private String getFirstTypeName() {
-        return this.firstTypeName;
-    }
 }

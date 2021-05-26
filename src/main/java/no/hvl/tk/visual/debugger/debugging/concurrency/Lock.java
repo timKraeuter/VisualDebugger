@@ -16,7 +16,7 @@ public class Lock {
         this.locked = locked;
     }
 
-    synchronized public void lock() {
+    public synchronized void lock() {
         while (this.locked) {
             try {
                 this.wait();
@@ -28,7 +28,7 @@ public class Lock {
         this.locked = true;
     }
 
-    synchronized public void unlock() {
+    public synchronized void unlock() {
         this.locked = false;
         this.notifyAll();
     }
