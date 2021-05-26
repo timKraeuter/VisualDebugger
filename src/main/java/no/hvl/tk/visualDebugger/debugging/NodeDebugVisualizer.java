@@ -224,22 +224,22 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
     @Override
     public void tooManyChildren(int remaining) {
-        throw new UnsupportedOperationException();
+        LOGGER.debug("tooManyChildren called!");
     }
 
     @Override
     public void setAlreadySorted(boolean alreadySorted) {
-        throw new UnsupportedOperationException();
+        LOGGER.debug("setAlreadySorted called!");
     }
 
     @Override
     public void setErrorMessage(@NotNull String errorMessage) {
-        LOGGER.error(errorMessage);
+        LOGGER.warn(errorMessage);
     }
 
     @Override
     public void setErrorMessage(@NotNull String errorMessage, @Nullable XDebuggerTreeNodeHyperlink link) {
-        LOGGER.error(errorMessage);
+        LOGGER.warn(errorMessage);
     }
 
     @Override
