@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class DebuggingScenariosTest {
+class DebuggingScenariosTest {
     @Test
     void testPrimitiveVariables() {
         byte aByte1 = 0;

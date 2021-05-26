@@ -2,6 +2,7 @@ package no.hvl.tk.visual.debugger.debugging;
 
 import com.intellij.debugger.engine.JavaValue;
 import com.intellij.debugger.engine.evaluation.EvaluateException;
+import com.intellij.debugger.engine.evaluation.EvaluateRuntimeException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
 import com.intellij.ui.SimpleTextAttributes;
@@ -139,7 +140,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
                         }
                     } catch (EvaluateException e) {
                         LOGGER.error(e);
-                        throw new RuntimeException(e);
+                        throw new EvaluateRuntimeException(e);
                     }
                 }
             }, XValuePlace.TREE);
@@ -168,7 +169,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
             return value.uniqueID();
         } catch (EvaluateException e) {
             LOGGER.error(e);
-            throw new RuntimeException(e);
+            throw new EvaluateRuntimeException(e);
         }
     }
 
@@ -198,7 +199,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
             return value1.getValue(valueField).toString();
         } catch (EvaluateException e) {
             LOGGER.error(e);
-            throw new RuntimeException(e);
+            throw new EvaluateRuntimeException(e);
         }
     }
 
@@ -207,7 +208,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
             return value.getDescriptor().calcValue(value.getEvaluationContext()).toString();
         } catch (EvaluateException e) {
             LOGGER.error(e);
-            throw new RuntimeException(e);
+            throw new EvaluateRuntimeException(e);
         }
     }
 
@@ -220,7 +221,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
             return Optional.of(calcedValue.type().name());
         } catch (EvaluateException e) {
             LOGGER.error(e);
-            throw new RuntimeException(e);
+            throw new EvaluateRuntimeException(e);
         }
     }
 
