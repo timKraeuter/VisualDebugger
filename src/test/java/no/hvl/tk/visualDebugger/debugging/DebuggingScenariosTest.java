@@ -1,8 +1,8 @@
 package no.hvl.tk.visualDebugger.debugging;
 
 import com.google.common.collect.Lists;
-import no.hvl.tk.visualDebugger.partsList.Material;
-import no.hvl.tk.visualDebugger.partsList.Product;
+import no.hvl.tk.visualDebugger.partsList.domain.Material;
+import no.hvl.tk.visualDebugger.partsList.domain.Product;
 import org.apache.commons.compress.utils.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
