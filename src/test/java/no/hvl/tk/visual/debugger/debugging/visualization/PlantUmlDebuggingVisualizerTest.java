@@ -69,4 +69,44 @@ class PlantUmlDebuggingVisualizerTest {
                 "2 --> 1 : friends\n" +
                 "@enduml\n"));
     }
+
+    //    @Test
+    void toPlantUMLStringPrimitiveMapsTest() {
+        final PlantUmlDebuggingVisualizer visualizer = new PlantUmlDebuggingVisualizer(null);
+        ObjectDiagram diagram = new ObjectDiagram();
+        final ODObject hashMap = new ODObject(1, "java.util.HashMap", "hashMap");
+        final ODObject hashMapNode1 = new ODObject(2, "java.util.HashMap$Node", "0");
+        final ODObject hashMapNode2 = new ODObject(3, "java.util.HashMap$Node", "1");
+        final ODObject hashMapNode3 = new ODObject(4, "java.util.HashMap$Node", "2");
+        hashMap.addLink(new ODLink(hashMap, hashMapNode1, "0"));
+        hashMap.addLink(new ODLink(hashMap, hashMapNode2, "1"));
+        hashMap.addLink(new ODLink(hashMap, hashMapNode3, "2"));
+
+        final ODObject otherMap = new ODObject(5, "java.util.SomeOtherMap", "otherMap");
+        final ODObject otherMapNode1 = new ODObject(6, "java.util.SomeOtherMap$Node", "0");
+        final ODObject otherMapNode2 = new ODObject(7, "java.util.SomeOtherMap$Node", "1");
+        otherMap.addLink(new ODLink(otherMap, otherMapNode1, "0"));
+        otherMap.addLink(new ODLink(otherMap, otherMapNode2, "1"));
+
+        diagram.addObject(hashMap);
+        diagram.addObject(hashMapNode1);
+        diagram.addObject(hashMapNode2);
+        diagram.addObject(hashMapNode3);
+        diagram.addObject(otherMap);
+        diagram.addObject(otherMapNode1);
+        diagram.addObject(otherMapNode2);
+
+        final String plantUMLString = visualizer.toPlantUMLString(diagram);
+        System.out.println(plantUMLString);
+
+        assertThat(plantUMLString, is("@startuml\n" +
+                "!pragma layout smetana\n" +
+                "object \"1:Person\" as 1 {\n" +
+                "}\n" +
+                "object \"2:Person\" as 2 {\n" +
+                "}\n" +
+                "1 --> 2 : friends\r\n" +
+                "2 --> 1 : friends\r\n" +
+                "@enduml\n"));
+    }
 }

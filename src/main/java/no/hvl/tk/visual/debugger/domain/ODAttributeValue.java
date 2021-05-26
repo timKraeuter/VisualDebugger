@@ -37,6 +37,10 @@ public class ODAttributeValue {
         return attributeValue;
     }
 
+    public String getAttributeType() {
+        return attributeType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

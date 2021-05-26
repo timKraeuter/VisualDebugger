@@ -5,10 +5,7 @@ import com.intellij.ui.components.JBScrollPane;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
-import no.hvl.tk.visual.debugger.domain.ODAttributeValue;
-import no.hvl.tk.visual.debugger.domain.ODLink;
-import no.hvl.tk.visual.debugger.domain.ODObject;
-import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
+import no.hvl.tk.visual.debugger.domain.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,10 +13,8 @@ import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
@@ -110,11 +105,24 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     }
 
     private void addObjectsToDiagramAndCollectLinks(StringBuilder stringBuilder, Set<ODLink> links, List<ODObject> sortedObjects) {
+        final HashSet<ODObject> ignoredObjects = new HashSet<>();
         for (final ODObject object : sortedObjects) {
+            if (ignoredObjects.contains(object)) {
+                continue;
+            }
+            // Primitive maps are visualised differently
+            if (isPrimitiveJavaMap(object)) {
+                doPrimitiveMapVisualisation(stringBuilder, ignoredObjects, object);
+                continue;
+            }
+
+            // Add the object
             stringBuilder.append(String.format("object \"%s:%s\" as %s",
                     object.getVariableName(),
                     this.shortenTypeName(object.getType()),
                     object.hashCode()));
+
+            // Add object attributes
             if (object.getAttributeValues().isEmpty()) {
                 stringBuilder.append(" {\n");
                 object.getAttributeValues().stream()
@@ -131,6 +139,52 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
             }
             links.addAll(object.getLinks());
         }
+    }
+
+    private void doPrimitiveMapVisualisation(StringBuilder stringBuilder, HashSet<ODObject> ignoredObjects, ODObject object) {
+        stringBuilder.append(String.format("map \"%s:%s\" as %s",
+                object.getVariableName(),
+                this.shortenTypeName(object.getType()),
+                object.hashCode()));
+        stringBuilder.append(" {\n");
+
+        object.getLinks().forEach(odLink -> {
+            final ODObject mapNode = odLink.getTo();
+            ignoredObjects.add(mapNode); // Dont visualize the node as an object anymore!
+
+            final Optional<ODAttributeValue> key = mapNode.getAttributeByName("key");
+            final Optional<ODAttributeValue> value = mapNode.getAttributeByName("value");
+            if (key.isPresent() && value.isPresent()) {
+                stringBuilder.append(
+                        String.format("%s => %s%n",
+                                key.get().getAttributeValue(),
+                                value.get().getAttributeValue()));
+            }
+        });
+
+        stringBuilder.append("}\n");
+    }
+
+    private boolean isPrimitiveJavaMap(ODObject object) {
+        return isMap(object) && isPrimitive(object);
+    }
+
+    private boolean isPrimitive(ODObject object) {
+        // Nodes attached to the link must have primitive key and value attributes.
+        return !object.getLinks().isEmpty()
+                && object.getLinks()
+                         .stream()
+                         .anyMatch(odLink -> odLink.getTo()
+                                                   .getAttributeValues()
+                                                   .stream()
+                                                   .allMatch(odAttributeValue -> {
+                                                       final String attributeType = odAttributeValue.getAttributeType();
+                                                       return PrimitiveTypes.isString(attributeType) || PrimitiveTypes.isBoxedPrimitiveType(attributeType);
+                                                   }));
+    }
+
+    private boolean isMap(ODObject object) {
+        return object.getType().startsWith("java.util") && object.getType().endsWith("Map");
     }
 
     private Object shortenTypeName(String type) {

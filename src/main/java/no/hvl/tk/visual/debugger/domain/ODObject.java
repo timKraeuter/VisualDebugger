@@ -2,10 +2,7 @@ package no.hvl.tk.visual.debugger.domain;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 
 /**
  * Represents an Object in an object diagram.
@@ -63,6 +60,12 @@ public class ODObject implements Comparable<ODObject> {
 
     public String getType() {
         return type;
+    }
+
+    public Optional<ODAttributeValue> getAttributeByName(String attributeName) {
+        return this.attributeValues.stream()
+                                   .filter(odAttributeValue -> odAttributeValue.getAttributeName().equals(attributeName))
+                                   .findFirst();
     }
 
     @Override
