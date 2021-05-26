@@ -116,17 +116,17 @@ class DebuggingScenariosTest {
 
 
     @Test
-    void mapTest() {
-        final Map<String, String> someMap = new HashMap<>();
-        someMap.put("key1", "value1");
-        someMap.put("key2", "value2");
-        someMap.put("key3", "value3");
-        System.out.println(someMap);
-        System.out.println(someMap);
-        System.out.println(someMap);
-        System.out.println(someMap);
-        System.out.println(someMap);
-        System.out.println(someMap);
+    void primitiveMapVisualisationTest() {
+        final Map<String, Integer> intStringMap = new HashMap<>();
+        intStringMap.put("key1", 1);
+        intStringMap.put("key2", 2);
+        intStringMap.put("key3", 3);
+        final Map<Double, Boolean> doubleBooleanMap = new HashMap<>();
+        doubleBooleanMap.put(1.1, true);
+        doubleBooleanMap.put(1.2, false);
+        doubleBooleanMap.put(1.3, true);
+        System.out.println(intStringMap);
+        System.out.println(doubleBooleanMap);
     }
 
 

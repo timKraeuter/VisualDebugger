@@ -33,7 +33,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
     @Override
     public void finishVisualization() {
-        final String plantUMLString = toPlantUMLString();
+        final String plantUMLString = toPlantUMLString(this.diagram);
         // Reset diagram
         this.diagram = new ObjectDiagram();
         try {
@@ -58,7 +58,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         }
     }
 
-    private String toPlantUMLString() {
+    String toPlantUMLString(ObjectDiagram objectDiagram) {
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("@startuml\n");
         // Use this so we are not dependent on a Graphviz/Dot installation on the host machine.
@@ -66,10 +66,10 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
         final Set<ODLink> links = new HashSet<>();
         // Sort ojects so the visualisation does not change when there are no objects changes.
-        final List<ODObject> sortedObjects = diagram.getObjects()
-                                                    .stream()
-                                                    .sorted()
-                                                    .collect(Collectors.toList());
+        final List<ODObject> sortedObjects = objectDiagram.getObjects()
+                                                          .stream()
+                                                          .sorted()
+                                                          .collect(Collectors.toList());
 
         // Add objects with attributes and collect links. They have to be added after objects.
         addObjectsToDiagramAndCollectLinks(stringBuilder, links, sortedObjects);
@@ -78,33 +78,35 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         addLinksToDiagram(stringBuilder, links);
 
         // Add primitive root values if there are any.
-        if (!this.diagram.getPrimitiveRootValues().isEmpty()) {
-            addPrimitiveRootValuesToDiagram(stringBuilder);
+        if (!objectDiagram.getPrimitiveRootValues().isEmpty()) {
+            addPrimitiveRootValuesToDiagram(objectDiagram, stringBuilder);
         }
 
         stringBuilder.append("@enduml\n");
         return stringBuilder.toString();
     }
 
-    private void addPrimitiveRootValuesToDiagram(StringBuilder stringBuilder) {
+    private void addPrimitiveRootValuesToDiagram(ObjectDiagram objectDiagram, StringBuilder stringBuilder) {
         stringBuilder.append(String.format("object \"%s\" as %s", "LocalPrimitiveVars", "primitiveRootValues"));
         stringBuilder.append(" {\n");
-        this.diagram.getPrimitiveRootValues()
-                    .stream()
-                    .sorted()
-                    .forEach(primitiveRootValue -> stringBuilder.append(
-                            String.format("%s=%s%n",
-                                    primitiveRootValue.getVariableName(),
-                                    primitiveRootValue.getValue())));
+        objectDiagram.getPrimitiveRootValues()
+                     .stream()
+                     .sorted()
+                     .forEach(primitiveRootValue -> stringBuilder.append(
+                             String.format("%s=%s%n",
+                                     primitiveRootValue.getVariableName(),
+                                     primitiveRootValue.getValue())));
         stringBuilder.append("}\n");
     }
 
     private void addLinksToDiagram(StringBuilder stringBuilder, Set<ODLink> links) {
-        links.forEach(link -> stringBuilder.append(
-                String.format("%s --> %s : %s%n",
-                        link.getFrom().hashCode(),
-                        link.getTo().hashCode(),
-                        link.getType())));
+        links.stream()
+             .sorted()
+             .forEach(link -> stringBuilder.append(
+                     String.format("%s --> %s : %s%n",
+                             link.getFrom().hashCode(),
+                             link.getTo().hashCode(),
+                             link.getType())));
     }
 
     private void addObjectsToDiagramAndCollectLinks(StringBuilder stringBuilder, Set<ODLink> links, List<ODObject> sortedObjects) {
