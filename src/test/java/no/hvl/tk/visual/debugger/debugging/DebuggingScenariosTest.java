@@ -114,21 +114,32 @@ class DebuggingScenariosTest {
         System.out.println(materialsSet);
     }
 
-
     @Test
     void primitiveMapVisualisationTest() {
-        final Map<String, Integer> stringIntMap = new HashMap<>();
-        stringIntMap.put("key1", 1);
-        stringIntMap.put("key2", 2);
-        stringIntMap.put("key3", 3);
+        final Map<String, Integer> postcalCodes = new HashMap<>();
+        postcalCodes.put("Oslo", 1295);
+        postcalCodes.put("Bergen", 5052);
+        postcalCodes.put("Berlin", 13585);
+        postcalCodes.put("Hanover", 30161);
         final Map<Double, Boolean> doubleBooleanMap = new HashMap<>();
         doubleBooleanMap.put(1.1, true);
         doubleBooleanMap.put(1.2, false);
         doubleBooleanMap.put(1.3, true);
-        System.out.println(stringIntMap);
+        System.out.println(postcalCodes);
         System.out.println(doubleBooleanMap);
     }
 
+    @Test
+    void nonPrimitiveMapVisualisationTest() {
+        final Map<Material, Integer> inventory = new HashMap<>();
+        inventory.put(Material.create("Main support", 10), 3);
+        inventory.put(Material.create("Hinge", 5), 5);
+        inventory.put(Material.create("Wood screw D3,5 x 20mm", 1), 8);
+        inventory.put(Material.create("Wood screw D4 x 45mm", 1), 13);
+        System.out.println(inventory); // seems to not be visualised correctly
+        System.out.println(inventory);
+        System.out.println(inventory);
+    }
 
     @Test
     void duplicateObjectsTest() {
