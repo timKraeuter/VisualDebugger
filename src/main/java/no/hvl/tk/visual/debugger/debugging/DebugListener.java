@@ -80,7 +80,7 @@ public class DebugListener implements XDebugSessionListener {
 
     @Override
     public void stackFrameChanged() {
-        System.out.println("Stack frame changed");
+        // nop
     }
 
     private void initUIIfNeeded() {

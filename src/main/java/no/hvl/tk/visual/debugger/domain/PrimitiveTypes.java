@@ -4,15 +4,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 public enum PrimitiveTypes {
-    Byte("byte", "java.lang.Byte"),
-    Short("short", "java.lang.Short"),
-    Int("int", "java.lang.Integer"),
-    Long("long", "java.lang.Long"),
-    Float("float", "java.lang.Float"),
-    Double("double", "java.lang.Double"),
-    Char("char", "java.lang.Character"),
-    Boolean("boolean", "java.lang.Boolean"),
-    String("java.lang.String", "");
+    BYTE("byte", "java.lang.Byte"),
+    SHORT("short", "java.lang.Short"),
+    INT("int", "java.lang.Integer"),
+    LONG("long", "java.lang.Long"),
+    FLOAT("float", "java.lang.Float"),
+    DOUBLE("double", "java.lang.Double"),
+    CHAR("char", "java.lang.Character"),
+    BOOLEAN("boolean", "java.lang.Boolean"),
+    STRING("java.lang.String", "");
 
     private final String firstTypeName;
     private final String secondTypeName;

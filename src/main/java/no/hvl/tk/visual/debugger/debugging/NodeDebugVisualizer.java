@@ -101,7 +101,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
                     parentAndHasCollectionSkipped.getFirst(),
                     parentAndHasCollectionSkipped.getSecond());
             // Calling compute presentation fixes a value not being ready error.
-            jValue.computePresentation(new NOPXValueNode(), XValuePlace.TREE);
+            jValue.computePresentation(new NOOPXValueNode(), XValuePlace.TREE);
             jValue.computeChildren(nodeDebugVisualizer);
             // Decrease the counter here if computeChildren() will not be called on the new debug node.
             jValue.computePresentation(new XValueNode() {
@@ -123,6 +123,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
                 @Override
                 public void setFullValueEvaluator(@NotNull XFullValueEvaluator fullValueEvaluator) {
+                    // nop
                 }
 
 
