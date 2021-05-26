@@ -4,6 +4,7 @@ import no.hvl.tk.visual.debugger.domain.ODLink;
 import no.hvl.tk.visual.debugger.domain.ODObject;
 import no.hvl.tk.visual.debugger.domain.ODPrimitiveRootValue;
 import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -16,7 +17,7 @@ class PlantUmlDebuggingVisualizerTest {
         final PlantUmlDebuggingVisualizer visualizer = new PlantUmlDebuggingVisualizer(null);
         ObjectDiagram diagram = new ObjectDiagram();
         final String plantUMLString = visualizer.toPlantUMLString(diagram);
-        assertThat(plantUMLString, is("@startuml\n" +
+        assertThat(normalizeString(plantUMLString), is("@startuml\n" +
                 "!pragma layout smetana\n" +
                 "@enduml\n"));
     }
@@ -30,14 +31,19 @@ class PlantUmlDebuggingVisualizerTest {
         diagram.addPrimitiveRootValue(new ODPrimitiveRootValue("byte", "Byte", "1"));
         final String plantUMLString = visualizer.toPlantUMLString(diagram);
 
-        assertThat(plantUMLString, is("@startuml\n" +
+        assertThat(normalizeString(plantUMLString), is("@startuml\n" +
                 "!pragma layout smetana\n" +
                 "object \"LocalPrimitiveVars\" as primitiveRootValues {\n" +
-                "byte=1\r\n" +
-                "double=1.2\r\n" +
-                "int=1\r\n" +
+                "byte=1\n" +
+                "double=1.2\n" +
+                "int=1\n" +
                 "}\n" +
                 "@enduml\n"));
+    }
+
+    @NotNull
+    private String normalizeString(String plantUMLString) {
+        return plantUMLString.replace("\r\n", "\n");
     }
 
     @Test
@@ -53,16 +59,14 @@ class PlantUmlDebuggingVisualizerTest {
 
         final String plantUMLString = visualizer.toPlantUMLString(diagram);
 
-        assertThat(plantUMLString, is("@startuml\n" +
+        assertThat(normalizeString(plantUMLString), is("@startuml\n" +
                 "!pragma layout smetana\n" +
                 "object \"1:Person\" as 1 {\n" +
                 "}\n" +
                 "object \"2:Person\" as 2 {\n" +
                 "}\n" +
-                "1 --> 2 : friends\r\n" +
-                "2 --> 1 : friends\r\n" +
+                "1 --> 2 : friends\n" +
+                "2 --> 1 : friends\n" +
                 "@enduml\n"));
     }
-
-
 }
