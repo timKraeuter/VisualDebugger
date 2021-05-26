@@ -17,7 +17,7 @@
     <depends>com.intellij.modules.java</depends>
 
     <projectListeners>
-        <listener class="no.hvl.tk.visualDebugger.DebuggVisualizerListener"
+        <listener class="no.hvl.tk.visual.debugger.DebuggVisualizerListener"
                   topic="com.intellij.xdebugger.XDebuggerManagerListener"/>
     </projectListeners>
 
