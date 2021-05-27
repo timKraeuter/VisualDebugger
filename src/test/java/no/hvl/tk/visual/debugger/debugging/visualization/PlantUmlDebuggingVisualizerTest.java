@@ -1,16 +1,17 @@
 package no.hvl.tk.visual.debugger.debugging.visualization;
 
-import no.hvl.tk.visual.debugger.domain.ODLink;
-import no.hvl.tk.visual.debugger.domain.ODObject;
-import no.hvl.tk.visual.debugger.domain.ODPrimitiveRootValue;
-import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
+import no.hvl.tk.visual.debugger.domain.*;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 class PlantUmlDebuggingVisualizerTest {
+
+    private AtomicInteger counter = new AtomicInteger();
 
     @Test
     void toPlantUMLStringEmptyDiagramTest() {
@@ -61,16 +62,14 @@ class PlantUmlDebuggingVisualizerTest {
 
         assertThat(normalizeString(plantUMLString), is("@startuml\n" +
                 "!pragma layout smetana\n" +
-                "object \"1:Person\" as 1 {\n" +
-                "}\n" +
-                "object \"2:Person\" as 2 {\n" +
-                "}\n" +
+                "object \"1:Person\" as 1\n" +
+                "object \"2:Person\" as 2\n" +
                 "1 --> 2 : friends\n" +
                 "2 --> 1 : friends\n" +
                 "@enduml\n"));
     }
 
-    //    @Test
+    @Test
     void toPlantUMLStringPrimitiveMapsTest() {
         final PlantUmlDebuggingVisualizer visualizer = new PlantUmlDebuggingVisualizer(null);
         ObjectDiagram diagram = new ObjectDiagram();
@@ -78,6 +77,9 @@ class PlantUmlDebuggingVisualizerTest {
         final ODObject hashMapNode1 = new ODObject(2, "java.util.HashMap$Node", "0");
         final ODObject hashMapNode2 = new ODObject(3, "java.util.HashMap$Node", "1");
         final ODObject hashMapNode3 = new ODObject(4, "java.util.HashMap$Node", "2");
+        addKeyValueToNode(hashMapNode1);
+        addKeyValueToNode(hashMapNode2);
+        addKeyValueToNode(hashMapNode3);
         hashMap.addLink(new ODLink(hashMap, hashMapNode1, "0"));
         hashMap.addLink(new ODLink(hashMap, hashMapNode2, "1"));
         hashMap.addLink(new ODLink(hashMap, hashMapNode3, "2"));
@@ -85,6 +87,8 @@ class PlantUmlDebuggingVisualizerTest {
         final ODObject otherMap = new ODObject(5, "java.util.SomeOtherMap", "otherMap");
         final ODObject otherMapNode1 = new ODObject(6, "java.util.SomeOtherMap$Node", "0");
         final ODObject otherMapNode2 = new ODObject(7, "java.util.SomeOtherMap$Node", "1");
+        addKeyValueToNode(otherMapNode1);
+        addKeyValueToNode(otherMapNode2);
         otherMap.addLink(new ODLink(otherMap, otherMapNode1, "0"));
         otherMap.addLink(new ODLink(otherMap, otherMapNode2, "1"));
 
@@ -99,14 +103,22 @@ class PlantUmlDebuggingVisualizerTest {
         final String plantUMLString = visualizer.toPlantUMLString(diagram);
         System.out.println(plantUMLString);
 
-        assertThat(plantUMLString, is("@startuml\n" +
+        assertThat(this.normalizeString(plantUMLString), is("@startuml\n" +
                 "!pragma layout smetana\n" +
-                "object \"1:Person\" as 1 {\n" +
+                "map \"hashMap:HashMap\" as 1 {\n" +
+                "key1 => value2\n" +
+                "key3 => value4\n" +
+                "key5 => value6\n" +
                 "}\n" +
-                "object \"2:Person\" as 2 {\n" +
+                "map \"otherMap:SomeOtherMap\" as 5 {\n" +
+                "key7 => value8\n" +
+                "key9 => value10\n" +
                 "}\n" +
-                "1 --> 2 : friends\r\n" +
-                "2 --> 1 : friends\r\n" +
                 "@enduml\n"));
+    }
+
+    private void addKeyValueToNode(ODObject hashMapNode1) {
+        hashMapNode1.addAttribute(new ODAttributeValue("key", "someType", "key" + counter.incrementAndGet()));
+        hashMapNode1.addAttribute(new ODAttributeValue("value", "someType", "value" + counter.incrementAndGet()));
     }
 }

@@ -5,7 +5,10 @@ import com.intellij.ui.components.JBScrollPane;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
-import no.hvl.tk.visual.debugger.domain.*;
+import no.hvl.tk.visual.debugger.domain.ODAttributeValue;
+import no.hvl.tk.visual.debugger.domain.ODLink;
+import no.hvl.tk.visual.debugger.domain.ODObject;
+import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -123,7 +126,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                     object.hashCode()));
 
             // Add object attributes
-            if (object.getAttributeValues().isEmpty()) {
+            if (!object.getAttributeValues().isEmpty()) {
                 stringBuilder.append(" {\n");
                 object.getAttributeValues().stream()
                       // Sort so that objects with the same type have the same order of attributes
@@ -170,17 +173,12 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     }
 
     private boolean isPrimitive(ODObject object) {
-        // Nodes attached to the link must have primitive key and value attributes.
+        // Nodes attached to the link must not have have any more links.
+        // Key and value are then attributes i.e. primitive.
         return !object.getLinks().isEmpty()
                 && object.getLinks()
                          .stream()
-                         .anyMatch(odLink -> odLink.getTo()
-                                                   .getAttributeValues()
-                                                   .stream()
-                                                   .allMatch(odAttributeValue -> {
-                                                       final String attributeType = odAttributeValue.getAttributeType();
-                                                       return PrimitiveTypes.isString(attributeType) || PrimitiveTypes.isBoxedPrimitiveType(attributeType);
-                                                   }));
+                         .anyMatch(odLink -> odLink.getTo().getLinks().isEmpty());
     }
 
     private boolean isMap(ODObject object) {

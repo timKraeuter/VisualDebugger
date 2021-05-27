@@ -136,7 +136,7 @@ class DebuggingScenariosTest {
         inventory.put(Material.create("Hinge", 5), 5);
         inventory.put(Material.create("Wood screw D3,5 x 20mm", 1), 8);
         inventory.put(Material.create("Wood screw D4 x 45mm", 1), 13);
-        System.out.println(inventory); // seems to not be visualised correctly
+        System.out.println(inventory);
         System.out.println(inventory);
         System.out.println(inventory);
     }

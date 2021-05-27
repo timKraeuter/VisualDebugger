@@ -39,8 +39,4 @@ public enum PrimitiveTypes {
         }
         return typeNames.contains(typeName);
     }
-
-    public static boolean isString(String typeName) {
-        return STRING.firstTypeName.equals(typeName);
-    }
 }
