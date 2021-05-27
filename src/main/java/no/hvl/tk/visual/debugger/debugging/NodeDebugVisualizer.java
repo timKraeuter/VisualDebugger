@@ -30,12 +30,12 @@ public class NodeDebugVisualizer implements XCompositeNode {
     private final DebuggingInfoVisualizer debuggingInfoCollector;
     private final int depth;
 
-    private CounterBasedLock lock;
+    private final CounterBasedLock lock;
     /**
      * Parent. Null if at root.
      */
     private final ODObject parent;
-    private String inheritedLinkType;
+    private final String inheritedLinkType;
 
     public NodeDebugVisualizer(
             final DebuggingInfoVisualizer debuggingInfoCollector,
@@ -47,9 +47,9 @@ public class NodeDebugVisualizer implements XCompositeNode {
     public NodeDebugVisualizer(
             final DebuggingInfoVisualizer debuggingInfoCollector,
             final int depth,
-            CounterBasedLock lock,
+            final CounterBasedLock lock,
             final ODObject parent,
-            String inheritedLinkType) {
+            final String inheritedLinkType) {
         this.debuggingInfoCollector = debuggingInfoCollector;
         this.depth = depth;
         this.lock = lock;
@@ -58,9 +58,9 @@ public class NodeDebugVisualizer implements XCompositeNode {
     }
 
     @Override
-    public void addChildren(@NotNull XValueChildrenList children, boolean last) {
+    public void addChildren(@NotNull final XValueChildrenList children, final boolean last) {
         for (int i = 0; i < children.size(); i++) {
-            JavaValue value = (JavaValue) children.getValue(i);
+            final JavaValue value = (JavaValue) children.getValue(i);
             this.handleValue(value);
         }
         if (last) {
@@ -70,7 +70,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
     void handleValue(final JavaValue jValue) {
         final String variableName = jValue.getName();
-        Optional<String> maybeTypeName = getTypeIfExists(jValue);
+        final Optional<String> maybeTypeName = NodeDebugVisualizer.getTypeIfExists(jValue);
         if (maybeTypeName.isEmpty()) {
             // If type is null the value of the variable is null
             this.addValueToDiagram(variableName, null, null);
@@ -79,25 +79,25 @@ public class NodeDebugVisualizer implements XCompositeNode {
         final String typeName = maybeTypeName.get();
 
         if (PrimitiveTypes.isNonBoxedPrimitiveType(typeName)) {
-            final String varValue = getNonBoxedPrimitiveValue(jValue);
-            addValueToDiagram(variableName, typeName, varValue);
+            final String varValue = NodeDebugVisualizer.getNonBoxedPrimitiveValue(jValue);
+            this.addValueToDiagram(variableName, typeName, varValue);
             return;
         }
         if (PrimitiveTypes.isBoxedPrimitiveType(typeName)) {
-            final String varValue = getBoxedPrimitiveValue(jValue);
+            final String varValue = NodeDebugVisualizer.getBoxedPrimitiveValue(jValue);
             this.addValueToDiagram(variableName, typeName, varValue);
             return;
         }
         // Handle object case here.
-        if (depth > 0) {
-            final Pair<ODObject, String> parentAndHasCollectionSkipped = addObjectAndLinksToDiagram(
+        if (this.depth > 0) {
+            final Pair<ODObject, String> parentAndHasCollectionSkipped = this.addObjectAndLinksToDiagram(
                     jValue,
                     variableName,
                     typeName);
             this.lock.increaseCounter();
             final NodeDebugVisualizer nodeDebugVisualizer = new NodeDebugVisualizer(
                     this.debuggingInfoCollector,
-                    depth - 1,
+                    this.depth - 1,
                     this.lock,
                     parentAndHasCollectionSkipped.getFirst(),
                     parentAndHasCollectionSkipped.getSecond());
@@ -107,39 +107,39 @@ public class NodeDebugVisualizer implements XCompositeNode {
             // Decrease the counter here if computeChildren() will not be called on the new debug node.
             jValue.computePresentation(new XValueNode() {
                 @Override
-                public void setPresentation(@Nullable Icon icon, @NonNls @Nullable String type, @NonNls @NotNull String value, boolean hasChildren) {
+                public void setPresentation(@Nullable final Icon icon, @NonNls @Nullable final String type, @NonNls @NotNull final String value, final boolean hasChildren) {
                     this.decreaseCounterIfNeeded(jValue, hasChildren);
                 }
 
                 @Override
-                public void setPresentation(@Nullable Icon icon, @NotNull XValuePresentation presentation, boolean hasChildren) {
+                public void setPresentation(@Nullable final Icon icon, @NotNull final XValuePresentation presentation, final boolean hasChildren) {
                     this.decreaseCounterIfNeeded(jValue, hasChildren);
                 }
 
                 @SuppressWarnings("UnstableApiUsage")
                 @Override
-                public void setPresentation(@Nullable Icon icon, @NonNls @Nullable String type, @NonNls @NotNull String separator, @NonNls @Nullable String value, boolean hasChildren) {
+                public void setPresentation(@Nullable final Icon icon, @NonNls @Nullable final String type, @NonNls @NotNull final String separator, @NonNls @Nullable final String value, final boolean hasChildren) {
                     this.decreaseCounterIfNeeded(jValue, hasChildren);
                 }
 
                 @Override
-                public void setFullValueEvaluator(@NotNull XFullValueEvaluator fullValueEvaluator) {
+                public void setFullValueEvaluator(@NotNull final XFullValueEvaluator fullValueEvaluator) {
                     // nop
                 }
 
 
-                private void decreaseCounterIfNeeded(final JavaValue value, boolean hasChildren) {
+                private void decreaseCounterIfNeeded(final JavaValue value, final boolean hasChildren) {
                     try {
-                        final Value calcedValue = value.getDescriptor().calcValue(value.getEvaluationContext());
-                        if (calcedValue instanceof ObjectReferenceImpl) {
-                            ObjectReferenceImpl obRef = (ObjectReferenceImpl) calcedValue;
+                        final Value calculatedValue = value.getDescriptor().calcValue(value.getEvaluationContext());
+                        if (calculatedValue instanceof ObjectReferenceImpl) {
+                            final ObjectReferenceImpl obRef = (ObjectReferenceImpl) calculatedValue;
                             final int fieldSize = obRef.referenceType().allFields().size();
                             if (fieldSize == 0 || !hasChildren) {
                                 NodeDebugVisualizer.this.lock.decreaseCounter();
                             }
                         }
-                    } catch (EvaluateException e) {
-                        LOGGER.error(e);
+                    } catch (final EvaluateException e) {
+                        NodeDebugVisualizer.LOGGER.error(e);
                         throw new EvaluateRuntimeException(e);
                     }
                 }
@@ -147,15 +147,15 @@ public class NodeDebugVisualizer implements XCompositeNode {
         }
     }
 
-    private Pair<ODObject, String> addObjectAndLinksToDiagram(JavaValue jValue, String variableName, String typeName) {
+    private Pair<ODObject, String> addObjectAndLinksToDiagram(final JavaValue jValue, final String variableName, final String typeName) {
         // Skip lists and sets. They will be unfolded. Remember the original link type.
         if (Settings.SKIP_COLLECTION_VISUALIZATION
                 && (typeName.endsWith("Set") || typeName.endsWith("List"))
-                && parent != null) {
-            return Pair.create(parent, this.getLinkType(jValue));
+                && this.parent != null) {
+            return Pair.create(this.parent, this.getLinkType(jValue));
         }
         // Normal objects
-        final ODObject object = new ODObject(this.getObjectId(jValue), typeName, variableName);
+        final ODObject object = new ODObject(NodeDebugVisualizer.getObjectId(jValue), typeName, variableName);
         this.debuggingInfoCollector.addObject(object);
         if (this.parent != null) {
             this.debuggingInfoCollector.addLinkToObject(this.parent, object, this.getLinkType(jValue));
@@ -163,17 +163,17 @@ public class NodeDebugVisualizer implements XCompositeNode {
         return Pair.create(object, "");
     }
 
-    private long getObjectId(JavaValue jValue) {
+    private static long getObjectId(final JavaValue jValue) {
         try {
             final ObjectReferenceImpl value = (ObjectReferenceImpl) jValue.getDescriptor().calcValue(jValue.getEvaluationContext());
             return value.uniqueID();
-        } catch (EvaluateException e) {
+        } catch (final EvaluateException e) {
             LOGGER.error(e);
             throw new EvaluateRuntimeException(e);
         }
     }
 
-    private String getLinkType(JavaValue value) {
+    private String getLinkType(final JavaValue value) {
         // When skipping over collections we want to use the original link name for each subsequent link.
         if (!this.inheritedLinkType.isEmpty()) {
             return this.inheritedLinkType;
@@ -189,7 +189,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
         }
     }
 
-    private String getBoxedPrimitiveValue(JavaValue value) {
+    private static String getBoxedPrimitiveValue(final JavaValue value) {
         try {
             final ObjectReferenceImpl value1 = (ObjectReferenceImpl) value.getDescriptor().calcValue(value.getEvaluationContext());
             @SuppressWarnings("OptionalGetWithoutIsPresent") final Field valueField = value1.referenceType().allFields().stream()
@@ -197,60 +197,60 @@ public class NodeDebugVisualizer implements XCompositeNode {
                                                                                             .findFirst()
                                                                                             .get(); // Should always have a "value" field.
             return value1.getValue(valueField).toString();
-        } catch (EvaluateException e) {
+        } catch (final EvaluateException e) {
             LOGGER.error(e);
             throw new EvaluateRuntimeException(e);
         }
     }
 
-    private String getNonBoxedPrimitiveValue(final JavaValue value) {
+    private static String getNonBoxedPrimitiveValue(final JavaValue value) {
         try {
             return value.getDescriptor().calcValue(value.getEvaluationContext()).toString();
-        } catch (EvaluateException e) {
+        } catch (final EvaluateException e) {
             LOGGER.error(e);
             throw new EvaluateRuntimeException(e);
         }
     }
 
-    private Optional<String> getTypeIfExists(final JavaValue value) {
+    private static Optional<String> getTypeIfExists(final JavaValue value) {
         try {
-            final Value calcedValue = value.getDescriptor().calcValue(value.getEvaluationContext());
-            if (calcedValue == null) {
+            final Value calculatedValue = value.getDescriptor().calcValue(value.getEvaluationContext());
+            if (calculatedValue == null) {
                 return Optional.empty();
             }
-            return Optional.of(calcedValue.type().name());
-        } catch (EvaluateException e) {
+            return Optional.of(calculatedValue.type().name());
+        } catch (final EvaluateException e) {
             LOGGER.error(e);
             throw new EvaluateRuntimeException(e);
         }
     }
 
     @Override
-    public void tooManyChildren(int remaining) {
+    public void tooManyChildren(final int remaining) {
         LOGGER.debug("tooManyChildren called!");
     }
 
     @Override
-    public void setAlreadySorted(boolean alreadySorted) {
+    public void setAlreadySorted(final boolean alreadySorted) {
         LOGGER.debug("setAlreadySorted called!");
     }
 
     @Override
-    public void setErrorMessage(@NotNull String errorMessage) {
+    public void setErrorMessage(@NotNull final String errorMessage) {
         LOGGER.warn(errorMessage);
     }
 
     @Override
-    public void setErrorMessage(@NotNull String errorMessage, @Nullable XDebuggerTreeNodeHyperlink link) {
+    public void setErrorMessage(@NotNull final String errorMessage, @Nullable final XDebuggerTreeNodeHyperlink link) {
         LOGGER.warn(errorMessage);
     }
 
     @Override
     public void setMessage(
-            @NotNull String message,
-            @Nullable Icon icon,
-            @NotNull SimpleTextAttributes attributes,
-            @Nullable XDebuggerTreeNodeHyperlink link) {
+            @NotNull final String message,
+            @Nullable final Icon icon,
+            @NotNull final SimpleTextAttributes attributes,
+            @Nullable final XDebuggerTreeNodeHyperlink link) {
         LOGGER.debug(message);
     }
 }

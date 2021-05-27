@@ -15,36 +15,36 @@ import java.util.Set;
 class DebuggingScenariosTest {
     @Test
     void testPrimitiveVariables() {
-        byte aByte1 = 0;
-        Byte aByte2 = 0;
-        short aShort1 = 1;
-        Short aShort2 = 2;
-        int anInt1 = 2;
-        Integer anInt2 = 2;
-        long aLong1 = 3L;
-        Long aLong2 = 3L;
-        float aFloat1 = 4.1F;
-        Float aFloat2 = 4.1F;
-        double aDouble1 = 5.1;
-        Double aDouble2 = 5.1;
-        char aChar = '6';
-        Character aCharacter = '2';
-        boolean aBoolean1 = true;
-        Boolean aBoolean2 = true;
-        String aString = "8";
+        final byte aByte1 = 0;
+        final Byte aByte2 = 0;
+        final short aShort1 = 1;
+        final Short aShort2 = 2;
+        final int anInt1 = 2;
+        final Integer anInt2 = 2;
+        final long aLong1 = 3L;
+        final Long aLong2 = 3L;
+        final float aFloat1 = 4.1F;
+        final Float aFloat2 = 4.1F;
+        final double aDouble1 = 5.1;
+        final Double aDouble2 = 5.1;
+        final char aChar = '6';
+        final Character aCharacter = '2';
+        final boolean aBoolean1 = true;
+        final Boolean aBoolean2 = true;
+        final String aString = "8";
         System.out.println("Put your breakpoint here");
     }
 
     @Test
     void testWithOneLayerObjectVariables() {
-        Material aMaterial = Material.create("stringValue", 42);
+        final Material aMaterial = Material.create("stringValue", 42);
         System.out.println(aMaterial);
         System.out.println(aMaterial);
     }
 
     @Test
     void testMultiLayerObjectVariables() {
-        String productName = "productName";
+        final String productName = "productName";
         final Product product = Product.create(productName, 3);
         product.addPart(Material.create("mat1Name", 1), 1);
         product.addPart(Material.create("mat2Name", 2), 1);
@@ -58,8 +58,8 @@ class DebuggingScenariosTest {
     @Test
     void primitiveCollectionTest() {
         // Each list value ends up as an attribute at the moment.
-        CollectionHolder<String> stringHolder = new CollectionHolder<>(Lists.newArrayList("1", "2", "3"));
-        CollectionHolder<Integer> intHolder = new CollectionHolder<>(Lists.newArrayList(1, 2, 3));
+        final CollectionHolder<String> stringHolder = new CollectionHolder<>(Lists.newArrayList("1", "2", "3"));
+        final CollectionHolder<Integer> intHolder = new CollectionHolder<>(Lists.newArrayList(1, 2, 3));
         System.out.println(stringHolder);
         System.out.println(stringHolder);
         System.out.println(stringHolder);
@@ -70,7 +70,7 @@ class DebuggingScenariosTest {
     @Test
     void nonPrimitiveCollectionTest() {
         // Each list value ends up as an attribute at the moment.
-        CollectionHolder<Material> materialHolder = new CollectionHolder<>(Lists.newArrayList(
+        final CollectionHolder<Material> materialHolder = new CollectionHolder<>(Lists.newArrayList(
                 Material.create("1", 10),
                 Material.create("2", 20),
                 Material.create("3", 30)));
@@ -82,8 +82,8 @@ class DebuggingScenariosTest {
     @Test
     void primitiveCollectionAtRootTest() {
         // Lists work even with objects
-        List<String> stringList = Lists.newArrayList("1", "2", "3");
-        List<Integer> intList = Lists.newArrayList(1, 2, 3);
+        final List<String> stringList = Lists.newArrayList("1", "2", "3");
+        final List<Integer> intList = Lists.newArrayList(1, 2, 3);
         System.out.println(stringList);
         System.out.println(stringList);
         System.out.println(stringList);
@@ -95,7 +95,7 @@ class DebuggingScenariosTest {
     @Test
     void nonPrimitiveCollectionAtRootTest() {
         // Lists work even with objects
-        List<Material> materialsList = Lists.newArrayList(
+        final List<Material> materialsList = Lists.newArrayList(
                 Material.create("1", 10),
                 Material.create("2", 20),
                 Material.create("3", 30));
@@ -104,7 +104,7 @@ class DebuggingScenariosTest {
         System.out.println(materialsList);
         System.out.println(materialsList);
         // Lists work even with objects
-        Set<Material> materialsSet = Sets.newHashSet(
+        final Set<Material> materialsSet = Sets.newHashSet(
                 Material.create("1", 10),
                 Material.create("2", 20),
                 Material.create("3", 30));
@@ -116,16 +116,16 @@ class DebuggingScenariosTest {
 
     @Test
     void primitiveMapVisualisationTest() {
-        final Map<String, Integer> postcalCodes = new HashMap<>();
-        postcalCodes.put("Oslo", 1295);
-        postcalCodes.put("Bergen", 5052);
-        postcalCodes.put("Berlin", 13585);
-        postcalCodes.put("Hanover", 30161);
+        final Map<String, Integer> postalCodes = new HashMap<>();
+        postalCodes.put("Oslo", 1295);
+        postalCodes.put("Bergen", 5052);
+        postalCodes.put("Berlin", 13585);
+        postalCodes.put("Hanover", 30161);
         final Map<Double, Boolean> doubleBooleanMap = new HashMap<>();
         doubleBooleanMap.put(1.1, true);
         doubleBooleanMap.put(1.2, false);
         doubleBooleanMap.put(1.3, true);
-        System.out.println(postcalCodes);
+        System.out.println(postalCodes);
         System.out.println(doubleBooleanMap);
     }
 
@@ -157,14 +157,14 @@ class DebuggingScenariosTest {
 
     @Test
     void testScrolling() {
-        final Product prod1 = makeProductWith2Mats();
-        final Product prod2 = makeProductWith2Mats();
-        final Product prod3 = makeProductWith2Mats();
-        final Product prod4 = makeProductWith2Mats();
-        final Product prod5 = makeProductWith2Mats();
-        final Product prod6 = makeProductWith2Mats();
-        final Product prod7 = makeProductWith2Mats();
-        final Product prod8 = makeProductWith2Mats();
+        final Product prod1 = DebuggingScenariosTest.makeProductWith2Mats();
+        final Product prod2 = DebuggingScenariosTest.makeProductWith2Mats();
+        final Product prod3 = DebuggingScenariosTest.makeProductWith2Mats();
+        final Product prod4 = DebuggingScenariosTest.makeProductWith2Mats();
+        final Product prod5 = DebuggingScenariosTest.makeProductWith2Mats();
+        final Product prod6 = DebuggingScenariosTest.makeProductWith2Mats();
+        final Product prod7 = DebuggingScenariosTest.makeProductWith2Mats();
+        final Product prod8 = DebuggingScenariosTest.makeProductWith2Mats();
         System.out.println(prod8);
         System.out.println(prod8);
         System.out.println(prod8);
@@ -173,10 +173,10 @@ class DebuggingScenariosTest {
     }
 
     @NotNull
-    private Product makeProductWith2Mats() {
+    private static Product makeProductWith2Mats() {
         final Material mat1 = Material.create("123", 2);
         final Material mat2 = Material.create("123", 2);
-        Product product = Product.create("123", 1);
+        final Product product = Product.create("123", 1);
         product.addPart(mat1, 1);
         product.addPart(mat2, 2);
         return product;
@@ -190,8 +190,8 @@ class DebuggingScenariosTest {
             public Cycle next;
         }
 
-        Cycle c1 = new Cycle();
-        Cycle c2 = new Cycle();
+        final Cycle c1 = new Cycle();
+        final Cycle c2 = new Cycle();
         c1.next = c2;
         c2.next = c1;
 

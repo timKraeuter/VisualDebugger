@@ -8,17 +8,17 @@ import com.intellij.xdebugger.XDebuggerManagerListener;
 import no.hvl.tk.visual.debugger.debugging.DebugListener;
 import org.jetbrains.annotations.NotNull;
 
-public class DebuggVisualizerListener implements XDebuggerManagerListener {
+public class DebugVisualizerListener implements XDebuggerManagerListener {
     private static final Logger LOGGER = Logger.getInstance(XDebuggerManagerListener.class);
     private final Project project;
 
-    public DebuggVisualizerListener(Project project) {
+    public DebugVisualizerListener(final Project project) {
         this.project = project;
     }
 
     @Override
-    public void processStarted(@NotNull XDebugProcess debugProcess) {
-        XDebugSession debugSession = debugProcess.getSession();
+    public void processStarted(@NotNull final XDebugProcess debugProcess) {
+        final XDebugSession debugSession = debugProcess.getSession();
 
         if (debugSession != null) {
             debugSession.addSessionListener(new DebugListener(debugSession));

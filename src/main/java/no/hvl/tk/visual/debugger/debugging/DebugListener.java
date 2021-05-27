@@ -12,7 +12,7 @@ import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
 import com.intellij.xdebugger.frame.XStackFrame;
-import no.hvl.tk.visual.debugger.DebuggVisualizerListener;
+import no.hvl.tk.visual.debugger.DebugVisualizerListener;
 import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
@@ -50,12 +50,12 @@ public class DebugListener implements XDebugSessionListener {
     @Override
     public void sessionPaused() {
         LOGGER.debug("Next step in debugger!");
-        initUIIfNeeded();
+        this.initUIIfNeeded();
 
-        final XStackFrame currentStackFrame = debugSession.getCurrentStackFrame();
+        final XStackFrame currentStackFrame = this.debugSession.getCurrentStackFrame();
         Objects.requireNonNull(currentStackFrame, "Stack frame unexpectedly was null.");
 
-        final DebuggingInfoVisualizer debuggingInfoCollector = getDebuggingInfoVisualizer();
+        final DebuggingInfoVisualizer debuggingInfoCollector = this.getDebuggingInfoVisualizer();
         final CounterBasedLock lock = new CounterBasedLock();
         final NodeDebugVisualizer nodeVisualizer = new NodeDebugVisualizer(
                 debuggingInfoCollector,
@@ -72,10 +72,10 @@ public class DebugListener implements XDebugSessionListener {
 
     @NotNull
     private DebuggingInfoVisualizer getDebuggingInfoVisualizer() {
-        if (debuggingVisualizer == null) {
-            debuggingVisualizer = new PlantUmlDebuggingVisualizer(userInterface);
+        if (this.debuggingVisualizer == null) {
+            this.debuggingVisualizer = new PlantUmlDebuggingVisualizer(this.userInterface);
         }
-        return debuggingVisualizer;
+        return this.debuggingVisualizer;
     }
 
     @Override
@@ -84,28 +84,28 @@ public class DebugListener implements XDebugSessionListener {
     }
 
     private void initUIIfNeeded() {
-        if (userInterface != null) {
+        if (this.userInterface != null) {
             return;
         }
-        userInterface = new JPanel();
-        SimpleToolWindowPanel uiContainer = new SimpleToolWindowPanel(false, true);
+        this.userInterface = new JPanel();
+        final SimpleToolWindowPanel uiContainer = new SimpleToolWindowPanel(false, true);
 
         final ActionManager actionManager = ActionManager.getInstance();
-        ActionToolbar actionToolbar = actionManager.createActionToolbar(
+        final ActionToolbar actionToolbar = actionManager.createActionToolbar(
                 "DebugVisualizer.VisualizerToolbar",
                 (DefaultActionGroup) actionManager.getAction("DebugVisualizer.VisualizerToolbar"),
                 false
         );
-        actionToolbar.setTargetComponent(userInterface);
+        actionToolbar.setTargetComponent(this.userInterface);
         uiContainer.setToolbar(actionToolbar.getComponent());
-        uiContainer.setContent(userInterface);
+        uiContainer.setContent(this.userInterface);
 
-        RunnerLayoutUi ui = debugSession.getUI();
-        Content content = ui.createContent(
+        final RunnerLayoutUi ui = this.debugSession.getUI();
+        final Content content = ui.createContent(
                 CONTENT_ID,
                 uiContainer,
                 "Visual Debugger",
-                IconLoader.getIcon("/icons/icon_16x16.png", DebuggVisualizerListener.class),
+                IconLoader.getIcon("/icons/icon_16x16.png", DebugVisualizerListener.class),
                 null);
         content.setCloseable(false);
         UIUtil.invokeLaterIfNeeded(() -> ui.addContent(content));

@@ -25,66 +25,66 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     private final JPanel pluginUI;
     private JLabel imgLabel;
 
-    public PlantUmlDebuggingVisualizer(JPanel jPanel) {
+    public PlantUmlDebuggingVisualizer(final JPanel jPanel) {
         this.pluginUI = jPanel;
     }
 
     @Override
     public void finishVisualization() {
-        final String plantUMLString = toPlantUMLString(this.diagram);
+        final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(this.diagram);
         // Reset diagram
         this.diagram = new ObjectDiagram();
         try {
-            final byte[] pngData = toPNG(plantUMLString);
-            addImageToUI(pngData);
-        } catch (IOException e) {
+            final byte[] pngData = PlantUmlDebuggingVisualizer.toPNG(plantUMLString);
+            this.addImageToUI(pngData);
+        } catch (final IOException e) {
             LOGGER.error(e);
         }
     }
 
-    private void addImageToUI(byte[] pngData) throws IOException {
-        ByteArrayInputStream input = new ByteArrayInputStream(pngData);
+    private void addImageToUI(final byte[] pngData) throws IOException {
+        final ByteArrayInputStream input = new ByteArrayInputStream(pngData);
         final ImageIcon imageIcon = new ImageIcon(ImageIO.read(input));
 
-        if (imgLabel == null) {
-            imgLabel = new JLabel(imageIcon);
-            final JBScrollPane scrollPane = new JBScrollPane(imgLabel);
-            pluginUI.setLayout(new BorderLayout());
-            pluginUI.add(scrollPane, BorderLayout.CENTER);
+        if (this.imgLabel == null) {
+            this.imgLabel = new JLabel(imageIcon);
+            final JBScrollPane scrollPane = new JBScrollPane(this.imgLabel);
+            this.pluginUI.setLayout(new BorderLayout());
+            this.pluginUI.add(scrollPane, BorderLayout.CENTER);
         } else {
-            imgLabel.setIcon(imageIcon);
+            this.imgLabel.setIcon(imageIcon);
         }
     }
 
-    String toPlantUMLString(ObjectDiagram objectDiagram) {
+    static String toPlantUMLString(final ObjectDiagram objectDiagram) {
         final StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("@startuml\n");
         // Use this so we are not dependent on a Graphviz/Dot installation on the host machine.
         stringBuilder.append("!pragma layout smetana\n");
 
         final Set<ODLink> links = new HashSet<>();
-        // Sort ojects so the visualisation does not change when there are no objects changes.
+        // Sort objects so the visualisation does not change when there are no objects changes.
         final List<ODObject> sortedObjects = objectDiagram.getObjects()
                                                           .stream()
                                                           .sorted()
                                                           .collect(Collectors.toList());
 
         // Add objects with attributes and collect links. They have to be added after objects.
-        addObjectsToDiagramAndCollectLinks(stringBuilder, links, sortedObjects);
+        PlantUmlDebuggingVisualizer.addObjectsToDiagramAndCollectLinks(stringBuilder, links, sortedObjects);
 
         // Add links.
-        addLinksToDiagram(stringBuilder, links);
+        PlantUmlDebuggingVisualizer.addLinksToDiagram(stringBuilder, links);
 
         // Add primitive root values if there are any.
         if (!objectDiagram.getPrimitiveRootValues().isEmpty()) {
-            addPrimitiveRootValuesToDiagram(objectDiagram, stringBuilder);
+            PlantUmlDebuggingVisualizer.addPrimitiveRootValuesToDiagram(objectDiagram, stringBuilder);
         }
 
         stringBuilder.append("@enduml\n");
         return stringBuilder.toString();
     }
 
-    private void addPrimitiveRootValuesToDiagram(ObjectDiagram objectDiagram, StringBuilder stringBuilder) {
+    private static void addPrimitiveRootValuesToDiagram(final ObjectDiagram objectDiagram, final StringBuilder stringBuilder) {
         stringBuilder.append(String.format("object \"%s\" as %s", "LocalPrimitiveVars", "primitiveRootValues"));
         stringBuilder.append(" {\n");
         objectDiagram.getPrimitiveRootValues()
@@ -97,7 +97,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         stringBuilder.append("}\n");
     }
 
-    private void addLinksToDiagram(StringBuilder stringBuilder, Set<ODLink> links) {
+    private static void addLinksToDiagram(final StringBuilder stringBuilder, final Set<ODLink> links) {
         links.stream()
              .sorted()
              .forEach(link -> stringBuilder.append(
@@ -107,22 +107,22 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                              link.getType())));
     }
 
-    private void addObjectsToDiagramAndCollectLinks(StringBuilder stringBuilder, Set<ODLink> links, List<ODObject> sortedObjects) {
+    private static void addObjectsToDiagramAndCollectLinks(final StringBuilder stringBuilder, final Set<ODLink> links, final List<ODObject> sortedObjects) {
         final HashSet<ODObject> ignoredObjects = new HashSet<>();
         for (final ODObject object : sortedObjects) {
             if (ignoredObjects.contains(object)) {
                 continue;
             }
             // Primitive maps are visualised differently
-            if (isPrimitiveJavaMap(object)) {
-                doPrimitiveMapVisualisation(stringBuilder, ignoredObjects, object);
+            if (PlantUmlDebuggingVisualizer.isPrimitiveJavaMap(object)) {
+                PlantUmlDebuggingVisualizer.doPrimitiveMapVisualisation(stringBuilder, ignoredObjects, object);
                 continue;
             }
 
             // Add the object
             stringBuilder.append(String.format("object \"%s:%s\" as %s",
                     object.getVariableName(),
-                    this.shortenTypeName(object.getType()),
+                    PlantUmlDebuggingVisualizer.shortenTypeName(object.getType()),
                     object.hashCode()));
 
             // Add object attributes
@@ -144,10 +144,10 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         }
     }
 
-    private void doPrimitiveMapVisualisation(StringBuilder stringBuilder, HashSet<ODObject> ignoredObjects, ODObject object) {
+    private static void doPrimitiveMapVisualisation(final StringBuilder stringBuilder, final HashSet<ODObject> ignoredObjects, final ODObject object) {
         stringBuilder.append(String.format("map \"%s:%s\" as %s",
                 object.getVariableName(),
-                this.shortenTypeName(object.getType()),
+                PlantUmlDebuggingVisualizer.shortenTypeName(object.getType()),
                 object.hashCode()));
         stringBuilder.append(" {\n");
 
@@ -168,11 +168,11 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         stringBuilder.append("}\n");
     }
 
-    private boolean isPrimitiveJavaMap(ODObject object) {
-        return isMap(object) && isPrimitive(object);
+    private static boolean isPrimitiveJavaMap(final ODObject object) {
+        return PlantUmlDebuggingVisualizer.isMap(object) && PlantUmlDebuggingVisualizer.isPrimitive(object);
     }
 
-    private boolean isPrimitive(ODObject object) {
+    private static boolean isPrimitive(final ODObject object) {
         // Nodes attached to the link must not have have any more links.
         // Key and value are then attributes i.e. primitive.
         return !object.getLinks().isEmpty()
@@ -181,16 +181,16 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                          .anyMatch(odLink -> odLink.getTo().getLinks().isEmpty());
     }
 
-    private boolean isMap(ODObject object) {
+    private static boolean isMap(final ODObject object) {
         return object.getType().startsWith("java.util") && object.getType().endsWith("Map");
     }
 
-    private Object shortenTypeName(String type) {
+    private static Object shortenTypeName(final String type) {
         return type.substring(type.lastIndexOf(".") + 1);
     }
 
-    private byte[] toPNG(String plantUMLDescription) throws IOException {
-        SourceStringReader reader = new SourceStringReader(plantUMLDescription);
+    private static byte[] toPNG(final String plantUMLDescription) throws IOException {
+        final SourceStringReader reader = new SourceStringReader(plantUMLDescription);
         try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             reader.outputImage(outputStream, new FileFormatOption(FileFormat.PNG));
             return outputStream.toByteArray();

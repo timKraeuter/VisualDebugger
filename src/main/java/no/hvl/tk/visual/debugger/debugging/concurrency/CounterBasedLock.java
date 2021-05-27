@@ -6,8 +6,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Lock which will unlock when the counter hits 0.
  */
 public class CounterBasedLock {
-    private AtomicInteger counter;
-    private Lock lock;
+    private final AtomicInteger counter;
+    private final Lock lock;
 
     public CounterBasedLock() {
         lock = new Lock(true);
