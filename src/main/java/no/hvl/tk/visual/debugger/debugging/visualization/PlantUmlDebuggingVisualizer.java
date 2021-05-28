@@ -151,19 +151,22 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                 object.hashCode()));
         stringBuilder.append(" {\n");
 
-        object.getLinks().forEach(odLink -> {
-            final ODObject mapNode = odLink.getTo();
-            ignoredObjects.add(mapNode); // Dont visualize the node as an object anymore!
+        object.getLinks()
+              .stream()
+              .sorted()
+              .forEach(odLink -> {
+                  final ODObject mapNode = odLink.getTo();
+                  ignoredObjects.add(mapNode); // Dont visualize the node as an object anymore!
 
-            final Optional<ODAttributeValue> key = mapNode.getAttributeByName("key");
-            final Optional<ODAttributeValue> value = mapNode.getAttributeByName("value");
-            if (key.isPresent() && value.isPresent()) {
-                stringBuilder.append(
-                        String.format("%s => %s%n",
-                                key.get().getAttributeValue(),
-                                value.get().getAttributeValue()));
-            }
-        });
+                  final Optional<ODAttributeValue> key = mapNode.getAttributeByName("key");
+                  final Optional<ODAttributeValue> value = mapNode.getAttributeByName("value");
+                  if (key.isPresent() && value.isPresent()) {
+                      stringBuilder.append(
+                              String.format("%s => %s%n",
+                                      key.get().getAttributeValue(),
+                                      value.get().getAttributeValue()));
+                  }
+              });
 
         stringBuilder.append("}\n");
     }
