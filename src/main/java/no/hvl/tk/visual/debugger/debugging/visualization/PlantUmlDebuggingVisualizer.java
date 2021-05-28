@@ -31,7 +31,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
     @Override
     public void finishVisualization() {
-        final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(this.diagram);
+        final var plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(this.diagram);
         // Reset diagram
         this.diagram = new ObjectDiagram();
         try {
@@ -43,12 +43,12 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     }
 
     private void addImageToUI(final byte[] pngData) throws IOException {
-        final ByteArrayInputStream input = new ByteArrayInputStream(pngData);
-        final ImageIcon imageIcon = new ImageIcon(ImageIO.read(input));
+        final var input = new ByteArrayInputStream(pngData);
+        final var imageIcon = new ImageIcon(ImageIO.read(input));
 
         if (this.imgLabel == null) {
             this.imgLabel = new JLabel(imageIcon);
-            final JBScrollPane scrollPane = new JBScrollPane(this.imgLabel);
+            final var scrollPane = new JBScrollPane(this.imgLabel);
             this.pluginUI.setLayout(new BorderLayout());
             this.pluginUI.add(scrollPane, BorderLayout.CENTER);
         } else {
@@ -57,7 +57,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     }
 
     static String toPlantUMLString(final ObjectDiagram objectDiagram) {
-        final StringBuilder stringBuilder = new StringBuilder();
+        final var stringBuilder = new StringBuilder();
         stringBuilder.append("@startuml\n");
         // Use this so we are not dependent on a Graphviz/Dot installation on the host machine.
         stringBuilder.append("!pragma layout smetana\n");
@@ -193,8 +193,8 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     }
 
     private static byte[] toPNG(final String plantUMLDescription) throws IOException {
-        final SourceStringReader reader = new SourceStringReader(plantUMLDescription);
-        try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+        final var reader = new SourceStringReader(plantUMLDescription);
+        try (final var outputStream = new ByteArrayOutputStream()) {
             reader.outputImage(outputStream, new FileFormatOption(FileFormat.PNG));
             return outputStream.toByteArray();
         }

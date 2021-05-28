@@ -9,8 +9,6 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.xdebugger.frame.*;
 import com.intellij.xdebugger.frame.presentation.XValuePresentation;
 import com.jetbrains.jdi.ObjectReferenceImpl;
-import com.sun.jdi.Field;
-import com.sun.jdi.Value;
 import no.hvl.tk.visual.debugger.Settings;
 import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
@@ -59,7 +57,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
     @Override
     public void addChildren(@NotNull final XValueChildrenList children, final boolean last) {
-        for (int i = 0; i < children.size(); i++) {
+        for (var i = 0; i < children.size(); i++) {
             final JavaValue value = (JavaValue) children.getValue(i);
             this.handleValue(value);
         }
@@ -95,7 +93,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
                     variableName,
                     typeName);
             this.lock.increaseCounter();
-            final NodeDebugVisualizer nodeDebugVisualizer = new NodeDebugVisualizer(
+            final var nodeDebugVisualizer = new NodeDebugVisualizer(
                     this.debuggingInfoCollector,
                     this.depth - 1,
                     this.lock,
@@ -130,7 +128,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
                 private void decreaseCounterIfNeeded(final JavaValue value, final boolean hasChildren) {
                     try {
-                        final Value calculatedValue = value.getDescriptor().calcValue(value.getEvaluationContext());
+                        final var calculatedValue = value.getDescriptor().calcValue(value.getEvaluationContext());
                         if (calculatedValue instanceof ObjectReferenceImpl) {
                             final ObjectReferenceImpl obRef = (ObjectReferenceImpl) calculatedValue;
                             final int fieldSize = obRef.referenceType().allFields().size();
@@ -155,7 +153,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
             return Pair.create(this.parent, this.getLinkType(jValue));
         }
         // Normal objects
-        final ODObject object = new ODObject(NodeDebugVisualizer.getObjectId(jValue), typeName, variableName);
+        final var object = new ODObject(NodeDebugVisualizer.getObjectId(jValue), typeName, variableName);
         this.debuggingInfoCollector.addObject(object);
         if (this.parent != null) {
             this.debuggingInfoCollector.addLinkToObject(this.parent, object, this.getLinkType(jValue));
@@ -192,10 +190,10 @@ public class NodeDebugVisualizer implements XCompositeNode {
     private static String getBoxedPrimitiveValue(final JavaValue value) {
         try {
             final ObjectReferenceImpl value1 = (ObjectReferenceImpl) value.getDescriptor().calcValue(value.getEvaluationContext());
-            @SuppressWarnings("OptionalGetWithoutIsPresent") final Field valueField = value1.referenceType().allFields().stream()
-                                                                                            .filter(field -> "value".equals(field.name()))
-                                                                                            .findFirst()
-                                                                                            .get(); // Should always have a "value" field.
+            @SuppressWarnings("OptionalGetWithoutIsPresent") final var valueField = value1.referenceType().allFields().stream()
+                                                                                          .filter(field -> "value".equals(field.name()))
+                                                                                          .findFirst()
+                                                                                          .get(); // Should always have a "value" field.
             return value1.getValue(valueField).toString();
         } catch (final EvaluateException e) {
             LOGGER.error(e);
@@ -214,7 +212,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
     private static Optional<String> getTypeIfExists(final JavaValue value) {
         try {
-            final Value calculatedValue = value.getDescriptor().calcValue(value.getEvaluationContext());
+            final var calculatedValue = value.getDescriptor().calcValue(value.getEvaluationContext());
             if (calculatedValue == null) {
                 return Optional.empty();
             }

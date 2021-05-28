@@ -18,35 +18,35 @@ public class ODLink implements Comparable<ODLink> {
     private final ODObject from;
     private final ODObject to;
 
-    public ODLink(ODObject from, ODObject to, String type) {
+    public ODLink(final ODObject from, final ODObject to, final String type) {
         this.from = from;
         this.to = to;
         this.type = type;
     }
 
     public String getType() {
-        return type;
+        return this.type;
     }
 
     public ODObject getFrom() {
-        return from;
+        return this.from;
     }
 
     public ODObject getTo() {
-        return to;
+        return this.to;
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", "Link[", "]")
-                .add("type='" + type + "'")
-                .add("from=" + from.getVariableName())
-                .add("to=" + to.getVariableName())
+                .add("type='" + this.type + "'")
+                .add("from=" + this.from.getVariableName())
+                .add("to=" + this.to.getVariableName())
                 .toString();
     }
 
     @Override
-    public int compareTo(@NotNull ODLink odLink) {
+    public int compareTo(@NotNull final ODLink odLink) {
         final int fromComparison = this.from.compareTo(odLink.from);
         if (fromComparison != 0) {
             return fromComparison;
@@ -59,15 +59,19 @@ public class ODLink implements Comparable<ODLink> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ODLink odLink = (ODLink) o;
-        return Objects.equal(type, odLink.type) && Objects.equal(from, odLink.from) && Objects.equal(to, odLink.to);
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || this.getClass() != o.getClass()) {
+            return false;
+        }
+        final var odLink = (ODLink) o;
+        return Objects.equal(this.type, odLink.type) && Objects.equal(this.from, odLink.from) && Objects.equal(this.to, odLink.to);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(type, from, to);
+        return Objects.hashCode(this.type, this.from, this.to);
     }
 }

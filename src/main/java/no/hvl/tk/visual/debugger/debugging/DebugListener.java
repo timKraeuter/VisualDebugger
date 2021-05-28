@@ -2,12 +2,10 @@ package no.hvl.tk.visual.debugger.debugging;
 
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.ui.content.Content;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
@@ -55,9 +53,9 @@ public class DebugListener implements XDebugSessionListener {
         final XStackFrame currentStackFrame = this.debugSession.getCurrentStackFrame();
         Objects.requireNonNull(currentStackFrame, "Stack frame unexpectedly was null.");
 
-        final DebuggingInfoVisualizer debuggingInfoCollector = this.getDebuggingInfoVisualizer();
-        final CounterBasedLock lock = new CounterBasedLock();
-        final NodeDebugVisualizer nodeVisualizer = new NodeDebugVisualizer(
+        final var debuggingInfoCollector = this.getDebuggingInfoVisualizer();
+        final var lock = new CounterBasedLock();
+        final var nodeVisualizer = new NodeDebugVisualizer(
                 debuggingInfoCollector,
                 this.depth,
                 lock);
@@ -88,10 +86,10 @@ public class DebugListener implements XDebugSessionListener {
             return;
         }
         this.userInterface = new JPanel();
-        final SimpleToolWindowPanel uiContainer = new SimpleToolWindowPanel(false, true);
+        final var uiContainer = new SimpleToolWindowPanel(false, true);
 
-        final ActionManager actionManager = ActionManager.getInstance();
-        final ActionToolbar actionToolbar = actionManager.createActionToolbar(
+        final var actionManager = ActionManager.getInstance();
+        final var actionToolbar = actionManager.createActionToolbar(
                 "DebugVisualizer.VisualizerToolbar",
                 (DefaultActionGroup) actionManager.getAction("DebugVisualizer.VisualizerToolbar"),
                 false
@@ -101,7 +99,7 @@ public class DebugListener implements XDebugSessionListener {
         uiContainer.setContent(this.userInterface);
 
         final RunnerLayoutUi ui = this.debugSession.getUI();
-        final Content content = ui.createContent(
+        final var content = ui.createContent(
                 CONTENT_ID,
                 uiContainer,
                 "Visual Debugger",

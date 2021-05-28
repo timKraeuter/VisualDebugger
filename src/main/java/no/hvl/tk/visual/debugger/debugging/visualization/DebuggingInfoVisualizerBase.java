@@ -10,28 +10,25 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
     }
 
     @Override
-    public DebuggingInfoVisualizer addObject(ODObject object) {
+    public DebuggingInfoVisualizer addObject(final ODObject object) {
         this.diagram.addObject(object);
         return this;
     }
 
     @Override
-    public DebuggingInfoVisualizer addAttributeToObject(ODObject object, String fieldName, String fieldValue, String fieldType) {
-        assert this.diagram.getObjects().contains(object);
+    public DebuggingInfoVisualizer addAttributeToObject(final ODObject object, final String fieldName, final String fieldValue, final String fieldType) {
         object.addAttribute(new ODAttributeValue(fieldName, fieldType, fieldValue));
         return this;
     }
 
     @Override
-    public DebuggingInfoVisualizer addLinkToObject(ODObject from, ODObject to, String linkType) {
-        assert this.diagram.getObjects().contains(from);
-        assert this.diagram.getObjects().contains(to);
+    public DebuggingInfoVisualizer addLinkToObject(final ODObject from, final ODObject to, final String linkType) {
         from.addLink(new ODLink(from, to, linkType));
         return this;
     }
 
     @Override
     public void addPrimitiveRootValue(final String variableName, final String type, final String value) {
-        diagram.addPrimitiveRootValue(new ODPrimitiveRootValue(variableName, type, value));
+        this.diagram.addPrimitiveRootValue(new ODPrimitiveRootValue(variableName, type, value));
     }
 }

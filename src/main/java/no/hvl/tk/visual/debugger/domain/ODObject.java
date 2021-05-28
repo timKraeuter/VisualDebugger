@@ -24,7 +24,7 @@ public class ODObject implements Comparable<ODObject> {
      */
     private final Set<ODLink> links;
 
-    public ODObject(long id, final String type, final String variableName) {
+    public ODObject(final long id, final String type, final String variableName) {
         this.id = id;
         this.type = type;
         this.variableName = variableName;
@@ -36,33 +36,33 @@ public class ODObject implements Comparable<ODObject> {
      * Returns a read-only set of this objects attributes.
      */
     public Set<ODAttributeValue> getAttributeValues() {
-        return Collections.unmodifiableSet(attributeValues);
+        return Collections.unmodifiableSet(this.attributeValues);
     }
 
     /**
      * Returns a read-only set of this objects links.
      */
     public Set<ODLink> getLinks() {
-        return Collections.unmodifiableSet(links);
+        return Collections.unmodifiableSet(this.links);
     }
 
-    public void addLink(ODLink linkToAdd) {
+    public void addLink(final ODLink linkToAdd) {
         this.links.add(linkToAdd);
     }
 
-    public void addAttribute(ODAttributeValue attributeToAdd) {
+    public void addAttribute(final ODAttributeValue attributeToAdd) {
         this.attributeValues.add(attributeToAdd);
     }
 
     public String getVariableName() {
-        return variableName;
+        return this.variableName;
     }
 
     public String getType() {
-        return type;
+        return this.type;
     }
 
-    public Optional<ODAttributeValue> getAttributeByName(String attributeName) {
+    public Optional<ODAttributeValue> getAttributeByName(final String attributeName) {
         return this.attributeValues.stream()
                                    .filter(odAttributeValue -> odAttributeValue.getAttributeName().equals(attributeName))
                                    .findFirst();
@@ -71,24 +71,28 @@ public class ODObject implements Comparable<ODObject> {
     @Override
     public String toString() {
         return new StringJoiner(", ", "Object[", "]")
-                .add("type='" + type + "'")
-                .add("variableName='" + variableName + "'")
-                .add("attributeValues=" + attributeValues)
-                .add("links=" + links)
+                .add("type='" + this.type + "'")
+                .add("variableName='" + this.variableName + "'")
+                .add("attributeValues=" + this.attributeValues)
+                .add("links=" + this.links)
                 .toString();
     }
 
     @Override
-    public int compareTo(@NotNull ODObject object) {
+    public int compareTo(@NotNull final ODObject object) {
         return Long.compare(this.id, object.id);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ODObject odObject = (ODObject) o;
-        return id == odObject.id;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || this.getClass() != o.getClass()) {
+            return false;
+        }
+        final var odObject = (ODObject) o;
+        return this.id == odObject.id;
     }
 
     @Override
