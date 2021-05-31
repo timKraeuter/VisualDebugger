@@ -34,7 +34,7 @@ class PlantUmlDebuggingVisualizerTest {
 
         assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("@startuml\n" +
                 "!pragma layout smetana\n" +
-                "object \"LocalPrimitiveVars\" as primitiveRootValues {\n" +
+                "object \"PrimitiveVariables\" as primitiveVariables {\n" +
                 "byte=1\n" +
                 "double=1.2\n" +
                 "int=1\n" +
