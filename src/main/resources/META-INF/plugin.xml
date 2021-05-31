@@ -4,11 +4,13 @@
     <vendor email="tim.kraeuterr@gmail.com" url="https://timkraeuter.github.io//">Tim Kräuter</vendor>
 
     <description><![CDATA[
-    A plugin that visualizes the variables during a debugging session as a UML object diagram.
+    This plugin visualizes the variables during a debugging session as a UML object diagram using PlantUML.
     The plugin is used alongside normal debugging. Set a breakpoint for debugging and start the debugging as usual in the IDE.
-     The plugin will automatically create a visual debugging toolbar in the debug window, as shown in the screenshot.
-     All variables in the scope of a debugging session will be visualized as an object diagram.
-     Currently, the plugin will visualize object information up to a depth of 10.
+    The plugin will automatically create a visual debugging toolbar in the debug window, as shown in the screenshot.
+    All variables in the scope of a debugging session will be visualized as an object diagram.
+
+    By default, the plugin will visualize objects up to a depth of 10, but this can be configured using the plugin settings.
+    The diagrams shown can also be printed as an SVG file by the plugin using PlantUML.
     ]]></description>
 
     <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html

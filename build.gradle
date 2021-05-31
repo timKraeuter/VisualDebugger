@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.5'
+version '1.6'
 
 repositories {
     mavenCentral()
@@ -26,7 +26,7 @@ intellij {
     plugins = ['com.intellij.java']
 }
 patchPluginXml {
-    changeNotes """Added simpler visualization for primitive Maps. Fixed icon size."""
+    changeNotes """Adde print function and made visualization depth configurable."""
 }
 test {
     useJUnitPlatform()
