@@ -9,7 +9,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.xdebugger.frame.*;
 import com.intellij.xdebugger.frame.presentation.XValuePresentation;
 import com.jetbrains.jdi.ObjectReferenceImpl;
-import no.hvl.tk.visual.debugger.Settings;
+import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.domain.ODObject;
@@ -164,7 +164,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
             final String variableName,
             final String typeName) {
         // Skip lists and sets. They will be unfolded. Remember the original link type.
-        if (Settings.SKIP_COLLECTION_VISUALIZATION
+        if (SharedState.SKIP_COLLECTION_VISUALIZATION
                 && (typeName.endsWith("Set") || typeName.endsWith("List"))
                 && this.parent != null) {
             return Pair.create(this.parent, this.getLinkType(jValue));

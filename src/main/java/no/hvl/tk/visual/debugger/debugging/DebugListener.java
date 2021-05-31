@@ -11,7 +11,7 @@ import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
 import com.intellij.xdebugger.frame.XStackFrame;
 import no.hvl.tk.visual.debugger.DebugVisualizerListener;
-import no.hvl.tk.visual.debugger.Settings;
+import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
@@ -46,7 +46,7 @@ public class DebugListener implements XDebugSessionListener {
         final var lock = new CounterBasedLock();
         final var nodeVisualizer = new NodeDebugVisualizer(
                 debuggingInfoCollector,
-                Settings.VISUALIZATION_DEPTH,
+                SharedState.visualizationDepth,
                 lock);
         // Happens in a different thread!
         currentStackFrame.computeChildren(nodeVisualizer);

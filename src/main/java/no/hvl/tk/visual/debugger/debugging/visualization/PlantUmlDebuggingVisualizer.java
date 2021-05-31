@@ -5,6 +5,7 @@ import com.intellij.ui.components.JBScrollPane;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
+import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.domain.ODAttributeValue;
 import no.hvl.tk.visual.debugger.domain.ODLink;
 import no.hvl.tk.visual.debugger.domain.ODObject;
@@ -32,10 +33,11 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     @Override
     public void finishVisualization() {
         final var plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(this.diagram);
+        SharedState.last_plantuml_diagram = plantUMLString;
         // Reset diagram
         this.diagram = new ObjectDiagram();
         try {
-            final byte[] pngData = PlantUmlDebuggingVisualizer.toPNG(plantUMLString);
+            final byte[] pngData = PlantUmlDebuggingVisualizer.toImage(plantUMLString, FileFormat.PNG);
             this.addImageToUI(pngData);
         } catch (final IOException e) {
             LOGGER.error(e);
@@ -192,10 +194,10 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         return type.substring(type.lastIndexOf(".") + 1);
     }
 
-    private static byte[] toPNG(final String plantUMLDescription) throws IOException {
+    public static byte[] toImage(final String plantUMLDescription, final FileFormat format) throws IOException {
         final var reader = new SourceStringReader(plantUMLDescription);
         try (final var outputStream = new ByteArrayOutputStream()) {
-            reader.outputImage(outputStream, new FileFormatOption(FileFormat.PNG));
+            reader.outputImage(outputStream, new FileFormatOption(format));
             return outputStream.toByteArray();
         }
     }

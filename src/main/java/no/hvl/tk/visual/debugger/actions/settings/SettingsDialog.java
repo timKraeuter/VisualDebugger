@@ -3,7 +3,7 @@ package no.hvl.tk.visual.debugger.actions.settings;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.components.JBTextField;
-import no.hvl.tk.visual.debugger.Settings;
+import no.hvl.tk.visual.debugger.SharedState;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -25,7 +25,7 @@ public class SettingsDialog extends DialogWrapper {
         final JPanel dialogPanel = new JPanel(new GridBagLayout());
 
         final JLabel label = new JLabel("Visualization depth:");
-        this.depthField = new JBTextField(String.valueOf(Settings.VISUALIZATION_DEPTH));
+        this.depthField = new JBTextField(String.valueOf(SharedState.visualizationDepth));
         label.setLabelFor(this.depthField);
 
         dialogPanel.add(label);
@@ -38,7 +38,7 @@ public class SettingsDialog extends DialogWrapper {
     protected void doOKAction() {
         final String text = this.depthField.getText();
         try {
-            Settings.VISUALIZATION_DEPTH = Integer.parseInt(text);
+            SharedState.visualizationDepth = Integer.parseInt(text);
         } catch (final NumberFormatException e) {
             LOGGER.error(e);
         }

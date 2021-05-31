@@ -1,7 +1,7 @@
 package no.hvl.tk.visual.debugger;
 
-public class Settings {
-    private Settings() {
+public class SharedState {
+    private SharedState() {
     }
 
     /**
@@ -12,5 +12,10 @@ public class Settings {
     /**
      * The visualization depth set by the user.
      */
-    public static int VISUALIZATION_DEPTH = 10;
+    public static int visualizationDepth = 10;
+
+    /**
+     * The visualization depth set by the user.
+     */
+    public static String last_plantuml_diagram = "";
 }

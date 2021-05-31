@@ -30,6 +30,13 @@
                     description="Change settings"
                     icon="/icons/settings.svg"
             />
+            <action
+                    id="VisualDebugger.PrintAction"
+                    class="no.hvl.tk.visual.debugger.actions.print.PrintAction"
+                    text="Print"
+                    description="Print diagram"
+                    icon="/icons/print.svg"
+            />
         </group>
     </actions>
 
