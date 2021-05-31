@@ -19,8 +19,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 public class NodeDebugVisualizer implements XCompositeNode {
     private static final Logger LOGGER = Logger.getInstance(NodeDebugVisualizer.class);
@@ -29,6 +31,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
     private final int depth;
 
     private final CounterBasedLock lock;
+    private final Set<Long> seenObjectIds;
     /**
      * Parent. Null if at root.
      */
@@ -39,7 +42,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
             final DebuggingInfoVisualizer debuggingInfoCollector,
             final int depth,
             final CounterBasedLock lock) {
-        this(debuggingInfoCollector, depth, lock, null, "");
+        this(debuggingInfoCollector, depth, lock, null, "", new HashSet<>());
     }
 
     public NodeDebugVisualizer(
@@ -47,12 +50,14 @@ public class NodeDebugVisualizer implements XCompositeNode {
             final int depth,
             final CounterBasedLock lock,
             final ODObject parent,
-            final String inheritedLinkType) {
+            final String inheritedLinkType,
+            final Set<Long> seenObjectIds) {
         this.debuggingInfoCollector = debuggingInfoCollector;
         this.depth = depth;
         this.lock = lock;
         this.parent = parent;
         this.inheritedLinkType = inheritedLinkType;
+        this.seenObjectIds = seenObjectIds;
     }
 
     @Override
@@ -87,18 +92,27 @@ public class NodeDebugVisualizer implements XCompositeNode {
             return;
         }
         // Handle object case here.
+        final long objectId = NodeDebugVisualizer.getObjectId(jValue);
         if (this.depth > 0) {
+
             final Pair<ODObject, String> parentAndHasCollectionSkipped = this.addObjectAndLinksToDiagram(
+                    objectId,
                     jValue,
                     variableName,
                     typeName);
+            if (this.seenObjectIds.contains(objectId)) {
+                System.out.println("Object seen already!");
+                return;
+            }
+            this.seenObjectIds.add(objectId);
             this.lock.increaseCounter();
             final var nodeDebugVisualizer = new NodeDebugVisualizer(
                     this.debuggingInfoCollector,
                     this.depth - 1,
                     this.lock,
                     parentAndHasCollectionSkipped.getFirst(),
-                    parentAndHasCollectionSkipped.getSecond());
+                    parentAndHasCollectionSkipped.getSecond(),
+                    this.seenObjectIds);
             // Calling compute presentation fixes a value not being ready error.
             jValue.computePresentation(new NOOPXValueNode(), XValuePlace.TREE);
             jValue.computeChildren(nodeDebugVisualizer);
@@ -145,7 +159,11 @@ public class NodeDebugVisualizer implements XCompositeNode {
         }
     }
 
-    private Pair<ODObject, String> addObjectAndLinksToDiagram(final JavaValue jValue, final String variableName, final String typeName) {
+    private Pair<ODObject, String> addObjectAndLinksToDiagram(
+            final long objectId,
+            final JavaValue jValue,
+            final String variableName,
+            final String typeName) {
         // Skip lists and sets. They will be unfolded. Remember the original link type.
         if (Settings.SKIP_COLLECTION_VISUALIZATION
                 && (typeName.endsWith("Set") || typeName.endsWith("List"))
@@ -153,7 +171,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
             return Pair.create(this.parent, this.getLinkType(jValue));
         }
         // Normal objects
-        final var object = new ODObject(NodeDebugVisualizer.getObjectId(jValue), typeName, variableName);
+        final var object = new ODObject(objectId, typeName, variableName);
         this.debuggingInfoCollector.addObject(object);
         if (this.parent != null) {
             this.debuggingInfoCollector.addLinkToObject(this.parent, object, this.getLinkType(jValue));
