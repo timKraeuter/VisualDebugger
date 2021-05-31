@@ -85,7 +85,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     }
 
     private static void addPrimitiveRootValuesToDiagram(final ObjectDiagram objectDiagram, final StringBuilder stringBuilder) {
-        stringBuilder.append(String.format("object \"%s\" as %s", "LocalPrimitiveVars", "primitiveRootValues"));
+        stringBuilder.append(String.format("object \"%s\" as %s", "PrimitiveVariables", "primitiveVariables"));
         stringBuilder.append(" {\n");
         objectDiagram.getPrimitiveRootValues()
                      .stream()
