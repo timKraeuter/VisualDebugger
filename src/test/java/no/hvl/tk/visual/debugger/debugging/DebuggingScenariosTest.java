@@ -184,6 +184,15 @@ class DebuggingScenariosTest {
 
     private static class Cycle {
         public Cycle next;
+        public String name;
+
+        public Cycle() {
+            this.name = "some name";
+        }
+
+        public Cycle(String name) {
+            this.name = name;
+        }
     }
 
 
@@ -215,5 +224,21 @@ class DebuggingScenariosTest {
         System.out.println(c1);
         System.out.println(c1);
         System.out.println(c1);
+    }
+
+
+    @Test
+    void testVisualisationDepth() {
+        Cycle root = new Cycle();
+        Cycle parent = root;
+        for (int i = 1; i <= 100; i++) {
+            Cycle child = new Cycle(String.valueOf(i));
+            parent.next = child;
+            parent = child;
+        }
+        System.out.println("Buh");
+        System.out.println("Buh");
+        System.out.println("Buh");
+        System.out.println("Buh");
     }
 }

@@ -93,7 +93,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
         }
         // Handle object case here.
         final long objectId = NodeDebugVisualizer.getObjectId(jValue);
-        if (this.depth > 0) {
+        if (this.depth >= 0) {
 
             final Pair<ODObject, String> parentAndHasCollectionSkipped = this.addObjectAndLinksToDiagram(
                     objectId,
@@ -101,7 +101,6 @@ public class NodeDebugVisualizer implements XCompositeNode {
                     variableName,
                     typeName);
             if (this.seenObjectIds.contains(objectId)) {
-                System.out.println("Object seen already!");
                 return;
             }
             this.seenObjectIds.add(objectId);

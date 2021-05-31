@@ -11,6 +11,7 @@ import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
 import com.intellij.xdebugger.frame.XStackFrame;
 import no.hvl.tk.visual.debugger.DebugVisualizerListener;
+import no.hvl.tk.visual.debugger.Settings;
 import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
@@ -22,27 +23,15 @@ import java.util.Objects;
 public class DebugListener implements XDebugSessionListener {
     private static final Logger LOGGER = Logger.getInstance(DebugListener.class);
     private static final String CONTENT_ID = "no.hvl.tk.VisualDebugger";
-
-    public static final int DEFAULT_DEBUGGING_DEPTH = 10; // Defaults to 10 but should be configurable in the future.
+    private static final String TOOLBAR_ACTION = "VisualDebugger.VisualizerToolbar"; // has to match with plugin.xml
 
     private final XDebugSession debugSession;
-    private final int depth;
     private JPanel userInterface;
     private DebuggingInfoVisualizer debuggingVisualizer;
 
     public DebugListener(final XDebugSession debugSession) {
-        this(debugSession, DEFAULT_DEBUGGING_DEPTH);
-    }
-
-    public DebugListener(
-            final XDebugSession debugSession,
-            final int depth) {
-        if (depth < 0) {
-            throw new IllegalArgumentException("Debugging depth cannot be negative.");
-        }
         Objects.requireNonNull(debugSession, "Debug session must not be null.");
         this.debugSession = debugSession;
-        this.depth = depth;
     }
 
     @Override
@@ -57,7 +46,7 @@ public class DebugListener implements XDebugSessionListener {
         final var lock = new CounterBasedLock();
         final var nodeVisualizer = new NodeDebugVisualizer(
                 debuggingInfoCollector,
-                this.depth,
+                Settings.VISUALIZATION_DEPTH,
                 lock);
         // Happens in a different thread!
         currentStackFrame.computeChildren(nodeVisualizer);
@@ -90,8 +79,8 @@ public class DebugListener implements XDebugSessionListener {
 
         final var actionManager = ActionManager.getInstance();
         final var actionToolbar = actionManager.createActionToolbar(
-                "DebugVisualizer.VisualizerToolbar",
-                (DefaultActionGroup) actionManager.getAction("DebugVisualizer.VisualizerToolbar"),
+                TOOLBAR_ACTION,
+                (DefaultActionGroup) actionManager.getAction(TOOLBAR_ACTION),
                 false
         );
         actionToolbar.setTargetComponent(this.userInterface);

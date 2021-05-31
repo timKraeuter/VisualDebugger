@@ -22,7 +22,14 @@
     </projectListeners>
 
     <actions>
-        <group id="DebugVisualizer.VisualizerToolbar" popup="false">
+        <group id="VisualDebugger.VisualizerToolbar" popup="false">
+            <action
+                    id="VisualDebugger.SettingsAction"
+                    class="no.hvl.tk.visual.debugger.actions.settings.SettingsAction"
+                    text="Settings"
+                    description="Change settings"
+                    icon="/icons/settings.svg"
+            />
         </group>
     </actions>
 
