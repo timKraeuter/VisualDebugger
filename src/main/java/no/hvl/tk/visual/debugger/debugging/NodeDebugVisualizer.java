@@ -91,7 +91,10 @@ public class NodeDebugVisualizer implements XCompositeNode {
             this.addValueToDiagram(variableName, typeName, varValue);
             return;
         }
-        // Handle object case here.
+        this.handleObject(jValue, variableName, typeName);
+    }
+
+    private void handleObject(final JavaValue jValue, final String variableName, final String typeName) {
         final long objectId = NodeDebugVisualizer.getObjectId(jValue);
         if (this.depth >= 0) {
 
