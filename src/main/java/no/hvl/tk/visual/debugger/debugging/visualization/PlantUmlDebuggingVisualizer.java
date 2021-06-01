@@ -33,7 +33,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     @Override
     public void finishVisualization() {
         final var plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(this.diagram);
-        SharedState.last_plantuml_diagram = plantUMLString;
+        SharedState.setLastPlantUMLDiagram(plantUMLString);
         // Reset diagram
         this.diagram = new ObjectDiagram();
         try {

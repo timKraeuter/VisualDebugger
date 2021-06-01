@@ -46,7 +46,7 @@ public class DebugListener implements XDebugSessionListener {
         final var lock = new CounterBasedLock();
         final var nodeVisualizer = new NodeDebugVisualizer(
                 debuggingInfoCollector,
-                SharedState.visualizationDepth,
+                SharedState.getVisualizationDepth(),
                 lock);
         // Happens in a different thread!
         currentStackFrame.computeChildren(nodeVisualizer);

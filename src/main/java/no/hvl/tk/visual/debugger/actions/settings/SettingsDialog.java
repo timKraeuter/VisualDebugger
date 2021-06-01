@@ -22,10 +22,10 @@ public class SettingsDialog extends DialogWrapper {
 
     @Override
     protected @Nullable JComponent createCenterPanel() {
-        final JPanel dialogPanel = new JPanel(new GridBagLayout());
+        final var dialogPanel = new JPanel(new GridBagLayout());
 
-        final JLabel label = new JLabel("Visualization depth:");
-        this.depthField = new JBTextField(String.valueOf(SharedState.visualizationDepth));
+        final var label = new JLabel("Visualization depth:");
+        this.depthField = new JBTextField(String.valueOf(SharedState.getVisualizationDepth()));
         label.setLabelFor(this.depthField);
 
         dialogPanel.add(label);
@@ -38,7 +38,7 @@ public class SettingsDialog extends DialogWrapper {
     protected void doOKAction() {
         final String text = this.depthField.getText();
         try {
-            SharedState.visualizationDepth = Integer.parseInt(text);
+            SharedState.setVisualizationDepth(Integer.parseInt(text));
         } catch (final NumberFormatException e) {
             LOGGER.error(e);
         }

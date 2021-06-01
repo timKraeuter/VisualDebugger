@@ -9,13 +9,22 @@ public class SharedState {
      */
     public static final boolean SKIP_COLLECTION_VISUALIZATION = true;
 
-    /**
-     * The visualization depth set by the user.
-     */
-    public static int visualizationDepth = 10;
+    private static int visualizationDepth = 10;
+    private static String lastPlantumlDiagram = "";
 
-    /**
-     * The visualization depth set by the user.
-     */
-    public static String last_plantuml_diagram = "";
+    public static int getVisualizationDepth() {
+        return visualizationDepth;
+    }
+
+    public static void setVisualizationDepth(final int visualizationDepth) {
+        SharedState.visualizationDepth = visualizationDepth;
+    }
+
+    public static String getLastPlantUMLDiagram() {
+        return lastPlantumlDiagram;
+    }
+
+    public static void setLastPlantUMLDiagram(final String diagram) {
+        lastPlantumlDiagram = diagram;
+    }
 }

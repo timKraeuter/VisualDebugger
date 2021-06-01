@@ -24,30 +24,30 @@ public class PrintDialog extends DialogWrapper {
 
     @Override
     protected @Nullable JComponent createCenterPanel() {
-        final JPanel dialogPanel = new JPanel(new GridBagLayout());
+        final var dialogPanel = new JPanel(new GridBagLayout());
 
         // Show plantUML String.
-        final JLabel plantUMLStringLabel = new JLabel("PlantUML-Input:");
-        final JButton plantUMLStringButton = new JButton("Copy");
+        final var plantUMLStringLabel = new JLabel("PlantUML-Input:");
+        final var plantUMLStringButton = new JButton("Copy");
         plantUMLStringButton.addActionListener(
-                actionEvent -> PrintDialog.copyToClipBoard(SharedState.last_plantuml_diagram));
+                actionEvent -> PrintDialog.copyToClipBoard(SharedState.getLastPlantUMLDiagram()));
         plantUMLStringLabel.setLabelFor(plantUMLStringButton);
 
         dialogPanel.add(plantUMLStringLabel);
         dialogPanel.add(plantUMLStringButton);
 
         // Show plantUML svg data.
-        final JLabel svgLabel = new JLabel("SVG:");
-        final GridBagConstraints c2 = new GridBagConstraints();
+        final var svgLabel = new JLabel("SVG:");
+        final var c2 = new GridBagConstraints();
         c2.gridy = 1;
         dialogPanel.add(svgLabel, c2);
 
-        if (SharedState.last_plantuml_diagram.isEmpty()) {
-            final JLabel noDiagramLabel = new JLabel("No diagram loaded.");
+        if (SharedState.getLastPlantUMLDiagram().isEmpty()) {
+            final var noDiagramLabel = new JLabel("No diagram loaded.");
             svgLabel.setLabelFor(noDiagramLabel);
             dialogPanel.add(noDiagramLabel, c2);
         } else {
-            final JButton svgCopyButton = new JButton("Copy");
+            final var svgCopyButton = new JButton("Copy");
             svgCopyButton.addActionListener(
                     actionEvent -> PrintDialog.copyToClipBoard(PrintDialog.getSVGData()));
             svgLabel.setLabelFor(svgCopyButton);
@@ -68,7 +68,7 @@ public class PrintDialog extends DialogWrapper {
     private static String getSVGData() {
         try {
             return new String(
-                    PlantUmlDebuggingVisualizer.toImage(SharedState.last_plantuml_diagram, FileFormat.SVG),
+                    PlantUmlDebuggingVisualizer.toImage(SharedState.getLastPlantUMLDiagram(), FileFormat.SVG),
                     StandardCharsets.UTF_8);
         } catch (final IOException e) {
             LOGGER.error(e);
