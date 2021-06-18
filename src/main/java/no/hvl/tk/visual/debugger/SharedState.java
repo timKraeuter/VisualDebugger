@@ -9,7 +9,7 @@ public class SharedState {
      */
     public static final boolean SKIP_COLLECTION_VISUALIZATION = true;
 
-    private static int visualizationDepth = 10;
+    private static int visualizationDepth = 5;
     private static String lastPlantumlDiagram = "";
 
     public static int getVisualizationDepth() {
