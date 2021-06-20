@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.6'
+version '1.6.1'
 
 repositories {
     mavenCentral()
@@ -26,7 +26,7 @@ intellij {
     plugins = ['com.intellij.java']
 }
 patchPluginXml {
-    changeNotes """Added a print function and made the visualization depth configurable."""
+    changeNotes """Plugin does not start automatically now. Now, it can be turned on and off."""
 }
 test {
     useJUnitPlatform()
