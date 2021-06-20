@@ -48,14 +48,19 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         final var input = new ByteArrayInputStream(pngData);
         final var imageIcon = new ImageIcon(ImageIO.read(input));
 
-        if (this.imgLabel == null) {
-            this.imgLabel = new JLabel(imageIcon);
-            final var scrollPane = new JBScrollPane(this.imgLabel);
-            this.pluginUI.setLayout(new BorderLayout());
-            this.pluginUI.add(scrollPane, BorderLayout.CENTER);
+        if (this.imgLabel == null || this.pluginUI.getComponents().length == 0) {
+            this.createImageAndAddToUI(imageIcon);
         } else {
             this.imgLabel.setIcon(imageIcon);
         }
+        this.pluginUI.revalidate();
+    }
+
+    private void createImageAndAddToUI(final ImageIcon imageIcon) {
+        this.imgLabel = new JLabel(imageIcon);
+        final var scrollPane = new JBScrollPane(this.imgLabel);
+        this.pluginUI.setLayout(new BorderLayout());
+        this.pluginUI.add(scrollPane, BorderLayout.CENTER);
     }
 
     static String toPlantUMLString(final ObjectDiagram objectDiagram) {

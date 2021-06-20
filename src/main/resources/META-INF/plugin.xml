@@ -39,6 +39,13 @@
                     description="Print diagram"
                     icon="/icons/print.svg"
             />
+            <action
+                    id="VisualDebugger.StopAction"
+                    class="no.hvl.tk.visual.debugger.actions.stop.StopAction"
+                    text="Stop"
+                    description="Stop the visual debugger"
+                    icon="/icons/stop.svg"
+            />
         </group>
     </actions>
 

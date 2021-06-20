@@ -18,6 +18,7 @@ import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisual
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Objects;
 
 public class DebugListener implements XDebugSessionListener {
@@ -28,6 +29,7 @@ public class DebugListener implements XDebugSessionListener {
     private final XDebugSession debugSession;
     private JPanel userInterface;
     private DebuggingInfoVisualizer debuggingVisualizer;
+    private XStackFrame currentStackFrame;
 
     public DebugListener(final XDebugSession debugSession) {
         Objects.requireNonNull(debugSession, "Debug session must not be null.");
@@ -39,9 +41,17 @@ public class DebugListener implements XDebugSessionListener {
         LOGGER.debug("Next step in debugger!");
         this.initUIIfNeeded();
 
-        final XStackFrame currentStackFrame = this.debugSession.getCurrentStackFrame();
-        Objects.requireNonNull(currentStackFrame, "Stack frame unexpectedly was null.");
+        this.currentStackFrame = this.debugSession.getCurrentStackFrame();
+        Objects.requireNonNull(this.currentStackFrame, "Stack frame unexpectedly was null.");
 
+        if (!SharedState.isDebuggingActive()) {
+            this.addActivateDebuggingButton();
+            return;
+        }
+        this.startVisualDebugging();
+    }
+
+    private void startVisualDebugging() {
         final var debuggingInfoCollector = this.getDebuggingInfoVisualizer();
         final var lock = new CounterBasedLock();
         final var nodeVisualizer = new NodeDebugVisualizer(
@@ -49,7 +59,7 @@ public class DebugListener implements XDebugSessionListener {
                 SharedState.getVisualizationDepth(),
                 lock);
         // Happens in a different thread!
-        currentStackFrame.computeChildren(nodeVisualizer);
+        this.currentStackFrame.computeChildren(nodeVisualizer);
         new Thread(() -> {
             // Wait for the computation to be over
             lock.lock();
@@ -97,5 +107,22 @@ public class DebugListener implements XDebugSessionListener {
         content.setCloseable(false);
         UIUtil.invokeLaterIfNeeded(() -> ui.addContent(content));
         LOGGER.debug("UI initialized!");
+    }
+
+    private void addActivateDebuggingButton() {
+        this.userInterface.removeAll();
+        this.userInterface.setLayout(new FlowLayout());
+
+        final var activateButton = new JButton("Activate visual debugger");
+        activateButton.addActionListener(actionEvent -> {
+            SharedState.setDebuggingActive(true);
+            DebugListener.this.userInterface.remove(activateButton);
+            this.userInterface.revalidate();
+            this.startVisualDebugging();
+        });
+        this.userInterface.add(activateButton);
+        
+        this.userInterface.revalidate();
+        this.userInterface.repaint();
     }
 }

@@ -4,13 +4,15 @@ public class SharedState {
     private SharedState() {
     }
 
+    private static boolean debuggingActive = false;
+
     /**
      * Decides if the visualisation of nodes for sets and lists should be skipped.
      */
     public static final boolean SKIP_COLLECTION_VISUALIZATION = true;
 
     private static int visualizationDepth = 5;
-    private static String lastPlantumlDiagram = "";
+    private static String lastPlantUMLDiagram = "";
 
     public static int getVisualizationDepth() {
         return visualizationDepth;
@@ -21,10 +23,18 @@ public class SharedState {
     }
 
     public static String getLastPlantUMLDiagram() {
-        return lastPlantumlDiagram;
+        return lastPlantUMLDiagram;
     }
 
     public static void setLastPlantUMLDiagram(final String diagram) {
-        lastPlantumlDiagram = diagram;
+        lastPlantUMLDiagram = diagram;
+    }
+
+    public static boolean isDebuggingActive() {
+        return debuggingActive;
+    }
+
+    public static void setDebuggingActive(final boolean debuggingActive) {
+        SharedState.debuggingActive = debuggingActive;
     }
 }
