@@ -1,6 +1,10 @@
 package no.hvl.tk.visual.debugger;
 
+import no.hvl.tk.visual.debugger.debugging.DebugListener;
+
 public class SharedState {
+
+
     private SharedState() {
     }
 
@@ -11,6 +15,7 @@ public class SharedState {
      */
     public static final boolean SKIP_COLLECTION_VISUALIZATION = true;
 
+    private static DebugListener debugListener;
     private static int visualizationDepth = 5;
     private static String lastPlantUMLDiagram = "";
 
@@ -36,5 +41,13 @@ public class SharedState {
 
     public static void setDebuggingActive(final boolean debuggingActive) {
         SharedState.debuggingActive = debuggingActive;
+    }
+
+    public static DebugListener getDebugListener() {
+        return debugListener;
+    }
+
+    public static void setDebugListener(final DebugListener debugListener) {
+        SharedState.debugListener = debugListener;
     }
 }

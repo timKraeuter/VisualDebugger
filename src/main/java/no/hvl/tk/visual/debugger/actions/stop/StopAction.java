@@ -9,5 +9,6 @@ public class StopAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull final AnActionEvent e) {
         SharedState.setDebuggingActive(false);
+        SharedState.getDebugListener().addActivateDebuggingButton();
     }
 }

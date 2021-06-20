@@ -34,6 +34,7 @@ public class DebugListener implements XDebugSessionListener {
     public DebugListener(final XDebugSession debugSession) {
         Objects.requireNonNull(debugSession, "Debug session must not be null.");
         this.debugSession = debugSession;
+        SharedState.setDebugListener(this);
     }
 
     @Override
@@ -43,15 +44,13 @@ public class DebugListener implements XDebugSessionListener {
 
         this.currentStackFrame = this.debugSession.getCurrentStackFrame();
         Objects.requireNonNull(this.currentStackFrame, "Stack frame unexpectedly was null.");
-
         if (!SharedState.isDebuggingActive()) {
-            this.addActivateDebuggingButton();
             return;
         }
         this.startVisualDebugging();
     }
 
-    private void startVisualDebugging() {
+    public void startVisualDebugging() {
         final var debuggingInfoCollector = this.getDebuggingInfoVisualizer();
         final var lock = new CounterBasedLock();
         final var nodeVisualizer = new NodeDebugVisualizer(
@@ -85,6 +84,9 @@ public class DebugListener implements XDebugSessionListener {
             return;
         }
         this.userInterface = new JPanel();
+        if (!SharedState.isDebuggingActive()) {
+            this.addActivateDebuggingButton();
+        }
         final var uiContainer = new SimpleToolWindowPanel(false, true);
 
         final var actionManager = ActionManager.getInstance();
@@ -109,7 +111,7 @@ public class DebugListener implements XDebugSessionListener {
         LOGGER.debug("UI initialized!");
     }
 
-    private void addActivateDebuggingButton() {
+    public void addActivateDebuggingButton() {
         this.userInterface.removeAll();
         this.userInterface.setLayout(new FlowLayout());
 
@@ -121,7 +123,7 @@ public class DebugListener implements XDebugSessionListener {
             this.startVisualDebugging();
         });
         this.userInterface.add(activateButton);
-        
+
         this.userInterface.revalidate();
         this.userInterface.repaint();
     }

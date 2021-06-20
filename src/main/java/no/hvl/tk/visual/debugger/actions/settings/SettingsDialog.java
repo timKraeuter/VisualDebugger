@@ -38,7 +38,11 @@ public class SettingsDialog extends DialogWrapper {
     protected void doOKAction() {
         final String text = this.depthField.getText();
         try {
-            SharedState.setVisualizationDepth(Integer.parseInt(text));
+            final int newDepth = Integer.parseInt(text);
+            if (SharedState.getVisualizationDepth() != newDepth) {
+                SharedState.setVisualizationDepth(newDepth);
+                SharedState.getDebugListener().startVisualDebugging();
+            }
         } catch (final NumberFormatException e) {
             LOGGER.error(e);
         }
