@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.6.1'
+version '1.6.2'
 
 repositories {
     mavenCentral()
@@ -15,6 +15,9 @@ repositories {
 dependencies {
     // https://mvnrepository.com/artifact/net.sourceforge.plantuml/plantuml
     implementation group: 'net.sourceforge.plantuml', name: 'plantuml', version: '1.2021.5'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
@@ -26,7 +29,7 @@ intellij {
     plugins = ['com.intellij.java']
 }
 patchPluginXml {
-    changeNotes """Plugin does not start automatically now. Now, it can be turned on and off."""
+    changeNotes """Plugin does not start automatically now. It can be turned on and off. Minor stability fixes implemented."""
 }
 test {
     useJUnitPlatform()

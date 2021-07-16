@@ -32,6 +32,7 @@ class DebuggingScenariosTest {
         final boolean aBoolean1 = true;
         final Boolean aBoolean2 = true;
         final String aString = "8";
+        final String nullString = null;
         System.out.println("Put your breakpoint here");
     }
 
@@ -190,7 +191,7 @@ class DebuggingScenariosTest {
             this.name = "some name";
         }
 
-        public Cycle(String name) {
+        public Cycle(final String name) {
             this.name = name;
         }
     }
@@ -229,10 +230,10 @@ class DebuggingScenariosTest {
 
     @Test
     void testVisualisationDepth() {
-        Cycle root = new Cycle();
+        final Cycle root = new Cycle();
         Cycle parent = root;
         for (int i = 1; i <= 100; i++) {
-            Cycle child = new Cycle(String.valueOf(i));
+            final Cycle child = new Cycle(String.valueOf(i));
             parent.next = child;
             parent = child;
         }

@@ -1,5 +1,6 @@
 package no.hvl.tk.visual.debugger.domain;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class ODPrimitiveRootValue implements Comparable<ODPrimitiveRootValue> {
@@ -14,24 +15,25 @@ public class ODPrimitiveRootValue implements Comparable<ODPrimitiveRootValue> {
     }
 
     public String getVariableName() {
-        return variableName;
+        return this.variableName;
     }
 
     public String getType() {
-        return type;
+        return this.type;
     }
 
     public String getValue() {
-        return value;
+        return this.value;
     }
 
     @Override
-    public int compareTo(@NotNull ODPrimitiveRootValue other) {
+    public int compareTo(@NotNull final ODPrimitiveRootValue other) {
         final int varNameComparison = this.getVariableName().compareTo(other.getVariableName());
         if (varNameComparison != 0) {
             return varNameComparison;
         }
-        final int valueComparison = this.getValue().compareTo(other.getValue());
+        // Null-safe since values could be null.
+        final int valueComparison = StringUtils.compare(this.getValue(), other.getValue());
         if (valueComparison != 0) {
             return valueComparison;
         }
