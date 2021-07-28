@@ -8,6 +8,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.xdebugger.frame.*;
 import com.intellij.xdebugger.frame.presentation.XValuePresentation;
+import com.jetbrains.jdi.ArrayReferenceImpl;
 import com.jetbrains.jdi.ObjectReferenceImpl;
 import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
@@ -148,7 +149,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
                         if (calculatedValue instanceof ObjectReferenceImpl) {
                             final ObjectReferenceImpl obRef = (ObjectReferenceImpl) calculatedValue;
                             final int fieldSize = obRef.referenceType().allFields().size();
-                            if (fieldSize == 0 || !hasChildren) {
+                            if ((fieldSize == 0 || !hasChildren) && this.isNotArray(obRef)) {
                                 NodeDebugVisualizer.this.lock.decreaseCounter();
                             }
                         }
@@ -156,6 +157,10 @@ public class NodeDebugVisualizer implements XCompositeNode {
                         NodeDebugVisualizer.LOGGER.error(e);
                         throw new EvaluateRuntimeException(e);
                     }
+                }
+
+                private boolean isNotArray(final ObjectReferenceImpl obRef) {
+                    return !(obRef instanceof ArrayReferenceImpl);
                 }
             }, XValuePlace.TREE);
         }

@@ -33,6 +33,8 @@ class DebuggingScenariosTest {
         final Boolean aBoolean2 = true;
         final String aString = "8";
         final String nullString = null;
+        final String[] stringArray = {"1", "2", "3"};
+        final int[] intArray = {1, 2, 3};
         System.out.println("Put your breakpoint here");
     }
 
