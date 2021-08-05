@@ -46,6 +46,13 @@
                     description="Stop the visual debugger"
                     icon="/icons/stop.svg"
             />
+            <action
+                    id="VisualDebugger.StartServer"
+                    class="no.hvl.tk.visual.debugger.actions.websocket.startServer.StartServerAction"
+                    text="Start Server"
+                    description="Start the Server"
+                    icon="/icons/play.svg"
+            />
         </group>
     </actions>
 
