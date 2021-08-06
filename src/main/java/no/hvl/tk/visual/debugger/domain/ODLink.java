@@ -1,6 +1,7 @@
 package no.hvl.tk.visual.debugger.domain;
 
 import com.google.common.base.Objects;
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlID;
 import jakarta.xml.bind.annotation.XmlIDREF;
 import org.jetbrains.annotations.NotNull;
@@ -18,11 +19,12 @@ public class ODLink implements Comparable<ODLink> {
     /**
      * Name of the association this link is typed in.
      */
+    @XmlElement
     private final String type;
 
     @XmlIDREF
     private final ODObject from;
-    
+
     @XmlIDREF
     private final ODObject to;
 

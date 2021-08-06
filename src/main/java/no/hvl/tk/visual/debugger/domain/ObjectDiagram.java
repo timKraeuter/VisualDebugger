@@ -1,5 +1,6 @@
 package no.hvl.tk.visual.debugger.domain;
 
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.util.Collections;
@@ -8,8 +9,11 @@ import java.util.Set;
 
 @XmlRootElement
 public class ObjectDiagram {
+    @XmlElement
     private final Set<ODObject> objects;
+    @XmlElement
     public final Set<ODLink> links;
+    @XmlElement
     private final Set<ODPrimitiveRootValue> primitiveRootValues;
 
     public ObjectDiagram() {

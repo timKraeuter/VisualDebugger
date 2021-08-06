@@ -1,6 +1,7 @@
 package no.hvl.tk.visual.debugger.domain;
 
 import com.google.common.base.Objects;
+import jakarta.xml.bind.annotation.XmlElement;
 
 import java.util.StringJoiner;
 
@@ -8,9 +9,11 @@ import java.util.StringJoiner;
  * Represent the attribute value of an object in an object diagram.
  */
 public class ODAttributeValue {
-
+    @XmlElement
     private final String attributeName;
+    @XmlElement
     private final String attributeType;
+    @XmlElement
     private final String attributeValue;
 
     public ODAttributeValue(final String attributeName, final String attributeType, final String attributeValue) {
