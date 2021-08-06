@@ -48,10 +48,17 @@
             />
             <action
                     id="VisualDebugger.StartServer"
-                    class="no.hvl.tk.visual.debugger.actions.websocket.startServer.StartServerAction"
+                    class="no.hvl.tk.visual.debugger.actions.websocket.StartServerAction"
                     text="Start Server"
                     description="Start the Server"
                     icon="/icons/play.svg"
+            />
+            <action
+                    id="VisualDebugger.StopServer"
+                    class="no.hvl.tk.visual.debugger.actions.websocket.StopServerAction"
+                    text="Stop Server"
+                    description="Stop the Server"
+                    icon="/icons/stop2.svg"
             />
         </group>
     </actions>

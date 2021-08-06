@@ -23,7 +23,9 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
 
     @Override
     public DebuggingInfoVisualizer addLinkToObject(final ODObject from, final ODObject to, final String linkType) {
-        from.addLink(new ODLink(from, to, linkType));
+        final ODLink linkToAdd = new ODLink(from, to, linkType);
+        from.addLink(linkToAdd);
+        this.diagram.addLink(linkToAdd);
         return this;
     }
 

@@ -8,7 +8,6 @@ import java.util.StringJoiner;
  * Represent the attribute value of an object in an object diagram.
  */
 public class ODAttributeValue {
-    // Maybe add type here
 
     private final String attributeName;
     private final String attributeType;

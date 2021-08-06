@@ -1,5 +1,7 @@
 package no.hvl.tk.visual.debugger.domain;
 
+import jakarta.xml.bind.annotation.XmlID;
+import jakarta.xml.bind.annotation.XmlIDREF;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -22,6 +24,7 @@ public class ODObject implements Comparable<ODObject> {
     /**
      * All links coming from this object.
      */
+    @XmlIDREF
     private final Set<ODLink> links;
 
     public ODObject(final long id, final String type, final String variableName) {
@@ -98,5 +101,10 @@ public class ODObject implements Comparable<ODObject> {
     @Override
     public int hashCode() {
         return Long.hashCode(this.id);
+    }
+
+    @XmlID
+    public String getId() {
+        return Long.toString(this.id);
     }
 }

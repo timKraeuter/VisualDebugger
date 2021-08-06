@@ -1,31 +1,40 @@
 package no.hvl.tk.visual.debugger.domain;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+@XmlRootElement
 public class ObjectDiagram {
     private final Set<ODObject> objects;
+    public final Set<ODLink> links;
     private final Set<ODPrimitiveRootValue> primitiveRootValues;
 
     public ObjectDiagram() {
         this.objects = new HashSet<>();
+        this.links = new HashSet<>();
         this.primitiveRootValues = new HashSet<>();
     }
 
     public Set<ODObject> getObjects() {
-        return Collections.unmodifiableSet(objects);
+        return Collections.unmodifiableSet(this.objects);
     }
 
     public Set<ODPrimitiveRootValue> getPrimitiveRootValues() {
-        return Collections.unmodifiableSet(primitiveRootValues);
+        return Collections.unmodifiableSet(this.primitiveRootValues);
     }
 
-    public void addObject(ODObject obj) {
+    public void addObject(final ODObject obj) {
         this.objects.add(obj);
     }
 
-    public void addPrimitiveRootValue(ODPrimitiveRootValue primitiveRootValue) {
+    public void addLink(final ODLink link) {
+        this.links.add(link);
+    }
+
+    public void addPrimitiveRootValue(final ODPrimitiveRootValue primitiveRootValue) {
         this.primitiveRootValues.add(primitiveRootValue);
     }
 }

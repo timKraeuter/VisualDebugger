@@ -5,42 +5,27 @@ import jakarta.websocket.OnMessage;
 import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
-
-import java.io.IOException;
+import no.hvl.tk.visual.debugger.SharedState;
 
 @ServerEndpoint("/socket")
 public class WebSocketEndpoint {
-    // one gets one instance of this class per connection.
-
-    private Session client;
+    // One gets one instance of this class per session/client.
 
     @OnOpen
-    public void onOpen(final Session session) {
+    public static void onOpen(final Session session) {
         System.out.println("Session open. ID: " + session.getId());
-        this.client = session;
+        SharedState.addWebsocketClient(session);
     }
 
     @OnClose
-    public void onClose(final Session session) {
+    public static void onClose(final Session session) {
         System.out.println("Session closed. ID: " + session.getId());
-        this.client = null;
+        SharedState.removeWebsocketClient(session);
     }
 
     @OnMessage
-    public String handleTextMessage(final String message) {
+    public static String handleTextMessage(final String message) {
         System.out.println("New Text Message Received: " + message);
-        // Send additional message to test websocket
-        this.sendMessageToClient(message);
         return "test";
-    }
-
-    private void sendMessageToClient(final String message) {
-        if (this.client != null) {
-            try {
-                this.client.getBasicRemote().sendText(message);
-            } catch (final IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 }

@@ -1,24 +1,33 @@
 package no.hvl.tk.visual.debugger.domain;
 
 import com.google.common.base.Objects;
+import jakarta.xml.bind.annotation.XmlID;
+import jakarta.xml.bind.annotation.XmlIDREF;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.StringJoiner;
+import java.util.UUID;
 
 /**
  * Represents a link in an object diagram.
  */
 public class ODLink implements Comparable<ODLink> {
+    @XmlID
+    public final String id;
 
     /**
      * Name of the association this link is typed in.
      */
     private final String type;
 
+    @XmlIDREF
     private final ODObject from;
+    
+    @XmlIDREF
     private final ODObject to;
 
     public ODLink(final ODObject from, final ODObject to, final String type) {
+        this.id = UUID.randomUUID().toString();
         this.from = from;
         this.to = to;
         this.type = type;
