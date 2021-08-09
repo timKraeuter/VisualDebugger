@@ -31,16 +31,8 @@ class DiagramToXMLConverterTest {
 
         assertThat(xml, is("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
                 "<objectDiagram>\n" +
-                "    <primitiveRootValues>\n" +
-                "        <variableName>varName1</variableName>\n" +
-                "        <type>varType1</type>\n" +
-                "        <value>varValue1</value>\n" +
-                "    </primitiveRootValues>\n" +
-                "    <primitiveRootValues>\n" +
-                "        <variableName>varName2</variableName>\n" +
-                "        <type>varType2</type>\n" +
-                "        <value>varValue2</value>\n" +
-                "    </primitiveRootValues>\n" +
+                "    <primitiveRootValues variableName=\"varName1\" type=\"varType1\" value=\"varValue1\"/>\n" +
+                "    <primitiveRootValues variableName=\"varName2\" type=\"varType2\" value=\"varValue2\"/>\n" +
                 "</objectDiagram>\n"));
     }
 
@@ -55,15 +47,8 @@ class DiagramToXMLConverterTest {
 
         assertThat(xml, is("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
                 "<objectDiagram>\n" +
-                "    <objects>\n" +
-                "        <type>type</type>\n" +
-                "        <variableName>varName</variableName>\n" +
-                "        <attributeValues>\n" +
-                "            <attributeName>attrName</attributeName>\n" +
-                "            <attributeType>attrType</attributeType>\n" +
-                "            <attributeValue>attrValue</attributeValue>\n" +
-                "        </attributeValues>\n" +
-                "        <id>1</id>\n" +
+                "    <objects type=\"type\" variableName=\"varName\" id=\"1\">\n" +
+                "        <attributeValues attributeName=\"attrName\" attributeType=\"attrType\" attributeValue=\"attrValue\"/>\n" +
                 "    </objects>\n" +
                 "</objectDiagram>\n"));
     }
@@ -87,28 +72,10 @@ class DiagramToXMLConverterTest {
 
         assertThat(xml, is("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
                 "<objectDiagram>\n" +
-                "    <objects>\n" +
-                "        <type>type1</type>\n" +
-                "        <variableName>varName1</variableName>\n" +
-                "        <id>1</id>\n" +
-                "    </objects>\n" +
-                "    <objects>\n" +
-                "        <type>type2</type>\n" +
-                "        <variableName>varName2</variableName>\n" +
-                "        <id>2</id>\n" +
-                "    </objects>\n" +
-                "    <links>\n" +
-                "        <id>00000000-0000-0001-0000-000000000001</id>\n" +
-                "        <type>friend</type>\n" +
-                "        <from>1</from>\n" +
-                "        <to>2</to>\n" +
-                "    </links>\n" +
-                "    <links>\n" +
-                "        <id>00000000-0000-0001-0000-000000000001</id>\n" +
-                "        <type>enemy</type>\n" +
-                "        <from>2</from>\n" +
-                "        <to>1</to>\n" +
-                "    </links>\n" +
+                "    <objects type=\"type1\" variableName=\"varName1\" id=\"1\"/>\n" +
+                "    <objects type=\"type2\" variableName=\"varName2\" id=\"2\"/>\n" +
+                "    <links id=\"00000000-0000-0001-0000-000000000001\" type=\"friend\" from=\"1\" to=\"2\"/>\n" +
+                "    <links id=\"00000000-0000-0001-0000-000000000001\" type=\"enemy\" from=\"2\" to=\"1\"/>\n" +
                 "</objectDiagram>\n"));
     }
 }

@@ -1,5 +1,6 @@
 package no.hvl.tk.visual.debugger.domain;
 
+import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlID;
 import jakarta.xml.bind.annotation.XmlIDREF;
@@ -14,9 +15,9 @@ public class ODObject implements Comparable<ODObject> {
 
     private final long id;
 
-    @XmlElement
+    @XmlAttribute
     private final String type;
-    @XmlElement
+    @XmlAttribute
     private final String variableName;
 
     /**
@@ -108,6 +109,7 @@ public class ODObject implements Comparable<ODObject> {
     }
 
     @XmlID
+    @XmlAttribute
     public String getId() {
         return Long.toString(this.id);
     }
