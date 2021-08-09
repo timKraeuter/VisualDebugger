@@ -1,6 +1,8 @@
 package no.hvl.tk.visual.debugger.debugging.visualization;
 
+import com.intellij.debugger.engine.JavaValue;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.Pair;
 import com.intellij.ui.components.JBScrollPane;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
@@ -28,6 +30,11 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
     public PlantUmlDebuggingVisualizer(final JPanel jPanel) {
         this.pluginUI = jPanel;
+    }
+
+    @Override
+    public Pair<ODObject, JavaValue> getDebugNodeAndObjectForObjectId(final String objectId) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -205,5 +212,10 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
             reader.outputImage(outputStream, new FileFormatOption(format));
             return outputStream.toByteArray();
         }
+    }
+
+    @Override
+    protected void handleObjectAndJavaValue(final ODObject object, final JavaValue jValue) {
+        // NOOP
     }
 }

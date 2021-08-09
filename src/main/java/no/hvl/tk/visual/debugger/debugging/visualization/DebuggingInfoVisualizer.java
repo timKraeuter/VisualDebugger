@@ -1,10 +1,14 @@
 package no.hvl.tk.visual.debugger.debugging.visualization;
 
+import com.intellij.debugger.engine.JavaValue;
+import com.intellij.openapi.util.Pair;
 import no.hvl.tk.visual.debugger.domain.ODObject;
 
 public interface DebuggingInfoVisualizer {
 
-    DebuggingInfoVisualizer addObject(ODObject object);
+    DebuggingInfoVisualizer addObjectAndCorrespondingDebugNode(ODObject object, JavaValue jValue);
+
+    Pair<ODObject, JavaValue> getDebugNodeAndObjectForObjectId(String objectId);
 
     DebuggingInfoVisualizer addAttributeToObject(ODObject object, String fieldName, String fieldValue, String fieldType);
 

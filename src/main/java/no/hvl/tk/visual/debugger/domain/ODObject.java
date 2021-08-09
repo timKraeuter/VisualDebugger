@@ -22,6 +22,7 @@ public class ODObject implements Comparable<ODObject> {
     /**
      * All attributes of this object.
      */
+    @XmlElement
     private final Set<ODAttributeValue> attributeValues;
 
     /**

@@ -4,7 +4,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @XmlRootElement
@@ -17,9 +17,9 @@ public class ObjectDiagram {
     private final Set<ODPrimitiveRootValue> primitiveRootValues;
 
     public ObjectDiagram() {
-        this.objects = new HashSet<>();
-        this.links = new HashSet<>();
-        this.primitiveRootValues = new HashSet<>();
+        this.objects = new LinkedHashSet<>();
+        this.links = new LinkedHashSet<>();
+        this.primitiveRootValues = new LinkedHashSet<>();
     }
 
     public Set<ODObject> getObjects() {

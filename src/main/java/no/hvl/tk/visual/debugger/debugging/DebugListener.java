@@ -67,7 +67,7 @@ public class DebugListener implements XDebugSessionListener {
     }
 
     @NotNull
-    private DebuggingInfoVisualizer getDebuggingInfoVisualizer() {
+    public DebuggingInfoVisualizer getDebuggingInfoVisualizer() {
         if (this.debuggingVisualizer == null) {
             this.debuggingVisualizer = new WebSocketDebuggingVisualizer();
         }

@@ -1,5 +1,6 @@
 package no.hvl.tk.visual.debugger.webAPI;
 
+import no.hvl.tk.visual.debugger.webAPI.endpoint.WebSocketEndpoint;
 import org.glassfish.tyrus.server.Server;
 
 import java.util.HashMap;
