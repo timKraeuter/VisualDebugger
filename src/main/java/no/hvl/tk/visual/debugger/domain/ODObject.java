@@ -23,13 +23,14 @@ public class ODObject implements Comparable<ODObject> {
     /**
      * All attributes of this object.
      */
-    @XmlElement
+    @XmlElement(name = "attributeValue")
     private final Set<ODAttributeValue> attributeValues;
 
     /**
      * All links coming from this object.
      */
     @XmlIDREF
+    @XmlElement(name = "link")
     private final Set<ODLink> links;
 
     public ODObject(final long id, final String type, final String variableName) {

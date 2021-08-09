@@ -9,11 +9,11 @@ import java.util.Set;
 
 @XmlRootElement
 public class ObjectDiagram {
-    @XmlElement
+    @XmlElement(name = "object")
     private final Set<ODObject> objects;
-    @XmlElement
+    @XmlElement(name = "link")
     public final Set<ODLink> links;
-    @XmlElement
+    @XmlElement(name = "primitiveRootValue")
     private final Set<ODPrimitiveRootValue> primitiveRootValues;
 
     public ObjectDiagram() {
