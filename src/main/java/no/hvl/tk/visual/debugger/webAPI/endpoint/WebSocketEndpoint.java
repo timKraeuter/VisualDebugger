@@ -15,7 +15,7 @@ import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer
 import no.hvl.tk.visual.debugger.domain.ODObject;
 import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
 
-@ServerEndpoint("/socket")
+@ServerEndpoint("/debug")
 public class WebSocketEndpoint {
     // One gets one instance of this class per session/client.
 

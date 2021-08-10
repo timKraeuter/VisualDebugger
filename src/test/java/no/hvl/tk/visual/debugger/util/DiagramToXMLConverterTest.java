@@ -18,7 +18,8 @@ class DiagramToXMLConverterTest {
 
         final String xml = DiagramToXMLConverter.toXml(empty);
 
-        assertThat(xml, is("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<objectDiagram/>\n"));
+        assertThat(xml, is("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                "<db:objectDiagram xmlns:db=\"http://tk/schema/db\"/>\n"));
     }
 
     @Test
@@ -30,10 +31,10 @@ class DiagramToXMLConverterTest {
         final String xml = DiagramToXMLConverter.toXml(diagram);
 
         assertThat(xml, is("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-                "<objectDiagram>\n" +
-                "    <primitiveRootValue variableName=\"varName1\" type=\"varType1\" value=\"varValue1\"/>\n" +
-                "    <primitiveRootValue variableName=\"varName2\" type=\"varType2\" value=\"varValue2\"/>\n" +
-                "</objectDiagram>\n"));
+                "<db:objectDiagram xmlns:db=\"http://tk/schema/db\">\n" +
+                "    <db:primitiveRootValue variableName=\"varName1\" type=\"varType1\" value=\"varValue1\"/>\n" +
+                "    <db:primitiveRootValue variableName=\"varName2\" type=\"varType2\" value=\"varValue2\"/>\n" +
+                "</db:objectDiagram>\n"));
     }
 
     @Test
@@ -46,11 +47,11 @@ class DiagramToXMLConverterTest {
         final String xml = DiagramToXMLConverter.toXml(diagram);
 
         assertThat(xml, is("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-                "<objectDiagram>\n" +
-                "    <object type=\"type\" variableName=\"varName\" id=\"1\">\n" +
-                "        <attributeValue attributeName=\"attrName\" attributeType=\"attrType\" attributeValue=\"attrValue\"/>\n" +
-                "    </object>\n" +
-                "</objectDiagram>\n"));
+                "<db:objectDiagram xmlns:db=\"http://tk/schema/db\">\n" +
+                "    <db:object type=\"type\" variableName=\"varName\" id=\"1\">\n" +
+                "        <db:attributeValue attributeName=\"attrName\" attributeType=\"attrType\" attributeValue=\"attrValue\"/>\n" +
+                "    </db:object>\n" +
+                "</db:objectDiagram>\n"));
     }
 
     @Test
@@ -71,11 +72,11 @@ class DiagramToXMLConverterTest {
         final String xml = DiagramToXMLConverter.toXml(diagram);
 
         assertThat(xml, is("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-                "<objectDiagram>\n" +
-                "    <object type=\"type1\" variableName=\"varName1\" id=\"1\"/>\n" +
-                "    <object type=\"type2\" variableName=\"varName2\" id=\"2\"/>\n" +
-                "    <link id=\"00000000-0000-0001-0000-000000000001\" type=\"friend\" from=\"1\" to=\"2\"/>\n" +
-                "    <link id=\"00000000-0000-0001-0000-000000000001\" type=\"enemy\" from=\"2\" to=\"1\"/>\n" +
-                "</objectDiagram>\n"));
+                "<db:objectDiagram xmlns:db=\"http://tk/schema/db\">\n" +
+                "    <db:object type=\"type1\" variableName=\"varName1\" id=\"1\"/>\n" +
+                "    <db:object type=\"type2\" variableName=\"varName2\" id=\"2\"/>\n" +
+                "    <db:link id=\"00000000-0000-0001-0000-000000000001\" type=\"friend\" from=\"1\" to=\"2\"/>\n" +
+                "    <db:link id=\"00000000-0000-0001-0000-000000000001\" type=\"enemy\" from=\"2\" to=\"1\"/>\n" +
+                "</db:objectDiagram>\n"));
     }
 }
