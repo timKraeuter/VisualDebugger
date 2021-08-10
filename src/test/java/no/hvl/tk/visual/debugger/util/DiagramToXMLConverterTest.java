@@ -48,8 +48,8 @@ class DiagramToXMLConverterTest {
 
         assertThat(xml, is("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
                 "<db:objectDiagram xmlns:db=\"http://tk/schema/db\">\n" +
-                "    <db:object type=\"type\" variableName=\"varName\" id=\"1\">\n" +
-                "        <db:attributeValue attributeName=\"attrName\" attributeType=\"attrType\" attributeValue=\"attrValue\"/>\n" +
+                "    <db:object type=\"type\" variableName=\"varName\" id=\"Object_1\">\n" +
+                "        <db:attributeValue name=\"attrName\" type=\"attrType\" value=\"attrValue\"/>\n" +
                 "    </db:object>\n" +
                 "</db:objectDiagram>\n"));
     }
@@ -73,10 +73,10 @@ class DiagramToXMLConverterTest {
 
         assertThat(xml, is("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
                 "<db:objectDiagram xmlns:db=\"http://tk/schema/db\">\n" +
-                "    <db:object type=\"type1\" variableName=\"varName1\" id=\"1\"/>\n" +
-                "    <db:object type=\"type2\" variableName=\"varName2\" id=\"2\"/>\n" +
-                "    <db:link id=\"00000000-0000-0001-0000-000000000001\" type=\"friend\" from=\"1\" to=\"2\"/>\n" +
-                "    <db:link id=\"00000000-0000-0001-0000-000000000001\" type=\"enemy\" from=\"2\" to=\"1\"/>\n" +
+                "    <db:object type=\"type1\" variableName=\"varName1\" id=\"Object_1\"/>\n" +
+                "    <db:object type=\"type2\" variableName=\"varName2\" id=\"Object_2\"/>\n" +
+                "    <db:link id=\"Link_00000000-0000-0001-0000-000000000001\" type=\"friend\" from=\"Object_1\" to=\"Object_2\"/>\n" +
+                "    <db:link id=\"Link_00000000-0000-0001-0000-000000000001\" type=\"enemy\" from=\"Object_2\" to=\"Object_1\"/>\n" +
                 "</db:objectDiagram>\n"));
     }
 }

@@ -144,12 +144,12 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                 stringBuilder.append(" {\n");
                 object.getAttributeValues().stream()
                       // Sort so that objects with the same type have the same order of attributes
-                      .sorted(Comparator.comparing(ODAttributeValue::getAttributeName))
+                      .sorted(Comparator.comparing(ODAttributeValue::getName))
                       .forEach(odAttributeValue -> stringBuilder.append(
                               String.format(
                                       "%s=%s%n",
-                                      odAttributeValue.getAttributeName(),
-                                      odAttributeValue.getAttributeValue())));
+                                      odAttributeValue.getName(),
+                                      odAttributeValue.getValue())));
                 stringBuilder.append("}\n");
             } else {
                 stringBuilder.append("\n");
@@ -177,8 +177,8 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                   if (key.isPresent() && value.isPresent()) {
                       stringBuilder.append(
                               String.format("%s => %s%n",
-                                      key.get().getAttributeValue(),
-                                      value.get().getAttributeValue()));
+                                      key.get().getValue(),
+                                      value.get().getValue()));
                   }
               });
 

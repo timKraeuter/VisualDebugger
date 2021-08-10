@@ -11,33 +11,33 @@ import java.util.StringJoiner;
 public class ODAttributeValue {
 
     @XmlAttribute
-    private final String attributeName;
+    private final String name;
     @XmlAttribute
-    private final String attributeType;
+    private final String type;
     @XmlAttribute
-    private final String attributeValue;
+    private final String value;
 
-    public ODAttributeValue(final String attributeName, final String attributeType, final String attributeValue) {
-        this.attributeName = attributeName;
-        this.attributeType = attributeType;
-        this.attributeValue = attributeValue;
+    public ODAttributeValue(final String attributeName, final String type, final String value) {
+        this.name = attributeName;
+        this.type = type;
+        this.value = value;
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", "Attribute:[", "]")
-                .add("name='" + this.attributeName + "'")
-                .add("type='" + this.attributeType + "'")
-                .add("value='" + this.attributeValue + "'")
+                .add("name='" + this.name + "'")
+                .add("type='" + this.type + "'")
+                .add("value='" + this.value + "'")
                 .toString();
     }
 
-    public String getAttributeName() {
-        return this.attributeName;
+    public String getName() {
+        return this.name;
     }
 
-    public String getAttributeValue() {
-        return this.attributeValue;
+    public String getValue() {
+        return this.value;
     }
 
     @Override
@@ -49,11 +49,11 @@ public class ODAttributeValue {
             return false;
         }
         final ODAttributeValue that = (ODAttributeValue) o;
-        return Objects.equal(this.attributeName, that.attributeName) && Objects.equal(this.attributeType, that.attributeType) && Objects.equal(this.attributeValue, that.attributeValue);
+        return Objects.equal(this.name, that.name) && Objects.equal(this.type, that.type) && Objects.equal(this.value, that.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.attributeName, this.attributeType, this.attributeValue);
+        return Objects.hashCode(this.name, this.type, this.value);
     }
 }

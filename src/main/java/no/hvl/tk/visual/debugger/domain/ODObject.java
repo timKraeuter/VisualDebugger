@@ -73,7 +73,7 @@ public class ODObject implements Comparable<ODObject> {
 
     public Optional<ODAttributeValue> getAttributeByName(final String attributeName) {
         return this.attributeValues.stream()
-                                   .filter(odAttributeValue -> odAttributeValue.getAttributeName().equals(attributeName))
+                                   .filter(odAttributeValue -> odAttributeValue.getName().equals(attributeName))
                                    .findFirst();
     }
 
@@ -112,6 +112,6 @@ public class ODObject implements Comparable<ODObject> {
     @XmlID
     @XmlAttribute
     public String getId() {
-        return Long.toString(this.id);
+        return "Object_" + this.id;
     }
 }

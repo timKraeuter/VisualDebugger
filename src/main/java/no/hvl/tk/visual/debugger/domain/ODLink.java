@@ -32,7 +32,7 @@ public class ODLink implements Comparable<ODLink> {
     private final ODObject to;
 
     public ODLink(final ODObject from, final ODObject to, final String type) {
-        this.id = UUID.randomUUID().toString();
+        this.id = "Link_" + UUID.randomUUID();
         this.from = from;
         this.to = to;
         this.type = type;
