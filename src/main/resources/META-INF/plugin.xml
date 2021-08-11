@@ -28,8 +28,8 @@
             <action
                     id="VisualDebugger.SettingsAction"
                     class="no.hvl.tk.visual.debugger.actions.settings.SettingsAction"
-                    text="Settings"
-                    description="Change settings"
+                    text="Change Settings"
+                    description="Change the visual debugger settings"
                     icon="/icons/settings.svg"
             />
             <action
@@ -42,23 +42,9 @@
             <action
                     id="VisualDebugger.StopAction"
                     class="no.hvl.tk.visual.debugger.actions.stop.StopAction"
-                    text="Stop"
+                    text="Stop Debugger"
                     description="Stop the visual debugger"
                     icon="/icons/stop.svg"
-            />
-            <action
-                    id="VisualDebugger.StartServer"
-                    class="no.hvl.tk.visual.debugger.actions.websocket.StartServerAction"
-                    text="Start Server"
-                    description="Start the Server"
-                    icon="/icons/play.svg"
-            />
-            <action
-                    id="VisualDebugger.StopServer"
-                    class="no.hvl.tk.visual.debugger.actions.websocket.StopServerAction"
-                    text="Stop Server"
-                    description="Stop the Server"
-                    icon="/icons/stop2.svg"
             />
         </group>
     </actions>

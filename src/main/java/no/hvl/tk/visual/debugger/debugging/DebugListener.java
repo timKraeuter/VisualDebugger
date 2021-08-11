@@ -15,6 +15,9 @@ import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.WebSocketDebuggingVisualizer;
+import no.hvl.tk.visual.debugger.util.ClassloaderUtil;
+import no.hvl.tk.visual.debugger.webAPI.WebSocketServer;
+import org.glassfish.tyrus.server.Server;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -117,6 +120,8 @@ public class DebugListener implements XDebugSessionListener {
 
         final var activateButton = new JButton("Activate visual debugger");
         activateButton.addActionListener(actionEvent -> {
+            DebugListener.startDebuggingWebsocketServer();
+            
             SharedState.setDebuggingActive(true);
             DebugListener.this.userInterface.remove(activateButton);
             this.userInterface.revalidate();
@@ -126,5 +131,13 @@ public class DebugListener implements XDebugSessionListener {
 
         this.userInterface.revalidate();
         this.userInterface.repaint();
+    }
+
+    private static void startDebuggingWebsocketServer() {
+        ClassloaderUtil.runWithContextClassloader(() -> {
+            final Server server = WebSocketServer.runServer();
+            SharedState.setServer(server);
+            return null; // needed because of generic method.
+        });
     }
 }
