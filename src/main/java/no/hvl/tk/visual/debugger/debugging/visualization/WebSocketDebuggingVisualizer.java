@@ -5,6 +5,7 @@ import com.intellij.openapi.util.Pair;
 import jakarta.websocket.Session;
 import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.domain.ODObject;
+import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
 
 import java.io.IOException;
@@ -37,6 +38,8 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
             // If one client fails no more messages are sent. We should change this.
             WebSocketDebuggingVisualizer.sendMessageToClient(clientSession, DiagramToXMLConverter.toXml(this.diagram));
         });
+        // Reset diagram
+        this.diagram = new ObjectDiagram();
     }
 
     private static void sendMessageToClient(final Session client, final String message) {
