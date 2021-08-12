@@ -15,6 +15,7 @@ import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.domain.ODObject;
 import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
+import no.hvl.tk.visual.debugger.webAPI.WebSocketServer;
 import no.hvl.tk.visual.debugger.webAPI.endpoint.message.TypedWebsocketMessage;
 import no.hvl.tk.visual.debugger.webAPI.endpoint.message.WebsocketMessageType;
 
@@ -27,6 +28,12 @@ public class WebSocketEndpoint {
     public static void onOpen(final Session session) {
         LOGGER.info(String.format("Websocket session with id \"%s\" opened.", session.getId()));
         SharedState.addWebsocketClient(session);
+
+        // Send the last diagram xml to the newly connected client.
+        final String message = new TypedWebsocketMessage(
+                WebsocketMessageType.NEXT_DEBUG_STEP,
+                SharedState.getLastDiagramXML()).serialize();
+        WebSocketServer.sendMessageToClient(session, message);
     }
 
     @OnClose

@@ -27,6 +27,7 @@ public class SharedState {
     private static DebugListener debugListener;
     private static int visualizationDepth = 5;
     private static String lastPlantUMLDiagram = "";
+    private static String diagramXML = "";
 
     public static int getVisualizationDepth() {
         return visualizationDepth;
@@ -79,4 +80,13 @@ public class SharedState {
     public static void removeWebsocketClient(final Session clientSession) {
         websocketClients.remove(clientSession);
     }
+
+    public static String getLastDiagramXML() {
+        return diagramXML;
+    }
+    
+    public static void setLastDiagramXML(final String diagramXML) {
+        SharedState.diagramXML = diagramXML;
+    }
+
 }
