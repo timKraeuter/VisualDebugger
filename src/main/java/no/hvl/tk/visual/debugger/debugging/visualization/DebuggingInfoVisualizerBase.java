@@ -33,7 +33,6 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
     @Override
     public DebuggingInfoVisualizer addObjectAndCorrespondingDebugNode(final ODObject object, final JavaValue jValue) {
         this.diagram.addObject(object);
-        // jValue not relevant since no interaction is possible with a plantUML-Diagram.
         this.handleObjectAndJavaValue(object, jValue);
         return this;
     }

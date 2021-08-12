@@ -13,6 +13,7 @@ import java.util.*;
  */
 public class ODObject implements Comparable<ODObject> {
 
+    public static final String OBJECT_ID_PREFIX = "Object_";
     private final long id;
 
     @XmlAttribute
@@ -112,6 +113,6 @@ public class ODObject implements Comparable<ODObject> {
     @XmlID
     @XmlAttribute
     public String getId() {
-        return "Object_" + this.id;
+        return OBJECT_ID_PREFIX + this.id;
     }
 }

@@ -31,7 +31,6 @@ public class WebsocketDebuggingInfoCollector extends DebuggingInfoVisualizerBase
 
     @Override
     public void finishVisualization() {
-        System.out.println("Finish visualizuation");
         // not needed should never be called.
     }
 
