@@ -15,6 +15,8 @@ import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.domain.ODObject;
 import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
+import no.hvl.tk.visual.debugger.webAPI.endpoint.message.TypedWebsocketMessage;
+import no.hvl.tk.visual.debugger.webAPI.endpoint.message.WebsocketMessageType;
 
 @ServerEndpoint("/debug")
 public class WebSocketEndpoint {
@@ -41,9 +43,13 @@ public class WebSocketEndpoint {
                                                                            .getDebuggingInfoVisualizer();
         final Pair<ODObject, JavaValue> debugNodeAndObjectForObjectId = debuggingInfoVisualizer.getDebugNodeAndObjectForObjectId(objectId);
         if (debugNodeAndObjectForObjectId != null) {
-            return loadChildren(debuggingInfoVisualizer, debugNodeAndObjectForObjectId);
+            return new TypedWebsocketMessage(
+                    WebsocketMessageType.LOAD_CHILDREN,
+                    loadChildren(debuggingInfoVisualizer, debugNodeAndObjectForObjectId)).serialize();
         }
-        return String.format("Object with id \"%s\" not found", objectId);
+        return new TypedWebsocketMessage(
+                WebsocketMessageType.ERROR,
+                String.format("Object with id \"%s\" not found", objectId)).serialize();
     }
 
     private static String loadChildren(
