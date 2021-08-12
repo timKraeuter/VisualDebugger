@@ -7,15 +7,11 @@ import jakarta.xml.bind.annotation.XmlIDREF;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.StringJoiner;
-import java.util.UUID;
 
 /**
- * Represents a link in an object diagram.
+ * Represents a link between two objects in an object diagram.
  */
 public class ODLink implements Comparable<ODLink> {
-    @XmlID
-    @XmlAttribute
-    public final String id;
 
     /**
      * Name of the association this link is typed in.
@@ -32,7 +28,6 @@ public class ODLink implements Comparable<ODLink> {
     private final ODObject to;
 
     public ODLink(final ODObject from, final ODObject to, final String type) {
-        this.id = "Link_" + UUID.randomUUID();
         this.from = from;
         this.to = to;
         this.type = type;
@@ -87,5 +82,11 @@ public class ODLink implements Comparable<ODLink> {
     @Override
     public int hashCode() {
         return Objects.hashCode(this.type, this.from, this.to);
+    }
+
+    @XmlID
+    @XmlAttribute
+    public String getId() {
+        return "Link_" + this.from.getId() + "_to_" + this.to.getId() + ":" + this.type;
     }
 }

@@ -3,12 +3,8 @@ package no.hvl.tk.visual.debugger.util;
 import no.hvl.tk.visual.debugger.domain.*;
 import org.junit.jupiter.api.Test;
 
-import java.util.UUID;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
 
 class DiagramToXMLConverterTest {
 
@@ -61,11 +57,6 @@ class DiagramToXMLConverterTest {
         final ODObject obj2 = new ODObject(2, "type2", "varName2");
         diagram.addObject(obj1);
         diagram.addObject(obj2);
-        // random UUID's have to be mocked
-        //noinspection ResultOfMethodCallIgnored
-        mockStatic(UUID.class);
-        // Set UUID's to 00000000-0000-0001-0000-000000000001
-        when(UUID.randomUUID()).thenReturn(new UUID(1, 1));
         diagram.addLink(new ODLink(obj1, obj2, "friend"));
         diagram.addLink(new ODLink(obj2, obj1, "enemy"));
 
@@ -75,8 +66,8 @@ class DiagramToXMLConverterTest {
                 "<db:objectDiagram xmlns:db=\"http://tk/schema/db\">\n" +
                 "    <db:object type=\"type1\" variableName=\"varName1\" id=\"Object_1\"/>\n" +
                 "    <db:object type=\"type2\" variableName=\"varName2\" id=\"Object_2\"/>\n" +
-                "    <db:link id=\"Link_00000000-0000-0001-0000-000000000001\" type=\"friend\" from=\"Object_1\" to=\"Object_2\"/>\n" +
-                "    <db:link id=\"Link_00000000-0000-0001-0000-000000000001\" type=\"enemy\" from=\"Object_2\" to=\"Object_1\"/>\n" +
+                "    <db:link type=\"friend\" from=\"Object_1\" to=\"Object_2\" id=\"Link_Object_1_to_Object_2:friend\"/>\n" +
+                "    <db:link type=\"enemy\" from=\"Object_2\" to=\"Object_1\" id=\"Link_Object_2_to_Object_1:enemy\"/>\n" +
                 "</db:objectDiagram>\n"));
     }
 }
