@@ -19,11 +19,12 @@ import java.util.Map;
  */
 public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
-    private final Map<String, Pair<ODObject, JavaValue>> objectIDToJValue = new HashMap<>();
+    private Map<String, Pair<ODObject, JavaValue>> objectIDToJValue = new HashMap<>();
 
     @Override
-    protected void handleObjectAndJavaValue(final ODObject object, final JavaValue jValue) {
+    public DebuggingInfoVisualizer addDebugNodeForObject(final ODObject object, final JavaValue jValue) {
         this.objectIDToJValue.put(object.getId(), Pair.create(object, jValue));
+        return null;
     }
 
     @Override
@@ -54,6 +55,14 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
             } catch (final IOException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    @Override
+    protected void preAddObject() {
+        if (this.diagram.isEmpty()) {
+            // reset debug node map.
+            this.objectIDToJValue = new HashMap<>();
         }
     }
 }

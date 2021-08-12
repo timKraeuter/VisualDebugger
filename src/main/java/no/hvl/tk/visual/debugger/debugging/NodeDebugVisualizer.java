@@ -183,7 +183,8 @@ public class NodeDebugVisualizer implements XCompositeNode {
         }
         // Normal objects
         final var object = new ODObject(objectId, typeName, variableName);
-        this.debuggingInfoCollector.addObjectAndCorrespondingDebugNode(object, jValue);
+        this.debuggingInfoCollector.addObject(object);
+        this.debuggingInfoCollector.addDebugNodeForObject(object, jValue);
         if (this.parent != null) {
             this.debuggingInfoCollector.addLinkToObject(this.parent, object, this.getLinkType(jValue));
         }

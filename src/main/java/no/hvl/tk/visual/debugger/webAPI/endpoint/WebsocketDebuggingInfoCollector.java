@@ -19,8 +19,8 @@ public class WebsocketDebuggingInfoCollector extends DebuggingInfoVisualizerBase
     }
 
     @Override
-    protected void handleObjectAndJavaValue(final ODObject id, final JavaValue jValue) {
-        this.debuggingInfoVisualizer.addObjectAndCorrespondingDebugNode(id, jValue);
+    public DebuggingInfoVisualizer addDebugNodeForObject(final ODObject object, final JavaValue jValue) {
+        return this.debuggingInfoVisualizer.addDebugNodeForObject(object, jValue);
     }
 
     @Override
@@ -36,5 +36,10 @@ public class WebsocketDebuggingInfoCollector extends DebuggingInfoVisualizerBase
 
     public ObjectDiagram getCurrentDiagram() {
         return this.diagram;
+    }
+
+    @Override
+    protected void preAddObject() {
+        // NOOP
     }
 }

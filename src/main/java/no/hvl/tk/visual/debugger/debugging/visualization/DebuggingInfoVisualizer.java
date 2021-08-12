@@ -6,7 +6,9 @@ import no.hvl.tk.visual.debugger.domain.ODObject;
 
 public interface DebuggingInfoVisualizer {
 
-    DebuggingInfoVisualizer addObjectAndCorrespondingDebugNode(ODObject object, JavaValue jValue);
+    DebuggingInfoVisualizer addObject(ODObject object);
+
+    DebuggingInfoVisualizer addDebugNodeForObject(ODObject object, JavaValue jValue);
 
     Pair<ODObject, JavaValue> getDebugNodeAndObjectForObjectId(String objectId);
 

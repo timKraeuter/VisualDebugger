@@ -41,4 +41,8 @@ public class ObjectDiagram {
     public void addPrimitiveRootValue(final ODPrimitiveRootValue primitiveRootValue) {
         this.primitiveRootValues.add(primitiveRootValue);
     }
+
+    public boolean isEmpty() {
+        return this.objects.isEmpty() && this.links.isEmpty() && this.primitiveRootValues.isEmpty();
+    }
 }

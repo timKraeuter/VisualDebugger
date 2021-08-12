@@ -33,11 +33,6 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     }
 
     @Override
-    public Pair<ODObject, JavaValue> getDebugNodeAndObjectForObjectId(final String objectId) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void finishVisualization() {
         final var plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(this.diagram);
         SharedState.setLastPlantUMLDiagram(plantUMLString);
@@ -215,7 +210,18 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     }
 
     @Override
-    protected void handleObjectAndJavaValue(final ODObject object, final JavaValue jValue) {
+    protected void preAddObject() {
         // NOOP
+    }
+
+    @Override
+    public DebuggingInfoVisualizer addDebugNodeForObject(final ODObject object, final JavaValue jValue) {
+        // NOOP
+        return this;
+    }
+
+    @Override
+    public Pair<ODObject, JavaValue> getDebugNodeAndObjectForObjectId(final String objectId) {
+        throw new UnsupportedOperationException();
     }
 }

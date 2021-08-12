@@ -60,7 +60,7 @@ public class WebSocketEndpoint {
 
         final WebsocketDebuggingInfoCollector collector = new WebsocketDebuggingInfoCollector(debuggingInfoVisualizer);
         // Add parent to object diagram.
-        collector.addObjectAndCorrespondingDebugNode(parent, debugNode);
+        collector.addObject(parent);
 
         // Load children
         final CounterBasedLock lock = new CounterBasedLock();

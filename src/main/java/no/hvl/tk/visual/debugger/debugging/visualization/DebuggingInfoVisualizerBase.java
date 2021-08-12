@@ -1,6 +1,5 @@
 package no.hvl.tk.visual.debugger.debugging.visualization;
 
-import com.intellij.debugger.engine.JavaValue;
 import no.hvl.tk.visual.debugger.domain.*;
 
 public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisualizer {
@@ -31,11 +30,11 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
     }
 
     @Override
-    public DebuggingInfoVisualizer addObjectAndCorrespondingDebugNode(final ODObject object, final JavaValue jValue) {
+    public DebuggingInfoVisualizer addObject(final ODObject object) {
+        this.preAddObject();
         this.diagram.addObject(object);
-        this.handleObjectAndJavaValue(object, jValue);
         return this;
     }
 
-    protected abstract void handleObjectAndJavaValue(ODObject id, JavaValue jValue);
+    protected abstract void preAddObject();
 }
