@@ -15,6 +15,7 @@ import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
+import no.hvl.tk.visual.debugger.settings.AppSettingsState;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -44,18 +45,18 @@ public class DebugListener implements XDebugSessionListener {
 
         this.currentStackFrame = this.debugSession.getCurrentStackFrame();
         Objects.requireNonNull(this.currentStackFrame, "Stack frame unexpectedly was null.");
-        if (!SharedState.isDebuggingActive()) {
-            return;
-        }
         this.startVisualDebugging();
     }
 
     public void startVisualDebugging() {
+        if (!SharedState.isDebuggingActive()) {
+            return;
+        }
         final var debuggingInfoCollector = this.getDebuggingInfoVisualizer();
         final var lock = new CounterBasedLock();
         final var nodeVisualizer = new NodeDebugVisualizer(
                 debuggingInfoCollector,
-                SharedState.getVisualizationDepth(),
+                AppSettingsState.getInstance().visualisationDepth,
                 lock);
         // Happens in a different thread!
         this.currentStackFrame.computeChildren(nodeVisualizer);
