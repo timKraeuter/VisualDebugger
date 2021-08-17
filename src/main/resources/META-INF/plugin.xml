@@ -50,9 +50,9 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationConfigurable parentId="tools"
-                                 instance="no.hvl.tk.visual.debugger.settings.VisualDebuggerSettingsConfigurable"
-                                 id="no.hvl.tk.visualDebugger.settings" displayName="Visual Debugger Settings"/>
+        <projectConfigurable parentId="tools"
+                             instance="no.hvl.tk.visual.debugger.settings.VisualDebuggerSettingsConfigurable"
+                             id="no.hvl.tk.visualDebugger.settings" displayName="Visual Debugger Settings"/>
         <applicationService serviceImplementation="no.hvl.tk.visual.debugger.settings.AppSettingsState"/>
     </extensions>
 
