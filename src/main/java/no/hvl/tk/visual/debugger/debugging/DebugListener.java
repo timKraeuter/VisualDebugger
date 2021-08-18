@@ -15,14 +15,20 @@ import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.WebSocketDebuggingVisualizer;
-import no.hvl.tk.visual.debugger.util.ClassloaderUtil;
-import no.hvl.tk.visual.debugger.webAPI.WebSocketServer;
-import org.glassfish.tyrus.server.Server;
 import no.hvl.tk.visual.debugger.settings.AppSettingsState;
+import no.hvl.tk.visual.debugger.util.ClassloaderUtil;
+import no.hvl.tk.visual.debugger.webAPI.DebugAPIServerStarter;
+import no.hvl.tk.visual.debugger.webAPI.ServerConstants;
+import no.hvl.tk.visual.debugger.webAPI.UIServerStarter;
+import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.tyrus.server.Server;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Objects;
 
 public class DebugListener implements XDebugSessionListener {
@@ -122,9 +128,14 @@ public class DebugListener implements XDebugSessionListener {
         final var activateButton = new JButton("Activate visual debugger");
         activateButton.addActionListener(actionEvent -> {
             DebugListener.startDebuggingWebsocketServer();
+            DebugListener.startUIServer();
+            final var uiButton = new JButton(
+                    String.format("Launch user interface (%s)", ServerConstants.UI_SERVER_URL));
+            uiButton.addActionListener(e -> DebugListener.launchUIInBrowser());
 
             SharedState.setDebuggingActive(true);
-            DebugListener.this.userInterface.remove(activateButton);
+            this.userInterface.remove(activateButton);
+            this.userInterface.add(uiButton);
             this.userInterface.revalidate();
             this.startVisualDebugging();
         });
@@ -134,10 +145,37 @@ public class DebugListener implements XDebugSessionListener {
         this.userInterface.repaint();
     }
 
+    private static void launchUIInBrowser() {
+        if (Desktop.isDesktopSupported()) {
+            // Windows
+            try {
+                Desktop.getDesktop().browse(new URI(ServerConstants.UI_SERVER_URL));
+            } catch (final IOException | URISyntaxException ex) {
+                LOGGER.error(ex);
+            }
+        } else {
+            // Ubuntu
+            final Runtime runtime = Runtime.getRuntime();
+            try {
+                runtime.exec("/usr/bin/firefox -new-window " + ServerConstants.UI_SERVER_URL);
+            } catch (final IOException ex) {
+                LOGGER.error(ex);
+            }
+        }
+    }
+
     private static void startDebuggingWebsocketServer() {
         ClassloaderUtil.runWithContextClassloader(() -> {
-            final Server server = WebSocketServer.runServer();
-            SharedState.setServer(server);
+            final Server server = DebugAPIServerStarter.runNewServer();
+            SharedState.setDebugAPIServer(server);
+            return null; // needed because of generic method.
+        });
+    }
+
+    private static void startUIServer() {
+        ClassloaderUtil.runWithContextClassloader(() -> {
+            final HttpServer server = UIServerStarter.runNewServer();
+            SharedState.setUIServer(server);
             return null; // needed because of generic method.
         });
     }

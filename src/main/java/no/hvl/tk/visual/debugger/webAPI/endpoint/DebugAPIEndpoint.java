@@ -15,13 +15,13 @@ import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.domain.ODObject;
 import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
-import no.hvl.tk.visual.debugger.webAPI.WebSocketServer;
+import no.hvl.tk.visual.debugger.webAPI.DebugAPIServerStarter;
 import no.hvl.tk.visual.debugger.webAPI.endpoint.message.TypedWebsocketMessage;
 import no.hvl.tk.visual.debugger.webAPI.endpoint.message.WebsocketMessageType;
 
 @ServerEndpoint("/debug")
-public class WebSocketEndpoint {
-    private static final Logger LOGGER = Logger.getInstance(WebSocketEndpoint.class);
+public class DebugAPIEndpoint {
+    private static final Logger LOGGER = Logger.getInstance(DebugAPIEndpoint.class);
     // One gets one instance of this class per session/client.
 
     @OnOpen
@@ -33,7 +33,7 @@ public class WebSocketEndpoint {
         final String message = new TypedWebsocketMessage(
                 WebsocketMessageType.NEXT_DEBUG_STEP,
                 SharedState.getLastDiagramXML()).serialize();
-        WebSocketServer.sendMessageToClient(session, message);
+        DebugAPIServerStarter.sendMessageToClient(session, message);
     }
 
     @OnClose

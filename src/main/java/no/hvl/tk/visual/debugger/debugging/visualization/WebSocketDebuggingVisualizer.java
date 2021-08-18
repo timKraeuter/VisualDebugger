@@ -6,7 +6,7 @@ import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.domain.ODObject;
 import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
-import no.hvl.tk.visual.debugger.webAPI.WebSocketServer;
+import no.hvl.tk.visual.debugger.webAPI.DebugAPIServerStarter;
 import no.hvl.tk.visual.debugger.webAPI.endpoint.message.TypedWebsocketMessage;
 import no.hvl.tk.visual.debugger.webAPI.endpoint.message.WebsocketMessageType;
 
@@ -33,7 +33,7 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
     @Override
     public void finishVisualization() {
-        if (SharedState.getServer() == null) {
+        if (SharedState.getDebugAPIServer() == null) {
             return;
         }
         final String diagramXML = DiagramToXMLConverter.toXml(this.diagram);
@@ -43,7 +43,7 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                 diagramXML).serialize();
         SharedState.getWebsocketClients().forEach(clientSession -> {
             // If one client fails no more messages are sent. We should change this.
-            WebSocketServer.sendMessageToClient(clientSession, message);
+            DebugAPIServerStarter.sendMessageToClient(clientSession, message);
         });
         // Reset diagram
         this.diagram = new ObjectDiagram();

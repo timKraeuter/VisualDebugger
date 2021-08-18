@@ -2,6 +2,7 @@ package no.hvl.tk.visual.debugger;
 
 import jakarta.websocket.Session;
 import no.hvl.tk.visual.debugger.debugging.DebugListener;
+import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.tyrus.server.Server;
 
 import java.util.HashSet;
@@ -13,8 +14,10 @@ public class SharedState {
     private SharedState() {
     }
 
+    // UI
+    private static HttpServer uiServer;
     // Websocket related
-    private static Server server;
+    private static Server debugAPIServer;
     private static final Set<Session> websocketClients = new HashSet<>();
 
     private static boolean debuggingActive = false;
@@ -52,12 +55,12 @@ public class SharedState {
         SharedState.debugListener = debugListener;
     }
 
-    public static Server getServer() {
-        return server;
+    public static Server getDebugAPIServer() {
+        return debugAPIServer;
     }
 
-    public static void setServer(final Server server) {
-        SharedState.server = server;
+    public static void setDebugAPIServer(final Server debugAPIServer) {
+        SharedState.debugAPIServer = debugAPIServer;
     }
 
     public static Set<Session> getWebsocketClients() {
@@ -75,9 +78,16 @@ public class SharedState {
     public static String getLastDiagramXML() {
         return diagramXML;
     }
-    
+
     public static void setLastDiagramXML(final String diagramXML) {
         SharedState.diagramXML = diagramXML;
     }
 
+    public static void setUIServer(final HttpServer server) {
+        SharedState.uiServer = server;
+    }
+
+    public static HttpServer getUiServer() {
+        return uiServer;
+    }
 }
