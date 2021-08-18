@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.6.3'
+version '1.6.4'
 
 repositories {
     mavenCentral()
@@ -29,7 +29,7 @@ intellij {
     plugins = ['com.intellij.java']
 }
 patchPluginXml {
-    changeNotes """Plugin visualizes arrays correctly now."""
+    changeNotes """Plugin settings are now saved persistently."""
 }
 test {
     useJUnitPlatform()
