@@ -25,17 +25,8 @@ public class SharedState {
     public static final boolean SKIP_COLLECTION_VISUALIZATION = true;
 
     private static DebugListener debugListener;
-    private static int visualizationDepth = 5;
     private static String lastPlantUMLDiagram = "";
     private static String diagramXML = "";
-
-    public static int getVisualizationDepth() {
-        return visualizationDepth;
-    }
-
-    public static void setVisualizationDepth(final int visualizationDepth) {
-        SharedState.visualizationDepth = visualizationDepth;
-    }
 
     public static String getLastPlantUMLDiagram() {
         return lastPlantUMLDiagram;
