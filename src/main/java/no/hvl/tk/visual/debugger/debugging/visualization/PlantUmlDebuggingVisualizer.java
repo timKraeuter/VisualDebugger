@@ -46,6 +46,16 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         }
     }
 
+    @Override
+    public void debuggingActivated() {
+        // NOOP
+    }
+
+    @Override
+    public void debuggingDeactivated() {
+        // NOOP
+    }
+
     private void addImageToUI(final byte[] pngData) throws IOException {
         final var input = new ByteArrayInputStream(pngData);
         final var imageIcon = new ImageIcon(ImageIO.read(input));

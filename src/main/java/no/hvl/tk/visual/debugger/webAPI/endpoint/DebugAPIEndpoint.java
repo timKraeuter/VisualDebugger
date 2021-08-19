@@ -47,7 +47,7 @@ public class DebugAPIEndpoint {
         LOGGER.debug(String.format("New websocket message with content \"%s\" received.", objectId));
 
         final DebuggingInfoVisualizer debuggingInfoVisualizer = SharedState.getDebugListener()
-                                                                           .getDebuggingInfoVisualizer();
+                                                                           .getOrCreateDebuggingInfoVisualizer();
         final Pair<ODObject, JavaValue> debugNodeAndObjectForObjectId = debuggingInfoVisualizer.getDebugNodeAndObjectForObjectId(objectId);
         if (debugNodeAndObjectForObjectId != null) {
             return new TypedWebsocketMessage(

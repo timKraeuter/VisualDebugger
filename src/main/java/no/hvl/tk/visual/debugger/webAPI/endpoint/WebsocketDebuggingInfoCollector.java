@@ -34,6 +34,16 @@ public class WebsocketDebuggingInfoCollector extends DebuggingInfoVisualizerBase
         // not needed should never be called.
     }
 
+    @Override
+    public void debuggingActivated() {
+        // not needed should never be called.
+    }
+
+    @Override
+    public void debuggingDeactivated() {
+        // not needed should never be called.
+    }
+
     public ObjectDiagram getCurrentDiagram() {
         return this.diagram;
     }

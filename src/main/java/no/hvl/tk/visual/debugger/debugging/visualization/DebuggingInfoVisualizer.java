@@ -19,4 +19,8 @@ public interface DebuggingInfoVisualizer {
     void addPrimitiveRootValue(String variableName, String type, String value);
 
     void finishVisualization();
+
+    void debuggingActivated();
+
+    void debuggingDeactivated();
 }

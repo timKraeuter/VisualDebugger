@@ -26,9 +26,4 @@ public class DebugVisualizerListener implements XDebuggerManagerListener {
             LOGGER.info("No debugging session active but plugin was invoked.");
         }
     }
-
-    @Override
-    public void processStopped(@NotNull final XDebugProcess debugProcess) {
-        SharedState.setDebugListener(null);
-    }
 }
