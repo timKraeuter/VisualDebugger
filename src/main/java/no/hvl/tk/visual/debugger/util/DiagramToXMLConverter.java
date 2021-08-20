@@ -39,12 +39,6 @@ public class DiagramToXMLConverter {
         if (jaxbContext == null) {
             try {
                 jaxbContext = JAXBContext.newInstance(ObjectDiagram.class);
-            } catch (final JAXBException e) {
-                LOGGER.error(e);
-            }
-        }
-        if (jaxbMarshaller == null) {
-            try {
                 jaxbMarshaller = jaxbContext.createMarshaller();
                 jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             } catch (final JAXBException e) {

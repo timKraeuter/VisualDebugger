@@ -16,7 +16,7 @@ import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.WebSocketDebuggingVisualizer;
-import no.hvl.tk.visual.debugger.settings.AppSettingsState;
+import no.hvl.tk.visual.debugger.settings.PluginSettingsState;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -65,7 +65,7 @@ public class DebugListener implements XDebugSessionListener {
         final var lock = new CounterBasedLock();
         final var nodeVisualizer = new NodeDebugVisualizer(
                 debuggingInfoCollector,
-                AppSettingsState.getInstance().visualisationDepth,
+                PluginSettingsState.getInstance().getVisualisationDepth(),
                 lock,
                 this.manuallyExploredObjects);
         // Happens in a different thread!
@@ -80,7 +80,7 @@ public class DebugListener implements XDebugSessionListener {
     @NotNull
     public DebuggingInfoVisualizer getOrCreateDebuggingInfoVisualizer() {
         if (this.debuggingVisualizer == null) {
-            switch (AppSettingsState.getInstance().visualizerOption) {
+            switch (PluginSettingsState.getInstance().getVisualizerOption()) {
                 case WEB_UI:
                     this.debuggingVisualizer = new WebSocketDebuggingVisualizer(this.userInterface);
                     break;
@@ -88,7 +88,7 @@ public class DebugListener implements XDebugSessionListener {
                     this.debuggingVisualizer = new PlantUmlDebuggingVisualizer(this.userInterface);
                     break;
                 default:
-                    throw new Error("Uncovered visualizer option!");
+                    throw new RuntimeException("Uncovered visualizer option!");
             }
         }
         return this.debuggingVisualizer;

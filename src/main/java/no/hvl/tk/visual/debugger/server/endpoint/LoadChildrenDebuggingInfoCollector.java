@@ -1,4 +1,4 @@
-package no.hvl.tk.visual.debugger.webAPI.endpoint;
+package no.hvl.tk.visual.debugger.server.endpoint;
 
 import com.intellij.debugger.engine.JavaValue;
 import com.intellij.openapi.util.Pair;

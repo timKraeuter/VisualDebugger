@@ -1,4 +1,4 @@
-package no.hvl.tk.visual.debugger.webAPI.endpoint;
+package no.hvl.tk.visual.debugger.server.endpoint;
 
 import com.google.common.collect.Sets;
 import com.intellij.debugger.engine.JavaValue;
@@ -14,15 +14,20 @@ import no.hvl.tk.visual.debugger.debugging.NodeDebugVisualizer;
 import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.domain.ODObject;
+import no.hvl.tk.visual.debugger.server.DebugAPIServerStarter;
+import no.hvl.tk.visual.debugger.server.endpoint.message.TypedWebsocketMessage;
+import no.hvl.tk.visual.debugger.server.endpoint.message.WebsocketMessageType;
 import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
-import no.hvl.tk.visual.debugger.webAPI.DebugAPIServerStarter;
-import no.hvl.tk.visual.debugger.webAPI.endpoint.message.TypedWebsocketMessage;
-import no.hvl.tk.visual.debugger.webAPI.endpoint.message.WebsocketMessageType;
 
 @ServerEndpoint("/debug")
 public class DebugAPIEndpoint {
     private static final Logger LOGGER = Logger.getInstance(DebugAPIEndpoint.class);
     // One gets one instance of this class per session/client.
+
+
+    public DebugAPIEndpoint() {
+        // Needs public constructor.
+    }
 
     @OnOpen
     public static void onOpen(final Session session) {

@@ -18,7 +18,7 @@ public enum DebuggingVisualizerOption {
             case EMBEDDED:
                 return "Embedded visualizer (no interaction)";
             default:
-                throw new Error("Uncovered visualizer option!");
+                throw new RuntimeException("Uncovered visualizer option!");
         }
     }
 }

@@ -10,9 +10,6 @@ import org.jetbrains.annotations.NotNull;
 public class DebugVisualizerListener implements XDebuggerManagerListener {
     private static final Logger LOGGER = Logger.getInstance(XDebuggerManagerListener.class);
 
-    public DebugVisualizerListener() {
-    }
-
     @Override
     public void processStarted(@NotNull final XDebugProcess debugProcess) {
         final XDebugSession debugSession = debugProcess.getSession();

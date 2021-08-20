@@ -1,6 +1,10 @@
 package no.hvl.tk.visual.debugger.util;
 
 public class ClassloaderUtil {
+    private ClassloaderUtil() {
+        // only util methods
+    }
+
     public static <V> V runWithContextClassloader(final Executable<V> executable) {
         final ClassLoader current = Thread.currentThread().getContextClassLoader();
         try {

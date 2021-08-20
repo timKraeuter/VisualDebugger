@@ -1,8 +1,8 @@
-package no.hvl.tk.visual.debugger.webAPI;
+package no.hvl.tk.visual.debugger.server;
 
 import com.intellij.openapi.diagnostic.Logger;
 import jakarta.websocket.Session;
-import no.hvl.tk.visual.debugger.webAPI.endpoint.DebugAPIEndpoint;
+import no.hvl.tk.visual.debugger.server.endpoint.DebugAPIEndpoint;
 import org.glassfish.tyrus.server.Server;
 
 import java.io.IOException;
@@ -15,6 +15,9 @@ import java.util.HashMap;
 public class DebugAPIServerStarter {
     private static final Logger LOGGER = Logger.getInstance(DebugAPIServerStarter.class);
 
+    private DebugAPIServerStarter() {
+        // Only helper methods.
+    }
 
     public static Server runNewServer() {
         final Server server = new Server(ServerConstants.HOST_NAME, ServerConstants.DEBUG_SERVER_PORT, "", new HashMap<>(), DebugAPIEndpoint.class);

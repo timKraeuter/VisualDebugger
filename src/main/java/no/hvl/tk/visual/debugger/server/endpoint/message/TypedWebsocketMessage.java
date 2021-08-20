@@ -1,4 +1,4 @@
-package no.hvl.tk.visual.debugger.webAPI.endpoint.message;
+package no.hvl.tk.visual.debugger.server.endpoint.message;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

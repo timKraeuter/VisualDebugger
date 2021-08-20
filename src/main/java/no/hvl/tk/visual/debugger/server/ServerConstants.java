@@ -1,4 +1,4 @@
-package no.hvl.tk.visual.debugger.webAPI;
+package no.hvl.tk.visual.debugger.server;
 
 public class ServerConstants {
     public static final String HOST_NAME = "localhost";

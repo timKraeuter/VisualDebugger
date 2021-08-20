@@ -66,8 +66,8 @@ class DiagramToXMLConverterTest {
                 "<db:objectDiagram xmlns:db=\"http://tk/schema/db\">\n" +
                 "    <db:object type=\"type1\" variableName=\"varName1\" id=\"Object_1\"/>\n" +
                 "    <db:object type=\"type2\" variableName=\"varName2\" id=\"Object_2\"/>\n" +
-                "    <db:link type=\"friend\" from=\"Object_1\" to=\"Object_2\" id=\"Link_Object_1_to_Object_2:friend\"/>\n" +
-                "    <db:link type=\"enemy\" from=\"Object_2\" to=\"Object_1\" id=\"Link_Object_2_to_Object_1:enemy\"/>\n" +
+                "    <db:link type=\"friend\" from=\"Object_1\" to=\"Object_2\" id=\"Link_Object_1_to_Object_2_type_friend\"/>\n" +
+                "    <db:link type=\"enemy\" from=\"Object_2\" to=\"Object_1\" id=\"Link_Object_2_to_Object_1_type_enemy\"/>\n" +
                 "</db:objectDiagram>\n"));
     }
 }

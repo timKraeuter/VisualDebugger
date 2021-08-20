@@ -1,4 +1,4 @@
-package no.hvl.tk.visual.debugger.webAPI;
+package no.hvl.tk.visual.debugger.server;
 
 import com.intellij.openapi.diagnostic.Logger;
 import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
@@ -7,6 +7,10 @@ import org.glassfish.grizzly.http.server.NetworkListener;
 
 public class UIServerStarter {
     private static final Logger LOGGER = Logger.getInstance(UIServerStarter.class);
+
+    private UIServerStarter() {
+        // Only helper methods.
+    }
 
     public static HttpServer runNewServer() {
         final HttpServer server = new HttpServer();

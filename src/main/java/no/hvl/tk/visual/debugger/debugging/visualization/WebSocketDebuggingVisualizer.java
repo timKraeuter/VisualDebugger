@@ -6,13 +6,13 @@ import com.intellij.openapi.util.Pair;
 import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.domain.ODObject;
 import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
+import no.hvl.tk.visual.debugger.server.DebugAPIServerStarter;
+import no.hvl.tk.visual.debugger.server.ServerConstants;
+import no.hvl.tk.visual.debugger.server.UIServerStarter;
+import no.hvl.tk.visual.debugger.server.endpoint.message.TypedWebsocketMessage;
+import no.hvl.tk.visual.debugger.server.endpoint.message.WebsocketMessageType;
 import no.hvl.tk.visual.debugger.util.ClassloaderUtil;
 import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
-import no.hvl.tk.visual.debugger.webAPI.DebugAPIServerStarter;
-import no.hvl.tk.visual.debugger.webAPI.ServerConstants;
-import no.hvl.tk.visual.debugger.webAPI.UIServerStarter;
-import no.hvl.tk.visual.debugger.webAPI.endpoint.message.TypedWebsocketMessage;
-import no.hvl.tk.visual.debugger.webAPI.endpoint.message.WebsocketMessageType;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.tyrus.server.Server;
 
@@ -58,10 +58,10 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         final String message = new TypedWebsocketMessage(
                 WebsocketMessageType.NEXT_DEBUG_STEP,
                 diagramXML).serialize();
-        SharedState.getWebsocketClients().forEach(clientSession -> {
-            // If one client fails no more messages are sent. We should change this.
-            DebugAPIServerStarter.sendMessageToClient(clientSession, message);
-        });
+        SharedState.getWebsocketClients().forEach(clientSession ->
+                // If one client fails no more messages are sent. We should change this.
+                DebugAPIServerStarter.sendMessageToClient(clientSession, message)
+        );
         // Reset diagram
         this.diagram = new ObjectDiagram();
     }

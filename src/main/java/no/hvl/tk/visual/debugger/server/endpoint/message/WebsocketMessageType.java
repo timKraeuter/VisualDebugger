@@ -1,4 +1,4 @@
-package no.hvl.tk.visual.debugger.webAPI.endpoint.message;
+package no.hvl.tk.visual.debugger.server.endpoint.message;
 
 public enum WebsocketMessageType {
     NEXT_DEBUG_STEP("nextDebugStep"),
