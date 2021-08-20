@@ -88,7 +88,8 @@ public class DebugListener implements XDebugSessionListener {
                     this.debuggingVisualizer = new PlantUmlDebuggingVisualizer(this.userInterface);
                     break;
                 default:
-                    throw new RuntimeException("Uncovered visualizer option!");
+                    LOGGER.warn("Unrecognized debugging visualizer chosen. Defaulting to web visualizer!");
+                    this.debuggingVisualizer = new WebSocketDebuggingVisualizer(this.userInterface);
             }
         }
         return this.debuggingVisualizer;
