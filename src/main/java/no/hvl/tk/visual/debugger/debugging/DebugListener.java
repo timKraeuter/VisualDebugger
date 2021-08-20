@@ -15,12 +15,15 @@ import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
+import no.hvl.tk.visual.debugger.debugging.visualization.WebSocketDebuggingVisualizer;
 import no.hvl.tk.visual.debugger.settings.AppSettingsState;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class DebugListener implements XDebugSessionListener {
     private static final Logger LOGGER = Logger.getInstance(DebugListener.class);
@@ -28,13 +31,15 @@ public class DebugListener implements XDebugSessionListener {
     private static final String TOOLBAR_ACTION = "VisualDebugger.VisualizerToolbar"; // has to match with plugin.xml
 
     private final XDebugSession debugSession;
+    private XStackFrame currentStackFrame;
     private JPanel userInterface;
     private DebuggingInfoVisualizer debuggingVisualizer;
-    private XStackFrame currentStackFrame;
+    private final Set<Long> manuallyExploredObjects;
 
     public DebugListener(final XDebugSession debugSession) {
         Objects.requireNonNull(debugSession, "Debug session must not be null.");
         this.debugSession = debugSession;
+        this.manuallyExploredObjects = new HashSet<>();
         SharedState.setDebugListener(this);
     }
 
@@ -48,16 +53,21 @@ public class DebugListener implements XDebugSessionListener {
         this.startVisualDebugging();
     }
 
+    public void addManuallyExploredObject(final Long objectId) {
+        this.manuallyExploredObjects.add(objectId);
+    }
+
     public void startVisualDebugging() {
         if (!SharedState.isDebuggingActive()) {
             return;
         }
-        final var debuggingInfoCollector = this.getDebuggingInfoVisualizer();
+        final var debuggingInfoCollector = this.getOrCreateDebuggingInfoVisualizer();
         final var lock = new CounterBasedLock();
         final var nodeVisualizer = new NodeDebugVisualizer(
                 debuggingInfoCollector,
                 AppSettingsState.getInstance().visualisationDepth,
-                lock);
+                lock,
+                this.manuallyExploredObjects);
         // Happens in a different thread!
         this.currentStackFrame.computeChildren(nodeVisualizer);
         new Thread(() -> {
@@ -68,16 +78,20 @@ public class DebugListener implements XDebugSessionListener {
     }
 
     @NotNull
-    private DebuggingInfoVisualizer getDebuggingInfoVisualizer() {
+    public DebuggingInfoVisualizer getOrCreateDebuggingInfoVisualizer() {
         if (this.debuggingVisualizer == null) {
-            this.debuggingVisualizer = new PlantUmlDebuggingVisualizer(this.userInterface);
+            switch (AppSettingsState.getInstance().visualizerOption) {
+                case WEB_UI:
+                    this.debuggingVisualizer = new WebSocketDebuggingVisualizer(this.userInterface);
+                    break;
+                case EMBEDDED:
+                    this.debuggingVisualizer = new PlantUmlDebuggingVisualizer(this.userInterface);
+                    break;
+                default:
+                    throw new Error("Uncovered visualizer option!");
+            }
         }
         return this.debuggingVisualizer;
-    }
-
-    @Override
-    public void stackFrameChanged() {
-        // nop
     }
 
     private void initUIIfNeeded() {
@@ -85,8 +99,11 @@ public class DebugListener implements XDebugSessionListener {
             return;
         }
         this.userInterface = new JPanel();
+        this.getOrCreateDebuggingInfoVisualizer(); // make sure visualizer is initialized
         if (!SharedState.isDebuggingActive()) {
-            this.addActivateDebuggingButton();
+            this.resetUIAndAddActivateDebuggingButton();
+        } else {
+            this.debuggingVisualizer.debuggingActivated();
         }
         final var uiContainer = new SimpleToolWindowPanel(false, true);
 
@@ -112,14 +129,16 @@ public class DebugListener implements XDebugSessionListener {
         LOGGER.debug("UI initialized!");
     }
 
-    public void addActivateDebuggingButton() {
+    public void resetUIAndAddActivateDebuggingButton() {
         this.userInterface.removeAll();
         this.userInterface.setLayout(new FlowLayout());
 
         final var activateButton = new JButton("Activate visual debugger");
         activateButton.addActionListener(actionEvent -> {
+
             SharedState.setDebuggingActive(true);
-            DebugListener.this.userInterface.remove(activateButton);
+            this.userInterface.remove(activateButton);
+            this.debuggingVisualizer.debuggingActivated();
             this.userInterface.revalidate();
             this.startVisualDebugging();
         });

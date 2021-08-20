@@ -1,6 +1,7 @@
 package no.hvl.tk.visual.debugger.domain;
 
 import com.google.common.base.Objects;
+import jakarta.xml.bind.annotation.XmlAttribute;
 
 import java.util.StringJoiner;
 
@@ -8,33 +9,35 @@ import java.util.StringJoiner;
  * Represent the attribute value of an object in an object diagram.
  */
 public class ODAttributeValue {
-    // Maybe add type here
 
-    private final String attributeName;
-    private final String attributeType;
-    private final String attributeValue;
+    @XmlAttribute
+    private final String name;
+    @XmlAttribute
+    private final String type;
+    @XmlAttribute
+    private final String value;
 
-    public ODAttributeValue(final String attributeName, final String attributeType, final String attributeValue) {
-        this.attributeName = attributeName;
-        this.attributeType = attributeType;
-        this.attributeValue = attributeValue;
+    public ODAttributeValue(final String attributeName, final String type, final String value) {
+        this.name = attributeName;
+        this.type = type;
+        this.value = value;
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", "Attribute:[", "]")
-                .add("name='" + this.attributeName + "'")
-                .add("type='" + this.attributeType + "'")
-                .add("value='" + this.attributeValue + "'")
+                .add("name='" + this.name + "'")
+                .add("type='" + this.type + "'")
+                .add("value='" + this.value + "'")
                 .toString();
     }
 
-    public String getAttributeName() {
-        return this.attributeName;
+    public String getName() {
+        return this.name;
     }
 
-    public String getAttributeValue() {
-        return this.attributeValue;
+    public String getValue() {
+        return this.value;
     }
 
     @Override
@@ -46,11 +49,11 @@ public class ODAttributeValue {
             return false;
         }
         final ODAttributeValue that = (ODAttributeValue) o;
-        return Objects.equal(this.attributeName, that.attributeName) && Objects.equal(this.attributeType, that.attributeType) && Objects.equal(this.attributeValue, that.attributeValue);
+        return Objects.equal(this.name, that.name) && Objects.equal(this.type, that.type) && Objects.equal(this.value, that.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.attributeName, this.attributeType, this.attributeValue);
+        return Objects.hashCode(this.name, this.type, this.value);
     }
 }

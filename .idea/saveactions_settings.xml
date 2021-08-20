@@ -11,10 +11,8 @@
         <option value="fieldCanBeFinal" />
         <option value="localCanBeFinal" />
         <option value="localCanBeFinalExceptImplicit" />
-        <option value="methodMayBeStatic" />
         <option value="unqualifiedFieldAccess" />
         <option value="unqualifiedMethodAccess" />
-        <option value="customUnqualifiedStaticMemberAccess" />
         <option value="missingOverrideAnnotation" />
         <option value="useBlocks" />
       </set>

@@ -28,8 +28,8 @@
             <action
                     id="VisualDebugger.SettingsAction"
                     class="no.hvl.tk.visual.debugger.actions.settings.SettingsAction"
-                    text="Settings"
-                    description="Change settings"
+                    text="Change Settings"
+                    description="Change the visual debugger settings"
                     icon="/icons/settings.svg"
             />
             <action
@@ -42,7 +42,7 @@
             <action
                     id="VisualDebugger.StopAction"
                     class="no.hvl.tk.visual.debugger.actions.stop.StopAction"
-                    text="Stop"
+                    text="Stop Debugger"
                     description="Stop the visual debugger"
                     icon="/icons/stop.svg"
             />

@@ -6,9 +6,11 @@ import no.hvl.tk.visual.debugger.SharedState;
 import org.jetbrains.annotations.NotNull;
 
 public class StopAction extends AnAction {
+
     @Override
     public void actionPerformed(@NotNull final AnActionEvent e) {
         SharedState.setDebuggingActive(false);
-        SharedState.getDebugListener().addActivateDebuggingButton();
+        SharedState.getDebugListener().getOrCreateDebuggingInfoVisualizer().debuggingDeactivated();
+        SharedState.getDebugListener().resetUIAndAddActivateDebuggingButton();
     }
 }

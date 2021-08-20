@@ -1,6 +1,8 @@
 package no.hvl.tk.visual.debugger.debugging.visualization;
 
+import com.intellij.debugger.engine.JavaValue;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.Pair;
 import com.intellij.ui.components.JBScrollPane;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
@@ -42,6 +44,16 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         } catch (final IOException e) {
             LOGGER.error(e);
         }
+    }
+
+    @Override
+    public void debuggingActivated() {
+        // NOOP
+    }
+
+    @Override
+    public void debuggingDeactivated() {
+        // NOOP
     }
 
     private void addImageToUI(final byte[] pngData) throws IOException {
@@ -137,12 +149,12 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                 stringBuilder.append(" {\n");
                 object.getAttributeValues().stream()
                       // Sort so that objects with the same type have the same order of attributes
-                      .sorted(Comparator.comparing(ODAttributeValue::getAttributeName))
+                      .sorted(Comparator.comparing(ODAttributeValue::getName))
                       .forEach(odAttributeValue -> stringBuilder.append(
                               String.format(
                                       "%s=%s%n",
-                                      odAttributeValue.getAttributeName(),
-                                      odAttributeValue.getAttributeValue())));
+                                      odAttributeValue.getName(),
+                                      odAttributeValue.getValue())));
                 stringBuilder.append("}\n");
             } else {
                 stringBuilder.append("\n");
@@ -170,8 +182,8 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                   if (key.isPresent() && value.isPresent()) {
                       stringBuilder.append(
                               String.format("%s => %s%n",
-                                      key.get().getAttributeValue(),
-                                      value.get().getAttributeValue()));
+                                      key.get().getValue(),
+                                      value.get().getValue()));
                   }
               });
 
@@ -205,5 +217,21 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
             reader.outputImage(outputStream, new FileFormatOption(format));
             return outputStream.toByteArray();
         }
+    }
+
+    @Override
+    protected void preAddObject() {
+        // NOOP
+    }
+
+    @Override
+    public DebuggingInfoVisualizer addDebugNodeForObject(final ODObject object, final JavaValue jValue) {
+        // NOOP
+        return this;
+    }
+
+    @Override
+    public Pair<ODObject, JavaValue> getDebugNodeAndObjectForObjectId(final String objectId) {
+        throw new UnsupportedOperationException();
     }
 }

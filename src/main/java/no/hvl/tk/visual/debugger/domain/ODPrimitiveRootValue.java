@@ -1,11 +1,15 @@
 package no.hvl.tk.visual.debugger.domain;
 
+import jakarta.xml.bind.annotation.XmlAttribute;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class ODPrimitiveRootValue implements Comparable<ODPrimitiveRootValue> {
+    @XmlAttribute
     private final String variableName;
+    @XmlAttribute
     private final String type;
+    @XmlAttribute
     private final String value;
 
     public ODPrimitiveRootValue(final String variableName, final String type, final String value) {

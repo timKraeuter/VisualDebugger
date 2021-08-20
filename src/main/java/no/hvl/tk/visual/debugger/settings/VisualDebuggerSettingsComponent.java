@@ -1,6 +1,7 @@
 package no.hvl.tk.visual.debugger.settings;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.ComponentValidator;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.text.StringUtil;
@@ -21,9 +22,13 @@ public class VisualDebuggerSettingsComponent {
 
     private final JPanel myMainPanel;
     private final JBTextField visualizationDepthField = new JBTextField();
+    private final ComboBox<DebuggingVisualizerOption> visualizerOptionsCombobox =
+            new ComboBox<>(DebuggingVisualizerOption.values());
+
 
     public VisualDebuggerSettingsComponent(final Project project) {
         this.myMainPanel = FormBuilder.createFormBuilder()
+                                      .addLabeledComponent(new JBLabel("Choose visualizer: "), this.visualizerOptionsCombobox, 1, false)
                                       .addLabeledComponent(new JBLabel("Initial visualization depth: "), this.visualizationDepthField, 1, false)
                                       .addComponentFillVertically(new JPanel(), 0)
                                       .getPanel();
@@ -80,5 +85,12 @@ public class VisualDebuggerSettingsComponent {
         this.visualizationDepthField.setText(newText);
     }
 
+    public DebuggingVisualizerOption getDebuggingVisualizerOptionChoice() {
+        return this.visualizerOptionsCombobox.getItem();
+    }
+
+    public void chooseDebuggingVisualizerOption(final DebuggingVisualizerOption option) {
+        this.visualizerOptionsCombobox.setItem(option);
+    }
 
 }

@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 )
 public class AppSettingsState implements PersistentStateComponent<AppSettingsState> {
 
+    public DebuggingVisualizerOption visualizerOption = DebuggingVisualizerOption.WEB_UI;
     public Integer visualisationDepth = 5;
 
     public static AppSettingsState getInstance() {
