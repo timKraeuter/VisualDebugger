@@ -1,7 +1,6 @@
 package no.hvl.tk.visual.debugger;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManagerListener;
@@ -10,10 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class DebugVisualizerListener implements XDebuggerManagerListener {
     private static final Logger LOGGER = Logger.getInstance(XDebuggerManagerListener.class);
-    private final Project project;
 
-    public DebugVisualizerListener(final Project project) {
-        this.project = project;
+    public DebugVisualizerListener() {
     }
 
     @Override

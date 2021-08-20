@@ -30,6 +30,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
     private final DebuggingInfoVisualizer debuggingInfoCollector;
     private final int depth;
+    private final Set<Long> manuallyExploredObjects;
 
     private final CounterBasedLock lock;
     private final Set<Long> seenObjectIds;
@@ -42,8 +43,15 @@ public class NodeDebugVisualizer implements XCompositeNode {
     public NodeDebugVisualizer(
             final DebuggingInfoVisualizer debuggingInfoCollector,
             final int depth,
-            final CounterBasedLock lock) {
-        this(debuggingInfoCollector, depth, lock, null, "", new HashSet<>());
+            final CounterBasedLock lock,
+            final Set<Long> manuallyExploredObjects) {
+        this(debuggingInfoCollector,
+                depth,
+                lock,
+                null,
+                "",
+                new HashSet<>(),
+                manuallyExploredObjects);
     }
 
     public NodeDebugVisualizer(
@@ -52,13 +60,15 @@ public class NodeDebugVisualizer implements XCompositeNode {
             final CounterBasedLock lock,
             final ODObject parent,
             final String inheritedLinkType,
-            final Set<Long> seenObjectIds) {
+            final Set<Long> seenObjectIds,
+            final Set<Long> manuallyExploredObjects) {
         this.debuggingInfoCollector = debuggingInfoCollector;
         this.depth = depth;
         this.lock = lock;
         this.parent = parent;
         this.inheritedLinkType = inheritedLinkType;
         this.seenObjectIds = seenObjectIds;
+        this.manuallyExploredObjects = manuallyExploredObjects;
     }
 
     @Override
@@ -97,7 +107,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
     private void handleObject(final JavaValue jValue, final String variableName, final String typeName) {
         final long objectId = NodeDebugVisualizer.getObjectId(jValue);
-        if (this.depth >= 0) {
+        if (this.depth >= 0 || this.objectWasManuallyExplored()) {
 
             final Pair<ODObject, String> parentAndHasCollectionSkipped = this.addObjectAndLinksToDiagram(
                     objectId,
@@ -115,9 +125,15 @@ public class NodeDebugVisualizer implements XCompositeNode {
                     this.lock,
                     parentAndHasCollectionSkipped.getFirst(),
                     parentAndHasCollectionSkipped.getSecond(),
-                    this.seenObjectIds);
+                    this.seenObjectIds,
+                    this.manuallyExploredObjects);
             this.exploreObjectChildren(jValue, nodeDebugVisualizer);
         }
+    }
+
+    private boolean objectWasManuallyExplored() {
+        // If the parent was manually explored we have to check all children.
+        return this.parent != null && this.manuallyExploredObjects.contains(this.parent.getIdAsLong());
     }
 
     public void exploreObjectChildren(final JavaValue jValue, final NodeDebugVisualizer nodeDebugVisualizer) {

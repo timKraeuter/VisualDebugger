@@ -65,7 +65,8 @@ public class DebugAPIEndpoint {
         final ODObject parent = debugNodeAndObjectForObjectId.getFirst();
         final JavaValue debugNode = debugNodeAndObjectForObjectId.getSecond();
 
-        final WebsocketDebuggingInfoCollector collector = new WebsocketDebuggingInfoCollector(debuggingInfoVisualizer);
+        final LoadChildrenDebuggingInfoCollector collector =
+                new LoadChildrenDebuggingInfoCollector(debuggingInfoVisualizer);
         // Add parent to object diagram.
         collector.addObject(parent);
 
@@ -78,12 +79,15 @@ public class DebugAPIEndpoint {
                     lock,
                     parent,
                     "",
+                    Sets.newHashSet(),
                     Sets.newHashSet());
             nodeDebugger.exploreObjectChildren(debugNode, nodeDebugger);
         }).start();
 
         // Wait for the node debug visualizer to have finished.
         lock.lock();
+        // Remember explored objects
+        SharedState.getDebugListener().addManuallyExploredObject(parent.getIdAsLong());
         return DiagramToXMLConverter.toXml(collector.getCurrentDiagram());
     }
 }

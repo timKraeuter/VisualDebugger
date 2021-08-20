@@ -10,26 +10,33 @@ import java.util.Set;
 
 public class SharedState {
 
-
-    private SharedState() {
-    }
-
-    // UI
-    private static HttpServer uiServer;
-    // Websocket related
-    private static Server debugAPIServer;
-    private static final Set<Session> websocketClients = new HashSet<>();
-
-    private static boolean debuggingActive = false;
-
     /**
      * Decides if the visualisation of nodes for sets and lists should be skipped.
      */
     public static final boolean SKIP_COLLECTION_VISUALIZATION = true;
 
-    private static DebugListener debugListener;
-    private static String lastPlantUMLDiagram = "";
+    private SharedState() {
+    }
+
+    // UI / Debug API related
+    private static HttpServer uiServer;
+    private static Server debugAPIServer;
+    /**
+     * All currently connected websocket client which will get updated.
+     */
+    private static final Set<Session> websocketClients = new HashSet<>();
+    /**
+     * Last diagram XML for newly connecting clients.
+     */
     private static String diagramXML = "";
+
+    private static boolean debuggingActive = false;
+    private static DebugListener debugListener;
+
+    /**
+     * Last plant UML diagram input needed for the print function.
+     */
+    private static String lastPlantUMLDiagram = "";
 
     public static String getLastPlantUMLDiagram() {
         return lastPlantUMLDiagram;

@@ -7,14 +7,14 @@ import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer
 import no.hvl.tk.visual.debugger.domain.ODObject;
 import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 
-public class WebsocketDebuggingInfoCollector extends DebuggingInfoVisualizerBase {
+public class LoadChildrenDebuggingInfoCollector extends DebuggingInfoVisualizerBase {
 
     /**
      * Currently active visualizer (needs updates for debug nodes and ids).
      */
     private final DebuggingInfoVisualizer debuggingInfoVisualizer;
 
-    public WebsocketDebuggingInfoCollector(final DebuggingInfoVisualizer debuggingInfoVisualizer) {
+    public LoadChildrenDebuggingInfoCollector(final DebuggingInfoVisualizer debuggingInfoVisualizer) {
         this.debuggingInfoVisualizer = debuggingInfoVisualizer;
     }
 

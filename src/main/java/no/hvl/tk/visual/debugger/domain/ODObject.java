@@ -115,4 +115,8 @@ public class ODObject implements Comparable<ODObject> {
     public String getId() {
         return OBJECT_ID_PREFIX + this.id;
     }
+
+    public Long getIdAsLong() {
+        return this.id;
+    }
 }
