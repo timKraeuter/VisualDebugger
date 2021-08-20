@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class VisualDebuggerSettingsConfigurable implements Configurable {
-    private VisualDebuggerSettingsComponent mySettingsComponent;
+    private VisualDebuggerSettingsComponent settingsComponent;
     private final Project project;
 
     public VisualDebuggerSettingsConfigurable(final Project project) {
@@ -24,21 +24,29 @@ public class VisualDebuggerSettingsConfigurable implements Configurable {
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return this.mySettingsComponent.getPreferredFocusedComponent();
+        return this.settingsComponent.getPreferredFocusedComponent();
     }
 
     @Nullable
     @Override
     public JComponent createComponent() {
-        this.mySettingsComponent = new VisualDebuggerSettingsComponent(this.project);
-        return this.mySettingsComponent.getPanel();
+        this.settingsComponent = new VisualDebuggerSettingsComponent(this.project);
+        return this.settingsComponent.getPanel();
     }
 
     @Override
     public boolean isModified() {
         final AppSettingsState settings = AppSettingsState.getInstance();
+        return this.visualizerOptionChanged(settings) || this.isDepthModified(settings);
+    }
+
+    private boolean visualizerOptionChanged(final AppSettingsState settings) {
+        return settings.visualizerOption != this.settingsComponent.getDebuggingVisualizerOptionChoice();
+    }
+
+    private boolean isDepthModified(final AppSettingsState settings) {
         try {
-            final int newDepth = Integer.parseInt(this.mySettingsComponent.getVisualizationDepthText());
+            final int newDepth = Integer.parseInt(this.settingsComponent.getVisualizationDepthText());
             if (newDepth < 0) {
                 return false;
             }
@@ -52,7 +60,9 @@ public class VisualDebuggerSettingsConfigurable implements Configurable {
     @Override
     public void apply() {
         final AppSettingsState settings = AppSettingsState.getInstance();
-        final int newDepth = Integer.parseInt(this.mySettingsComponent.getVisualizationDepthText());
+        settings.visualizerOption = this.settingsComponent.getDebuggingVisualizerOptionChoice();
+        
+        final int newDepth = Integer.parseInt(this.settingsComponent.getVisualizationDepthText());
         VisualDebuggerSettingsConfigurable.changedDepthAndRestartDebuggerIfNeeded(settings, newDepth);
     }
 
@@ -68,11 +78,12 @@ public class VisualDebuggerSettingsConfigurable implements Configurable {
     @Override
     public void reset() {
         final AppSettingsState settings = AppSettingsState.getInstance();
-        this.mySettingsComponent.setVisualizationDepthText(settings.visualisationDepth.toString());
+        this.settingsComponent.setVisualizationDepthText(settings.visualisationDepth.toString());
+        this.settingsComponent.chooseDebuggingVisualizerOption(settings.visualizerOption);
     }
 
     @Override
     public void disposeUIResources() {
-        this.mySettingsComponent = null;
+        this.settingsComponent = null;
     }
 }

@@ -17,18 +17,18 @@ public class DiagramToXMLConverter {
     private DiagramToXMLConverter() {
     }
 
-    public static String toXml(final ObjectDiagram diagram) {
+    public static String toXml(final ObjectDiagram objectDiagram) {
         return ClassloaderUtil.runWithContextClassloader(() -> {
             createJAXBObjectsIfNeeded();
-            return marshallDiagram(diagram);
+            return marshallDiagram(objectDiagram);
         });
 
     }
 
-    private static String marshallDiagram(final ObjectDiagram mockDiagram) {
+    private static String marshallDiagram(final ObjectDiagram objectDiagram) {
         final StringWriter sw = new StringWriter();
         try {
-            jaxbMarshaller.marshal(mockDiagram, sw);
+            jaxbMarshaller.marshal(objectDiagram, sw);
         } catch (final JAXBException e) {
             LOGGER.error(e);
         }
