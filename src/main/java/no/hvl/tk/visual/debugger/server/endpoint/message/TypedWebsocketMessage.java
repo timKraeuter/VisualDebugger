@@ -30,7 +30,7 @@ public class TypedWebsocketMessage {
             return mapper.writeValueAsString(this);
         } catch (final JsonProcessingException e) {
             LOGGER.error(e);
-            throw new RuntimeException(e);
+            return "JsonProcessingException: " + e;
         }
     }
 }

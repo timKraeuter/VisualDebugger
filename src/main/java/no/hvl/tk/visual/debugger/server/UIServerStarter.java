@@ -31,7 +31,7 @@ public class UIServerStarter {
             return server;
         } catch (final Exception e) {
             LOGGER.error(e);
-            throw new RuntimeException(e);
+            return null;
         }
     }
 }

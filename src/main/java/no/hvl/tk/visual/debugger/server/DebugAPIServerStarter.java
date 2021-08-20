@@ -27,7 +27,7 @@ public class DebugAPIServerStarter {
             return server;
         } catch (final Exception e) {
             LOGGER.error(e);
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
@@ -43,7 +43,6 @@ public class DebugAPIServerStarter {
                 client.getBasicRemote().sendText(message);
             } catch (final IOException e) {
                 LOGGER.error(e);
-                throw new RuntimeException(e);
             }
         }
     }
