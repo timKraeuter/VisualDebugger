@@ -14,6 +14,7 @@ import no.hvl.tk.visual.debugger.DebugVisualizerListener;
 import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
+import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.WebSocketDebuggingVisualizer;
 import no.hvl.tk.visual.debugger.settings.AppSettingsState;
 import org.jetbrains.annotations.NotNull;
@@ -79,7 +80,16 @@ public class DebugListener implements XDebugSessionListener {
     @NotNull
     public DebuggingInfoVisualizer getOrCreateDebuggingInfoVisualizer() {
         if (this.debuggingVisualizer == null) {
-            this.debuggingVisualizer = new WebSocketDebuggingVisualizer(this.userInterface);
+            switch (AppSettingsState.getInstance().visualizerOption) {
+                case WEB_UI:
+                    this.debuggingVisualizer = new WebSocketDebuggingVisualizer(this.userInterface);
+                    break;
+                case EMBEDDED:
+                    this.debuggingVisualizer = new PlantUmlDebuggingVisualizer(this.userInterface);
+                    break;
+                default:
+                    throw new Error("Uncovered visualizer option!");
+            }
         }
         return this.debuggingVisualizer;
     }
