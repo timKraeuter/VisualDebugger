@@ -37,7 +37,7 @@ public class PrintDialog extends DialogWrapper {
         dialogPanel.add(plantUMLStringButton);
 
         // Show plantUML svg data.
-        final var svgLabel = new JLabel("SVG:");
+        final var svgLabel = new JLabel("PlantUML-SVG:");
         final var c2 = new GridBagConstraints();
         c2.gridy = 1;
         dialogPanel.add(svgLabel, c2);
