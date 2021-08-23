@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.7'
+version '1.7.1'
 
 repositories {
     mavenCentral()
@@ -44,7 +44,7 @@ intellij {
     plugins = ['com.intellij.java']
 }
 patchPluginXml {
-    changeNotes """Plugin contains an interactive web user interface now."""
+    changeNotes """Plugin contains an interactive web user interface now. Plugin description updated."""
 }
 test {
     useJUnitPlatform()
