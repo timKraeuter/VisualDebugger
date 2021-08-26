@@ -23,7 +23,7 @@
     <depends>com.intellij.modules.java</depends>
 
     <projectListeners>
-        <listener class="no.hvl.tk.visual.debugger.DebugVisualizerListener"
+        <listener class="no.hvl.tk.visual.debugger.DebugProcessListener"
                   topic="com.intellij.xdebugger.XDebuggerManagerListener"/>
     </projectListeners>
 

@@ -1,7 +1,7 @@
 package no.hvl.tk.visual.debugger;
 
 import jakarta.websocket.Session;
-import no.hvl.tk.visual.debugger.debugging.DebugListener;
+import no.hvl.tk.visual.debugger.debugging.DebugSessionListener;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.tyrus.server.Server;
 
@@ -31,7 +31,7 @@ public class SharedState {
     private static String diagramXML = "";
 
     private static boolean debuggingActive = false;
-    private static DebugListener debugListener;
+    private static DebugSessionListener debugSessionListener;
 
     /**
      * Last plant UML diagram input needed for the print function.
@@ -54,12 +54,12 @@ public class SharedState {
         SharedState.debuggingActive = debuggingActive;
     }
 
-    public static DebugListener getDebugListener() {
-        return debugListener;
+    public static DebugSessionListener getDebugListener() {
+        return debugSessionListener;
     }
 
-    public static void setDebugListener(final DebugListener debugListener) {
-        SharedState.debugListener = debugListener;
+    public static void setDebugListener(final DebugSessionListener debugSessionListener) {
+        SharedState.debugSessionListener = debugSessionListener;
     }
 
     public static Server getDebugAPIServer() {

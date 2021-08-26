@@ -10,7 +10,7 @@ import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
 import com.intellij.xdebugger.frame.XStackFrame;
-import no.hvl.tk.visual.debugger.DebugVisualizerListener;
+import no.hvl.tk.visual.debugger.DebugProcessListener;
 import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
@@ -25,8 +25,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class DebugListener implements XDebugSessionListener {
-    private static final Logger LOGGER = Logger.getInstance(DebugListener.class);
+public class DebugSessionListener implements XDebugSessionListener {
+    private static final Logger LOGGER = Logger.getInstance(DebugSessionListener.class);
     private static final String CONTENT_ID = "no.hvl.tk.VisualDebugger";
     private static final String TOOLBAR_ACTION = "VisualDebugger.VisualizerToolbar"; // has to match with plugin.xml
 
@@ -36,7 +36,7 @@ public class DebugListener implements XDebugSessionListener {
     private DebuggingInfoVisualizer debuggingVisualizer;
     private final Set<Long> manuallyExploredObjects;
 
-    public DebugListener(final XDebugSession debugSession) {
+    public DebugSessionListener(final XDebugSession debugSession) {
         Objects.requireNonNull(debugSession, "Debug session must not be null.");
         this.debugSession = debugSession;
         this.manuallyExploredObjects = new HashSet<>();
@@ -123,7 +123,7 @@ public class DebugListener implements XDebugSessionListener {
                 CONTENT_ID,
                 uiContainer,
                 "Visual Debugger",
-                IconLoader.getIcon("/icons/icon_16x16.png", DebugVisualizerListener.class),
+                IconLoader.getIcon("/icons/icon_16x16.png", DebugProcessListener.class),
                 null);
         content.setCloseable(false);
         UIUtil.invokeLaterIfNeeded(() -> ui.addContent(content));
