@@ -1275,12 +1275,8 @@ function ODRenderer(
 
   function renderAttributes(parentGfx, element) {
     var semantic = (0,_ODRendererUtil__WEBPACK_IMPORTED_MODULE_5__.getSemantic)(element);
-    if (semantic.attributeValues && semantic.attributeValues.length > 0) {
-      var attributeText = '';
-      semantic.attributeValues.forEach(
-        attribute => attributeText += attribute.attributeName + '=' + attribute.attributeValue + '\n');
-      attributeText = attributeText.slice(0, attributeText.length - 1); // slice last "\n"
-      renderLabel(parentGfx, attributeText, {
+    if (semantic.attributeValues) {
+      renderLabel(parentGfx, semantic.attributeValues, {
         box: {
           height: element.height + 30,
           width: element.width
@@ -1518,13 +1514,6 @@ function getColor(element) {
 
   return bo.color || element.color;
 }
-
-function getImageSource(element) {
-  var bo = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_9__.getBusinessObject)(element);
-
-  return bo.source || element.source;
-}
-
 
 
 /***/ }),
@@ -8926,16 +8915,17 @@ WebsocketConnector.prototype.setOnMessageHandler = function(eventBus, lastBoard)
       // Could do this when rendering as well and keep the full information here
       mapped_object.name = object.variableName + ':' + object.type.substring(object.type.lastIndexOf('.') + 1);
 
-      // Map attribute values.
-      if (object.attributeValue) {
-        let attributes = mapped_object.get('attributeValues');
-        object.attributeValue.forEach(attribute => {
-          let attributeValue = moddle.create('od:AttributeValue');
-          attributeValue.attributeName = attribute.name;
-          attributeValue.attributeValue = attribute.value;
 
-          attributes.push(attributeValue);
+      // Map attribute values.
+      mapped_object.attributeValues = '';
+      if (object.attributeValue) {
+        object.attributeValue.forEach(attribute => {
+          mapped_object.attributeValues += attribute.name + '=' + attribute.value;
+          mapped_object.attributeValues += '\n';
         });
+
+        // removed the unwanted \n at the end.
+        mapped_object.attributeValues = mapped_object.attributeValues.substring(0, mapped_object.attributeValues.length - 1);
       }
     });
 
@@ -8998,17 +8988,10 @@ WebsocketConnector.prototype.setOnMessageHandler = function(eventBus, lastBoard)
 
     function calcObjectWidth(object) {
 
-      // use the width of the longest name for every object.
+      // use the width of the longest name or attribute for every object.
       const nameWidth = getTextWidth(object.name, OBJECT_FONT_SIZE);
-      let attributeWidth = 0;
-      object.get('attributeValues').forEach(attribute => {
-        let displayString = attribute.attributeName + '=' + attribute.attributeValue;
-        let attributeDisplayWidth = getTextWidth(displayString, OBJECT_FONT_SIZE);
+      const attributeWidth = calcAttributeWidth(object);
 
-        if (attributeDisplayWidth > attributeWidth) {
-          attributeWidth = attributeDisplayWidth;
-        }
-      });
       let width;
       if (nameWidth >= attributeWidth) {
         width = nameWidth;
@@ -9020,10 +9003,16 @@ WebsocketConnector.prototype.setOnMessageHandler = function(eventBus, lastBoard)
       return width + 10;
     }
 
+    function calcAttributeWidth(object) {
+      return Math.max.apply(
+        Math,
+        object.get('attributeValues').split(/\r\n|\r|\n/).map(singleAttribute => getTextWidth(singleAttribute, OBJECT_FONT_SIZE)));
+    }
+
     function calcObjectHeight(object) {
 
-      // There is exactly one line per attribute due to the previously calculated width.
-      let numberOfLines = object.get('attributeValues').length;
+      // Calculate number of lines by splitting at \n.
+      let numberOfLines = object.get('attributeValues').split(/\r\n|\r|\n/).length;
 
       // The line height is 19.2px.
       let height = numberOfLines * 19.2;
@@ -63441,7 +63430,7 @@ module.exports = JSON.parse('{"name":"dc","uri":"http://www.omg.org/spec/DD/2010
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"Object diagram","uri":"http://tk/schema/od","prefix":"od","xml":{"tagAlias":"lowerCase"},"types":[{"name":"BoardElement","isAbstract":true,"properties":[{"name":"name","isAttr":true,"type":"String"},{"name":"id","isAttr":true,"type":"String","isId":true}]},{"name":"Object","superClass":["BoardElement"],"properties":[{"name":"attributeValues","isMany":true,"type":"AttributeValue"},{"name":"links","isMany":true,"type":"Link","isReference":true}]},{"name":"AttributeValue","properties":[{"name":"attributeName","isAttr":true,"type":"String"},{"name":"attributeValue","isAttr":true,"type":"String"}]},{"name":"Link","superClass":["BoardElement"],"properties":[{"name":"type","isAttr":true,"type":"String"},{"name":"sourceRef","isAttr":true,"isReference":true,"type":"Object"},{"name":"targetRef","isAttr":true,"isReference":true,"type":"Object"}]},{"name":"OdBoard","superClass":["RootElement"],"properties":[{"name":"boardElements","isMany":true,"type":"BoardElement"}]},{"name":"TextBox","superClass":["BoardElement"]},{"name":"RootElement","isAbstract":true,"superClass":["BoardElement"]},{"name":"Definitions","superClass":["BoardElement"],"properties":[{"name":"targetNamespace","isAttr":true,"type":"String"},{"name":"expressionLanguage","default":"http://www.w3.org/1999/XPath","isAttr":true,"type":"String"},{"name":"typeLanguage","default":"http://www.w3.org/2001/XMLSchema","isAttr":true,"type":"String"},{"name":"rootElements","type":"RootElement","isMany":true},{"name":"rootBoards","isMany":true,"type":"odDi:OdRootBoard"},{"name":"exporter","isAttr":true,"type":"String"},{"name":"exporterVersion","isAttr":true,"type":"String"}]}]}');
+module.exports = JSON.parse('{"name":"Object diagram","uri":"http://tk/schema/od","prefix":"od","xml":{"tagAlias":"lowerCase"},"types":[{"name":"BoardElement","isAbstract":true,"properties":[{"name":"name","isAttr":true,"type":"String"},{"name":"id","isAttr":true,"type":"String","isId":true}]},{"name":"Object","superClass":["BoardElement"],"properties":[{"name":"attributeValues","isAttr":true,"type":"String"},{"name":"links","isMany":true,"type":"Link","isReference":true}]},{"name":"Link","superClass":["BoardElement"],"properties":[{"name":"type","isAttr":true,"type":"String"},{"name":"sourceRef","isAttr":true,"isReference":true,"type":"Object"},{"name":"targetRef","isAttr":true,"isReference":true,"type":"Object"}]},{"name":"OdBoard","superClass":["RootElement"],"properties":[{"name":"boardElements","isMany":true,"type":"BoardElement"}]},{"name":"TextBox","superClass":["BoardElement"]},{"name":"RootElement","isAbstract":true,"superClass":["BoardElement"]},{"name":"Definitions","superClass":["BoardElement"],"properties":[{"name":"targetNamespace","isAttr":true,"type":"String"},{"name":"expressionLanguage","default":"http://www.w3.org/1999/XPath","isAttr":true,"type":"String"},{"name":"typeLanguage","default":"http://www.w3.org/2001/XMLSchema","isAttr":true,"type":"String"},{"name":"rootElements","type":"RootElement","isMany":true},{"name":"rootBoards","isMany":true,"type":"odDi:OdRootBoard"},{"name":"exporter","isAttr":true,"type":"String"},{"name":"exporterVersion","isAttr":true,"type":"String"}]}]}');
 
 /***/ }),
 
