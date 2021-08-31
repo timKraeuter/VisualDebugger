@@ -101,7 +101,6 @@ class PlantUmlDebuggingVisualizerTest {
         diagram.addObject(otherMapNode2);
 
         final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(diagram);
-        System.out.println(plantUMLString);
 
         assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("@startuml\n" +
                 "!pragma layout smetana\n" +

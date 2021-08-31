@@ -30,6 +30,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
     private final DebuggingInfoVisualizer debuggingInfoCollector;
     private final int depth;
+    private final Set<Long> manuallyExploredObjects;
 
     private final CounterBasedLock lock;
     private final Set<Long> seenObjectIds;
@@ -42,8 +43,15 @@ public class NodeDebugVisualizer implements XCompositeNode {
     public NodeDebugVisualizer(
             final DebuggingInfoVisualizer debuggingInfoCollector,
             final int depth,
-            final CounterBasedLock lock) {
-        this(debuggingInfoCollector, depth, lock, null, "", new HashSet<>());
+            final CounterBasedLock lock,
+            final Set<Long> manuallyExploredObjects) {
+        this(debuggingInfoCollector,
+                depth,
+                lock,
+                null,
+                "",
+                new HashSet<>(),
+                manuallyExploredObjects);
     }
 
     public NodeDebugVisualizer(
@@ -52,13 +60,15 @@ public class NodeDebugVisualizer implements XCompositeNode {
             final CounterBasedLock lock,
             final ODObject parent,
             final String inheritedLinkType,
-            final Set<Long> seenObjectIds) {
+            final Set<Long> seenObjectIds,
+            final Set<Long> manuallyExploredObjects) {
         this.debuggingInfoCollector = debuggingInfoCollector;
         this.depth = depth;
         this.lock = lock;
         this.parent = parent;
         this.inheritedLinkType = inheritedLinkType;
         this.seenObjectIds = seenObjectIds;
+        this.manuallyExploredObjects = manuallyExploredObjects;
     }
 
     @Override
@@ -97,7 +107,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
 
     private void handleObject(final JavaValue jValue, final String variableName, final String typeName) {
         final long objectId = NodeDebugVisualizer.getObjectId(jValue);
-        if (this.depth >= 0) {
+        if (this.depth >= 0 || this.objectWasManuallyExplored()) {
 
             final Pair<ODObject, String> parentAndHasCollectionSkipped = this.addObjectAndLinksToDiagram(
                     objectId,
@@ -115,55 +125,65 @@ public class NodeDebugVisualizer implements XCompositeNode {
                     this.lock,
                     parentAndHasCollectionSkipped.getFirst(),
                     parentAndHasCollectionSkipped.getSecond(),
-                    this.seenObjectIds);
-            // Calling compute presentation fixes a value not being ready error.
-            jValue.computePresentation(new NOOPXValueNode(), XValuePlace.TREE);
-            jValue.computeChildren(nodeDebugVisualizer);
-            // Decrease the counter here if computeChildren() will not be called on the new debug node.
-            jValue.computePresentation(new XValueNode() {
-                @Override
-                public void setPresentation(@Nullable final Icon icon, @NonNls @Nullable final String type, @NonNls @NotNull final String value, final boolean hasChildren) {
-                    this.decreaseCounterIfNeeded(jValue, hasChildren);
-                }
-
-                @Override
-                public void setPresentation(@Nullable final Icon icon, @NotNull final XValuePresentation presentation, final boolean hasChildren) {
-                    this.decreaseCounterIfNeeded(jValue, hasChildren);
-                }
-
-                @SuppressWarnings("UnstableApiUsage")
-                @Override
-                public void setPresentation(@Nullable final Icon icon, @NonNls @Nullable final String type, @NonNls @NotNull final String separator, @NonNls @Nullable final String value, final boolean hasChildren) {
-                    this.decreaseCounterIfNeeded(jValue, hasChildren);
-                }
-
-                @Override
-                public void setFullValueEvaluator(@NotNull final XFullValueEvaluator fullValueEvaluator) {
-                    // nop
-                }
-
-
-                private void decreaseCounterIfNeeded(final JavaValue value, final boolean hasChildren) {
-                    try {
-                        final var calculatedValue = value.getDescriptor().calcValue(value.getEvaluationContext());
-                        if (calculatedValue instanceof ObjectReferenceImpl) {
-                            final ObjectReferenceImpl obRef = (ObjectReferenceImpl) calculatedValue;
-                            final int fieldSize = obRef.referenceType().allFields().size();
-                            if ((fieldSize == 0 || !hasChildren) && this.isNotArray(obRef)) {
-                                NodeDebugVisualizer.this.lock.decreaseCounter();
-                            }
-                        }
-                    } catch (final EvaluateException e) {
-                        NodeDebugVisualizer.LOGGER.error(e);
-                        throw new EvaluateRuntimeException(e);
-                    }
-                }
-
-                private boolean isNotArray(final ObjectReferenceImpl obRef) {
-                    return !(obRef instanceof ArrayReferenceImpl);
-                }
-            }, XValuePlace.TREE);
+                    this.seenObjectIds,
+                    this.manuallyExploredObjects);
+            this.exploreObjectChildren(jValue, nodeDebugVisualizer);
         }
+    }
+
+    private boolean objectWasManuallyExplored() {
+        // If the parent was manually explored we have to check all children.
+        return this.parent != null && this.manuallyExploredObjects.contains(this.parent.getIdAsLong());
+    }
+
+    public void exploreObjectChildren(final JavaValue jValue, final NodeDebugVisualizer nodeDebugVisualizer) {
+        // Calling compute presentation fixes a value not being ready error.
+        jValue.computePresentation(new NOOPXValueNode(), XValuePlace.TREE);
+        jValue.computeChildren(nodeDebugVisualizer);
+        // Decrease the counter here if computeChildren() will not be called on the new debug node.
+        jValue.computePresentation(new XValueNode() {
+            @Override
+            public void setPresentation(@Nullable final Icon icon, @NonNls @Nullable final String type, @NonNls @NotNull final String value, final boolean hasChildren) {
+                this.decreaseCounterIfNeeded(jValue, hasChildren);
+            }
+
+            @Override
+            public void setPresentation(@Nullable final Icon icon, @NotNull final XValuePresentation presentation, final boolean hasChildren) {
+                this.decreaseCounterIfNeeded(jValue, hasChildren);
+            }
+
+            @SuppressWarnings("UnstableApiUsage")
+            @Override
+            public void setPresentation(@Nullable final Icon icon, @NonNls @Nullable final String type, @NonNls @NotNull final String separator, @NonNls @Nullable final String value, final boolean hasChildren) {
+                this.decreaseCounterIfNeeded(jValue, hasChildren);
+            }
+
+            @Override
+            public void setFullValueEvaluator(@NotNull final XFullValueEvaluator fullValueEvaluator) {
+                // nop
+            }
+
+
+            private void decreaseCounterIfNeeded(final JavaValue value, final boolean hasChildren) {
+                try {
+                    final var calculatedValue = value.getDescriptor().calcValue(value.getEvaluationContext());
+                    if (calculatedValue instanceof ObjectReferenceImpl) {
+                        final ObjectReferenceImpl obRef = (ObjectReferenceImpl) calculatedValue;
+                        final int fieldSize = obRef.referenceType().allFields().size();
+                        if ((fieldSize == 0 || !hasChildren) && this.isNotArray(obRef)) {
+                            NodeDebugVisualizer.this.lock.decreaseCounter();
+                        }
+                    }
+                } catch (final EvaluateException e) {
+                    NodeDebugVisualizer.LOGGER.error(e);
+                    throw new EvaluateRuntimeException(e);
+                }
+            }
+
+            private boolean isNotArray(final ObjectReferenceImpl obRef) {
+                return !(obRef instanceof ArrayReferenceImpl);
+            }
+        }, XValuePlace.TREE);
     }
 
     private Pair<ODObject, String> addObjectAndLinksToDiagram(
@@ -180,6 +200,7 @@ public class NodeDebugVisualizer implements XCompositeNode {
         // Normal objects
         final var object = new ODObject(objectId, typeName, variableName);
         this.debuggingInfoCollector.addObject(object);
+        this.debuggingInfoCollector.addDebugNodeForObject(object, jValue);
         if (this.parent != null) {
             this.debuggingInfoCollector.addLinkToObject(this.parent, object, this.getLinkType(jValue));
         }

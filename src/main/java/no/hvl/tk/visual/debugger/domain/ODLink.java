@@ -1,21 +1,30 @@
 package no.hvl.tk.visual.debugger.domain;
 
 import com.google.common.base.Objects;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlID;
+import jakarta.xml.bind.annotation.XmlIDREF;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.StringJoiner;
 
 /**
- * Represents a link in an object diagram.
+ * Represents a link between two objects in an object diagram.
  */
 public class ODLink implements Comparable<ODLink> {
 
     /**
      * Name of the association this link is typed in.
      */
+    @XmlAttribute
     private final String type;
 
+    @XmlIDREF
+    @XmlAttribute
     private final ODObject from;
+
+    @XmlIDREF
+    @XmlAttribute
     private final ODObject to;
 
     public ODLink(final ODObject from, final ODObject to, final String type) {
@@ -73,5 +82,11 @@ public class ODLink implements Comparable<ODLink> {
     @Override
     public int hashCode() {
         return Objects.hashCode(this.type, this.from, this.to);
+    }
+
+    @XmlID
+    @XmlAttribute
+    public String getId() {
+        return "Link_" + this.from.getId() + "_to_" + this.to.getId() + "_type_" + this.type;
     }
 }

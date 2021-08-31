@@ -4,13 +4,17 @@
     <vendor email="tim.kraeuterr@gmail.com" url="https://timkraeuter.github.io//">Tim Kräuter</vendor>
 
     <description><![CDATA[
-    This plugin visualizes the variables during a debugging session as a UML object diagram using PlantUML.
+    This plugin visualizes the variables during a debugging session as a UML object diagram.
     The plugin is used alongside normal debugging. Set a breakpoint for debugging and start the debugging as usual in the IDE.
-    The plugin will automatically create a visual debugging toolbar in the debug window, as shown in the screenshot.
+    The plugin will automatically create a visual debugging toolbar in the debug window, shown in the screenshot.
     All variables in the scope of a debugging session will be visualized as an object diagram.
 
-    By default, the plugin will visualize objects up to a depth of 3, but this can be configured using the plugin settings.
-    The diagrams shown can also be printed as an SVG file by the plugin using PlantUML.
+    The default visualization is browser-based and allows double click on objects to load its children directly from the UI.
+    In addition, there is an embedded visualization using PlantUML, which does not support user interaction.
+
+    By default, the plugin will visualize objects up to a depth of 3, but this is configurable using the plugin settings.
+    The browser UI allows the user to download the current object diagram as an SVG- or XML-File for future discussion.
+    Printing an SVG-File when using the embedded visualization can be done from the IDE using the print icon in the plugin toolbar.
     ]]></description>
 
     <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
@@ -19,7 +23,7 @@
     <depends>com.intellij.modules.java</depends>
 
     <projectListeners>
-        <listener class="no.hvl.tk.visual.debugger.DebugVisualizerListener"
+        <listener class="no.hvl.tk.visual.debugger.DebugProcessListener"
                   topic="com.intellij.xdebugger.XDebuggerManagerListener"/>
     </projectListeners>
 
@@ -28,8 +32,8 @@
             <action
                     id="VisualDebugger.SettingsAction"
                     class="no.hvl.tk.visual.debugger.actions.settings.SettingsAction"
-                    text="Settings"
-                    description="Change settings"
+                    text="Change Settings"
+                    description="Change the visual debugger settings"
                     icon="/icons/settings.svg"
             />
             <action
@@ -42,7 +46,7 @@
             <action
                     id="VisualDebugger.StopAction"
                     class="no.hvl.tk.visual.debugger.actions.stop.StopAction"
-                    text="Stop"
+                    text="Stop Debugger"
                     description="Stop the visual debugger"
                     icon="/icons/stop.svg"
             />
@@ -50,7 +54,10 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
+        <projectConfigurable parentId="tools"
+                             instance="no.hvl.tk.visual.debugger.settings.VisualDebuggerSettingsConfigurable"
+                             id="no.hvl.tk.visualDebugger.settings" displayName="Visual Debugger Settings"/>
+        <applicationService serviceImplementation="no.hvl.tk.visual.debugger.settings.PluginSettingsState"/>
     </extensions>
 
     <actions>
