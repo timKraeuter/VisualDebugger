@@ -33,7 +33,7 @@ variables. One can interact with the object diagram in the browser visualization
 their immediate children. This communication also uses the established WebSocket connection.
 
 The user interface implementation is decoupled from the IDEA, such that it can be reused for debugging visualization,
-for example, together with Eclipse IDE. The source code for the UI will be published soon and then linked here.
+for example, together with Eclipse IDE. The source code for the UI can be found [here](https://github.com/timKraeuter/object-diagram-modeler/tree/master/debugger).
 
 ### Debugging API
 
