@@ -7,6 +7,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
 import com.intellij.xdebugger.frame.XStackFrame;
+import com.jetbrains.jdi.ObjectReferenceImpl;
 import com.sun.jdi.*;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizerBase;
@@ -181,7 +182,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             this.addVariableToDiagram(variableName, variableType, value, parentIfExists);
             return;
         }
-        if (!(variableValue instanceof ObjectReference)) {
+        if (variableValue instanceof ObjectReferenceImpl) {
             ObjectReference obj = (ObjectReference) variableValue;
             // TODO add link if parent exists
             this.convertObjectReference(variableName, obj, stackFrame, parentIfExists, depth);
