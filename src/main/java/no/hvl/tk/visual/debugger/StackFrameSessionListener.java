@@ -15,6 +15,7 @@ import no.hvl.tk.visual.debugger.domain.ODObject;
 import no.hvl.tk.visual.debugger.domain.PrimitiveTypes;
 import no.hvl.tk.visual.debugger.settings.PluginSettingsState;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -113,10 +114,26 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             this.convertValue(value, name, objectType, stackFrame, parentIfExists, visualisationDepth);
             return;
         }
+        // TODO: handle array, stringref, list, set and maps
+
         // TODO save seen objects.
-        long objectID = objectReference.uniqueID();
-        Map<Field, Value> fields = objectReference.getValues(objectReference.referenceType().allFields());
-        // TODO map fields, reduce depth and continue
+        final ODObject object = new ODObject(objectReference.uniqueID(), objectType, name);
+        if (parentIfExists != null) {
+            debuggingVisualizer.addLinkToObject(parentIfExists, object, "associationName");
+        }
+        this.debuggingVisualizer.addObject(object);
+
+        // Filter static fields? Or non visible fields?
+        for (Map.Entry<Field, Value> fieldValueEntry : objectReference.getValues(objectReference.referenceType().allFields()).entrySet()) {
+            final String fieldName = fieldValueEntry.getKey().name();
+            this.convertValue(
+                    fieldValueEntry.getValue(),
+                    fieldName,
+                    fieldValueEntry.getKey().typeName(),
+                    stackFrame,
+                    object,
+                    visualisationDepth - 1);
+        }
     }
 
     private void convertVariable(
@@ -182,12 +199,13 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             this.addVariableToDiagram(variableName, variableType, value, parentIfExists);
             return;
         }
-        if (variableValue instanceof ObjectReferenceImpl) {
-            ObjectReference obj = (ObjectReference) variableValue;
-            // TODO add link if parent exists
-            this.convertObjectReference(variableName, obj, stackFrame, parentIfExists, depth);
+        ObjectReference obj = (ObjectReference) variableValue;
+        if (obj == null) {
+            this.addVariableToDiagram(variableName, variableType, "null", parentIfExists);
+            return;
         }
-        throw new RuntimeException("Unexpected value encountered " + variableValue.toString());
+        // Only objects left.
+        this.convertObjectReference(variableName, obj, stackFrame, parentIfExists, depth);
     }
 
     private void addVariableToDiagram(String variableName, String variableType, String value, ODObject parentIfExists) {
