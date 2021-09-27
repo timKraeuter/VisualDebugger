@@ -220,16 +220,15 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             return;
         }
 
+        if (parentIfExists != null) {
+            debuggingVisualizer.addLinkToObject(parentIfExists, odObject, linkTypeIfExists);
+        }
 
         if (this.seenObjectIds.contains(objectReference.uniqueID())) {
             return;
         }
         this.debuggingVisualizer.addObject(odObject);
         this.seenObjectIds.add(objectReference.uniqueID());
-
-        if (parentIfExists != null) {
-            debuggingVisualizer.addLinkToObject(parentIfExists, odObject, linkTypeIfExists);
-        }
 
         // Filter static fields? Or non visible fields?
         for (Map.Entry<Field, Value> fieldValueEntry : objectReference.getValues(objectReference.referenceType().allFields()).entrySet()) {
