@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.Pair;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
@@ -31,7 +32,6 @@ import static no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionLi
 public class StackFrameSessionListener implements XDebugSessionListener {
 
     private static final Logger LOGGER = Logger.getInstance(StackFrameSessionListener.class);
-    private static final int SUFFIX_LENGTH = ".java".length();
     private static final String CONTENT_ID = "no.hvl.tk.VisualDebugger";
     private static final String TOOLBAR_ACTION = "VisualDebugger.VisualizerToolbar"; // has to match with plugin.xml
 
@@ -41,6 +41,15 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     private final XDebugSession debugSession;
     private DebuggingInfoVisualizer debuggingVisualizer;
     private ThreadReference thread;
+
+    private Set<Long> seenObjectIds = new HashSet<>();
+
+    /*
+    Converting actual heap objects requires running code on the suspended VM thread.
+    However, once we start running code on the thread, we can no longer read frame locals.
+    Therefore, we have to convert all heap objects at the very end.
+    */
+    private final TreeMap<Long, Pair<ObjectReference, ODObject>> rootObjects = new TreeMap<>();
 
     public StackFrameSessionListener(XDebugSession debugSession) {
         this.debugSession = debugSession;
@@ -62,30 +71,44 @@ public class StackFrameSessionListener implements XDebugSessionListener {
         visualizeThisObject(stackFrame);
         visualizeVariables(stackFrame);
 
+        convertObjects();
+
         this.debuggingVisualizer.finishVisualization();
+        this.seenObjectIds.clear();
+    }
+
+    private void convertObjects() {
+        rootObjects.forEach((objID, objectReferenceODObjectPair) -> {
+            final ObjectReference obRef = objectReferenceODObjectPair.getFirst();
+            final ODObject odObject = objectReferenceODObjectPair.getSecond();
+            // No parents at root
+            this.exploreObjectReference(obRef, odObject, null, "");
+        });
     }
 
     private void visualizeThisObject(StackFrame stackFrame) {
         ObjectReference thisObjectReference = stackFrame.thisObject();
         assert thisObjectReference != null;
 
-        this.convertObjectReference(
-                "this",
-                thisObjectReference,
-                stackFrame,
-                null,
-                PluginSettingsState.getInstance().getVisualisationDepth());
+        final ODObject thisObject = new ODObject(
+                thisObjectReference.uniqueID(),
+                thisObjectReference.referenceType().name(),
+                "this");
+
+        rootObjects.put(thisObjectReference.uniqueID(),
+                Pair.create(thisObjectReference,
+                        thisObject));
     }
 
     private void visualizeVariables(StackFrame stackFrame) {
         try {
-            // All visible variables in the stack frame
+            // All visible variables in the stackframe.
             final List<LocalVariable> methodVariables = stackFrame.visibleVariables();
             methodVariables.forEach(localVariable -> this.convertVariable(
                     localVariable,
                     stackFrame,
                     null,
-                    PluginSettingsState.getInstance().getVisualisationDepth()));
+                    null));
         } catch (AbsentInformationException e) {
             // OK
         }
@@ -163,49 +186,48 @@ public class StackFrameSessionListener implements XDebugSessionListener {
         return this.debuggingVisualizer;
     }
 
-    private void convertObjectReference(
-            String name,
+    private void exploreObjectReference(
             ObjectReference objectReference,
-            StackFrame stackFrame,
+            ODObject odObject,
             ODObject parentIfExists,
-            Integer visualisationDepth) {
-        if (visualisationDepth <= 0) {
-            return;
-        }
+            String linkTypeIfExists) {
         final String objectType = objectReference.referenceType().name();
         if (PrimitiveTypes.isBoxedPrimitiveType(objectType)) {
             final Value value = objectReference.getValue(objectReference.referenceType().fieldByName("value"));
-            this.convertValue(value, name, objectType, stackFrame, parentIfExists, visualisationDepth);
-            return;
-        }
-        if (objectReference instanceof ArrayReference) {
-            convertArray(name, (ArrayReference) objectReference, stackFrame, parentIfExists, visualisationDepth, objectType);
+            this.convertValue(value, odObject.getVariableName(), objectType, parentIfExists, linkTypeIfExists, true);
             return;
         }
         if (objectReference instanceof StringReference) {
-            // TODO check if we really need this again!
+            // TODO check if we really need this again !!!!
             final String value = ((StringReference) objectReference).value();
-            this.addVariableToDiagram(name, objectType, value, parentIfExists);
+            this.addVariableToDiagram(odObject.getVariableName(), objectType, value, parentIfExists);
+            return;
+        }
+        if (objectReference instanceof ArrayReference) {
+            convertArray(
+                    odObject.getVariableName(),
+                    (ArrayReference) objectReference,
+                    objectType,
+                    parentIfExists,
+                    linkTypeIfExists);
             return;
         }
         if ((doesImplementInterface(objectReference, "java.util.List")
                 || doesImplementInterface(objectReference, "java.util.Set"))
                 && isInternalPackage(objectType)) {
-            convertListOrSet(name, objectReference, stackFrame, parentIfExists, visualisationDepth, objectType);
+            convertListOrSet(odObject.getVariableName(), objectReference, objectType, parentIfExists, linkTypeIfExists);
             return;
         }
 
         if (doesImplementInterface(objectReference, "java.util.Map") && isInternalPackage(objectType)) {
-            convertMap(name, objectReference, stackFrame, parentIfExists, visualisationDepth, objectType);
+            convertMap(odObject.getVariableName(), objectReference, objectType, parentIfExists, linkTypeIfExists);
             return;
         }
 
-        // TODO save seen objects.
-        final ODObject object = new ODObject(objectReference.uniqueID(), objectType, name);
+        this.debuggingVisualizer.addObject(odObject);
         if (parentIfExists != null) {
-            debuggingVisualizer.addLinkToObject(parentIfExists, object, "associationName");
+            debuggingVisualizer.addLinkToObject(parentIfExists, odObject, linkTypeIfExists);
         }
-        this.debuggingVisualizer.addObject(object);
 
         // Filter static fields? Or non visible fields?
         for (Map.Entry<Field, Value> fieldValueEntry : objectReference.getValues(objectReference.referenceType().allFields()).entrySet()) {
@@ -214,43 +236,42 @@ public class StackFrameSessionListener implements XDebugSessionListener {
                     fieldValueEntry.getValue(),
                     fieldName,
                     fieldValueEntry.getKey().typeName(),
-                    stackFrame,
-                    object,
-                    visualisationDepth - 1);
+                    odObject,
+                    fieldName,
+                    true);
         }
     }
 
     private void convertArray(
             String name,
             ArrayReference arrayRef,
-            StackFrame stackFrame,
+            String objectType,
             ODObject parentIfExists,
-            Integer visualisationDepth,
-            String objectType) {
-        final ODObject parent = createParentIfNeededForCollection(name, arrayRef, parentIfExists, objectType);
+            String linkTypeIfExists) {
+        final ODObject parent = createParentIfNeededForCollection(arrayRef, parentIfExists, name, objectType);
         for (int i = 0; i < arrayRef.length(); i++) {
             final Value value = arrayRef.getValue(i);
+            final String variableName = String.valueOf(i);
             this.convertValue(
                     value,
-                    String.valueOf(i),
+                    variableName,
                     value.type().name(),
-                    stackFrame,
                     parent,
-                    parentIfExists != null ? visualisationDepth : visualisationDepth - 1);
+                    parent.equals(parentIfExists) ? linkTypeIfExists : variableName, true); // link type is just the index in case of root collections.
         }
     }
 
     @NotNull
     private ODObject createParentIfNeededForCollection(
-            String name,
             ObjectReference obRef,
             ODObject parentIfExists,
+            String obName,
             String objectType) {
         final ODObject parent;
         if (parentIfExists != null) {
             parent = parentIfExists;
         } else {
-            parent = new ODObject(obRef.uniqueID(), objectType, name);
+            parent = new ODObject(obRef.uniqueID(), objectType, obName);
             this.debuggingVisualizer.addObject(parent);
         }
         return parent;
@@ -259,22 +280,21 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     private void convertListOrSet(
             String name,
             ObjectReference collectionRef,
-            StackFrame stackFrame,
+            String objectType,
             ODObject parentIfExists,
-            Integer visualisationDepth,
-            String objectType) {
-        final ODObject parent = createParentIfNeededForCollection(name, collectionRef, parentIfExists, objectType);
+            String linkTypeIfExists) {
+        final ODObject parent = createParentIfNeededForCollection(collectionRef, parentIfExists, name, objectType);
         Iterator<Value> iterator = getIterator(thread, collectionRef);
         int i = 0;
         while (iterator.hasNext()) {
             final Value value = iterator.next();
+            final String obName = String.valueOf(i);
             this.convertValue(
                     value,
-                    String.valueOf(i), // TODO add association/link name
-                    objectType,
-                    stackFrame,
+                    obName,
+                    value.type().name(),
                     parent,
-                    parentIfExists != null ? visualisationDepth : visualisationDepth - 1);
+                    parent.equals(parentIfExists) ? linkTypeIfExists : obName, true); // link type is just the index in case of root collections.
             i++;
         }
     }
@@ -282,11 +302,10 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     private void convertMap(
             String name,
             ObjectReference mapRef,
-            StackFrame stackFrame,
+            String objectType,
             ODObject parentIfExists,
-            Integer visualisationDepth,
-            String objectType) {
-        final ODObject parent = createParentIfNeededForCollection(name, mapRef, parentIfExists, objectType);
+            String linkTypeIfExists) {
+        final ODObject parent = createParentIfNeededForCollection(mapRef, parentIfExists, name, objectType);
         ObjectReference entrySet = (ObjectReference) invokeSimple(thread, mapRef, "entrySet");
         Iterator<Value> iterator = getIterator(thread, entrySet);
         int i = 0;
@@ -295,27 +314,30 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             final Value keyValue = invokeSimple(thread, entry, "getKey");
             final Value valueValue = invokeSimple(thread, entry, "getValue");
             // TODO change name here
-            final ODObject entryObject = new ODObject(entry.uniqueID(), entry.referenceType().name(), name);
+            final ODObject entryObject = new ODObject(entry.uniqueID(), entry.referenceType().name(), String.valueOf(i));
             this.debuggingVisualizer.addObject(entryObject);
             // TODO check link type
-            this.debuggingVisualizer.addLinkToObject(parent, entryObject, entry.referenceType().name());
+            this.debuggingVisualizer.addLinkToObject(
+                    parent,
+                    entryObject,
+                    i + (parentIfExists != null ? linkTypeIfExists : ""));
             if (keyValue != null) {
+                final String keyName = String.format("key %s", i);
                 this.convertValue(
                         keyValue,
-                        String.format("key %s", i),
+                        keyName,
                         keyValue.type() == null ? "" : keyValue.type().name(),
-                        stackFrame,
                         entryObject,
-                        visualisationDepth - 1);
+                        "key", true);
             }
             if (valueValue != null) {
+                final String valueName = String.format("value %s", i);
                 this.convertValue(
                         valueValue,
-                        String.format("value %s", i),
+                        valueName,
                         valueValue.type() == null ? "" : keyValue.type().name(),
-                        stackFrame,
                         entryObject,
-                        visualisationDepth - 1);
+                        "value", true);
             }
             i++;
         }
@@ -325,20 +347,20 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             LocalVariable localVariable,
             StackFrame stackFrame,
             ODObject parentIfExists,
-            int depth) {
+            String linkTypeIfExists) {
         final Value variableValue = stackFrame.getValue(localVariable);
         final String variableName = localVariable.name();
         final String variableType = localVariable.typeName();
-        this.convertValue(variableValue, variableName, variableType, stackFrame, parentIfExists, depth);
+        this.convertValue(variableValue, variableName, variableType, parentIfExists, linkTypeIfExists, false);
     }
 
     private void convertValue(
             Value variableValue,
             String variableName,
             String variableType,
-            StackFrame stackFrame,
             ODObject parentIfExists,
-            int depth) {
+            String linkTypeIfExists,
+            boolean exploreObjects) {
         if (variableValue instanceof BooleanValue) {
             final String value = String.valueOf(((BooleanValue) variableValue).value());
             this.addVariableToDiagram(variableName, variableType, value, parentIfExists);
@@ -376,12 +398,12 @@ public class StackFrameSessionListener implements XDebugSessionListener {
         }
         if (variableValue instanceof CharValue) {
             final String value = Character.toString(((CharValue) variableValue).value());
-            this.addVariableToDiagram(variableName, variableType, value, parentIfExists);
+            this.addVariableToDiagram(variableName, variableType, String.format("'%s'", value), parentIfExists);
             return;
         }
         if (variableValue instanceof StringReference) {
             final String value = ((StringReference) variableValue).value();
-            this.addVariableToDiagram(variableName, variableType, value, parentIfExists);
+            this.addVariableToDiagram(variableName, variableType, String.format("\"%s\"", value), parentIfExists);
             return;
         }
         ObjectReference obj = (ObjectReference) variableValue;
@@ -389,8 +411,18 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             this.addVariableToDiagram(variableName, variableType, "null", parentIfExists);
             return;
         }
-        // Only objects left.
-        this.convertObjectReference(variableName, obj, stackFrame, parentIfExists, depth);
+
+        if (this.seenObjectIds.contains(obj.uniqueID())) {
+            return;
+        }
+        this.seenObjectIds.add(obj.uniqueID());
+
+        final ODObject odObject = new ODObject(obj.uniqueID(), variableType, variableName);
+        if (exploreObjects) {
+            this.exploreObjectReference(obj, odObject, parentIfExists, linkTypeIfExists);
+        } else {
+            this.rootObjects.put(obj.uniqueID(), Pair.create(obj, odObject));
+        }
     }
 
     private void addVariableToDiagram(String variableName, String variableType, String value, ODObject parentIfExists) {
