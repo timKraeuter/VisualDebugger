@@ -34,6 +34,8 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     private static final Logger LOGGER = Logger.getInstance(StackFrameSessionListener.class);
     private static final String CONTENT_ID = "no.hvl.tk.VisualDebugger";
     private static final String TOOLBAR_ACTION = "VisualDebugger.VisualizerToolbar"; // has to match with plugin.xml
+    public static final String KEY = "key";
+    public static final String VALUE = "value";
 
 
     private JPanel userInterface;
@@ -193,14 +195,8 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             String linkTypeIfExists) {
         final String objectType = objectReference.referenceType().name();
         if (PrimitiveTypes.isBoxedPrimitiveType(objectType)) {
-            final Value value = objectReference.getValue(objectReference.referenceType().fieldByName("value"));
+            final Value value = objectReference.getValue(objectReference.referenceType().fieldByName(VALUE));
             this.convertValue(value, odObject.getVariableName(), objectType, parentIfExists, linkTypeIfExists, true);
-            return;
-        }
-        if (objectReference instanceof StringReference) {
-            // TODO check if we really need this again !!!!
-            final String value = ((StringReference) objectReference).value();
-            this.addVariableToDiagram(odObject.getVariableName(), objectType, value, parentIfExists);
             return;
         }
         if (objectReference instanceof ArrayReference) {
@@ -224,7 +220,13 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             return;
         }
 
+
+        if (this.seenObjectIds.contains(objectReference.uniqueID())) {
+            return;
+        }
         this.debuggingVisualizer.addObject(odObject);
+        this.seenObjectIds.add(objectReference.uniqueID());
+
         if (parentIfExists != null) {
             debuggingVisualizer.addLinkToObject(parentIfExists, odObject, linkTypeIfExists);
         }
@@ -313,31 +315,32 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             ObjectReference entry = (ObjectReference) iterator.next();
             final Value keyValue = invokeSimple(thread, entry, "getKey");
             final Value valueValue = invokeSimple(thread, entry, "getValue");
-            // TODO change name here
+
             final ODObject entryObject = new ODObject(entry.uniqueID(), entry.referenceType().name(), String.valueOf(i));
+
             this.debuggingVisualizer.addObject(entryObject);
-            // TODO check link type
             this.debuggingVisualizer.addLinkToObject(
                     parent,
                     entryObject,
                     i + (parentIfExists != null ? linkTypeIfExists : ""));
+
             if (keyValue != null) {
-                final String keyName = String.format("key %s", i);
                 this.convertValue(
                         keyValue,
-                        keyName,
+                        KEY,
                         keyValue.type() == null ? "" : keyValue.type().name(),
                         entryObject,
-                        "key", true);
+                        KEY,
+                        true);
             }
             if (valueValue != null) {
-                final String valueName = String.format("value %s", i);
                 this.convertValue(
                         valueValue,
-                        valueName,
-                        valueValue.type() == null ? "" : keyValue.type().name(),
+                        VALUE,
+                        valueValue.type() == null ? "" : valueValue.type().name(),
                         entryObject,
-                        "value", true);
+                        VALUE,
+                        true);
             }
             i++;
         }
@@ -411,11 +414,6 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             this.addVariableToDiagram(variableName, variableType, "null", parentIfExists);
             return;
         }
-
-        if (this.seenObjectIds.contains(obj.uniqueID())) {
-            return;
-        }
-        this.seenObjectIds.add(obj.uniqueID());
 
         final ODObject odObject = new ODObject(obj.uniqueID(), variableType, variableName);
         if (exploreObjects) {
