@@ -1,6 +1,7 @@
 package no.hvl.tk.visual.debugger.debugging.stackframe;
 
 import com.intellij.debugger.engine.SuspendContext;
+import com.intellij.debugger.engine.jdi.ThreadReferenceProxy;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -11,6 +12,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
+import com.intellij.xdebugger.frame.XStackFrame;
 import com.sun.jdi.*;
 import no.hvl.tk.visual.debugger.DebugProcessListener;
 import no.hvl.tk.visual.debugger.SharedState;
@@ -32,10 +34,14 @@ import static no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionLi
 public class StackFrameSessionListener implements XDebugSessionListener {
 
     private static final Logger LOGGER = Logger.getInstance(StackFrameSessionListener.class);
+
+    // UI constants
     private static final String CONTENT_ID = "no.hvl.tk.VisualDebugger";
     private static final String TOOLBAR_ACTION = "VisualDebugger.VisualizerToolbar"; // has to match with plugin.xml
-    public static final String KEY = "key";
-    public static final String VALUE = "value";
+
+    private static final int SUFFIX_LENGTH = ".java".length();
+    private static final String KEY = "key";
+    private static final String VALUE = "value";
 
 
     private JPanel userInterface;
@@ -104,13 +110,11 @@ public class StackFrameSessionListener implements XDebugSessionListener {
 
     private void visualizeVariables(StackFrame stackFrame) {
         try {
-            // All visible variables in the stackframe.
+            // All visible variables in the stack frame.
             final List<LocalVariable> methodVariables = stackFrame.visibleVariables();
             methodVariables.forEach(localVariable -> this.convertVariable(
                     localVariable,
-                    stackFrame,
-                    null,
-                    null));
+                    stackFrame));
         } catch (AbsentInformationException e) {
             // OK
         }
@@ -347,13 +351,11 @@ public class StackFrameSessionListener implements XDebugSessionListener {
 
     private void convertVariable(
             LocalVariable localVariable,
-            StackFrame stackFrame,
-            ODObject parentIfExists,
-            String linkTypeIfExists) {
+            StackFrame stackFrame) {
         final Value variableValue = stackFrame.getValue(localVariable);
         final String variableName = localVariable.name();
         final String variableType = localVariable.typeName();
-        this.convertValue(variableValue, variableName, variableType, parentIfExists, linkTypeIfExists, false);
+        this.convertValue(variableValue, variableName, variableType, null, null, false);
     }
 
     private void convertValue(
@@ -430,13 +432,18 @@ public class StackFrameSessionListener implements XDebugSessionListener {
         }
     }
 
-
     private StackFrame getCorrectStackFrame(XDebugSession debugSession) {
         SuspendContext sc = (SuspendContext) debugSession.getSuspendContext();
-        thread = sc.getThread().getThreadReference();
+        ThreadReferenceProxy scThread = sc.getThread();
+        if (scThread == null) {
+            throw new RuntimeException("Suspend context thread was unexpectedly nulL!");
+        }
+
+        thread = scThread.getThreadReference();
         try {
-            // TODO: We boldy assume the first stack frame is the right one, which it seems to be.
-            final Optional<StackFrame> first = thread.frames().stream().findFirst();
+            final Optional<StackFrame> first = thread.frames().stream()
+                                                     .filter(this::isCorrectStackFrame)
+                                                     .findFirst();
             if (first.isPresent()) {
                 return first.get();
             }
@@ -445,5 +452,20 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             throw new RuntimeException("Correct stack frame for debugging not found!", e);
         }
         throw new RuntimeException("Correct stack frame for debugging not found!");
+    }
+
+    private boolean isCorrectStackFrame(StackFrame stackFrame) {
+        final XStackFrame currentStackFrame = debugSession.getCurrentStackFrame();
+        if (currentStackFrame == null || currentStackFrame.getSourcePosition() == null) {
+            throw new RuntimeException("Current stack frame or source position was unexpectedly nulL!");
+
+        }
+        final String canonicalName = currentStackFrame.getSourcePosition().getFile().getName();
+        // cut the .java
+        final String wantedTypeName = canonicalName.substring(0, canonicalName.length() - SUFFIX_LENGTH);
+
+        final String typeName = stackFrame.location().declaringType().name();
+
+        return typeName.contains(wantedTypeName);
     }
 }
