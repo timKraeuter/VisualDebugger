@@ -1,6 +1,5 @@
 package no.hvl.tk.visual.debugger.server.endpoint;
 
-import com.google.common.collect.Sets;
 import com.intellij.debugger.engine.JavaValue;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
@@ -10,8 +9,6 @@ import jakarta.websocket.OnOpen;
 import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
 import no.hvl.tk.visual.debugger.SharedState;
-import no.hvl.tk.visual.debugger.debugging.NodeDebugVisualizer;
-import no.hvl.tk.visual.debugger.debugging.concurrency.CounterBasedLock;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.domain.ODObject;
 import no.hvl.tk.visual.debugger.server.DebugAPIServerStarter;
@@ -67,30 +64,10 @@ public class DebugAPIEndpoint {
     private static String loadChildren(
             final DebuggingInfoVisualizer debuggingInfoVisualizer,
             final Pair<ODObject, JavaValue> debugNodeAndObjectForObjectId) {
-        final ODObject parent = debugNodeAndObjectForObjectId.getFirst();
-        final JavaValue debugNode = debugNodeAndObjectForObjectId.getSecond();
 
         final LoadChildrenDebuggingInfoCollector collector =
                 new LoadChildrenDebuggingInfoCollector(debuggingInfoVisualizer);
-        // Add parent to object diagram.
-        collector.addObject(parent);
-
-        // Load children
-        final CounterBasedLock lock = new CounterBasedLock();
-        new Thread(() -> {
-            final NodeDebugVisualizer nodeDebugger = new NodeDebugVisualizer(
-                    collector,
-                    1,
-                    lock,
-                    parent,
-                    "",
-                    Sets.newHashSet(),
-                    Sets.newHashSet());
-            nodeDebugger.exploreObjectChildren(debugNode, nodeDebugger);
-        }).start();
-
-        // Wait for the node debug visualizer to have finished.
-        lock.lock();
+        // TODO implement this using the stack frame
         return DiagramToXMLConverter.toXml(collector.getCurrentDiagram());
     }
 }

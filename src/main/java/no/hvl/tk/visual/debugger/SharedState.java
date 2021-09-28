@@ -1,7 +1,6 @@
 package no.hvl.tk.visual.debugger;
 
 import jakarta.websocket.Session;
-import no.hvl.tk.visual.debugger.debugging.DebugSessionListener;
 import no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionListener;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.tyrus.server.Server;

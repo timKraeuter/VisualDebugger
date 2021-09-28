@@ -11,29 +11,25 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Pair;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
 import com.intellij.xdebugger.frame.XStackFrame;
-import com.sun.jdi.*;
+import com.sun.jdi.IncompatibleThreadStateException;
+import com.sun.jdi.StackFrame;
+import com.sun.jdi.ThreadReference;
 import no.hvl.tk.visual.debugger.DebugProcessListener;
 import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.WebSocketDebuggingVisualizer;
-import no.hvl.tk.visual.debugger.domain.ODObject;
-import no.hvl.tk.visual.debugger.domain.PrimitiveTypes;
 import no.hvl.tk.visual.debugger.settings.PluginSettingsState;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
-import java.util.List;
-
-import static no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionListenerHelper.*;
+import java.util.Optional;
 
 public class StackFrameSessionListener implements XDebugSessionListener {
 
@@ -63,10 +59,12 @@ public class StackFrameSessionListener implements XDebugSessionListener {
 
             @Override
             public void processTerminated(@NotNull ProcessEvent event) {
+                // not relevant
             }
 
             @Override
             public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
+                // not relevant
             }
         });
         SharedState.setDebugListener(this);
@@ -74,14 +72,14 @@ public class StackFrameSessionListener implements XDebugSessionListener {
 
     @Override
     public void sessionPaused() {
-        startVisualDebugging();
+        this.startVisualDebugging();
     }
 
     private void startVisualDebugging() {
         if (!SharedState.isDebuggingActive()) {
             return;
         }
-        StackFrame stackFrame = this.getCorrectStackFrame(debugSession);
+        StackFrame stackFrame = this.getCorrectStackFrame(this.debugSession);
 
         StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(
                 stackFrame,
@@ -170,11 +168,11 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             throw new RuntimeException("Suspend context thread was unexpectedly nulL!");
         }
 
-        thread = scThread.getThreadReference();
+        this.thread = scThread.getThreadReference();
         try {
-            final Optional<StackFrame> first = thread.frames().stream()
-                                                     .filter(this::isCorrectStackFrame)
-                                                     .findFirst();
+            final Optional<StackFrame> first = this.thread.frames().stream()
+                                                          .filter(this::isCorrectStackFrame)
+                                                          .findFirst();
             if (first.isPresent()) {
                 return first.get();
             }
@@ -186,7 +184,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     }
 
     private boolean isCorrectStackFrame(StackFrame stackFrame) {
-        final XStackFrame currentStackFrame = debugSession.getCurrentStackFrame();
+        final XStackFrame currentStackFrame = this.debugSession.getCurrentStackFrame();
         if (currentStackFrame == null || currentStackFrame.getSourcePosition() == null) {
             throw new RuntimeException("Current stack frame or source position was unexpectedly nulL!");
 
