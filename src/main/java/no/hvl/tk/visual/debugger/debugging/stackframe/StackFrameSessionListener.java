@@ -2,14 +2,18 @@ package no.hvl.tk.visual.debugger.debugging.stackframe;
 
 import com.intellij.debugger.engine.SuspendContext;
 import com.intellij.debugger.engine.jdi.ThreadReferenceProxy;
+import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.ui.UIUtil;
+import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
 import com.intellij.xdebugger.frame.XStackFrame;
@@ -49,14 +53,27 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     private ThreadReference thread;
 
 
-    public StackFrameSessionListener(XDebugSession debugSession) {
-        this.debugSession = debugSession;
+    public StackFrameSessionListener(@NotNull XDebugProcess debugProcess) {
+        this.debugSession = debugProcess.getSession();
+        debugProcess.getProcessHandler().addProcessListener(new ProcessListener() {
+            @Override
+            public void startNotified(@NotNull ProcessEvent event) {
+                StackFrameSessionListener.this.initUIIfNeeded();
+            }
+
+            @Override
+            public void processTerminated(@NotNull ProcessEvent event) {
+            }
+
+            @Override
+            public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
+            }
+        });
+        SharedState.setDebugListener(this);
     }
 
     @Override
     public void sessionPaused() {
-        this.initUIIfNeeded();
-
         startVisualDebugging();
     }
 
@@ -121,7 +138,6 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             this.userInterface.remove(activateButton);
             this.debuggingVisualizer.debuggingActivated();
             this.userInterface.revalidate();
-            this.startVisualDebugging();
         });
         this.userInterface.add(activateButton);
 

@@ -103,14 +103,14 @@ public class StackFrameAnalyzer {
                     linkTypeIfExists);
             return;
         }
-        if ((doesImplementInterface(objectReference, "java.util.List")
-                || doesImplementInterface(objectReference, "java.util.Set"))
+        if ((implementsInterface(objectReference, "java.util.List")
+                || implementsInterface(objectReference, "java.util.Set"))
                 && isInternalPackage(objectType)) {
             convertListOrSet(odObject.getVariableName(), objectReference, objectType, parentIfExists, linkTypeIfExists);
             return;
         }
 
-        if (doesImplementInterface(objectReference, "java.util.Map") && isInternalPackage(objectType)) {
+        if (implementsInterface(objectReference, "java.util.Map") && isInternalPackage(objectType)) {
             convertMap(odObject.getVariableName(), objectReference, objectType, parentIfExists, linkTypeIfExists);
             return;
         }

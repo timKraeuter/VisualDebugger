@@ -22,7 +22,7 @@ public class StackFrameSessionListenerHelper {
 
     static Iterator<Value> getIterator(ThreadReference thread, ObjectReference obj) {
         ObjectReference i = (ObjectReference) invokeSimple(thread, obj, "iterator");
-        return new Iterator<com.sun.jdi.Value>() {
+        return new Iterator<>() {
             @Override
             public boolean hasNext() {
                 return ((BooleanValue) invokeSimple(thread, i, "hasNext")).value();
@@ -43,7 +43,7 @@ public class StackFrameSessionListenerHelper {
         }
     }
 
-    static boolean doesImplementInterface(ObjectReference obj, String iface) {
+    static boolean implementsInterface(ObjectReference obj, String iface) {
         if (obj.referenceType() instanceof ClassType) {
             Queue<InterfaceType> queue = new LinkedList<>(((ClassType) obj.referenceType()).interfaces());
             while (!queue.isEmpty()) {

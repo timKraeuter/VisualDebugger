@@ -91,8 +91,6 @@ public class DebugAPIEndpoint {
 
         // Wait for the node debug visualizer to have finished.
         lock.lock();
-        // Remember explored objects
-        SharedState.getDebugListener().addManuallyExploredObject(parent.getIdAsLong());
         return DiagramToXMLConverter.toXml(collector.getCurrentDiagram());
     }
 }

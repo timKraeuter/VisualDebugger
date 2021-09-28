@@ -40,7 +40,6 @@ public class DebugSessionListener implements XDebugSessionListener {
         Objects.requireNonNull(debugSession, "Debug session must not be null.");
         this.debugSession = debugSession;
         this.manuallyExploredObjects = new HashSet<>();
-        SharedState.setDebugListener(this);
     }
 
     @Override

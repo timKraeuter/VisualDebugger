@@ -11,6 +11,6 @@ public class DebugProcessListener implements XDebuggerManagerListener {
     @Override
     public void processStarted(@NotNull final XDebugProcess debugProcess) {
         final XDebugSession debugSession = debugProcess.getSession();
-        debugSession.addSessionListener(new StackFrameSessionListener(debugSession));
+        debugSession.addSessionListener(new StackFrameSessionListener(debugProcess));
     }
 }
