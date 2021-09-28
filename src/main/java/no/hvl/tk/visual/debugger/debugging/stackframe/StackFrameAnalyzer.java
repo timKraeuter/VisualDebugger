@@ -8,6 +8,7 @@ import no.hvl.tk.visual.debugger.domain.PrimitiveTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionListenerHelper.*;
 import static no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionListenerHelper.invokeSimple;
@@ -125,7 +126,7 @@ public class StackFrameAnalyzer {
         this.seenObjectIds.add(objectReference.uniqueID());
 
         // Filter static fields? Or non visible fields?
-        for (Map.Entry<Field, Value> fieldValueEntry : objectReference.getValues(objectReference.referenceType().allFields()).entrySet()) {
+        for (Map.Entry<Field, Value> fieldValueEntry : objectReference.getValues(getNonStaticFields(objectReference)).entrySet()) {
             final String fieldName = fieldValueEntry.getKey().name();
             this.convertValue(
                     fieldValueEntry.getValue(),
@@ -135,6 +136,13 @@ public class StackFrameAnalyzer {
                     fieldName,
                     true);
         }
+    }
+
+    @NotNull
+    private List<Field> getNonStaticFields(ObjectReference objectReference) {
+        return objectReference.referenceType().allFields().stream()
+                              .filter(field -> !field.isStatic())
+                              .collect(Collectors.toList());
     }
 
     private void convertArray(
