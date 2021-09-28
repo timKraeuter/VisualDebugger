@@ -1,5 +1,6 @@
 package no.hvl.tk.visual.debugger.domain;
 
+import com.google.common.base.Objects;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -42,5 +43,18 @@ public class ODPrimitiveRootValue implements Comparable<ODPrimitiveRootValue> {
             return valueComparison;
         }
         return this.getType().compareTo(other.getType());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ODPrimitiveRootValue that = (ODPrimitiveRootValue) o;
+        return Objects.equal(variableName, that.variableName) && Objects.equal(type, that.type) && Objects.equal(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(variableName, type, value);
     }
 }
