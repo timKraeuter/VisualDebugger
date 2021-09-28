@@ -1,12 +1,23 @@
 package no.hvl.tk.visual.debugger.debugging.visualization;
 
 import no.hvl.tk.visual.debugger.domain.*;
+import no.hvl.tk.visual.debugger.settings.PluginSettingsState;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisualizer {
-    protected ObjectDiagram diagram;
+    private ObjectDiagram diagram;
+    protected Map<Long, ODObject> objectMap;
+
+    private final Set<ODObject> rootObjects;
 
     protected DebuggingInfoVisualizerBase() {
         this.diagram = new ObjectDiagram();
+        this.objectMap = new HashMap<>();
+        this.rootObjects = new HashSet<>();
     }
 
 
@@ -30,11 +41,63 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
     }
 
     @Override
-    public DebuggingInfoVisualizer addObject(final ODObject object) {
-        this.preAddObject();
+    public DebuggingInfoVisualizer addObject(final ODObject object, boolean root) {
         this.diagram.addObject(object);
+        this.objectMap.put(object.getIdAsLong(), object);
+        if (root) {
+            this.rootObjects.add(object);
+        }
         return this;
     }
 
-    protected abstract void preAddObject();
+    @Override
+    public ObjectDiagram getDiagram() {
+        return this.diagram;
+    }
+
+    @Override
+    public void setDiagram(ObjectDiagram objectDiagram) {
+        this.diagram = objectDiagram;
+    }
+
+    @Override
+    public ObjectDiagram getDiagramIncludingObject(String objectId) {
+        // TODO
+        return null;
+    }
+
+    protected ObjectDiagram getDiagramWithDepth() {
+        return this.getDiagramWithDepth(PluginSettingsState.getInstance().getVisualisationDepth());
+    }
+
+    protected ObjectDiagram getDiagramWithDepth(Integer depth) {
+        ObjectDiagram diagramWithDepth = new ObjectDiagram();
+        Set<ODObject> seenObjects = new HashSet<>();
+        this.rootObjects.forEach(odObject -> {
+            // TODO: copy the leave objects because they contain links to non-existing objects
+            diagramWithDepth.addObject(odObject);
+            this.addFurtherObjectsRespectingDepth(diagramWithDepth, depth, odObject, seenObjects);
+        });
+        this.diagram.getPrimitiveRootValues().forEach(diagramWithDepth::addPrimitiveRootValue);
+
+        return diagramWithDepth;
+    }
+
+    private void addFurtherObjectsRespectingDepth(
+            ObjectDiagram diagramWithDepth,
+            Integer depth,
+            ODObject odObject,
+            Set<ODObject> seenObjects) {
+        if (depth <= 0 || seenObjects.contains(odObject)) {
+            return;
+        }
+        seenObjects.add(odObject);
+        odObject.getLinks().forEach(odLink -> {
+            ODObject to = odLink.getTo();
+            diagramWithDepth.addObject(to);
+            diagramWithDepth.addLink(odLink);
+
+            this.addFurtherObjectsRespectingDepth(diagramWithDepth, depth - 1, to, seenObjects);
+        });
+    }
 }

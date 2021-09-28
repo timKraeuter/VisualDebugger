@@ -1,6 +1,9 @@
 package no.hvl.tk.visual.debugger.debugging.stackframe;
 
-import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.*;
+import no.hvl.tk.visual.debugger.debugging.DebuggingInfoCollector;
+import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.ObjectReferenceMock;
+import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.StackFrameMock;
+import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.StackFrameMockHelper;
 import no.hvl.tk.visual.debugger.domain.ODPrimitiveRootValue;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;

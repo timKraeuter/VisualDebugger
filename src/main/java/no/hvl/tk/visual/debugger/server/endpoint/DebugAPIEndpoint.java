@@ -1,8 +1,6 @@
 package no.hvl.tk.visual.debugger.server.endpoint;
 
-import com.intellij.debugger.engine.JavaValue;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Pair;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnMessage;
 import jakarta.websocket.OnOpen;
@@ -10,7 +8,7 @@ import jakarta.websocket.Session;
 import jakarta.websocket.server.ServerEndpoint;
 import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
-import no.hvl.tk.visual.debugger.domain.ODObject;
+import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 import no.hvl.tk.visual.debugger.server.DebugAPIServerStarter;
 import no.hvl.tk.visual.debugger.server.endpoint.message.TypedWebsocketMessage;
 import no.hvl.tk.visual.debugger.server.endpoint.message.WebsocketMessageType;
@@ -50,24 +48,14 @@ public class DebugAPIEndpoint {
 
         final DebuggingInfoVisualizer debuggingInfoVisualizer = SharedState.getDebugListener()
                                                                            .getOrCreateDebuggingInfoVisualizer();
-        final Pair<ODObject, JavaValue> debugNodeAndObjectForObjectId = debuggingInfoVisualizer.getDebugNodeAndObjectForObjectId(objectId);
-        if (debugNodeAndObjectForObjectId != null) {
+        final ObjectDiagram diagram = debuggingInfoVisualizer.getDiagramIncludingObject(objectId);
+        if (diagram != null) {
             return new TypedWebsocketMessage(
                     WebsocketMessageType.LOAD_CHILDREN,
-                    loadChildren(debuggingInfoVisualizer, debugNodeAndObjectForObjectId)).serialize();
+                    DiagramToXMLConverter.toXml(diagram)).serialize();
         }
         return new TypedWebsocketMessage(
                 WebsocketMessageType.ERROR,
                 String.format("Object with id \"%s\" not found", objectId)).serialize();
-    }
-
-    private static String loadChildren(
-            final DebuggingInfoVisualizer debuggingInfoVisualizer,
-            final Pair<ODObject, JavaValue> debugNodeAndObjectForObjectId) {
-
-        final LoadChildrenDebuggingInfoCollector collector =
-                new LoadChildrenDebuggingInfoCollector(debuggingInfoVisualizer);
-        // TODO implement this using the stack frame
-        return DiagramToXMLConverter.toXml(collector.getCurrentDiagram());
     }
 }

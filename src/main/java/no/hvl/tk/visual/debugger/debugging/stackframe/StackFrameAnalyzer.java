@@ -11,7 +11,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionListenerHelper.*;
-import static no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionListenerHelper.invokeSimple;
 
 public class StackFrameAnalyzer {
     private static final String KEY = "key";
@@ -38,17 +37,17 @@ public class StackFrameAnalyzer {
 
     public void analyze() {
 
-        visualizeThisObject(stackFrame);
-        visualizeVariables(stackFrame);
+        this.visualizeThisObject(this.stackFrame);
+        this.visualizeVariables(this.stackFrame);
 
-        convertObjects();
+        this.convertObjects();
 
         this.seenObjectIds.clear();
     }
 
 
     private void convertObjects() {
-        rootObjects.forEach((objID, objectReferenceODObjectPair) -> {
+        this.rootObjects.forEach((objID, objectReferenceODObjectPair) -> {
             final ObjectReference obRef = objectReferenceODObjectPair.getFirst();
             final ODObject odObject = objectReferenceODObjectPair.getSecond();
             // No parents at root
@@ -65,7 +64,7 @@ public class StackFrameAnalyzer {
                 thisObjectReference.referenceType().name(),
                 "this");
 
-        rootObjects.put(thisObjectReference.uniqueID(),
+        this.rootObjects.put(thisObjectReference.uniqueID(),
                 Pair.create(thisObjectReference,
                         thisObject));
     }
@@ -95,7 +94,7 @@ public class StackFrameAnalyzer {
             return;
         }
         if (objectReference instanceof ArrayReference) {
-            convertArray(
+            this.convertArray(
                     odObject.getVariableName(),
                     (ArrayReference) objectReference,
                     objectType,
@@ -106,27 +105,27 @@ public class StackFrameAnalyzer {
         if ((implementsInterface(objectReference, "java.util.List")
                 || implementsInterface(objectReference, "java.util.Set"))
                 && isInternalPackage(objectType)) {
-            convertListOrSet(odObject.getVariableName(), objectReference, objectType, parentIfExists, linkTypeIfExists);
+            this.convertListOrSet(odObject.getVariableName(), objectReference, objectType, parentIfExists, linkTypeIfExists);
             return;
         }
 
         if (implementsInterface(objectReference, "java.util.Map") && isInternalPackage(objectType)) {
-            convertMap(odObject.getVariableName(), objectReference, objectType, parentIfExists, linkTypeIfExists);
+            this.convertMap(odObject.getVariableName(), objectReference, objectType, parentIfExists, linkTypeIfExists);
             return;
         }
 
         if (parentIfExists != null) {
-            debuggingVisualizer.addLinkToObject(parentIfExists, odObject, linkTypeIfExists);
+            this.debuggingVisualizer.addLinkToObject(parentIfExists, odObject, linkTypeIfExists);
         }
 
         if (this.seenObjectIds.contains(objectReference.uniqueID())) {
             return;
         }
-        this.debuggingVisualizer.addObject(odObject);
+        this.debuggingVisualizer.addObject(odObject, parentIfExists == null);
         this.seenObjectIds.add(objectReference.uniqueID());
 
         // Filter static fields? Or non visible fields?
-        for (Map.Entry<Field, Value> fieldValueEntry : objectReference.getValues(getNonStaticFields(objectReference)).entrySet()) {
+        for (Map.Entry<Field, Value> fieldValueEntry : objectReference.getValues(this.getNonStaticFields(objectReference)).entrySet()) {
             final String fieldName = fieldValueEntry.getKey().name();
             this.convertValue(
                     fieldValueEntry.getValue(),
@@ -151,7 +150,7 @@ public class StackFrameAnalyzer {
             String objectType,
             ODObject parentIfExists,
             String linkTypeIfExists) {
-        final ODObject parent = createParentIfNeededForCollection(arrayRef, parentIfExists, name, objectType);
+        final ODObject parent = this.createParentIfNeededForCollection(arrayRef, parentIfExists, name, objectType);
         for (int i = 0; i < arrayRef.length(); i++) {
             final Value value = arrayRef.getValue(i);
             final String variableName = String.valueOf(i);
@@ -175,7 +174,7 @@ public class StackFrameAnalyzer {
             parent = parentIfExists;
         } else {
             parent = new ODObject(obRef.uniqueID(), objectType, obName);
-            this.debuggingVisualizer.addObject(parent);
+            this.debuggingVisualizer.addObject(parent, true);
         }
         return parent;
     }
@@ -186,8 +185,8 @@ public class StackFrameAnalyzer {
             String objectType,
             ODObject parentIfExists,
             String linkTypeIfExists) {
-        final ODObject parent = createParentIfNeededForCollection(collectionRef, parentIfExists, name, objectType);
-        Iterator<Value> iterator = getIterator(thread, collectionRef);
+        final ODObject parent = this.createParentIfNeededForCollection(collectionRef, parentIfExists, name, objectType);
+        Iterator<Value> iterator = getIterator(this.thread, collectionRef);
         int i = 0;
         while (iterator.hasNext()) {
             final Value value = iterator.next();
@@ -208,18 +207,18 @@ public class StackFrameAnalyzer {
             String objectType,
             ODObject parentIfExists,
             String linkTypeIfExists) {
-        final ODObject parent = createParentIfNeededForCollection(mapRef, parentIfExists, name, objectType);
-        ObjectReference entrySet = (ObjectReference) invokeSimple(thread, mapRef, "entrySet");
-        Iterator<Value> iterator = getIterator(thread, entrySet);
+        final ODObject parent = this.createParentIfNeededForCollection(mapRef, parentIfExists, name, objectType);
+        ObjectReference entrySet = (ObjectReference) invokeSimple(this.thread, mapRef, "entrySet");
+        Iterator<Value> iterator = getIterator(this.thread, entrySet);
         int i = 0;
         while (iterator.hasNext()) {
             ObjectReference entry = (ObjectReference) iterator.next();
-            final Value keyValue = invokeSimple(thread, entry, "getKey");
-            final Value valueValue = invokeSimple(thread, entry, "getValue");
+            final Value keyValue = invokeSimple(this.thread, entry, "getKey");
+            final Value valueValue = invokeSimple(this.thread, entry, "getValue");
 
             final ODObject entryObject = new ODObject(entry.uniqueID(), entry.referenceType().name(), String.valueOf(i));
 
-            this.debuggingVisualizer.addObject(entryObject);
+            this.debuggingVisualizer.addObject(entryObject, false);
             this.debuggingVisualizer.addLinkToObject(
                     parent,
                     entryObject,

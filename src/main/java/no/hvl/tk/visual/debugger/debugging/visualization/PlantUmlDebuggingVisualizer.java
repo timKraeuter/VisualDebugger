@@ -1,8 +1,6 @@
 package no.hvl.tk.visual.debugger.debugging.visualization;
 
-import com.intellij.debugger.engine.JavaValue;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Pair;
 import com.intellij.ui.components.JBScrollPane;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
@@ -34,10 +32,10 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
     @Override
     public void finishVisualization() {
-        final var plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(this.diagram);
+        final var plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(this.getDiagramWithDepth());
         SharedState.setLastPlantUMLDiagram(plantUMLString);
         // Reset diagram
-        this.diagram = new ObjectDiagram();
+        this.setDiagram(new ObjectDiagram());
         try {
             final byte[] pngData = PlantUmlDebuggingVisualizer.toImage(plantUMLString, FileFormat.PNG);
             this.addImageToUI(pngData);
@@ -217,21 +215,5 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
             reader.outputImage(outputStream, new FileFormatOption(format));
             return outputStream.toByteArray();
         }
-    }
-
-    @Override
-    protected void preAddObject() {
-        // NOOP
-    }
-
-    @Override
-    public DebuggingInfoVisualizer addDebugNodeForObject(final ODObject object, final JavaValue jValue) {
-        // NOOP
-        return this;
-    }
-
-    @Override
-    public Pair<ODObject, JavaValue> getDebugNodeAndObjectForObjectId(final String objectId) {
-        throw new UnsupportedOperationException();
     }
 }

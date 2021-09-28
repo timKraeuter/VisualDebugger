@@ -15,7 +15,6 @@ class PlantUmlDebuggingVisualizerTest {
 
     @Test
     void toPlantUMLStringEmptyDiagramTest() {
-        final PlantUmlDebuggingVisualizer visualizer = new PlantUmlDebuggingVisualizer(null);
         final ObjectDiagram diagram = new ObjectDiagram();
         final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(diagram);
         assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("@startuml\n" +
@@ -25,7 +24,6 @@ class PlantUmlDebuggingVisualizerTest {
 
     @Test
     void toPlantUMLStringPrimitiveVarsTest() {
-        final PlantUmlDebuggingVisualizer visualizer = new PlantUmlDebuggingVisualizer(null);
         final ObjectDiagram diagram = new ObjectDiagram();
         diagram.addPrimitiveRootValue(new ODPrimitiveRootValue("int", "Integer", "1"));
         diagram.addPrimitiveRootValue(new ODPrimitiveRootValue("double", "Double", "1.2"));
@@ -49,7 +47,6 @@ class PlantUmlDebuggingVisualizerTest {
 
     @Test
     void toPlantUMLStringLinksTest() {
-        final PlantUmlDebuggingVisualizer visualizer = new PlantUmlDebuggingVisualizer(null);
         final ObjectDiagram diagram = new ObjectDiagram();
         final ODObject person1 = new ODObject(1, "Person", "1");
         final ODObject person2 = new ODObject(2, "Person", "2");
@@ -71,7 +68,6 @@ class PlantUmlDebuggingVisualizerTest {
 
     @Test
     void toPlantUMLStringPrimitiveMapsTest() {
-        final PlantUmlDebuggingVisualizer visualizer = new PlantUmlDebuggingVisualizer(null);
         final ObjectDiagram diagram = new ObjectDiagram();
         final ODObject hashMap = new ODObject(1, "java.util.HashMap", "hashMap");
         final ODObject hashMapNode1 = new ODObject(2, "java.util.HashMap$Node", "0");

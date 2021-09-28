@@ -70,8 +70,7 @@ public class VisualDebuggerSettingsConfigurable implements Configurable {
         if (newDepth != settings.getVisualisationDepth()) {
             settings.setVisualisationDepth(newDepth);
             if (SharedState.getDebugListener() != null) {
-                // TODO depth restart?
-//                SharedState.getDebugListener().startVisualDebugging();
+                SharedState.getDebugListener().reprintDiagram();
             }
         }
     }
