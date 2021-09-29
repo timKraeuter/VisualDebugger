@@ -7,7 +7,7 @@ public interface DebuggingInfoVisualizer {
 
     DebuggingInfoVisualizer addObject(ODObject object, boolean root);
 
-    ObjectDiagram getDiagramIncludingObject(String objectId);
+    ObjectDiagram getObjectWithChildrenFromPreviousDiagram(String objectId);
 
     DebuggingInfoVisualizer addAttributeToObject(ODObject object, String fieldName, String fieldValue, String fieldType);
 
@@ -21,8 +21,17 @@ public interface DebuggingInfoVisualizer {
 
     void debuggingDeactivated();
 
-    ObjectDiagram getDiagram();
+    ObjectDiagram getCurrentDiagram();
 
-    void setDiagram(ObjectDiagram objectDiagram);
+    ObjectDiagram getPreviousDiagram();
 
+    /**
+     * Saves the current diagram as the previous diagram.
+     * Resets the current diagram to an empty diagram.
+     */
+    void resetDiagram();
+
+    void reprintPreviousDiagram();
+
+    void sessionStopped();
 }

@@ -6,7 +6,6 @@ import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.StackFrameMock;
 import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.StackFrameMockHelper;
 import no.hvl.tk.visual.debugger.domain.ODPrimitiveRootValue;
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -78,6 +77,6 @@ class StackFrameAnalyzerTest {
         ODPrimitiveRootValue charValue = new ODPrimitiveRootValue(charVarName, "java.lang.Char", "'a'");
         primitiveVars.add(charValue);
 
-        assertThat(debuggingInfoCollector.getDiagram().getPrimitiveRootValues(), CoreMatchers.equalTo(primitiveVars));
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getPrimitiveRootValues(), CoreMatchers.equalTo(primitiveVars));
     }
 }

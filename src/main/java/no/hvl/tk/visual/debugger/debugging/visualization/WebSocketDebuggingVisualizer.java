@@ -45,8 +45,7 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                 // If one client fails no more messages are sent. We should change this.
                 DebugAPIServerStarter.sendMessageToClient(clientSession, message)
         );
-        // Reset diagram
-        this.setDiagram(new ObjectDiagram());
+        this.resetDiagram();
     }
 
     @Override

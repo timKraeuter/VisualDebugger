@@ -6,6 +6,7 @@ import no.hvl.tk.visual.debugger.domain.ODLink;
 import no.hvl.tk.visual.debugger.domain.ODObject;
 import no.hvl.tk.visual.debugger.domain.ODPrimitiveRootValue;
 import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -38,6 +39,36 @@ class DebuggingInfoVisualizerBaseTest {
     @Test
     void getDiagramWithDepthCycleTest() {
         final ObjectDiagram diagram = new ObjectDiagram();
+        final ODObject person1 = populateDiagramWithPersons(diagram);
+
+        DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
+        debuggingInfoCollector.setDiagram(diagram);
+        debuggingInfoCollector.addObject(person1, true);
+
+        ObjectDiagram diagramWithDepth = debuggingInfoCollector.getDiagramWithDepth(42);
+
+        assertThat(diagramWithDepth.getObjects(), is(diagram.getObjects()));
+        assertThat(diagramWithDepth.getLinks(), is(diagram.getLinks()));
+    }
+    @Test
+    void getObjectWithChildrenFromPreviousDiagramTest() {
+        final ObjectDiagram diagram = new ObjectDiagram();
+        final ODObject person1 = populateDiagramWithPersons(diagram);
+
+        DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
+        debuggingInfoCollector.setDiagram(diagram);
+        debuggingInfoCollector.addObject(person1, true);
+
+        debuggingInfoCollector.resetDiagram();
+        final ObjectDiagram person1Diagram = debuggingInfoCollector.getObjectWithChildrenFromPreviousDiagram("Object_1");
+
+        assertThat(person1Diagram.getObjects(), is(diagram.getObjects()));
+        // Only one link from person 1 found but all objects
+        assertThat(person1Diagram.getLinks().size(), is(1));
+    }
+
+    @NotNull
+    private ODObject populateDiagramWithPersons(ObjectDiagram diagram) {
         final ODObject person1 = new ODObject(1, "Person", "1");
         final ODObject person2 = new ODObject(2, "Person", "2");
         ODLink personLink1 = new ODLink(person1, person2, "friends");
@@ -48,15 +79,7 @@ class DebuggingInfoVisualizerBaseTest {
         diagram.addObject(person2);
         diagram.addLink(personLink1);
         diagram.addLink(personLink2);
-
-        DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
-        debuggingInfoCollector.setDiagram(diagram);
-        debuggingInfoCollector.addObject(person1, true);
-
-        ObjectDiagram diagramWithDepth = debuggingInfoCollector.getDiagramWithDepth(42);
-
-        assertThat(diagramWithDepth.getObjects(), is(diagram.getObjects()));
-        assertThat(diagramWithDepth.getLinks(), is(diagram.getLinks()));
+        return person1;
     }
 
     @Test

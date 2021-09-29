@@ -24,7 +24,6 @@ import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.WebSocketDebuggingVisualizer;
-import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 import no.hvl.tk.visual.debugger.settings.PluginSettingsState;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,8 +47,6 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     private final XDebugSession debugSession;
     private DebuggingInfoVisualizer debuggingVisualizer;
     private ThreadReference thread;
-    private ObjectDiagram lastDiagram;
-
 
     public StackFrameSessionListener(@NotNull XDebugProcess debugProcess) {
         this.debugSession = debugProcess.getSession();
@@ -73,6 +70,11 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     }
 
     @Override
+    public void sessionStopped() {
+        this.debuggingVisualizer.sessionStopped();
+    }
+
+    @Override
     public void sessionPaused() {
         this.startVisualDebugging();
     }
@@ -89,7 +91,6 @@ public class StackFrameSessionListener implements XDebugSessionListener {
                 this.debuggingVisualizer);
         stackFrameAnalyzer.analyze();
 
-        this.lastDiagram = this.debuggingVisualizer.getDiagram();
         this.debuggingVisualizer.finishVisualization();
     }
 
@@ -202,7 +203,6 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     }
 
     public void reprintDiagram() {
-        this.debuggingVisualizer.setDiagram(this.lastDiagram);
-        this.debuggingVisualizer.finishVisualization();
+        this.debuggingVisualizer.reprintPreviousDiagram();
     }
 }

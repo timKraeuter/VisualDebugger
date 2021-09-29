@@ -48,14 +48,15 @@ public class DebugAPIEndpoint {
 
         final DebuggingInfoVisualizer debuggingInfoVisualizer = SharedState.getDebugListener()
                                                                            .getOrCreateDebuggingInfoVisualizer();
-        final ObjectDiagram diagram = debuggingInfoVisualizer.getDiagramIncludingObject(objectId);
-        if (diagram != null) {
+        try {
+            final ObjectDiagram diagram = debuggingInfoVisualizer.getObjectWithChildrenFromPreviousDiagram(objectId);
             return new TypedWebsocketMessage(
                     WebsocketMessageType.LOAD_CHILDREN,
                     DiagramToXMLConverter.toXml(diagram)).serialize();
+        } catch (NumberFormatException e) {
+            return new TypedWebsocketMessage(
+                    WebsocketMessageType.ERROR,
+                    String.format("Object id \"%s\" is not a number!", objectId)).serialize();
         }
-        return new TypedWebsocketMessage(
-                WebsocketMessageType.ERROR,
-                String.format("Object with id \"%s\" not found", objectId)).serialize();
     }
 }
