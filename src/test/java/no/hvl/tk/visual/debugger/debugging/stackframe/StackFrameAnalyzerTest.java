@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
 class StackFrameAnalyzerTest {
     @Test
     void primitiveLocalVariablesTest() {
@@ -76,6 +78,6 @@ class StackFrameAnalyzerTest {
         ODPrimitiveRootValue charValue = new ODPrimitiveRootValue(charVarName, "java.lang.Char", "'a'");
         primitiveVars.add(charValue);
 
-        MatcherAssert.assertThat(debuggingInfoCollector.getDiagram().getPrimitiveRootValues(), CoreMatchers.equalTo(primitiveVars));
+        assertThat(debuggingInfoCollector.getDiagram().getPrimitiveRootValues(), CoreMatchers.equalTo(primitiveVars));
     }
 }

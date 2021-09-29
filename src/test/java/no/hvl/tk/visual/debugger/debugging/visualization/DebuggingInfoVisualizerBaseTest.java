@@ -56,7 +56,7 @@ class DebuggingInfoVisualizerBaseTest {
         ObjectDiagram diagramWithDepth = debuggingInfoCollector.getDiagramWithDepth(42);
 
         assertThat(diagramWithDepth.getObjects(), is(diagram.getObjects()));
-        assertThat(diagramWithDepth.links, is(diagram.links));
+        assertThat(diagramWithDepth.getLinks(), is(diagram.getLinks()));
     }
 
     @Test
@@ -81,26 +81,26 @@ class DebuggingInfoVisualizerBaseTest {
         ObjectDiagram diagramWithDepth0 = debuggingInfoCollector.getDiagramWithDepth(0);
 
         assertThat(diagramWithDepth0.getObjects(), is(Sets.newHashSet(person1)));
-        assertThat(diagramWithDepth0.links.isEmpty(), is(true));
+        assertThat(diagramWithDepth0.getLinks().isEmpty(), is(true));
 
         ObjectDiagram diagramWithDepth10 = debuggingInfoCollector.getDiagramWithDepth(10);
 
         assertThat(diagramWithDepth10.getObjects().size(), is(11));
-        assertThat(diagramWithDepth10.links.size(), is(10));
+        assertThat(diagramWithDepth10.getLinks().size(), is(10));
 
         ObjectDiagram diagramWithDepth25 = debuggingInfoCollector.getDiagramWithDepth(25);
 
         assertThat(diagramWithDepth25.getObjects().size(), is(26));
-        assertThat(diagramWithDepth25.links.size(), is(25));
+        assertThat(diagramWithDepth25.getLinks().size(), is(25));
 
         ObjectDiagram diagramWithDepth100 = debuggingInfoCollector.getDiagramWithDepth(100);
 
         assertThat(diagramWithDepth100.getObjects(), is(diagram.getObjects()));
-        assertThat(diagramWithDepth100.links, is(diagram.links));
+        assertThat(diagramWithDepth100.getLinks(), is(diagram.getLinks()));
 
         ObjectDiagram diagramWithDepth1000 = debuggingInfoCollector.getDiagramWithDepth(1000);
 
         assertThat(diagramWithDepth1000.getObjects(), is(diagram.getObjects()));
-        assertThat(diagramWithDepth1000.links, is(diagram.links));
+        assertThat(diagramWithDepth1000.getLinks(), is(diagram.getLinks()));
     }
 }

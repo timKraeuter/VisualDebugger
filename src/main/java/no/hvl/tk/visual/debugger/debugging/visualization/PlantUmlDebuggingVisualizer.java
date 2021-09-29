@@ -79,7 +79,6 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         // Use this so we are not dependent on a Graphviz/Dot installation on the host machine.
         stringBuilder.append("!pragma layout smetana\n");
 
-        final Set<ODLink> links = new HashSet<>();
         // Sort objects so the visualisation does not change when there are no objects changes.
         final List<ODObject> sortedObjects = objectDiagram.getObjects()
                                                           .stream()
@@ -87,10 +86,10 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                                                           .collect(Collectors.toList());
 
         // Add objects with attributes and collect links. They have to be added after objects.
-        PlantUmlDebuggingVisualizer.addObjectsToDiagramAndCollectLinks(stringBuilder, links, sortedObjects);
+        PlantUmlDebuggingVisualizer.addObjectsToDiagramAndCollectLinks(stringBuilder, sortedObjects);
 
         // Add links.
-        PlantUmlDebuggingVisualizer.addLinksToDiagram(stringBuilder, links);
+        PlantUmlDebuggingVisualizer.addLinksToDiagram(stringBuilder, objectDiagram.getLinks());
 
         // Add primitive root values if there are any.
         if (!objectDiagram.getPrimitiveRootValues().isEmpty()) {
@@ -124,7 +123,9 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                              link.getType())));
     }
 
-    private static void addObjectsToDiagramAndCollectLinks(final StringBuilder stringBuilder, final Set<ODLink> links, final List<ODObject> sortedObjects) {
+    private static void addObjectsToDiagramAndCollectLinks(
+            final StringBuilder stringBuilder,
+            final List<ODObject> sortedObjects) {
         final HashSet<ODObject> ignoredObjects = new HashSet<>();
         for (final ODObject object : sortedObjects) {
             if (ignoredObjects.contains(object)) {
@@ -157,7 +158,6 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
             } else {
                 stringBuilder.append("\n");
             }
-            links.addAll(object.getLinks());
         }
     }
 

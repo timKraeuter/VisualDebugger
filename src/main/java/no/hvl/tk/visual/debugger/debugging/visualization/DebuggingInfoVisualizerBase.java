@@ -74,7 +74,6 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
         ObjectDiagram diagramWithDepth = new ObjectDiagram();
         Set<ODObject> seenObjects = new HashSet<>();
         this.rootObjects.forEach(odObject -> {
-            // TODO: copy the leave objects because they contain links to non-existing objects
             diagramWithDepth.addObject(odObject);
             this.addFurtherObjectsRespectingDepth(diagramWithDepth, depth, odObject, seenObjects);
         });

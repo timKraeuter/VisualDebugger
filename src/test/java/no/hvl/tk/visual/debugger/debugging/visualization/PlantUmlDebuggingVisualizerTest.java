@@ -50,10 +50,14 @@ class PlantUmlDebuggingVisualizerTest {
         final ObjectDiagram diagram = new ObjectDiagram();
         final ODObject person1 = new ODObject(1, "Person", "1");
         final ODObject person2 = new ODObject(2, "Person", "2");
-        person1.addLink(new ODLink(person1, person2, "friends"));
-        person2.addLink(new ODLink(person2, person1, "friends"));
+        final ODLink friendLink1 = new ODLink(person1, person2, "friends");
+        final ODLink friendLink2 = new ODLink(person2, person1, "friends");
+        person1.addLink(friendLink1);
+        person2.addLink(friendLink2);
         diagram.addObject(person1);
         diagram.addObject(person2);
+        diagram.addLink(friendLink1);
+        diagram.addLink(friendLink2);
 
         final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(diagram);
 
