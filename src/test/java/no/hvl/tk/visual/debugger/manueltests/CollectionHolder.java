@@ -1,4 +1,4 @@
-package no.hvl.tk.visual.debugger.debugging;
+package no.hvl.tk.visual.debugger.manueltests;
 
 import java.util.List;
 

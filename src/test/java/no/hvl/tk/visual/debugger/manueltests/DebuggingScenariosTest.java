@@ -1,8 +1,8 @@
-package no.hvl.tk.visual.debugger.debugging;
+package no.hvl.tk.visual.debugger.manueltests;
 
 import com.google.common.collect.Lists;
-import no.hvl.tk.visual.debugger.partsList.domain.Material;
-import no.hvl.tk.visual.debugger.partsList.domain.Product;
+import no.hvl.tk.visual.debugger.manueltests.partsList.domain.Material;
+import no.hvl.tk.visual.debugger.manueltests.partsList.domain.Product;
 import org.apache.commons.compress.utils.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Manuel testing suite with different debugging scenarios.
+ */
 class DebuggingScenariosTest {
     @Test
     void testPrimitiveVariables() {

@@ -12,7 +12,7 @@ public class ObjectDiagram {
     @XmlElement(name = "object")
     private final Set<ODObject> objects;
     @XmlElement(name = "link")
-    public final Set<ODLink> links;
+    private final Set<ODLink> links;
     @XmlElement(name = "primitiveRootValue")
     private final Set<ODPrimitiveRootValue> primitiveRootValues;
 
@@ -24,6 +24,10 @@ public class ObjectDiagram {
 
     public Set<ODObject> getObjects() {
         return Collections.unmodifiableSet(this.objects);
+    }
+
+    public Set<ODLink> getLinks() {
+        return links;
     }
 
     public Set<ODPrimitiveRootValue> getPrimitiveRootValues() {

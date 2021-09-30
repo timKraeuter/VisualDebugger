@@ -1,6 +1,6 @@
-package no.hvl.tk.visual.debugger.partsList.domain;
+package no.hvl.tk.visual.debugger.manueltests.partsList.domain;
 
-import no.hvl.tk.visual.debugger.partsList.domain.exception.CycleException;
+import no.hvl.tk.visual.debugger.manueltests.partsList.domain.exception.CycleException;
 
 import java.util.HashSet;
 import java.util.Optional;

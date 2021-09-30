@@ -15,7 +15,6 @@ class PlantUmlDebuggingVisualizerTest {
 
     @Test
     void toPlantUMLStringEmptyDiagramTest() {
-        final PlantUmlDebuggingVisualizer visualizer = new PlantUmlDebuggingVisualizer(null);
         final ObjectDiagram diagram = new ObjectDiagram();
         final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(diagram);
         assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("@startuml\n" +
@@ -25,7 +24,6 @@ class PlantUmlDebuggingVisualizerTest {
 
     @Test
     void toPlantUMLStringPrimitiveVarsTest() {
-        final PlantUmlDebuggingVisualizer visualizer = new PlantUmlDebuggingVisualizer(null);
         final ObjectDiagram diagram = new ObjectDiagram();
         diagram.addPrimitiveRootValue(new ODPrimitiveRootValue("int", "Integer", "1"));
         diagram.addPrimitiveRootValue(new ODPrimitiveRootValue("double", "Double", "1.2"));
@@ -42,6 +40,25 @@ class PlantUmlDebuggingVisualizerTest {
                 "@enduml\n"));
     }
 
+    @Test
+    void toPlantUMLStringAttributesTest() {
+        final ObjectDiagram diagram = new ObjectDiagram();
+        final ODObject odObject = new ODObject(1, "Product", "foldingWallTable");
+        diagram.addObject(odObject);
+        odObject.addAttribute(new ODAttributeValue("name", "String", "\"folding wall table\""));
+        odObject.addAttribute(new ODAttributeValue("price", "Integer", "25"));
+
+        final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(diagram);
+
+        assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("@startuml\n" +
+                "!pragma layout smetana\n" +
+                "object \"foldingWallTable:Product\" as 1 {\n" +
+                "name=\"folding wall table\"\n" +
+                "price=25\n" +
+                "}\n" +
+                "@enduml\n"));
+    }
+
     @NotNull
     private static String normalizeString(final String plantUMLString) {
         return plantUMLString.replace("\r\n", "\n");
@@ -49,14 +66,17 @@ class PlantUmlDebuggingVisualizerTest {
 
     @Test
     void toPlantUMLStringLinksTest() {
-        final PlantUmlDebuggingVisualizer visualizer = new PlantUmlDebuggingVisualizer(null);
         final ObjectDiagram diagram = new ObjectDiagram();
         final ODObject person1 = new ODObject(1, "Person", "1");
         final ODObject person2 = new ODObject(2, "Person", "2");
-        person1.addLink(new ODLink(person1, person2, "friends"));
-        person2.addLink(new ODLink(person2, person1, "friends"));
+        final ODLink friendLink1 = new ODLink(person1, person2, "friends");
+        final ODLink friendLink2 = new ODLink(person2, person1, "friends");
+        person1.addLink(friendLink1);
+        person2.addLink(friendLink2);
         diagram.addObject(person1);
         diagram.addObject(person2);
+        diagram.addLink(friendLink1);
+        diagram.addLink(friendLink2);
 
         final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(diagram);
 
@@ -71,7 +91,6 @@ class PlantUmlDebuggingVisualizerTest {
 
     @Test
     void toPlantUMLStringPrimitiveMapsTest() {
-        final PlantUmlDebuggingVisualizer visualizer = new PlantUmlDebuggingVisualizer(null);
         final ObjectDiagram diagram = new ObjectDiagram();
         final ODObject hashMap = new ODObject(1, "java.util.HashMap", "hashMap");
         final ODObject hashMapNode1 = new ODObject(2, "java.util.HashMap$Node", "0");
@@ -80,17 +99,27 @@ class PlantUmlDebuggingVisualizerTest {
         this.addKeyValueToNode(hashMapNode1);
         this.addKeyValueToNode(hashMapNode2);
         this.addKeyValueToNode(hashMapNode3);
-        hashMap.addLink(new ODLink(hashMap, hashMapNode1, "0"));
-        hashMap.addLink(new ODLink(hashMap, hashMapNode2, "1"));
-        hashMap.addLink(new ODLink(hashMap, hashMapNode3, "2"));
+        final ODLink node1Link = new ODLink(hashMap, hashMapNode1, "0");
+        final ODLink node2Link = new ODLink(hashMap, hashMapNode2, "1");
+        final ODLink node3Link = new ODLink(hashMap, hashMapNode3, "2");
+        hashMap.addLink(node1Link);
+        diagram.addLink(node1Link);
+        hashMap.addLink(node2Link);
+        diagram.addLink(node2Link);
+        hashMap.addLink(node3Link);
+        diagram.addLink(node3Link);
 
         final ODObject otherMap = new ODObject(5, "java.util.SomeOtherMap", "otherMap");
         final ODObject otherMapNode1 = new ODObject(6, "java.util.SomeOtherMap$Node", "0");
         final ODObject otherMapNode2 = new ODObject(7, "java.util.SomeOtherMap$Node", "1");
         this.addKeyValueToNode(otherMapNode1);
         this.addKeyValueToNode(otherMapNode2);
-        otherMap.addLink(new ODLink(otherMap, otherMapNode1, "0"));
-        otherMap.addLink(new ODLink(otherMap, otherMapNode2, "1"));
+        final ODLink otherMapNode1Link = new ODLink(otherMap, otherMapNode1, "0");
+        final ODLink otherMapNode2Link = new ODLink(otherMap, otherMapNode2, "1");
+        otherMap.addLink(otherMapNode1Link);
+        diagram.addLink(otherMapNode1Link);
+        otherMap.addLink(otherMapNode2Link);
+        diagram.addLink(otherMapNode2Link);
 
         diagram.addObject(hashMap);
         diagram.addObject(hashMapNode1);

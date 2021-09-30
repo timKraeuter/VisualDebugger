@@ -1,4 +1,4 @@
-package no.hvl.tk.visual.debugger.partsList.domain;
+package no.hvl.tk.visual.debugger.manueltests.partsList.domain;
 
 public class Material extends ComponentCommon {
     public static Material create(final String name, final int materialCost) {

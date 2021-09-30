@@ -1,4 +1,4 @@
-package no.hvl.tk.visual.debugger.partsList.domain;
+package no.hvl.tk.visual.debugger.manueltests.partsList.domain;
 
 public abstract class ComponentCommon implements Component {
     private final String name;
