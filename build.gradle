@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.7.4'
+version '1.8'
 
 repositories {
     mavenCentral()
@@ -34,8 +34,8 @@ dependencies {
     implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '3.0.1'
 
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
@@ -44,7 +44,7 @@ intellij {
     plugins = ['com.intellij.java']
 }
 patchPluginXml {
-    changeNotes """Fixed a bug in the browser visualizer regarding primitive variables."""
+    changeNotes """Internal implementation optimized for better performance."""
 }
 test {
     useJUnitPlatform()
