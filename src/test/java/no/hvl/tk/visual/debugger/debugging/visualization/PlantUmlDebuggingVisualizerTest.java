@@ -40,6 +40,25 @@ class PlantUmlDebuggingVisualizerTest {
                 "@enduml\n"));
     }
 
+    @Test
+    void toPlantUMLStringAttributesTest() {
+        final ObjectDiagram diagram = new ObjectDiagram();
+        final ODObject odObject = new ODObject(1, "Product", "foldingWallTable");
+        diagram.addObject(odObject);
+        odObject.addAttribute(new ODAttributeValue("name", "String", "\"folding wall table\""));
+        odObject.addAttribute(new ODAttributeValue("price", "Integer", "25"));
+
+        final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(diagram);
+
+        assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("@startuml\n" +
+                "!pragma layout smetana\n" +
+                "object \"foldingWallTable:Product\" as 1 {\n" +
+                "name=\"folding wall table\"\n" +
+                "price=25\n" +
+                "}\n" +
+                "@enduml\n"));
+    }
+
     @NotNull
     private static String normalizeString(final String plantUMLString) {
         return plantUMLString.replace("\r\n", "\n");
