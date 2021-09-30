@@ -21,6 +21,7 @@ import com.sun.jdi.StackFrame;
 import com.sun.jdi.ThreadReference;
 import no.hvl.tk.visual.debugger.DebugProcessListener;
 import no.hvl.tk.visual.debugger.SharedState;
+import no.hvl.tk.visual.debugger.debugging.stackframe.exceptions.StackFrameAnalyzerException;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.WebSocketDebuggingVisualizer;
@@ -169,7 +170,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
         SuspendContext sc = (SuspendContext) debugSession.getSuspendContext();
         ThreadReferenceProxy scThread = sc.getThread();
         if (scThread == null) {
-            throw new RuntimeException("Suspend context thread was unexpectedly nulL!");
+            throw new StackFrameAnalyzerException("Suspend context thread was unexpectedly nulL!");
         }
 
         this.thread = scThread.getThreadReference();
@@ -182,16 +183,15 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             }
         } catch (IncompatibleThreadStateException e) {
             LOGGER.error(e);
-            throw new RuntimeException("Correct stack frame for debugging not found!", e);
+            throw new StackFrameAnalyzerException("Correct stack frame for debugging not found!", e);
         }
-        throw new RuntimeException("Correct stack frame for debugging not found!");
+        throw new StackFrameAnalyzerException("Correct stack frame for debugging not found!");
     }
 
     private boolean isCorrectStackFrame(StackFrame stackFrame) {
         final XStackFrame currentStackFrame = this.debugSession.getCurrentStackFrame();
         if (currentStackFrame == null || currentStackFrame.getSourcePosition() == null) {
-            throw new RuntimeException("Current stack frame or source position was unexpectedly nulL!");
-
+            throw new StackFrameAnalyzerException("Current stack frame or source position was unexpectedly nulL!");
         }
         final String canonicalName = currentStackFrame.getSourcePosition().getFile().getName();
         // cut the .java

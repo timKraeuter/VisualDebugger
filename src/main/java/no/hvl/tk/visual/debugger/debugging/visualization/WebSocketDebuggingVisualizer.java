@@ -2,7 +2,6 @@ package no.hvl.tk.visual.debugger.debugging.visualization;
 
 import com.intellij.openapi.diagnostic.Logger;
 import no.hvl.tk.visual.debugger.SharedState;
-import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 import no.hvl.tk.visual.debugger.server.DebugAPIServerStarter;
 import no.hvl.tk.visual.debugger.server.ServerConstants;
 import no.hvl.tk.visual.debugger.server.UIServerStarter;

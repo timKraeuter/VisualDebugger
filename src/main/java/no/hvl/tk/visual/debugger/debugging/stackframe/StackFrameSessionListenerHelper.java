@@ -29,7 +29,7 @@ public class StackFrameSessionListenerHelper {
             }
 
             @Override
-            public com.sun.jdi.Value next() throws NoSuchElementException {
+            public com.sun.jdi.Value next() {
                 return invokeSimple(thread, i, "next");
             }
         };
