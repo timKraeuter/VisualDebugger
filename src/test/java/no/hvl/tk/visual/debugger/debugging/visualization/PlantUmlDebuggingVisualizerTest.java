@@ -99,17 +99,27 @@ class PlantUmlDebuggingVisualizerTest {
         this.addKeyValueToNode(hashMapNode1);
         this.addKeyValueToNode(hashMapNode2);
         this.addKeyValueToNode(hashMapNode3);
-        hashMap.addLink(new ODLink(hashMap, hashMapNode1, "0"));
-        hashMap.addLink(new ODLink(hashMap, hashMapNode2, "1"));
-        hashMap.addLink(new ODLink(hashMap, hashMapNode3, "2"));
+        final ODLink node1Link = new ODLink(hashMap, hashMapNode1, "0");
+        final ODLink node2Link = new ODLink(hashMap, hashMapNode2, "1");
+        final ODLink node3Link = new ODLink(hashMap, hashMapNode3, "2");
+        hashMap.addLink(node1Link);
+        diagram.addLink(node1Link);
+        hashMap.addLink(node2Link);
+        diagram.addLink(node2Link);
+        hashMap.addLink(node3Link);
+        diagram.addLink(node3Link);
 
         final ODObject otherMap = new ODObject(5, "java.util.SomeOtherMap", "otherMap");
         final ODObject otherMapNode1 = new ODObject(6, "java.util.SomeOtherMap$Node", "0");
         final ODObject otherMapNode2 = new ODObject(7, "java.util.SomeOtherMap$Node", "1");
         this.addKeyValueToNode(otherMapNode1);
         this.addKeyValueToNode(otherMapNode2);
-        otherMap.addLink(new ODLink(otherMap, otherMapNode1, "0"));
-        otherMap.addLink(new ODLink(otherMap, otherMapNode2, "1"));
+        final ODLink otherMapNode1Link = new ODLink(otherMap, otherMapNode1, "0");
+        final ODLink otherMapNode2Link = new ODLink(otherMap, otherMapNode2, "1");
+        otherMap.addLink(otherMapNode1Link);
+        diagram.addLink(otherMapNode1Link);
+        otherMap.addLink(otherMapNode2Link);
+        diagram.addLink(otherMapNode2Link);
 
         diagram.addObject(hashMap);
         diagram.addObject(hashMapNode1);

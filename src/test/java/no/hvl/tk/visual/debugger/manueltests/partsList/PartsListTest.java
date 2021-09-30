@@ -1,7 +1,7 @@
-package no.hvl.tk.visual.debugger.partsList;
+package no.hvl.tk.visual.debugger.manueltests.partsList;
 
-import no.hvl.tk.visual.debugger.partsList.domain.Material;
-import no.hvl.tk.visual.debugger.partsList.domain.Product;
+import no.hvl.tk.visual.debugger.manueltests.partsList.domain.Material;
+import no.hvl.tk.visual.debugger.manueltests.partsList.domain.Product;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

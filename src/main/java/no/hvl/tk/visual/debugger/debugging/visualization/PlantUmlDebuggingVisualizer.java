@@ -84,11 +84,12 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                                                           .sorted()
                                                           .collect(Collectors.toList());
 
+        final Set<ODLink> mapLinks = new HashSet<>();
         // Add objects with attributes and collect links. They have to be added after objects.
-        PlantUmlDebuggingVisualizer.addObjectsToDiagramAndCollectLinks(stringBuilder, sortedObjects);
+        PlantUmlDebuggingVisualizer.addObjectsToDiagramAndCollectLinks(stringBuilder, sortedObjects, mapLinks);
 
         // Add links.
-        PlantUmlDebuggingVisualizer.addLinksToDiagram(stringBuilder, objectDiagram.getLinks());
+        PlantUmlDebuggingVisualizer.addLinksToDiagram(stringBuilder, objectDiagram.getLinks(), mapLinks);
 
         // Add primitive root values if there are any.
         if (!objectDiagram.getPrimitiveRootValues().isEmpty()) {
@@ -112,9 +113,14 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         stringBuilder.append("}\n");
     }
 
-    private static void addLinksToDiagram(final StringBuilder stringBuilder, final Set<ODLink> links) {
+    private static void addLinksToDiagram(
+            final StringBuilder stringBuilder,
+            final Set<ODLink> links,
+            final Set<ODLink> mapLinks) {
         links.stream()
              .sorted()
+             // Ignore links already visualized in maps.
+             .filter(odLink -> !mapLinks.contains(odLink))
              .forEach(link -> stringBuilder.append(
                      String.format("%s --> %s : %s%n",
                              link.getFrom().hashCode(),
@@ -124,7 +130,8 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
     private static void addObjectsToDiagramAndCollectLinks(
             final StringBuilder stringBuilder,
-            final List<ODObject> sortedObjects) {
+            final List<ODObject> sortedObjects,
+            final Set<ODLink> mapLinks) {
         final HashSet<ODObject> ignoredObjects = new HashSet<>();
         for (final ODObject object : sortedObjects) {
             if (ignoredObjects.contains(object)) {
@@ -133,6 +140,8 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
             // Primitive maps are visualised differently
             if (PlantUmlDebuggingVisualizer.isPrimitiveJavaMap(object)) {
                 PlantUmlDebuggingVisualizer.doPrimitiveMapVisualisation(stringBuilder, ignoredObjects, object);
+                // Links are not allowed to be shown later on.
+                mapLinks.addAll(object.getLinks());
                 continue;
             }
 
