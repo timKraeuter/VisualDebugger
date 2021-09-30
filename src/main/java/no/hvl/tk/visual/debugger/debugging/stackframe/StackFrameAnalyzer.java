@@ -28,7 +28,7 @@ public class StackFrameAnalyzer {
     */
     private final TreeMap<Long, Pair<ObjectReference, ODObject>> rootObjects = new TreeMap<>();
 
-    public StackFrameAnalyzer(StackFrame stackFrame, ThreadReference thread, DebuggingInfoVisualizer debuggingVisualizer) {
+    public StackFrameAnalyzer(final StackFrame stackFrame, final ThreadReference thread, final DebuggingInfoVisualizer debuggingVisualizer) {
         this.stackFrame = stackFrame;
         this.thread = thread;
         this.debuggingVisualizer = debuggingVisualizer;
@@ -55,8 +55,8 @@ public class StackFrameAnalyzer {
         });
     }
 
-    private void visualizeThisObject(StackFrame stackFrame) {
-        ObjectReference thisObjectReference = stackFrame.thisObject();
+    private void visualizeThisObject(final StackFrame stackFrame) {
+        final ObjectReference thisObjectReference = stackFrame.thisObject();
         assert thisObjectReference != null;
 
         final ODObject thisObject = new ODObject(
@@ -69,24 +69,24 @@ public class StackFrameAnalyzer {
                         thisObject));
     }
 
-    private void visualizeVariables(StackFrame stackFrame) {
+    private void visualizeVariables(final StackFrame stackFrame) {
         try {
             // All visible variables in the stack frame.
             final List<LocalVariable> methodVariables = stackFrame.visibleVariables();
             methodVariables.forEach(localVariable -> this.convertVariable(
                     localVariable,
                     stackFrame));
-        } catch (AbsentInformationException e) {
+        } catch (final AbsentInformationException e) {
             // OK
         }
     }
 
 
     private void exploreObjectReference(
-            ObjectReference objectReference,
-            ODObject odObject,
-            ODObject parentIfExists,
-            String linkTypeIfExists) {
+            final ObjectReference objectReference,
+            final ODObject odObject,
+            final ODObject parentIfExists,
+            final String linkTypeIfExists) {
         final String objectType = objectReference.referenceType().name();
         if (PrimitiveTypes.isBoxedPrimitiveType(objectType)) {
             final Value value = objectReference.getValue(objectReference.referenceType().fieldByName(VALUE));
@@ -124,8 +124,7 @@ public class StackFrameAnalyzer {
         this.debuggingVisualizer.addObject(odObject, parentIfExists == null);
         this.seenObjectIds.add(objectReference.uniqueID());
 
-        // Filter static fields? Or non visible fields?
-        for (Map.Entry<Field, Value> fieldValueEntry : objectReference.getValues(this.getNonStaticFields(objectReference)).entrySet()) {
+        for (final Map.Entry<Field, Value> fieldValueEntry : objectReference.getValues(this.getNonStaticFields(objectReference)).entrySet()) {
             final String fieldName = fieldValueEntry.getKey().name();
             this.convertValue(
                     fieldValueEntry.getValue(),
@@ -138,18 +137,18 @@ public class StackFrameAnalyzer {
     }
 
     @NotNull
-    private List<Field> getNonStaticFields(ObjectReference objectReference) {
+    private List<Field> getNonStaticFields(final ObjectReference objectReference) {
         return objectReference.referenceType().allFields().stream()
                               .filter(field -> !field.isStatic())
                               .collect(Collectors.toList());
     }
 
     private void convertArray(
-            String name,
-            ArrayReference arrayRef,
-            String objectType,
-            ODObject parentIfExists,
-            String linkTypeIfExists) {
+            final String name,
+            final ArrayReference arrayRef,
+            final String objectType,
+            final ODObject parentIfExists,
+            final String linkTypeIfExists) {
         final ODObject parent = this.createParentIfNeededForCollection(arrayRef, parentIfExists, name, objectType);
         for (int i = 0; i < arrayRef.length(); i++) {
             final Value value = arrayRef.getValue(i);
@@ -165,10 +164,10 @@ public class StackFrameAnalyzer {
 
     @NotNull
     private ODObject createParentIfNeededForCollection(
-            ObjectReference obRef,
-            ODObject parentIfExists,
-            String obName,
-            String objectType) {
+            final ObjectReference obRef,
+            final ODObject parentIfExists,
+            final String obName,
+            final String objectType) {
         final ODObject parent;
         if (parentIfExists != null) {
             parent = parentIfExists;
@@ -180,13 +179,13 @@ public class StackFrameAnalyzer {
     }
 
     private void convertListOrSet(
-            String name,
-            ObjectReference collectionRef,
-            String objectType,
-            ODObject parentIfExists,
-            String linkTypeIfExists) {
+            final String name,
+            final ObjectReference collectionRef,
+            final String objectType,
+            final ODObject parentIfExists,
+            final String linkTypeIfExists) {
         final ODObject parent = this.createParentIfNeededForCollection(collectionRef, parentIfExists, name, objectType);
-        Iterator<Value> iterator = getIterator(this.thread, collectionRef);
+        final Iterator<Value> iterator = getIterator(this.thread, collectionRef);
         int i = 0;
         while (iterator.hasNext()) {
             final Value value = iterator.next();
@@ -202,17 +201,17 @@ public class StackFrameAnalyzer {
     }
 
     private void convertMap(
-            String name,
-            ObjectReference mapRef,
-            String objectType,
-            ODObject parentIfExists,
-            String linkTypeIfExists) {
+            final String name,
+            final ObjectReference mapRef,
+            final String objectType,
+            final ODObject parentIfExists,
+            final String linkTypeIfExists) {
         final ODObject parent = this.createParentIfNeededForCollection(mapRef, parentIfExists, name, objectType);
-        ObjectReference entrySet = (ObjectReference) invokeSimple(this.thread, mapRef, "entrySet");
-        Iterator<Value> iterator = getIterator(this.thread, entrySet);
+        final ObjectReference entrySet = (ObjectReference) invokeSimple(this.thread, mapRef, "entrySet");
+        final Iterator<Value> iterator = getIterator(this.thread, entrySet);
         int i = 0;
         while (iterator.hasNext()) {
-            ObjectReference entry = (ObjectReference) iterator.next();
+            final ObjectReference entry = (ObjectReference) iterator.next();
             final Value keyValue = invokeSimple(this.thread, entry, "getKey");
             final Value valueValue = invokeSimple(this.thread, entry, "getValue");
 
@@ -247,8 +246,8 @@ public class StackFrameAnalyzer {
     }
 
     private void convertVariable(
-            LocalVariable localVariable,
-            StackFrame stackFrame) {
+            final LocalVariable localVariable,
+            final StackFrame stackFrame) {
         final Value variableValue = stackFrame.getValue(localVariable);
         final String variableName = localVariable.name();
         final String variableType = localVariable.typeName();
@@ -256,12 +255,12 @@ public class StackFrameAnalyzer {
     }
 
     private void convertValue(
-            Value variableValue,
-            String variableName,
-            String variableType,
-            ODObject parentIfExists,
-            String linkTypeIfExists,
-            boolean exploreObjects) {
+            final Value variableValue,
+            final String variableName,
+            final String variableType,
+            final ODObject parentIfExists,
+            final String linkTypeIfExists,
+            final boolean exploreObjects) {
         if (variableValue instanceof BooleanValue) {
             final String value = String.valueOf(((BooleanValue) variableValue).value());
             this.addVariableToDiagram(variableName, variableType, value, parentIfExists);
@@ -307,7 +306,7 @@ public class StackFrameAnalyzer {
             this.addVariableToDiagram(variableName, variableType, String.format("\"%s\"", value), parentIfExists);
             return;
         }
-        ObjectReference obj = (ObjectReference) variableValue;
+        final ObjectReference obj = (ObjectReference) variableValue;
         if (obj == null) {
             this.addVariableToDiagram(variableName, variableType, "null", parentIfExists);
             return;
@@ -321,7 +320,7 @@ public class StackFrameAnalyzer {
         }
     }
 
-    private void addVariableToDiagram(String variableName, String variableType, String value, ODObject parentIfExists) {
+    private void addVariableToDiagram(final String variableName, final String variableType, final String value, final ODObject parentIfExists) {
         if (parentIfExists != null) {
             this.debuggingVisualizer.addAttributeToObject(parentIfExists, variableName, value, variableType);
         } else {

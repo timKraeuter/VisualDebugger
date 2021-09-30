@@ -16,8 +16,8 @@ class DebuggingInfoVisualizerBaseTest {
 
     @Test
     void getDiagramWithDepthEmptyDiagramTest() {
-        DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
-        ObjectDiagram diagramWithDepth = debuggingInfoCollector.getDiagramWithDepth(42);
+        final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
+        final ObjectDiagram diagramWithDepth = debuggingInfoCollector.getDiagramWithDepth(42);
         assertThat(diagramWithDepth.isEmpty(), is(true));
     }
 
@@ -28,10 +28,10 @@ class DebuggingInfoVisualizerBaseTest {
         diagram.addPrimitiveRootValue(new ODPrimitiveRootValue("double", "Double", "1.2"));
         diagram.addPrimitiveRootValue(new ODPrimitiveRootValue("byte", "Byte", "1"));
 
-        DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
+        final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
         debuggingInfoCollector.setDiagram(diagram);
 
-        ObjectDiagram diagramWithDepth = debuggingInfoCollector.getDiagramWithDepth(42);
+        final ObjectDiagram diagramWithDepth = debuggingInfoCollector.getDiagramWithDepth(42);
 
         assertThat(diagramWithDepth.getPrimitiveRootValues(), is(diagram.getPrimitiveRootValues()));
     }
@@ -39,23 +39,24 @@ class DebuggingInfoVisualizerBaseTest {
     @Test
     void getDiagramWithDepthCycleTest() {
         final ObjectDiagram diagram = new ObjectDiagram();
-        final ODObject person1 = populateDiagramWithPersons(diagram);
+        final ODObject person1 = this.populateDiagramWithPersons(diagram);
 
-        DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
+        final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
         debuggingInfoCollector.setDiagram(diagram);
         debuggingInfoCollector.addObject(person1, true);
 
-        ObjectDiagram diagramWithDepth = debuggingInfoCollector.getDiagramWithDepth(42);
+        final ObjectDiagram diagramWithDepth = debuggingInfoCollector.getDiagramWithDepth(42);
 
         assertThat(diagramWithDepth.getObjects(), is(diagram.getObjects()));
         assertThat(diagramWithDepth.getLinks(), is(diagram.getLinks()));
     }
+
     @Test
     void getObjectWithChildrenFromPreviousDiagramTest() {
         final ObjectDiagram diagram = new ObjectDiagram();
-        final ODObject person1 = populateDiagramWithPersons(diagram);
+        final ODObject person1 = this.populateDiagramWithPersons(diagram);
 
-        DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
+        final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
         debuggingInfoCollector.setDiagram(diagram);
         debuggingInfoCollector.addObject(person1, true);
 
@@ -68,11 +69,11 @@ class DebuggingInfoVisualizerBaseTest {
     }
 
     @NotNull
-    private ODObject populateDiagramWithPersons(ObjectDiagram diagram) {
+    private ODObject populateDiagramWithPersons(final ObjectDiagram diagram) {
         final ODObject person1 = new ODObject(1, "Person", "1");
         final ODObject person2 = new ODObject(2, "Person", "2");
-        ODLink personLink1 = new ODLink(person1, person2, "friends");
-        ODLink personLink2 = new ODLink(person2, person1, "friends");
+        final ODLink personLink1 = new ODLink(person1, person2, "friends");
+        final ODLink personLink2 = new ODLink(person2, person1, "friends");
         person1.addLink(personLink1);
         person2.addLink(personLink2);
         diagram.addObject(person1);
@@ -83,45 +84,45 @@ class DebuggingInfoVisualizerBaseTest {
     }
 
     @Test
-    void getDiagramWithDepth_DepthTest() {
+    void getDiagramWithDepthTest() {
         final ObjectDiagram diagram = new ObjectDiagram();
         final ODObject person1 = new ODObject(0, "Person", "1");
         ODObject lastPerson = person1;
         diagram.addObject(person1);
         for (int i = 1; i < 101; i++) {
             final ODObject nextPerson = new ODObject(i, "Person", String.valueOf(i));
-            ODLink personLink = new ODLink(lastPerson, nextPerson, "friends");
+            final ODLink personLink = new ODLink(lastPerson, nextPerson, "friends");
             lastPerson.addLink(personLink);
             diagram.addObject(nextPerson);
             diagram.addLink(personLink);
             lastPerson = nextPerson;
         }
 
-        DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
+        final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
         debuggingInfoCollector.setDiagram(diagram);
         debuggingInfoCollector.addObject(person1, true);
 
-        ObjectDiagram diagramWithDepth0 = debuggingInfoCollector.getDiagramWithDepth(0);
+        final ObjectDiagram diagramWithDepth0 = debuggingInfoCollector.getDiagramWithDepth(0);
 
         assertThat(diagramWithDepth0.getObjects(), is(Sets.newHashSet(person1)));
         assertThat(diagramWithDepth0.getLinks().isEmpty(), is(true));
 
-        ObjectDiagram diagramWithDepth10 = debuggingInfoCollector.getDiagramWithDepth(10);
+        final ObjectDiagram diagramWithDepth10 = debuggingInfoCollector.getDiagramWithDepth(10);
 
         assertThat(diagramWithDepth10.getObjects().size(), is(11));
         assertThat(diagramWithDepth10.getLinks().size(), is(10));
 
-        ObjectDiagram diagramWithDepth25 = debuggingInfoCollector.getDiagramWithDepth(25);
+        final ObjectDiagram diagramWithDepth25 = debuggingInfoCollector.getDiagramWithDepth(25);
 
         assertThat(diagramWithDepth25.getObjects().size(), is(26));
         assertThat(diagramWithDepth25.getLinks().size(), is(25));
 
-        ObjectDiagram diagramWithDepth100 = debuggingInfoCollector.getDiagramWithDepth(100);
+        final ObjectDiagram diagramWithDepth100 = debuggingInfoCollector.getDiagramWithDepth(100);
 
         assertThat(diagramWithDepth100.getObjects(), is(diagram.getObjects()));
         assertThat(diagramWithDepth100.getLinks(), is(diagram.getLinks()));
 
-        ObjectDiagram diagramWithDepth1000 = debuggingInfoCollector.getDiagramWithDepth(1000);
+        final ObjectDiagram diagramWithDepth1000 = debuggingInfoCollector.getDiagramWithDepth(1000);
 
         assertThat(diagramWithDepth1000.getObjects(), is(diagram.getObjects()));
         assertThat(diagramWithDepth1000.getLinks(), is(diagram.getLinks()));

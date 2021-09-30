@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Manuel testing suite with different debugging scenarios.
+ */
 class DebuggingScenariosTest {
     @Test
     void testPrimitiveVariables() {

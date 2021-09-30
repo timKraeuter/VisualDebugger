@@ -9,33 +9,43 @@ import java.util.Map;
 public class ObjectReferenceMock implements ObjectReference {
     private final long id;
     private final ReferenceTypeMock type;
+    private final HashMap<Field, Value> fields;
 
-    public ObjectReferenceMock(String typeName) {
+    public ObjectReferenceMock(final String typeName) {
         this.type = new ReferenceTypeMock(typeName);
         this.id = StringReferenceMock.idCounter.incrementAndGet();
+        this.fields = new HashMap<>();
     }
 
     @Override
     public ReferenceType referenceType() {
-        return type;
+        return this.type;
     }
 
     @Override
-    public Value getValue(Field sig) {
-        return null;
+    public Value getValue(final Field field) {
+        return this.fields.get(field);
     }
 
     @Override
-    public Map<Field, Value> getValues(List<? extends Field> fields) {
-        return new HashMap<>();
+    public Map<Field, Value> getValues(final List<? extends Field> fields) {
+        return this.fields;
     }
 
     @Override
-    public void setValue(Field field, Value value) {
+    public void setValue(final Field field, final Value value) {
+        this.fields.put(field, value);
     }
 
     @Override
-    public Value invokeMethod(ThreadReference thread, Method method, List<? extends Value> arguments, int options) {
+    public Type type() {
+        return new TypeMock(this.type.name());
+    }
+
+    // Below is irrelevant
+
+    @Override
+    public Value invokeMethod(final ThreadReference thread, final Method method, final List<? extends Value> arguments, final int options) {
         return null;
     }
 
@@ -56,7 +66,7 @@ public class ObjectReferenceMock implements ObjectReference {
 
     @Override
     public long uniqueID() {
-        return id;
+        return this.id;
     }
 
     @Override
@@ -75,12 +85,7 @@ public class ObjectReferenceMock implements ObjectReference {
     }
 
     @Override
-    public List<ObjectReference> referringObjects(long maxReferrers) {
-        return null;
-    }
-
-    @Override
-    public Type type() {
+    public List<ObjectReference> referringObjects(final long maxReferrers) {
         return null;
     }
 
