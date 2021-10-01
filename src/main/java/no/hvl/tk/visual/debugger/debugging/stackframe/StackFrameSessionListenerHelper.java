@@ -25,7 +25,11 @@ public class StackFrameSessionListenerHelper {
         return new Iterator<>() {
             @Override
             public boolean hasNext() {
-                return ((BooleanValue) invokeSimple(thread, i, "hasNext")).value();
+                BooleanValue hasNext = (BooleanValue) invokeSimple(thread, i, "hasNext");
+                if (hasNext == null) {
+                    return false;
+                }
+                return hasNext.value();
             }
 
             @Override

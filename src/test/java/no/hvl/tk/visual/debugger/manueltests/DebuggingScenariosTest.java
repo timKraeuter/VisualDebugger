@@ -7,10 +7,7 @@ import org.apache.commons.compress.utils.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Manuel testing suite with different debugging scenarios.
@@ -246,5 +243,17 @@ class DebuggingScenariosTest {
         System.out.println("Buh");
         System.out.println("Buh");
         System.out.println("Buh");
+    }
+
+    @Test
+    void testManyObjects() {
+        Set<Product> products = new HashSet<>();
+        int amountOfProducts = 100; // each product has two materials.
+        // So x*3 objects and x*3 links + x links and one object for the root collection.
+        for (int i = 0; i <= amountOfProducts; i++) {
+            final Product prod = DebuggingScenariosTest.makeProductWith2Mats();
+            products.add(prod);
+        }
+        System.out.println(products.size());
     }
 }

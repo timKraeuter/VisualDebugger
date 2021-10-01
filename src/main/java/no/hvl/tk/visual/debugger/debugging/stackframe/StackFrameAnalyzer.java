@@ -1,6 +1,5 @@
 package no.hvl.tk.visual.debugger.debugging.stackframe;
 
-import com.intellij.openapi.util.Pair;
 import com.sun.jdi.*;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.domain.ODObject;
@@ -26,7 +25,7 @@ public class StackFrameAnalyzer {
     However, once we start running code on the thread, we can no longer read frame locals.
     Therefore, we have to convert all heap objects at the very end.
     */
-    private final TreeMap<Long, Pair<ObjectReference, ODObject>> rootObjects = new TreeMap<>();
+    private final Map<ODObject, ObjectReference> rootObjects = new TreeMap<>();
 
     public StackFrameAnalyzer(final StackFrame stackFrame, final ThreadReference thread, final DebuggingInfoVisualizer debuggingVisualizer) {
         this.stackFrame = stackFrame;
@@ -47,9 +46,7 @@ public class StackFrameAnalyzer {
 
 
     private void convertObjects() {
-        this.rootObjects.forEach((objID, objectReferenceODObjectPair) -> {
-            final ObjectReference obRef = objectReferenceODObjectPair.getFirst();
-            final ODObject odObject = objectReferenceODObjectPair.getSecond();
+        this.rootObjects.forEach((odObject, obRef) -> {
             // No parents at root
             this.exploreObjectReference(obRef, odObject, null, "");
         });
@@ -64,9 +61,7 @@ public class StackFrameAnalyzer {
                 thisObjectReference.referenceType().name(),
                 "this");
 
-        this.rootObjects.put(thisObjectReference.uniqueID(),
-                Pair.create(thisObjectReference,
-                        thisObject));
+        this.rootObjects.put(thisObject, thisObjectReference);
     }
 
     private void visualizeVariables(final StackFrame stackFrame) {
@@ -316,7 +311,7 @@ public class StackFrameAnalyzer {
         if (exploreObjects) {
             this.exploreObjectReference(obj, odObject, parentIfExists, linkTypeIfExists);
         } else {
-            this.rootObjects.put(obj.uniqueID(), Pair.create(obj, odObject));
+            this.rootObjects.put(odObject, obj);
         }
     }
 
