@@ -156,6 +156,34 @@ class StackFrameAnalyzerTest {
     }
 
     @Test
+    void emptyArrayTest() {
+        // Given
+        final StackFrameMock stackFrameMock = new StackFrameMock(new ObjectReferenceMock("test"));
+        final String intArray = "intArray";
+        StackFrameMockHelper.createArray(
+                stackFrameMock,
+                intArray,
+                Lists.newArrayList());
+
+        final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
+
+        final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(
+                stackFrameMock,
+                null,
+                debuggingInfoCollector);
+
+        // When
+        stackFrameAnalyzer.analyze();
+
+        // Then
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getObjects().size(), is(2));
+        final ODObject intArrayObject = this.findObjectWithVarNameIfExists(
+                debuggingInfoCollector.getCurrentDiagram(),
+                intArray);
+        assertThat(intArrayObject.getAttributeValues().size(), is(0));
+    }
+
+    @Test
     void primitiveRootArrayTest() {
         // Given
         final StackFrameMock stackFrameMock = new StackFrameMock(new ObjectReferenceMock("test"));
