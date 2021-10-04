@@ -74,7 +74,21 @@ public class StackFrameMockHelper {
         return objRefMock;
     }
 
-    public static void addAttributeToObject(final ObjectReferenceMock objRefMock, final String fieldName, final String fieldType, final Value fieldValue) {
+    public static void addAttributeToObject(
+            final ObjectReferenceMock objRefMock,
+            final String fieldName,
+            final String fieldType,
+            final Value fieldValue) {
         objRefMock.setValue(new FieldMock(fieldName, fieldType), fieldValue);
+    }
+
+    public static ObjectReferenceMock createChildObject(
+            final StackFrameMock stackFrameMock,
+            final ObjectReferenceMock father,
+            final String fieldName,
+            final String childType) {
+        final ObjectReferenceMock child = new ObjectReferenceMock(childType);
+        father.setValue(new FieldMock(fieldName, childType), child);
+        return child;
     }
 }

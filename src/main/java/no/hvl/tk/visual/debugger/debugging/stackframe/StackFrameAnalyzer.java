@@ -46,10 +46,10 @@ public class StackFrameAnalyzer {
 
 
     private void convertObjects() {
-        this.rootObjects.forEach((odObject, obRef) -> {
-            // No parents at root
-            this.exploreObjectReference(obRef, odObject, null, "");
-        });
+        this.rootObjects.forEach((odObject, obRef) ->
+                // No parents at root
+                this.exploreObjectReference(obRef, odObject, null, "")
+        );
     }
 
     private void visualizeThisObject(final StackFrame stackFrame) {

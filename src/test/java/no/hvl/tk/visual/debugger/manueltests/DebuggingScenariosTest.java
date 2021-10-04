@@ -13,6 +13,10 @@ import java.util.*;
  * Manuel testing suite with different debugging scenarios.
  */
 class DebuggingScenariosTest {
+
+    /**
+     * Equivalent Unit-Test using a mocked stack frame in primitiveLocalVariablesTest().
+     */
     @Test
     void testPrimitiveVariables() {
         final byte aByte1 = 0;
@@ -38,6 +42,9 @@ class DebuggingScenariosTest {
         System.out.println("Put your breakpoint here");
     }
 
+    /**
+     * Equivalent Unit-Test using a mocked stack frame in objectWithAttributesTest().
+     */
     @Test
     void testWithOneLayerObjectVariables() {
         final Material aMaterial = Material.create("stringValue", 42);
@@ -45,6 +52,9 @@ class DebuggingScenariosTest {
         System.out.println(aMaterial);
     }
 
+    /**
+     * Equivalent Unit-Test using a mocked stack frame in multiLayerObjectTest().
+     */
     @Test
     void testMultiLayerObjectVariables() {
         final String productName = "productName";
@@ -247,8 +257,8 @@ class DebuggingScenariosTest {
 
     @Test
     void testManyObjects() {
-        Set<Product> products = new HashSet<>();
-        int amountOfProducts = 100; // each product has two materials.
+        final Set<Product> products = new HashSet<>();
+        final int amountOfProducts = 100; // each product has two materials.
         // So x*3 objects and x*3 links + x links and one object for the root collection.
         for (int i = 0; i <= amountOfProducts; i++) {
             final Product prod = DebuggingScenariosTest.makeProductWith2Mats();

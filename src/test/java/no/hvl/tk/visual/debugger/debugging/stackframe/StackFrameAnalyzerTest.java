@@ -118,6 +118,46 @@ class StackFrameAnalyzerTest {
                 is(new ODAttributeValue("price", "Integer", "25")));
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    @Test
+    void multiLayerObjectTest() {
+        // Given
+        final StackFrameMock stackFrameMock = new StackFrameMock(new ObjectReferenceMock("test"));
+
+        final String productName = "foldingWallTable";
+        final ObjectReferenceMock product = StackFrameMockHelper.createObject(stackFrameMock, "Product", productName);
+        final String childFieldName = "material";
+        final ObjectReferenceMock material = StackFrameMockHelper.createChildObject(stackFrameMock, product, childFieldName, "Material");
+        StackFrameMockHelper.addAttributeToObject(material, "name", "String", new StringReferenceMock("Main support"));
+        StackFrameMockHelper.addAttributeToObject(material, "price", "Integer", new IntegerValueMock(10));
+
+        final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
+
+        final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector);
+
+        // When
+        stackFrameAnalyzer.analyze();
+
+        // Then
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getObjects().size(), is(3));
+        final ODObject productObject = this.findObjectWithVarNameIfExists(
+                debuggingInfoCollector.getCurrentDiagram(),
+                productName);
+
+        assertThat(productObject.getLinks().size(), is(1));
+
+        final ODObject materialObject = this.findObjectWithVarNameIfExists(
+                debuggingInfoCollector.getCurrentDiagram(),
+                childFieldName);
+        assertThat(productObject.getLinks().stream().findFirst().get().getTo(), is(materialObject));
+
+        assertThat(materialObject.getAttributeValues().size(), is(2));
+        assertThat(materialObject.getAttributeByName("name").get(), // must be present for the test case
+                is(new ODAttributeValue("name", "String", "\"Main support\"")));
+        assertThat(materialObject.getAttributeByName("price").get(), // must be present for the test case
+                is(new ODAttributeValue("price", "Integer", "10")));
+    }
+
     private ODObject findObjectWithVarNameIfExists(final ObjectDiagram diagram, final String variableName) {
         final Optional<ODObject> foundObject = diagram.getObjects()
                                                       .stream()
