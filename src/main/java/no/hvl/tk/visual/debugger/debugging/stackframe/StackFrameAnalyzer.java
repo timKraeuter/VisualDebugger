@@ -144,7 +144,20 @@ public class StackFrameAnalyzer {
             final String objectType,
             final ODObject parentIfExists,
             final String linkTypeIfExists) {
-        final ODObject parent = this.createParentIfNeededForCollection(arrayRef, parentIfExists, name, objectType);
+        final ODObject newParent;
+        // Always create a new parent for primitive types or empty arrays
+        if (this.isPrimitiveOrEmptyArray(arrayRef)) {
+            newParent = new ODObject(arrayRef.uniqueID(), objectType, name);
+            if (parentIfExists != null) {
+                this.debuggingVisualizer.addObject(newParent, false);
+                this.debuggingVisualizer.addLinkToObject(parentIfExists, newParent, linkTypeIfExists);
+            } else {
+                this.debuggingVisualizer.addObject(newParent, true);
+            }
+        } else {
+            newParent = this.createParentIfNeededForCollection(arrayRef, parentIfExists, name, objectType);
+        }
+
         for (int i = 0; i < arrayRef.length(); i++) {
             final Value value = arrayRef.getValue(i);
             final String variableName = String.valueOf(i);
@@ -152,9 +165,19 @@ public class StackFrameAnalyzer {
                     value,
                     variableName,
                     value.type().name(),
-                    parent,
-                    parent.equals(parentIfExists) ? linkTypeIfExists : variableName, true); // link type is just the index in case of root collections.
+                    newParent,
+                    newParent.equals(parentIfExists) ? linkTypeIfExists : variableName, true); // link type is just the index in case of root collections.
         }
+
+    }
+
+    private boolean isPrimitiveOrEmptyArray(final ArrayReference arrayRef) {
+        if (arrayRef.length() >= 1) {
+            final String arrayContentType = arrayRef.getValue(0).type().name();
+            return PrimitiveTypes.isBoxedPrimitiveType(arrayContentType) ||
+                    PrimitiveTypes.isNonBoxedPrimitiveType(arrayContentType);
+        }
+        return true;
     }
 
     @NotNull

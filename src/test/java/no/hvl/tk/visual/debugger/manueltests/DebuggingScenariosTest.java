@@ -1,6 +1,8 @@
 package no.hvl.tk.visual.debugger.manueltests;
 
 import com.google.common.collect.Lists;
+import no.hvl.tk.visual.debugger.manueltests.holders.CollectionHolder;
+import no.hvl.tk.visual.debugger.manueltests.holders.PrimitiveArrayHolder;
 import no.hvl.tk.visual.debugger.manueltests.partsList.domain.Material;
 import no.hvl.tk.visual.debugger.manueltests.partsList.domain.Product;
 import org.apache.commons.compress.utils.Sets;
@@ -62,6 +64,19 @@ class DebuggingScenariosTest {
         product.addPart(Material.create("mat1Name", 1), 1);
         product.addPart(Material.create("mat2Name", 2), 1);
         System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
+    }
+
+    /**
+     * Equivalent Unit-Test using a mocked stack frame in primitiveSubArrayTest().
+     */
+    @Test
+    void primitiveArrayAsFieldTest() {
+        final PrimitiveArrayHolder primitiveArrayHolder = new PrimitiveArrayHolder(new int[]{1, 2, 3});
+        System.out.println(primitiveArrayHolder);
         System.out.println("123");
         System.out.println("123");
         System.out.println("123");

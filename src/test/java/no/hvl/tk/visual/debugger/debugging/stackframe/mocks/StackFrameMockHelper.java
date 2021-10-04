@@ -85,7 +85,6 @@ public class StackFrameMockHelper {
     }
 
     public static ObjectReferenceMock createChildObject(
-            final StackFrameMock stackFrameMock,
             final ObjectReferenceMock father,
             final String fieldName,
             final String childType) {
@@ -104,5 +103,9 @@ public class StackFrameMockHelper {
                 arrayMock
         );
         return arrayMock;
+    }
+
+    public static void addChildObject(final ObjectReferenceMock obj, final String fieldName, final Value value) {
+        obj.setValue(new FieldMock(fieldName, value.type().name()), value);
     }
 }
