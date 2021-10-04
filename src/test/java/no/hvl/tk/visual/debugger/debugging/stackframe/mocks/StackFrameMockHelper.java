@@ -3,6 +3,8 @@ package no.hvl.tk.visual.debugger.debugging.stackframe.mocks;
 import com.sun.jdi.Value;
 import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.value.*;
 
+import java.util.List;
+
 public class StackFrameMockHelper {
     public static void addLocalStringVariable(final StackFrameMock sf, final String variableName, final String value) {
         sf.setValue(
@@ -39,7 +41,7 @@ public class StackFrameMockHelper {
 
     public static void addLocalIntegerVariable(final StackFrameMock sf, final String variableName, final int value) {
         sf.setValue(
-                new LocalVariableMock(variableName, "java.lang.Integer"),
+                new LocalVariableMock(variableName, IntegerValueMock.TYPE_NAME),
                 new IntegerValueMock(value));
 
     }
@@ -90,5 +92,17 @@ public class StackFrameMockHelper {
         final ObjectReferenceMock child = new ObjectReferenceMock(childType);
         father.setValue(new FieldMock(fieldName, childType), child);
         return child;
+    }
+
+    public static ArrayReferenceMock createArray(
+            final StackFrameMock sf,
+            final String variableName,
+            final List<Value> content) {
+        final ArrayReferenceMock arrayMock = new ArrayReferenceMock(content);
+        sf.setValue(
+                new LocalVariableMock(variableName, "Array"),
+                arrayMock
+        );
+        return arrayMock;
     }
 }

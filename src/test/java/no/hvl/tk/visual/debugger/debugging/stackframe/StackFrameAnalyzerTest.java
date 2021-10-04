@@ -1,15 +1,13 @@
 package no.hvl.tk.visual.debugger.debugging.stackframe;
 
+import com.google.common.collect.Lists;
 import no.hvl.tk.visual.debugger.debugging.DebuggingInfoCollector;
 import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.ObjectReferenceMock;
 import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.StackFrameMock;
 import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.StackFrameMockHelper;
 import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.StringReferenceMock;
 import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.value.IntegerValueMock;
-import no.hvl.tk.visual.debugger.domain.ODAttributeValue;
-import no.hvl.tk.visual.debugger.domain.ODObject;
-import no.hvl.tk.visual.debugger.domain.ODPrimitiveRootValue;
-import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
+import no.hvl.tk.visual.debugger.domain.*;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
@@ -71,7 +69,7 @@ class StackFrameAnalyzerTest {
         primitiveVars.add(byteValue);
         final ODPrimitiveRootValue shortValue = new ODPrimitiveRootValue(shortVarName, "java.lang.Short", "1");
         primitiveVars.add(shortValue);
-        final ODPrimitiveRootValue integerValue = new ODPrimitiveRootValue(integerVarName, "java.lang.Integer", "1");
+        final ODPrimitiveRootValue integerValue = new ODPrimitiveRootValue(integerVarName, IntegerValueMock.TYPE_NAME, "1");
         primitiveVars.add(integerValue);
         final ODPrimitiveRootValue longValue = new ODPrimitiveRootValue(longVarName, "java.lang.Long", "1");
         primitiveVars.add(longValue);
@@ -96,7 +94,7 @@ class StackFrameAnalyzerTest {
         final String variableName = "foldingWallTable";
         final ObjectReferenceMock objRefMock = StackFrameMockHelper.createObject(stackFrameMock, "Product", variableName);
         StackFrameMockHelper.addAttributeToObject(objRefMock, "name", "String", new StringReferenceMock("folding wall table"));
-        StackFrameMockHelper.addAttributeToObject(objRefMock, "price", "Integer", new IntegerValueMock(25));
+        StackFrameMockHelper.addAttributeToObject(objRefMock, "price", IntegerValueMock.TYPE_NAME, new IntegerValueMock(25));
 
         final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
@@ -115,7 +113,7 @@ class StackFrameAnalyzerTest {
         assertThat(productObject.getAttributeByName("name").get(), // must be present for the test case
                 is(new ODAttributeValue("name", "String", "\"folding wall table\"")));
         assertThat(productObject.getAttributeByName("price").get(), // must be present for the test case
-                is(new ODAttributeValue("price", "Integer", "25")));
+                is(new ODAttributeValue("price", IntegerValueMock.TYPE_NAME, "25")));
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -156,6 +154,81 @@ class StackFrameAnalyzerTest {
                 is(new ODAttributeValue("name", "String", "\"Main support\"")));
         assertThat(materialObject.getAttributeByName("price").get(), // must be present for the test case
                 is(new ODAttributeValue("price", "Integer", "10")));
+    }
+
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    @Test
+    void primitiveArrayTest() {
+        // Given
+        final StackFrameMock stackFrameMock = new StackFrameMock(new ObjectReferenceMock("test"));
+        final String intArray = "intArray";
+        StackFrameMockHelper.createArray(
+                stackFrameMock,
+                intArray,
+                Lists.newArrayList(
+                        new IntegerValueMock(1),
+                        new IntegerValueMock(2),
+                        new IntegerValueMock(3)));
+
+        final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
+
+        final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(
+                stackFrameMock,
+                null,
+                debuggingInfoCollector);
+
+        // When
+        stackFrameAnalyzer.analyze();
+
+        // Then
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getObjects().size(), is(2));
+        final ODObject intArrayObject = this.findObjectWithVarNameIfExists(
+                debuggingInfoCollector.getCurrentDiagram(),
+                intArray);
+        assertThat(intArrayObject.getAttributeValues().size(), is(3));
+        assertThat(intArrayObject.getAttributeByName("0").get(), // must be present for the test case
+                is(new ODAttributeValue("0", IntegerValueMock.TYPE_NAME, "1")));
+        assertThat(intArrayObject.getAttributeByName("1").get(), // must be present for the test case
+                is(new ODAttributeValue("1", IntegerValueMock.TYPE_NAME, "2")));
+        assertThat(intArrayObject.getAttributeByName("2").get(), // must be present for the test case
+                is(new ODAttributeValue("2", IntegerValueMock.TYPE_NAME, "3")));
+    }
+
+    @Test
+    void nonPrimitiveArrayTest() {
+        // Given
+        final StackFrameMock stackFrameMock = new StackFrameMock(new ObjectReferenceMock("test"));
+        final String objArray = "objArray";
+        StackFrameMockHelper.createArray(
+                stackFrameMock,
+                objArray,
+                Lists.newArrayList(
+                        new ObjectReferenceMock("Material"),
+                        new ObjectReferenceMock("Material"),
+                        new ObjectReferenceMock("Material")));
+
+        final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
+
+        final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(
+                stackFrameMock,
+                null,
+                debuggingInfoCollector);
+
+        // When
+        stackFrameAnalyzer.analyze();
+
+        // Then
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getObjects().size(), is(5));
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getLinks().size(), is(3));
+
+        final ODObject objArrayObject = this.findObjectWithVarNameIfExists(
+                debuggingInfoCollector.getCurrentDiagram(),
+                objArray);
+        assertThat(objArrayObject.getLinks().size(), is(3));
+        // All objects have the type "Material".
+        assertThat(objArrayObject.getLinks().stream()
+                                 .map(ODLink::getTo)
+                                 .allMatch(object -> object.getType().equals("Material")), is(true));
     }
 
     private ODObject findObjectWithVarNameIfExists(final ObjectDiagram diagram, final String variableName) {

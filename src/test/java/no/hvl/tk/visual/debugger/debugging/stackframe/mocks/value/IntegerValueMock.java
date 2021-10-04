@@ -3,18 +3,25 @@ package no.hvl.tk.visual.debugger.debugging.stackframe.mocks.value;
 import com.sun.jdi.IntegerValue;
 import com.sun.jdi.Type;
 import com.sun.jdi.VirtualMachine;
+import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.TypeMock;
 import org.jetbrains.annotations.NotNull;
 
 public class IntegerValueMock implements IntegerValue {
+    public static final String TYPE_NAME = "java.lang.Integer";
     private final int value;
 
-    public IntegerValueMock(int value) {
+    public IntegerValueMock(final int value) {
         this.value = value;
     }
 
     @Override
     public int value() {
-        return value;
+        return this.value;
+    }
+
+    @Override
+    public Type type() {
+        return new TypeMock(TYPE_NAME);
     }
 
     // Below is irrelevant
@@ -41,7 +48,7 @@ public class IntegerValueMock implements IntegerValue {
 
     @Override
     public int intValue() {
-        return value;
+        return this.value;
     }
 
     @Override
@@ -60,17 +67,12 @@ public class IntegerValueMock implements IntegerValue {
     }
 
     @Override
-    public Type type() {
-        return null;
-    }
-
-    @Override
     public VirtualMachine virtualMachine() {
         return null;
     }
 
     @Override
-    public int compareTo(@NotNull IntegerValue o) {
+    public int compareTo(@NotNull final IntegerValue o) {
         return 0;
     }
 }
