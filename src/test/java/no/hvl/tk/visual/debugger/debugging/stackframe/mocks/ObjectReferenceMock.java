@@ -1,24 +1,45 @@
 package no.hvl.tk.visual.debugger.debugging.stackframe.mocks;
 
 import com.sun.jdi.*;
+import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.value.BooleanValueMock;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class ObjectReferenceMock implements ObjectReference {
+public class ObjectReferenceMock<E extends Value> implements ObjectReference, Iterable<E> {
     private final long id;
     private final ReferenceTypeMock type;
     private final HashMap<Field, Value> fields;
+    private Collection<E> itSource = new HashSet<>();
 
-    public ObjectReferenceMock(final String typeName) {
+    private Iterator<E> runningIt = null;
+
+    public static ObjectReferenceMock<Value> create(final String typeName) {
+        return new ObjectReferenceMock<>(typeName);
+    }
+
+    public static <A extends Value> ObjectReferenceMock<A> createCollectionObjectRefMock(
+            final String typeName,
+            final Collection<A> content) {
+        final ObjectReferenceMock<A> aObjectReferenceMock = new ObjectReferenceMock<>(typeName);
+        aObjectReferenceMock.setIteratorSource(content);
+        return aObjectReferenceMock;
+    }
+
+    @NotNull
+    @Override
+    public Iterator<E> iterator() {
+        return this.itSource.iterator();
+    }
+
+    private ObjectReferenceMock(final String typeName) {
         this.type = new ReferenceTypeMock(typeName);
         this.id = StringReferenceMock.idCounter.incrementAndGet();
         this.fields = new HashMap<>();
     }
 
     @Override
-    public ReferenceType referenceType() {
+    public ReferenceTypeMock referenceType() {
         return this.type;
     }
 
@@ -42,10 +63,28 @@ public class ObjectReferenceMock implements ObjectReference {
         return new TypeMock(this.type.name());
     }
 
+    private void setIteratorSource(final Collection<E> collection) {
+        this.itSource = collection;
+    }
+
     // Below is irrelevant
 
     @Override
-    public Value invokeMethod(final ThreadReference thread, final Method method, final List<? extends Value> arguments, final int options) {
+    public Value invokeMethod(
+            final ThreadReference thread,
+            final Method method,
+            final List<? extends Value> arguments,
+            final int options) {
+        if (method.name().equals("iterator")) {
+            this.runningIt = this.itSource.iterator();
+            return this;
+        }
+        if (method.name().equals("hasNext")) {
+            return new BooleanValueMock(this.runningIt.hasNext());
+        }
+        if (method.name().equals("next")) {
+            return this.runningIt.next();
+        }
         return null;
     }
 
@@ -93,4 +132,5 @@ public class ObjectReferenceMock implements ObjectReference {
     public VirtualMachine virtualMachine() {
         return null;
     }
+
 }

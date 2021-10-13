@@ -2,37 +2,37 @@ package no.hvl.tk.visual.debugger.debugging.stackframe.mocks;
 
 import com.sun.jdi.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class ReferenceTypeMock implements ReferenceType, ClassType {
-    private final String name;
-    private final List<InterfaceType> interfaces = new ArrayList<>();
+public class InterfaceTypeMock implements InterfaceType {
+    private final String typeName;
 
-    public ReferenceTypeMock(final String name) {
-        this.name = name;
-    }
-
-    public void addInterface(final InterfaceType type) {
-        this.interfaces.add(type);
+    public InterfaceTypeMock(final String typeName) {
+        this.typeName = typeName;
     }
 
     @Override
     public String name() {
-        return this.name;
+        return this.typeName;
     }
 
+    // Below is irrelevant
+
     @Override
-    public List<Field> allFields() {
+    public List<InterfaceType> superinterfaces() {
         return new ArrayList<>();
     }
 
     @Override
-    public List<Field> visibleFields() {
+    public List<InterfaceType> subinterfaces() {
+        return null;
+    }
+
+    @Override
+    public List<ClassType> implementors() {
         return null;
     }
 
@@ -40,7 +40,6 @@ public class ReferenceTypeMock implements ReferenceType, ClassType {
     public String signature() {
         return null;
     }
-
 
     @Override
     public String genericSignature() {
@@ -58,12 +57,12 @@ public class ReferenceTypeMock implements ReferenceType, ClassType {
     }
 
     @Override
-    public List<String> sourceNames(final String stratum) {
+    public List<String> sourceNames(final String s) {
         return null;
     }
 
     @Override
-    public List<String> sourcePaths(final String stratum) {
+    public List<String> sourcePaths(final String s) {
         return null;
     }
 
@@ -113,7 +112,17 @@ public class ReferenceTypeMock implements ReferenceType, ClassType {
     }
 
     @Override
-    public Field fieldByName(final String fieldName) {
+    public List<Field> visibleFields() {
+        return null;
+    }
+
+    @Override
+    public List<Field> allFields() {
+        return null;
+    }
+
+    @Override
+    public Field fieldByName(final String s) {
         return null;
     }
 
@@ -133,12 +142,12 @@ public class ReferenceTypeMock implements ReferenceType, ClassType {
     }
 
     @Override
-    public List<Method> methodsByName(final String name) {
-        return Collections.singletonList(new MethodMock(name));
+    public List<Method> methodsByName(final String s) {
+        return null;
     }
 
     @Override
-    public List<Method> methodsByName(final String name, final String signature) {
+    public List<Method> methodsByName(final String s, final String s1) {
         return null;
     }
 
@@ -153,7 +162,7 @@ public class ReferenceTypeMock implements ReferenceType, ClassType {
     }
 
     @Override
-    public Map<Field, Value> getValues(final List<? extends Field> fields) {
+    public Map<Field, Value> getValues(final List<? extends Field> list) {
         return null;
     }
 
@@ -168,17 +177,17 @@ public class ReferenceTypeMock implements ReferenceType, ClassType {
     }
 
     @Override
-    public List<Location> allLineLocations(final String stratum, final String sourceName) {
+    public List<Location> allLineLocations(final String s, final String s1) {
         return null;
     }
 
     @Override
-    public List<Location> locationsOfLine(final int lineNumber) {
+    public List<Location> locationsOfLine(final int i) {
         return null;
     }
 
     @Override
-    public List<Location> locationsOfLine(final String stratum, final String sourceName, final int lineNumber) {
+    public List<Location> locationsOfLine(final String s, final String s1, final int i) {
         return null;
     }
 
@@ -193,7 +202,7 @@ public class ReferenceTypeMock implements ReferenceType, ClassType {
     }
 
     @Override
-    public List<ObjectReference> instances(final long maxInstances) {
+    public List<ObjectReference> instances(final long l) {
         return null;
     }
 
@@ -248,53 +257,7 @@ public class ReferenceTypeMock implements ReferenceType, ClassType {
     }
 
     @Override
-    public int compareTo(@NotNull final ReferenceType o) {
+    public int compareTo(@NotNull final ReferenceType referenceType) {
         return 0;
-    }
-
-    @Nullable
-    @Override
-    public ClassType superclass() {
-        return null;
-    }
-
-    @Override
-    public List<InterfaceType> interfaces() {
-        return this.interfaces;
-    }
-
-    @Override
-    public List<InterfaceType> allInterfaces() {
-        return null;
-    }
-
-    @Override
-    public List<ClassType> subclasses() {
-        return null;
-    }
-
-    @Override
-    public boolean isEnum() {
-        return false;
-    }
-
-    @Override
-    public void setValue(final Field field, final Value value) {
-
-    }
-
-    @Override
-    public Value invokeMethod(final ThreadReference threadReference, final Method method, final List<? extends Value> list, final int i) {
-        return null;
-    }
-
-    @Override
-    public ObjectReference newInstance(final ThreadReference threadReference, final Method method, final List<? extends Value> list, final int i) {
-        return null;
-    }
-
-    @Override
-    public Method concreteMethodByName(final String s, final String s1) {
-        return null;
     }
 }

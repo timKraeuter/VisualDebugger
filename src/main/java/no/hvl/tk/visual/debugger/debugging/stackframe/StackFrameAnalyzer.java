@@ -27,7 +27,10 @@ public class StackFrameAnalyzer {
     */
     private final Map<ODObject, ObjectReference> rootObjects = new TreeMap<>();
 
-    public StackFrameAnalyzer(final StackFrame stackFrame, final ThreadReference thread, final DebuggingInfoVisualizer debuggingVisualizer) {
+    public StackFrameAnalyzer(
+            final StackFrame stackFrame,
+            final ThreadReference thread,
+            final DebuggingInfoVisualizer debuggingVisualizer) {
         this.stackFrame = stackFrame;
         this.thread = thread;
         this.debuggingVisualizer = debuggingVisualizer;
