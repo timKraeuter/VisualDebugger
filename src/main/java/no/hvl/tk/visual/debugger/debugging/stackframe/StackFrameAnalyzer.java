@@ -147,19 +147,13 @@ public class StackFrameAnalyzer {
             final String objectType,
             final ODObject parentIfExists,
             final String linkTypeIfExists) {
-        final ODObject newParent;
-        // Always create a new parent for primitive types or empty arrays
-        if (this.isPrimitiveOrEmptyArray(arrayRef)) {
-            newParent = new ODObject(arrayRef.uniqueID(), objectType, name);
-            if (parentIfExists != null) {
-                this.debuggingVisualizer.addObject(newParent, false);
-                this.debuggingVisualizer.addLinkToObject(parentIfExists, newParent, linkTypeIfExists);
-            } else {
-                this.debuggingVisualizer.addObject(newParent, true);
-            }
-        } else {
-            newParent = this.createParentIfNeededForCollection(arrayRef, parentIfExists, name, objectType);
-        }
+        final ODObject newParent = this.findCollectionParent(
+                name,
+                arrayRef,
+                objectType,
+                parentIfExists,
+                linkTypeIfExists,
+                this.isPrimitiveOrEmptyArray(arrayRef));
 
         for (int i = 0; i < arrayRef.length(); i++) {
             final Value value = arrayRef.getValue(i);
@@ -183,6 +177,70 @@ public class StackFrameAnalyzer {
         return true;
     }
 
+    private void convertListOrSet(
+            final String name,
+            final ObjectReference collectionRef,
+            final String objectType,
+            final ODObject parentIfExists,
+            final String linkTypeIfExists) {
+        final ODObject newParent = this.findCollectionParent(
+                name,
+                collectionRef,
+                objectType,
+                parentIfExists,
+                linkTypeIfExists,
+                this.isPrimitiveOrEmptyListOrSet(collectionRef));
+
+        final Iterator<Value> iterator = getIterator(this.thread, collectionRef);
+        int i = 0;
+        while (iterator.hasNext()) {
+            final Value value = iterator.next();
+            final String obName = String.valueOf(i);
+            this.convertValue(
+                    value,
+                    obName,
+                    value.type().name(),
+                    newParent,
+                    newParent.equals(parentIfExists) ? linkTypeIfExists : obName, true); // link type is just the index in case of root collections.
+            i++;
+        }
+    }
+
+    private boolean isPrimitiveOrEmptyListOrSet(final ObjectReference collectionRef) {
+        final Iterator<Value> iterator = getIterator(this.thread, collectionRef);
+        if (iterator.hasNext()) {
+            final String collectionContentType = iterator.next().type().name();
+            return PrimitiveTypes.isBoxedPrimitiveType(collectionContentType) ||
+                    PrimitiveTypes.isNonBoxedPrimitiveType(collectionContentType);
+        } else {
+            return true;
+        }
+    }
+
+    @NotNull
+    private ODObject findCollectionParent(
+            final String name,
+            final ObjectReference collectionRef,
+            final String objectType,
+            final ODObject parentIfExists,
+            final String linkTypeIfExists,
+            final boolean primitiveOrEmpty) {
+        final ODObject newParent;
+        // Always create a new parent for primitive types or empty collections
+        if (primitiveOrEmpty) {
+            newParent = new ODObject(collectionRef.uniqueID(), objectType, name);
+            if (parentIfExists != null) {
+                this.debuggingVisualizer.addObject(newParent, false);
+                this.debuggingVisualizer.addLinkToObject(parentIfExists, newParent, linkTypeIfExists);
+            } else {
+                this.debuggingVisualizer.addObject(newParent, true);
+            }
+        } else {
+            newParent = this.createParentIfNeededForCollection(collectionRef, parentIfExists, name, objectType);
+        }
+        return newParent;
+    }
+
     @NotNull
     private ODObject createParentIfNeededForCollection(
             final ObjectReference obRef,
@@ -197,28 +255,6 @@ public class StackFrameAnalyzer {
             this.debuggingVisualizer.addObject(parent, true);
         }
         return parent;
-    }
-
-    private void convertListOrSet(
-            final String name,
-            final ObjectReference collectionRef,
-            final String objectType,
-            final ODObject parentIfExists,
-            final String linkTypeIfExists) {
-        final ODObject parent = this.createParentIfNeededForCollection(collectionRef, parentIfExists, name, objectType);
-        final Iterator<Value> iterator = getIterator(this.thread, collectionRef);
-        int i = 0;
-        while (iterator.hasNext()) {
-            final Value value = iterator.next();
-            final String obName = String.valueOf(i);
-            this.convertValue(
-                    value,
-                    obName,
-                    value.type().name(),
-                    parent,
-                    parent.equals(parentIfExists) ? linkTypeIfExists : obName, true); // link type is just the index in case of root collections.
-            i++;
-        }
     }
 
     private void convertMap(

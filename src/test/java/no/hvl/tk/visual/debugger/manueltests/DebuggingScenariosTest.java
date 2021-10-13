@@ -2,7 +2,7 @@ package no.hvl.tk.visual.debugger.manueltests;
 
 import com.google.common.collect.Lists;
 import no.hvl.tk.visual.debugger.manueltests.holders.CollectionHolder;
-import no.hvl.tk.visual.debugger.manueltests.holders.PrimitiveArrayHolder;
+import no.hvl.tk.visual.debugger.manueltests.holders.PrimitiveCollectionHolder;
 import no.hvl.tk.visual.debugger.manueltests.partsList.domain.Material;
 import no.hvl.tk.visual.debugger.manueltests.partsList.domain.Product;
 import org.apache.commons.compress.utils.Sets;
@@ -71,28 +71,16 @@ class DebuggingScenariosTest {
     }
 
     /**
-     * Equivalent Unit-Test using a mocked stack frame in primitiveSubArrayTest().
+     * Equivalent Unit-Test using a mocked stack frame in primitiveSubCollectionTest().
      */
     @Test
     void primitiveArrayAsFieldTest() {
-        final PrimitiveArrayHolder primitiveArrayHolder = new PrimitiveArrayHolder(new int[]{1, 2, 3});
+        final PrimitiveCollectionHolder primitiveArrayHolder = new PrimitiveCollectionHolder();
         System.out.println(primitiveArrayHolder);
         System.out.println("123");
         System.out.println("123");
         System.out.println("123");
         System.out.println("123");
-    }
-
-    @Test
-    void primitiveCollectionTest() {
-        // Each list value ends up as an attribute at the moment.
-        final CollectionHolder<String> stringHolder = new CollectionHolder<>(Lists.newArrayList("1", "2", "3"));
-        final CollectionHolder<Integer> intHolder = new CollectionHolder<>(Lists.newArrayList(1, 2, 3));
-        System.out.println(stringHolder);
-        System.out.println(stringHolder);
-        System.out.println(stringHolder);
-        System.out.println(intHolder);
-        System.out.println(intHolder);
     }
 
     @Test

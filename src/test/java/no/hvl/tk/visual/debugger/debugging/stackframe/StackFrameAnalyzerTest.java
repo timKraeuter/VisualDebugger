@@ -1,7 +1,6 @@
 package no.hvl.tk.visual.debugger.debugging.stackframe;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.sun.jdi.Value;
 import no.hvl.tk.visual.debugger.debugging.DebuggingInfoCollector;
 import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.*;
@@ -16,6 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -224,7 +224,7 @@ class StackFrameAnalyzerTest {
         StackFrameMockHelper.createSet(
                 stackFrameMock,
                 set,
-                Sets.newHashSet(
+                newHashSet(
                         new IntegerValueMock(5),
                         new IntegerValueMock(6),
                         new IntegerValueMock(7)));
@@ -244,13 +244,17 @@ class StackFrameAnalyzerTest {
         final ODObject setObject = this.findObjectWithVarNameIfExists(
                 debuggingInfoCollector.getCurrentDiagram(),
                 set);
+        this.checkIntegerSet(setObject);
+    }
+
+    private void checkIntegerSet(final ODObject setObject) {
         assertThat(setObject.getAttributeValues().size(), is(3));
         assertThat(setObject.getAttributeValues().stream()
                             .map(ODAttributeValue::getName)
-                            .collect(Collectors.toSet()), is(Sets.newHashSet("0", "1", "2")));
+                            .collect(Collectors.toSet()), is(newHashSet("0", "1", "2")));
         assertThat(setObject.getAttributeValues().stream()
                             .map(ODAttributeValue::getValue)
-                            .collect(Collectors.toSet()), is(Sets.newHashSet("5", "6", "7")));
+                            .collect(Collectors.toSet()), is(newHashSet("5", "6", "7")));
     }
 
     @Test
@@ -296,9 +300,29 @@ class StackFrameAnalyzerTest {
     }
 
     @Test
-    void nonPrimitiveRootArrayTest() {
+    void nonPrimitiveRootCollectionTest() {
         // Given
         final StackFrameMock stackFrameMock = new StackFrameMock(ObjectReferenceMock.create("test"));
+        final String objList = "objList";
+        // List
+        StackFrameMockHelper.createList(
+                stackFrameMock,
+                objList,
+                Lists.newArrayList(
+                        ObjectReferenceMock.create("Material"),
+                        ObjectReferenceMock.create("Material"),
+                        ObjectReferenceMock.create("Material")));
+        // Set
+        final String objSet = "objSet";
+        StackFrameMockHelper.createSet(
+                stackFrameMock,
+                objSet,
+                newHashSet(
+                        ObjectReferenceMock.create("Material"),
+                        ObjectReferenceMock.create("Material"),
+                        ObjectReferenceMock.create("Material")));
+
+        // Array
         final String objArray = "objArray";
         StackFrameMockHelper.createArray(
                 stackFrameMock,
@@ -319,12 +343,20 @@ class StackFrameAnalyzerTest {
         stackFrameAnalyzer.analyze();
 
         // Then
-        assertThat(debuggingInfoCollector.getCurrentDiagram().getObjects().size(), is(5));
-        assertThat(debuggingInfoCollector.getCurrentDiagram().getLinks().size(), is(3));
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getObjects().size(), is(13));
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getLinks().size(), is(9));
 
+        this.checkCollectionObjWithName(objList, debuggingInfoCollector);
+        this.checkCollectionObjWithName(objSet, debuggingInfoCollector);
+        this.checkCollectionObjWithName(objArray, debuggingInfoCollector);
+    }
+
+    private void checkCollectionObjWithName(
+            final String collectionName,
+            final DebuggingInfoCollector debuggingInfoCollector) {
         final ODObject objArrayObject = this.findObjectWithVarNameIfExists(
                 debuggingInfoCollector.getCurrentDiagram(),
-                objArray);
+                collectionName);
         assertThat(objArrayObject.getLinks().size(), is(3));
         // All objects have the type "Material".
         assertThat(objArrayObject.getLinks().stream()
@@ -334,18 +366,39 @@ class StackFrameAnalyzerTest {
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Test
-    void primitiveSubArrayTest() {
+    void primitiveSubCollectionTest() {
         // Given
         final ObjectReferenceMock<Value> thisObj = ObjectReferenceMock.create("ThisType");
         final StackFrameMock stackFrameMock = new StackFrameMock(thisObj);
 
-        final List<Value> content = Lists.newArrayList(
+        // Array
+        final Value arrayRefMock = new ArrayReferenceMock(Lists.newArrayList(
                 new IntegerValueMock(1),
                 new IntegerValueMock(2),
-                new IntegerValueMock(3));
-        final Value arrayRefMock = new ArrayReferenceMock(content);
+                new IntegerValueMock(3)));
         final String intArray = "intArray";
         StackFrameMockHelper.addChildObject(thisObj, intArray, arrayRefMock);
+
+        // Set
+        final String setTypeName = "java.util.Set";
+        final ObjectReferenceMock<IntegerValueMock> setObjectReferenceMock = ObjectReferenceMock.createCollectionObjectRefMock(
+                setTypeName,
+                newHashSet(
+                        new IntegerValueMock(5),
+                        new IntegerValueMock(6),
+                        new IntegerValueMock(7)));
+        final String intSet = "intSet";
+        StackFrameMockHelper.addChildObject(thisObj, intSet, setObjectReferenceMock);
+        // List
+        final String listTypeName = "java.util.List";
+        final ObjectReferenceMock<IntegerValueMock> listObjectReferenceMock = ObjectReferenceMock.createCollectionObjectRefMock(
+                listTypeName,
+                Lists.newArrayList(
+                        new IntegerValueMock(1),
+                        new IntegerValueMock(2),
+                        new IntegerValueMock(3)));
+        final String intList = "intList";
+        StackFrameMockHelper.addChildObject(thisObj, intList, listObjectReferenceMock);
 
         final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
@@ -358,17 +411,30 @@ class StackFrameAnalyzerTest {
         stackFrameAnalyzer.analyze();
 
         // Then
-        assertThat(debuggingInfoCollector.getCurrentDiagram().getObjects().size(), is(2));
-        assertThat(debuggingInfoCollector.getCurrentDiagram().getLinks().size(), is(1));
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getObjects().size(), is(4));
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getLinks().size(), is(3));
         final ODObject thisObject = debuggingInfoCollector.getCurrentDiagram().getObjects().stream().findFirst().get();
 
-        assertThat(thisObject.getLinks().size(), is(1));
+        assertThat(thisObject.getLinks().size(), is(3));
 
         final ODObject intArrayObject = this.findObjectWithVarNameIfExists(
                 debuggingInfoCollector.getCurrentDiagram(),
                 intArray);
-        assertThat(thisObject.getLinks().stream().findFirst().get().getTo(), is(intArrayObject));
+        final ODObject intSetObject = this.findObjectWithVarNameIfExists(
+                debuggingInfoCollector.getCurrentDiagram(),
+                intSet);
+        final ODObject intListObject = this.findObjectWithVarNameIfExists(
+                debuggingInfoCollector.getCurrentDiagram(),
+                intList);
+        assertThat(thisObject.getLinks().stream()
+                             .map(ODLink::getTo)
+                             .collect(Collectors.toSet()), is(newHashSet(
+                intArrayObject,
+                intSetObject,
+                intListObject)));
         this.checkIntArrayOrList(intArrayObject);
+        this.checkIntegerSet(intSetObject);
+        this.checkIntArrayOrList(intListObject);
     }
 
     @Test

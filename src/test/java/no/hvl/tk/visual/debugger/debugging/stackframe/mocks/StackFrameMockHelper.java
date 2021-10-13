@@ -120,7 +120,6 @@ public class StackFrameMockHelper {
         final ObjectReferenceMock<E> setObjectReferenceMock = ObjectReferenceMock.createCollectionObjectRefMock(
                 typeName,
                 content);
-        setObjectReferenceMock.referenceType().addInterface(new InterfaceTypeMock(typeName));
         sf.setValue(
                 new LocalVariableMock(variableName, "java.util.ArrayList"),
                 setObjectReferenceMock
@@ -133,7 +132,6 @@ public class StackFrameMockHelper {
             final Set<E> content) {
         final String typeName = "java.util.Set";
         final ObjectReferenceMock<E> setObjectReferenceMock = ObjectReferenceMock.createCollectionObjectRefMock(typeName, content);
-        setObjectReferenceMock.referenceType().addInterface(new InterfaceTypeMock(typeName));
         sf.setValue(
                 new LocalVariableMock(variableName, "java.util.HashSet"),
                 setObjectReferenceMock

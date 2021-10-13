@@ -22,6 +22,7 @@ public class ObjectReferenceMock<E extends Value> implements ObjectReference, It
             final String typeName,
             final Collection<A> content) {
         final ObjectReferenceMock<A> aObjectReferenceMock = new ObjectReferenceMock<>(typeName);
+        aObjectReferenceMock.referenceType().addInterface(new InterfaceTypeMock(typeName));
         aObjectReferenceMock.setIteratorSource(content);
         return aObjectReferenceMock;
     }
