@@ -4,6 +4,7 @@ import com.sun.jdi.Value;
 import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.value.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class StackFrameMockHelper {
@@ -136,5 +137,15 @@ public class StackFrameMockHelper {
                 new LocalVariableMock(variableName, "java.util.HashSet"),
                 setObjectReferenceMock
         );
+    }
+
+    public static <A extends Value> void createMap(final StackFrameMock sf, final String variableName, final Map<A, A> content) {
+        final String typeName = "java.util.Map";
+        final ObjectReferenceMock<A> setObjectReferenceMock = ObjectReferenceMock.createMapObjectRefMock(typeName, content);
+        sf.setValue(
+                new LocalVariableMock(variableName, "java.util.HashMap"),
+                setObjectReferenceMock
+        );
+
     }
 }

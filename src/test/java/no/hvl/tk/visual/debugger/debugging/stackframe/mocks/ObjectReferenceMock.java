@@ -11,8 +11,11 @@ public class ObjectReferenceMock<E extends Value> implements ObjectReference, It
     private final ReferenceTypeMock type;
     private final HashMap<Field, Value> fields;
     private Collection<E> itSource = new HashSet<>();
+    private Map<E, E> itMapSource = new HashMap<>();
 
     private Iterator<E> runningIt = null;
+    private Iterator<Map.Entry<E, E>> runningMapIt = null;
+    private boolean itShouldBeMap = false;
 
     public static ObjectReferenceMock<Value> create(final String typeName) {
         return new ObjectReferenceMock<>(typeName);
@@ -24,6 +27,15 @@ public class ObjectReferenceMock<E extends Value> implements ObjectReference, It
         final ObjectReferenceMock<A> aObjectReferenceMock = new ObjectReferenceMock<>(typeName);
         aObjectReferenceMock.referenceType().addInterface(new InterfaceTypeMock(typeName));
         aObjectReferenceMock.setIteratorSource(content);
+        return aObjectReferenceMock;
+    }
+
+    public static <A extends Value> ObjectReferenceMock<A> createMapObjectRefMock(
+            final String typeName,
+            final Map<A, A> content) {
+        final ObjectReferenceMock<A> aObjectReferenceMock = new ObjectReferenceMock<>(typeName);
+        aObjectReferenceMock.referenceType().addInterface(new InterfaceTypeMock(typeName));
+        aObjectReferenceMock.setItMapSource(content);
         return aObjectReferenceMock;
     }
 
@@ -77,14 +89,31 @@ public class ObjectReferenceMock<E extends Value> implements ObjectReference, It
             final List<? extends Value> arguments,
             final int options) {
         if (method.name().equals("iterator")) {
-            this.runningIt = this.itSource.iterator();
+            if (this.itShouldBeMap) {
+                this.runningMapIt = this.itMapSource.entrySet().iterator();
+            } else {
+                this.runningIt = this.itSource.iterator();
+            }
             return this;
         }
         if (method.name().equals("hasNext")) {
-            return new BooleanValueMock(this.runningIt.hasNext());
+            if (this.itShouldBeMap) {
+                return new BooleanValueMock(this.runningMapIt.hasNext());
+            } else {
+                return new BooleanValueMock(this.runningIt.hasNext());
+            }
         }
         if (method.name().equals("next")) {
-            return this.runningIt.next();
+            if (this.itShouldBeMap) {
+                final Map.Entry<E, E> next = this.runningMapIt.next();
+                return new EntryObjectReferenceMock(next.getKey(), next.getValue());
+            } else {
+                return this.runningIt.next();
+            }
+        }
+        if (method.name().equals("entrySet")) {
+            this.itShouldBeMap = true;
+            return this;
         }
         return null;
     }
@@ -134,4 +163,7 @@ public class ObjectReferenceMock<E extends Value> implements ObjectReference, It
         return null;
     }
 
+    public void setItMapSource(final Map<E, E> itMapSource) {
+        this.itMapSource = itMapSource;
+    }
 }

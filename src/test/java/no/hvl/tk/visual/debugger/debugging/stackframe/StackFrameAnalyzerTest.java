@@ -1,6 +1,7 @@
 package no.hvl.tk.visual.debugger.debugging.stackframe;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.sun.jdi.Value;
 import no.hvl.tk.visual.debugger.debugging.DebuggingInfoCollector;
@@ -8,12 +9,10 @@ import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.*;
 import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.value.IntegerValueMock;
 import no.hvl.tk.visual.debugger.domain.*;
 import org.hamcrest.CoreMatchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -158,7 +157,7 @@ class StackFrameAnalyzerTest {
     }
 
     @Test
-    void emptyArrayTest() {
+    void emptyCollectionAndMapTest() {
         // Given
         final StackFrameMock stackFrameMock = new StackFrameMock(ObjectReferenceMock.create("test"));
         final String intArray = "intArray";
@@ -166,6 +165,21 @@ class StackFrameAnalyzerTest {
                 stackFrameMock,
                 intArray,
                 Lists.newArrayList());
+        final String intList = "intList";
+        StackFrameMockHelper.createList(
+                stackFrameMock,
+                intList,
+                Lists.newArrayList());
+        final String intSet = "intSet";
+        StackFrameMockHelper.createSet(
+                stackFrameMock,
+                intSet,
+                Sets.newHashSet());
+        final String map = "map";
+        StackFrameMockHelper.createMap(
+                stackFrameMock,
+                map,
+                Maps.newHashMap());
 
         final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
@@ -178,11 +192,83 @@ class StackFrameAnalyzerTest {
         stackFrameAnalyzer.analyze();
 
         // Then
-        assertThat(debuggingInfoCollector.getCurrentDiagram().getObjects().size(), is(2));
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getObjects().size(), is(5));
         final ODObject intArrayObject = this.findObjectWithVarNameIfExists(
                 debuggingInfoCollector.getCurrentDiagram(),
                 intArray);
         assertThat(intArrayObject.getAttributeValues().size(), is(0));
+        assertThat(intArrayObject.getLinks().size(), is(0));
+
+        final ODObject intSetObject = this.findObjectWithVarNameIfExists(
+                debuggingInfoCollector.getCurrentDiagram(),
+                intSet);
+        assertThat(intSetObject.getAttributeValues().size(), is(0));
+        assertThat(intSetObject.getLinks().size(), is(0));
+
+        final ODObject intListObject = this.findObjectWithVarNameIfExists(
+                debuggingInfoCollector.getCurrentDiagram(),
+                intList);
+        assertThat(intListObject.getAttributeValues().size(), is(0));
+        assertThat(intListObject.getLinks().size(), is(0));
+
+        final ODObject mapObject = this.findObjectWithVarNameIfExists(
+                debuggingInfoCollector.getCurrentDiagram(),
+                map);
+        assertThat(mapObject.getAttributeValues().size(), is(0));
+        assertThat(mapObject.getLinks().size(), is(0));
+    }
+
+    @Test
+    void primitiveRootMapTest() {
+        // Given
+        final StackFrameMock stackFrameMock = new StackFrameMock(ObjectReferenceMock.create("test"));
+        final String mapVarName = "mapVarName";
+        final Map<Value, Value> mapContent = Maps.newHashMap();
+        mapContent.put(new IntegerValueMock(1), new IntegerValueMock(1));
+        mapContent.put(new IntegerValueMock(2), new IntegerValueMock(2));
+        mapContent.put(new IntegerValueMock(3), new IntegerValueMock(3));
+        mapContent.put(new IntegerValueMock(4), new IntegerValueMock(4));
+        StackFrameMockHelper.createMap(
+                stackFrameMock,
+                mapVarName,
+                mapContent);
+
+        final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
+
+        final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(
+                stackFrameMock,
+                null,
+                debuggingInfoCollector);
+
+        // When
+        stackFrameAnalyzer.analyze();
+
+        // Then
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getObjects().size(), is(6));
+        final ODObject mapObject = this.findObjectWithVarNameIfExists(
+                debuggingInfoCollector.getCurrentDiagram(),
+                mapVarName);
+        assertThat(mapObject.getAttributeValues().size(), is(0));
+        assertThat(mapObject.getLinks().size(), is(4));
+        assertThat(mapObject.getLinks().stream().allMatch(odLink -> this.checkEntryAttributes(odLink.getTo())), is(true));
+    }
+
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    private boolean checkEntryAttributes(final ODObject entry) {
+        Assertions.assertTrue(entry.getAttributeValues().stream()
+                                   .anyMatch(odAttributeValue -> odAttributeValue.getName().equals("key")));
+        Assertions.assertTrue(entry.getAttributeValues().stream()
+                                   .anyMatch(odAttributeValue -> odAttributeValue.getName().equals("value")));
+
+        final ODAttributeValue key = entry.getAttributeValues().stream()
+                                          .filter(odAttributeValue -> odAttributeValue.getName().equals("key"))
+                                          .findFirst()
+                                          .get();
+        final ODAttributeValue value = entry.getAttributeValues().stream()
+                                            .filter(odAttributeValue -> odAttributeValue.getName().equals("value"))
+                                            .findFirst()
+                                            .get();
+        return key.getValue().equals(value.getValue());
     }
 
     @Test
