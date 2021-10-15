@@ -417,6 +417,17 @@ class StackFrameAnalyzerTest {
                         ObjectReferenceMock.create("Material"),
                         ObjectReferenceMock.create("Material"),
                         ObjectReferenceMock.create("Material")));
+        // Map
+        final String mapVarName = "mapVarName";
+        final Map<Value, Value> mapContent = Maps.newHashMap();
+        mapContent.put(new IntegerValueMock(1), ObjectReferenceMock.create("Material"));
+        mapContent.put(new IntegerValueMock(2), ObjectReferenceMock.create("Material"));
+        mapContent.put(new IntegerValueMock(3), ObjectReferenceMock.create("Material"));
+        mapContent.put(new IntegerValueMock(4), ObjectReferenceMock.create("Material"));
+        StackFrameMockHelper.createMap(
+                stackFrameMock,
+                mapVarName,
+                mapContent);
 
         final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
@@ -429,12 +440,32 @@ class StackFrameAnalyzerTest {
         stackFrameAnalyzer.analyze();
 
         // Then
-        assertThat(debuggingInfoCollector.getCurrentDiagram().getObjects().size(), is(13));
-        assertThat(debuggingInfoCollector.getCurrentDiagram().getLinks().size(), is(9));
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getObjects().size(), is(22));
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getLinks().size(), is(17));
 
         this.checkCollectionObjWithName(objList, debuggingInfoCollector);
         this.checkCollectionObjWithName(objSet, debuggingInfoCollector);
         this.checkCollectionObjWithName(objArray, debuggingInfoCollector);
+
+        // Check map
+        final ODObject mapObject = this.findObjectWithVarNameIfExists(
+                debuggingInfoCollector.getCurrentDiagram(),
+                mapVarName);
+        // 4 links to the 4 map entries
+        assertThat(mapObject.getLinks().size(), is(4));
+        List<ODObject> mapEntries = mapObject.getLinks().stream()
+                                             .map(ODLink::getTo)
+                                             .collect(Collectors.toList());
+        // Check one entry
+        ODObject firstEntry = mapEntries.get(0);
+        assertThat(firstEntry.getAttributeValues().size(), is(1));
+        // Key is an attribute because it is a primitive type (Long).
+        ODAttributeValue keyAttribute = firstEntry.getAttributeValues().stream().findFirst().get();
+        assertThat(keyAttribute.getName(), is("key"));
+        Assertions.assertTrue(Lists.newArrayList(1L, 2L, 3L, 4L).contains(Long.parseLong(keyAttribute.getValue())));
+        // Value must be an object
+        assertThat(firstEntry.getLinks().size(), is(1));
+        assertThat(firstEntry.getLinks().stream().findFirst().get().getTo().getType(), is("Material"));
     }
 
     private void checkCollectionObjWithName(
