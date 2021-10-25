@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.8.1'
+version '1.8.2'
 
 repositories {
     mavenCentral()
@@ -44,7 +44,7 @@ intellij {
     plugins = ['com.intellij.java']
 }
 patchPluginXml {
-    changeNotes """Empty arrays, lists and sets are now visualized corretcly."""
+    changeNotes """Link label positioning in the object diagram optimized."""
 }
 test {
     useJUnitPlatform()
