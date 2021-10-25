@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.8'
+version '1.8.1'
 
 repositories {
     mavenCentral()
@@ -44,7 +44,7 @@ intellij {
     plugins = ['com.intellij.java']
 }
 patchPluginXml {
-    changeNotes """Internal implementation optimized for better performance."""
+    changeNotes """Empty arrays, lists and sets are now visualized corretcly."""
 }
 test {
     useJUnitPlatform()
