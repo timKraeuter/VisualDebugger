@@ -161,7 +161,7 @@ public class StackFrameAnalyzer {
             this.convertValue(
                     value,
                     variableName,
-                    value.type().name(),
+                    value == null ? "" : value.type().name(),
                     newParent,
                     newParent.equals(parentIfExists) ? linkTypeIfExists : variableName, true); // link type is just the index in case of root collections.
         }
@@ -170,7 +170,13 @@ public class StackFrameAnalyzer {
 
     private boolean isPrimitiveOrEmptyArray(final ArrayReference arrayRef) {
         if (arrayRef.length() >= 1) {
-            final String arrayContentType = arrayRef.getValue(0).type().name();
+            Optional<Value> arrayValue = arrayRef.getValues().stream()
+                                                 .filter(Objects::nonNull)
+                                                 .findFirst();
+            if (arrayValue.isEmpty()) {
+                return true;
+            }
+            String arrayContentType = arrayValue.get().type().name();
             return PrimitiveTypes.isBoxedPrimitiveType(arrayContentType) ||
                     PrimitiveTypes.isNonBoxedPrimitiveType(arrayContentType);
         }
@@ -199,7 +205,7 @@ public class StackFrameAnalyzer {
             this.convertValue(
                     value,
                     obName,
-                    value.type().name(),
+                    value == null ? "" : value.type().name(),
                     newParent,
                     newParent.equals(parentIfExists) ? linkTypeIfExists : obName, true); // link type is just the index in case of root collections.
             i++;
@@ -208,13 +214,16 @@ public class StackFrameAnalyzer {
 
     private boolean isPrimitiveOrEmptyListOrSet(final ObjectReference collectionRef) {
         final Iterator<Value> iterator = getIterator(this.thread, collectionRef);
-        if (iterator.hasNext()) {
-            final String collectionContentType = iterator.next().type().name();
-            return PrimitiveTypes.isBoxedPrimitiveType(collectionContentType) ||
-                    PrimitiveTypes.isNonBoxedPrimitiveType(collectionContentType);
-        } else {
+        Value next = null;
+        while (iterator.hasNext() && next == null) {
+            next = iterator.next();
+        }
+        if (next == null) {
             return true;
         }
+        final String collectionContentType = next.type().name();
+        return PrimitiveTypes.isBoxedPrimitiveType(collectionContentType) ||
+                PrimitiveTypes.isNonBoxedPrimitiveType(collectionContentType);
     }
 
     @NotNull

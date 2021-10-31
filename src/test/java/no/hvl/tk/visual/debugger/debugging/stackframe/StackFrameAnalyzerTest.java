@@ -622,4 +622,78 @@ class StackFrameAnalyzerTest {
                                                       .findFirst();
         return foundObject.orElse(null);
     }
+
+    /**
+     * This situation lead to a bug. This test is to ensure this bug stays dead.
+     */
+    @Test
+    void nullInCollectionAndArrayBugTest() {
+        // Given
+        final ObjectReferenceMock<Value> thisObj = ObjectReferenceMock.create("ThisType");
+        final StackFrameMock stackFrameMock = new StackFrameMock(thisObj);
+
+        // Set
+        final String setTypeName = "java.util.Set";
+        final ObjectReferenceMock<Value> setObjectReferenceMock = ObjectReferenceMock.createCollectionObjectRefMock(
+                setTypeName,
+                Sets.newHashSet(
+                        null,
+                        ObjectReferenceMock.create("Material"),
+                        null));
+        final String setMaterials = "setMaterials";
+        StackFrameMockHelper.addChildObject(thisObj, setMaterials, setObjectReferenceMock);
+        // List
+        final String listTypeName = "java.util.List";
+        final ObjectReferenceMock<Value> listObjectReferenceMock = ObjectReferenceMock.createCollectionObjectRefMock(
+                listTypeName,
+                Lists.newArrayList(
+                        null,
+                        ObjectReferenceMock.create("Material"),
+                        null));
+        final String listMaterials = "listMaterials";
+        StackFrameMockHelper.addChildObject(thisObj, listMaterials, listObjectReferenceMock);
+        // Array
+        final List<Value> arrayContent = Lists.newArrayList(
+                null,
+                ObjectReferenceMock.create("Material"),
+                null);
+        final Value arrayRefMock = new ArrayReferenceMock(arrayContent);
+        final String arrayMaterials = "arrayMaterials";
+        StackFrameMockHelper.addChildObject(thisObj, arrayMaterials, arrayRefMock);
+        // Map
+        final String mapVarName = "mapVarName";
+        final Map<Value, Value> mapContent = Maps.newHashMap();
+        mapContent.put(null, null);
+        mapContent.put(null, ObjectReferenceMock.create("Material"));
+        mapContent.put(new IntegerValueMock(3), null);
+        mapContent.put(new IntegerValueMock(4), ObjectReferenceMock.create("Material"));
+        StackFrameMockHelper.createMap(
+                stackFrameMock,
+                mapVarName,
+                mapContent);
+
+        final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
+
+        final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(
+                stackFrameMock,
+                null,
+                debuggingInfoCollector);
+
+        // When
+        stackFrameAnalyzer.analyze();
+
+        // Then
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getObjects().size(), is(10));
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getLinks().size(), is(8));
+        final ODObject thisObject = this.findObjectWithVarNameIfExists(
+                debuggingInfoCollector.getCurrentDiagram(),
+                "this");
+
+        assertThat(thisObject.getLinks().size(), is(3));
+        assertThat(thisObject.getLinks().stream()
+                             .allMatch(odLink -> odLink.getTo().getType().equals("Material")), is(true));
+        assertThat(thisObject.getLinks().stream()
+                             .map(ODLink::getType)
+                             .collect(Collectors.toSet()), is(Sets.newHashSet(arrayMaterials, listMaterials, setMaterials)));
+    }
 }

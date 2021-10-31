@@ -2,6 +2,7 @@ package no.hvl.tk.visual.debugger.debugging.stackframe.mocks;
 
 import com.sun.jdi.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -40,12 +41,12 @@ public class ArrayReferenceMock implements ArrayReference {
         return new TypeMock(ARRAY);
     }
 
-    // Below is irrelevant.
-
     @Override
     public List<Value> getValues() {
-        return null;
+        return Arrays.asList(this.content);
     }
+
+    // Below is irrelevant.
 
     @Override
     public List<Value> getValues(final int i, final int i1) {

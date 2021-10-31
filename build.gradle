@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.8.2'
+version '1.8.3'
 
 repositories {
     mavenCentral()
@@ -33,7 +33,6 @@ dependencies {
     // https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-core
     implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '3.0.1'
 
-
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
 }
@@ -44,7 +43,7 @@ intellij {
     plugins = ['com.intellij.java']
 }
 patchPluginXml {
-    changeNotes """Link label positioning in the object diagram optimized."""
+    changeNotes """Link label positioning in the object diagram optimized and minor bugs fixed."""
 }
 test {
     useJUnitPlatform()
