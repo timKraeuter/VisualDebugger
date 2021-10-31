@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class StackFrameSessionListener implements XDebugSessionListener {
 
@@ -185,10 +186,32 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             LOGGER.error(e);
             throw new StackFrameAnalyzerException("Correct stack frame for debugging not found!", e);
         }
-        throw new StackFrameAnalyzerException("Correct stack frame for debugging not found!");
+        throw new StackFrameAnalyzerException(String.format("Correct stack frame for debugging not found! " +
+                        "Looking for stack frame with the type \"%s\" but only found the following stack frames \"%s\".",
+                this.getCurrentStackFrameType(),
+                this.getGivenStackFrames()));
+    }
+
+    @NotNull
+    private java.util.List<String> getGivenStackFrames() {
+        try {
+            return this.thread.frames().stream().map(stackFrame -> stackFrame.location().declaringType().name()).collect(Collectors.toList());
+        } catch (IncompatibleThreadStateException e) {
+            LOGGER.error(e);
+            throw new StackFrameAnalyzerException("Correct stack frame for debugging not found!", e);
+        }
     }
 
     private boolean isCorrectStackFrame(StackFrame stackFrame) {
+        final String wantedTypeName = this.getCurrentStackFrameType();
+
+        final String typeName = stackFrame.location().declaringType().name();
+
+        return typeName.contains(wantedTypeName);
+    }
+
+    @NotNull
+    private String getCurrentStackFrameType() {
         final XStackFrame currentStackFrame = this.debugSession.getCurrentStackFrame();
         if (currentStackFrame == null || currentStackFrame.getSourcePosition() == null) {
             throw new StackFrameAnalyzerException("Current stack frame or source position was unexpectedly nulL!");
@@ -196,10 +219,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
         final String canonicalName = currentStackFrame.getSourcePosition().getFile().getName();
         // cut the .java
         final String wantedTypeName = canonicalName.substring(0, canonicalName.length() - SUFFIX_LENGTH);
-
-        final String typeName = stackFrame.location().declaringType().name();
-
-        return typeName.contains(wantedTypeName);
+        return wantedTypeName;
     }
 
     public void reprintDiagram() {

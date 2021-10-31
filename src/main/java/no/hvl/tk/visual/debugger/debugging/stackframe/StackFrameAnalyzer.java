@@ -1,5 +1,6 @@
 package no.hvl.tk.visual.debugger.debugging.stackframe;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.sun.jdi.*;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.domain.ODObject;
@@ -12,6 +13,8 @@ import java.util.stream.Collectors;
 import static no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionListenerHelper.*;
 
 public class StackFrameAnalyzer {
+
+    private static final Logger LOGGER = Logger.getInstance(StackFrameAnalyzer.class);
     private static final String KEY = "key";
     private static final String VALUE = "value";
 
@@ -57,7 +60,10 @@ public class StackFrameAnalyzer {
 
     private void visualizeThisObject(final StackFrame stackFrame) {
         final ObjectReference thisObjectReference = stackFrame.thisObject();
-        assert thisObjectReference != null;
+        if (thisObjectReference == null) {
+            LOGGER.warn("this object was null!");
+            return;
+        }
 
         final ODObject thisObject = new ODObject(
                 thisObjectReference.uniqueID(),
