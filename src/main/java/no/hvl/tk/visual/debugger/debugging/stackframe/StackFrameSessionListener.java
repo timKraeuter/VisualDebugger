@@ -218,8 +218,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
         }
         final String canonicalName = currentStackFrame.getSourcePosition().getFile().getName();
         // cut the .java
-        final String wantedTypeName = canonicalName.substring(0, canonicalName.length() - SUFFIX_LENGTH);
-        return wantedTypeName;
+        return canonicalName.substring(0, canonicalName.length() - SUFFIX_LENGTH);
     }
 
     public void reprintDiagram() {
