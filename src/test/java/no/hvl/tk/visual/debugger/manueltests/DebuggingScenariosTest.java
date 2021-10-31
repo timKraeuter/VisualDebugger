@@ -84,6 +84,22 @@ class DebuggingScenariosTest {
     }
 
     @Test
+    void collectionsWithNullValuesTest() {
+        final List<String> stringList = Lists.newArrayList(null, "2", null);
+        final Set<String> intList = Sets.newHashSet(null, "2", null);
+        final Map<String, Integer> postalCodes = new HashMap<>();
+        postalCodes.put("Oslo", 1295);
+        postalCodes.put("Bergen", 5052);
+        postalCodes.put("Berlin", null);
+        postalCodes.put(null, null);
+        postalCodes.put(null, 30161);
+
+        System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
+    }
+
+    @Test
     void nonPrimitiveCollectionTest() {
         // Each list value ends up as an attribute at the moment.
         final CollectionHolder<Material> materialHolder = new CollectionHolder<>(Lists.newArrayList(
