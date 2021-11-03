@@ -97,7 +97,8 @@ public class StackFrameAnalyzer {
             this.convertValue(value, odObject.getVariableName(), objectType, parentIfExists, linkTypeIfExists, true);
             return;
         }
-        if (objectReference instanceof ArrayReference) {
+        if (objectReference instanceof ArrayReference && !this.seenObjectIds.contains(objectReference.uniqueID())) {
+            this.seenObjectIds.add(objectReference.uniqueID());
             this.convertArray(
                     odObject.getVariableName(),
                     (ArrayReference) objectReference,
@@ -108,12 +109,17 @@ public class StackFrameAnalyzer {
         }
         if ((implementsInterface(objectReference, "java.util.List")
                 || implementsInterface(objectReference, "java.util.Set"))
-                && isInternalPackage(objectType)) {
+                && isInternalPackage(objectType)
+                && !this.seenObjectIds.contains(objectReference.uniqueID())) {
+            this.seenObjectIds.add(objectReference.uniqueID());
             this.convertListOrSet(odObject.getVariableName(), objectReference, objectType, parentIfExists, linkTypeIfExists);
             return;
         }
 
-        if (implementsInterface(objectReference, "java.util.Map") && isInternalPackage(objectType)) {
+        if (implementsInterface(objectReference, "java.util.Map")
+                && isInternalPackage(objectType)
+                && !this.seenObjectIds.contains(objectReference.uniqueID())) {
+            this.seenObjectIds.add(objectReference.uniqueID());
             this.convertMap(odObject.getVariableName(), objectReference, objectType, parentIfExists, linkTypeIfExists);
             return;
         }
@@ -176,13 +182,13 @@ public class StackFrameAnalyzer {
 
     private boolean isPrimitiveOrEmptyArray(final ArrayReference arrayRef) {
         if (arrayRef.length() >= 1) {
-            Optional<Value> arrayValue = arrayRef.getValues().stream()
-                                                 .filter(Objects::nonNull)
-                                                 .findFirst();
+            final Optional<Value> arrayValue = arrayRef.getValues().stream()
+                                                       .filter(Objects::nonNull)
+                                                       .findFirst();
             if (arrayValue.isEmpty()) {
                 return true;
             }
-            String arrayContentType = arrayValue.get().type().name();
+            final String arrayContentType = arrayValue.get().type().name();
             return PrimitiveTypes.isBoxedPrimitiveType(arrayContentType) ||
                     PrimitiveTypes.isNonBoxedPrimitiveType(arrayContentType);
         }

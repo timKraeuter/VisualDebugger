@@ -285,4 +285,25 @@ class DebuggingScenariosTest {
         }
         System.out.println(products.size());
     }
+
+    @SuppressWarnings("rawtypes")
+    @Test
+    void testAdvancedRecursion() {
+        final SetRecursion setRecursion = new SetRecursion();
+        setRecursion.set.add(setRecursion);
+
+        final Set<Set> set1 = new HashSet<>();
+        final Set<Set> set2 = new HashSet<>();
+        set1.add(set2);
+        set2.add(set1);
+
+        System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
+    }
+
+    static class SetRecursion {
+        Set<SetRecursion> set = new HashSet<>();
+    }
 }

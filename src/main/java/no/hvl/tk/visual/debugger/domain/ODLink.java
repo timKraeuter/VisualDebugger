@@ -87,6 +87,8 @@ public class ODLink implements Comparable<ODLink> {
     @XmlID
     @XmlAttribute
     public String getId() {
-        return "Link_" + this.from.getId() + "_to_" + this.to.getId() + "_type_" + this.type;
+        return "Link_" + this.from.getId() + "_to_" + this.to.getId() + "_type_"
+                // Ids are not allowed to contain "$".
+                + this.type.replace('$', '_');
     }
 }
