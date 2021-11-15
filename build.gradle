@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.8.3'
+version '1.8.5'
 
 repositories {
     mavenCentral()
@@ -33,8 +33,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-core
     implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '3.0.1'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
@@ -43,7 +43,7 @@ intellij {
     plugins = ['com.intellij.java']
 }
 patchPluginXml {
-    changeNotes """Link label positioning in the object diagram optimized and minor bugs fixed."""
+    changeNotes """Minor bug opening a browser on linux fixed."""
 }
 test {
     useJUnitPlatform()
