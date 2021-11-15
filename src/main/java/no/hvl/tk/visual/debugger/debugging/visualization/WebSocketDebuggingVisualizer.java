@@ -1,5 +1,6 @@
 package no.hvl.tk.visual.debugger.debugging.visualization;
 
+import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.server.DebugAPIServerStarter;
@@ -13,8 +14,6 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.tyrus.server.Server;
 
 import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -58,21 +57,10 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     }
 
     private static void launchUIInBrowser() {
-        if (Desktop.isDesktopSupported()) {
-            // Windows
-            try {
-                Desktop.getDesktop().browse(new URI(ServerConstants.UI_SERVER_URL));
-            } catch (final IOException | URISyntaxException ex) {
-                LOGGER.error(ex);
-            }
-        } else {
-            // Ubuntu
-            final Runtime runtime = Runtime.getRuntime();
-            try {
-                runtime.exec("/usr/bin/firefox -new-window " + ServerConstants.UI_SERVER_URL);
-            } catch (final IOException ex) {
-                LOGGER.error(ex);
-            }
+        try {
+            BrowserUtil.browse(new URI(ServerConstants.UI_SERVER_URL));
+        } catch (final URISyntaxException ex) {
+            LOGGER.error(ex);
         }
     }
 
