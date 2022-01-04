@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.8.5'
+version '1.8.6'
 
 repositories {
     mavenCentral()
@@ -33,17 +33,17 @@ dependencies {
     // https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-core
     implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '3.0.1'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version '2021.2'
+    version '2021.3'
     plugins = ['com.intellij.java']
 }
 patchPluginXml {
-    changeNotes """Minor bug opening a browser on linux fixed."""
+    changeNotes """The plugin is now compatible with IntelliJ 2021.3."""
 }
 test {
     useJUnitPlatform()
