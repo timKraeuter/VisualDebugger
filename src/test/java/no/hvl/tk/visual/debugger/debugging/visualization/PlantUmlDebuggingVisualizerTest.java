@@ -130,6 +130,7 @@ class PlantUmlDebuggingVisualizerTest {
         diagram.addObject(otherMapNode2);
 
         final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(diagram);
+        System.out.println(plantUMLString);
 
         assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("@startuml\n" +
                 "!pragma layout smetana\n" +
@@ -141,6 +142,45 @@ class PlantUmlDebuggingVisualizerTest {
                 "map \"otherMap:SomeOtherMap\" as 5 {\n" +
                 "key7 => value8\n" +
                 "key9 => value10\n" +
+                "}\n" +
+                "@enduml\n"));
+    }
+
+    @Test
+    void toPlantUMLStringPrimitiveMapsWithNullKeyAndValueTest() {
+        final ObjectDiagram diagram = new ObjectDiagram();
+        final ODObject hashMap = new ODObject(1, "java.util.HashMap", "hashMap");
+        final ODObject hashMapNode1 = new ODObject(2, "java.util.HashMap$Node", "0");
+        final ODObject hashMapNode2 = new ODObject(3, "java.util.HashMap$Node", "1");
+        final ODObject hashMapNode3 = new ODObject(4, "java.util.HashMap$Node", "2");
+        this.addKeyValueToNode(hashMapNode1);
+        // Only key means the value is null.
+        hashMapNode2.addAttribute(new ODAttributeValue("key", "someType", "key" + this.counter.incrementAndGet()));
+        // Only value means the key is null.
+        hashMapNode3.addAttribute(new ODAttributeValue("value", "someType", "value" + this.counter.incrementAndGet()));
+        final ODLink node1Link = new ODLink(hashMap, hashMapNode1, "0");
+        final ODLink node2Link = new ODLink(hashMap, hashMapNode2, "1");
+        final ODLink node3Link = new ODLink(hashMap, hashMapNode3, "2");
+        hashMap.addLink(node1Link);
+        diagram.addLink(node1Link);
+        hashMap.addLink(node2Link);
+        diagram.addLink(node2Link);
+        hashMap.addLink(node3Link);
+        diagram.addLink(node3Link);
+
+        diagram.addObject(hashMap);
+        diagram.addObject(hashMapNode1);
+        diagram.addObject(hashMapNode2);
+        diagram.addObject(hashMapNode3);
+
+        final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(diagram);
+
+        assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("@startuml\n" +
+                "!pragma layout smetana\n" +
+                "map \"hashMap:HashMap\" as 1 {\n" +
+                "key1 => value2\n" +
+                "key3 => null\n" +
+                "null => value4\n" +
                 "}\n" +
                 "@enduml\n"));
     }

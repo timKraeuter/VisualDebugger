@@ -23,6 +23,10 @@ import java.util.stream.Collectors;
 
 public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     private static final Logger LOGGER = Logger.getInstance(PlantUmlDebuggingVisualizer.class);
+    private static final String NULL = "null";
+    private static final String KEY = "key";
+    private static final String VALUE = "value";
+
     private final JPanel pluginUI;
     private JLabel imgLabel;
 
@@ -183,13 +187,13 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                   final ODObject mapNode = odLink.getTo();
                   ignoredObjects.add(mapNode); // Dont visualize the node as an object anymore!
 
-                  final Optional<ODAttributeValue> key = mapNode.getAttributeByName("key");
-                  final Optional<ODAttributeValue> value = mapNode.getAttributeByName("value");
-                  if (key.isPresent() && value.isPresent()) {
+                  final Optional<ODAttributeValue> key = mapNode.getAttributeByName(KEY);
+                  final Optional<ODAttributeValue> value = mapNode.getAttributeByName(VALUE);
+                  if (key.isPresent() || value.isPresent()) {
                       stringBuilder.append(
                               String.format("%s => %s%n",
-                                      key.get().getValue(),
-                                      value.get().getValue()));
+                                      key.isPresent() ? key.get().getValue() : NULL,
+                                      value.isPresent() ? value.get().getValue() : NULL));
                   }
               });
 
