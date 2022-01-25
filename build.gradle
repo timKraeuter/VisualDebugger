@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.8.6'
+version '1.8.7'
 
 repositories {
     mavenCentral()
@@ -43,7 +43,7 @@ intellij {
     plugins = ['com.intellij.java']
 }
 patchPluginXml {
-    changeNotes """The plugin is now compatible with IntelliJ 2021.3."""
+    changeNotes """Minor bug fixed: Maps with null keys or values are now visualized correctly in the embedded visualizer."""
 }
 test {
     useJUnitPlatform()
