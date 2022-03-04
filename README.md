@@ -5,8 +5,8 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=timKraeuter_VisualDebugger&metric=coverage)](https://sonarcloud.io/dashboard?id=timKraeuter_VisualDebugger)
  --->
 
-# VisualDebugger
+# Visual Debugger IntelliJ Plugin
 
 Repository for the [visual debugger IntelliJ plugin](https://plugins.jetbrains.com/plugin/16851-visual-debugger).
-
-The browser-based UI for the plugin can be found [here](https://github.com/timKraeuter/object-diagram-modeler/tree/master/debugger).
+- A short documentation of the plugin can be found [here](./documentation/README.md).
+- The browser-based UI for the plugin can be found [here](https://github.com/timKraeuter/object-diagram-modeler/tree/master/debugger).
