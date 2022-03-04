@@ -25,7 +25,7 @@ variables view in the IDE.
 The browser visualizer makes use of WebSocket to update the connected clients/browser whenever the debugging variables
 change. An overview of the architecture is shown in the following picture.
 
-![Architecture picture showing the plugin connecting to the browser using WebSocket](https://raw.githubusercontent.com/timKraeuter/VisualDebugger/develop/documentation/pictures/architecture.svg)
+![Architecture picture showing the plugin connecting to the browser using WebSocket](./pictures/VD-architecture.svg)
 
 The browser initially connects to the plugin running inside IntelliJ IDEA, which leads to the creation of a WebSocket
 session. Using the obtained session, the plugin will update the connected client about any changes to the debugging
@@ -35,10 +35,11 @@ their immediate children. This communication also uses the established WebSocket
 The user interface implementation is decoupled from the IDEA, such that it can be reused for debugging visualization,
 for example, together with Eclipse IDE. The source code for the UI can be found [here](https://github.com/timKraeuter/object-diagram-modeler/tree/master/debugger).
 
-### Debugging API
+### Visual Debugging API
 
-The object diagram is transferred using XML conforming to the schema defined in `api/objectDiagram.xsd`. From the point
-of view of the UI, the following messages are transferred.
+The object diagram is transferred using XML conforming to the schema defined in `api/objectDiagram.xsd`.
+You can find an implementation of the Visual Debugging API in the class `VisualDebuggingAPIEndpoint`.
+From the point of view of the UI, the following messages are transferred.
 
 #### Incoming WebSocket messages
 

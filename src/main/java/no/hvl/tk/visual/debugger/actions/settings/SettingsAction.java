@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class SettingsAction extends AnAction {
 
-
     @Override
     public void actionPerformed(@NotNull final AnActionEvent e) {
         final Project project = e.getData(CommonDataKeys.PROJECT);

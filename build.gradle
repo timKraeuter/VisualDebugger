@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.7.4'
+version '1.8.7'
 
 repositories {
     mavenCentral()
@@ -33,18 +33,17 @@ dependencies {
     // https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-core
     implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '3.0.1'
 
-
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version '2021.2'
+    version '2021.3'
     plugins = ['com.intellij.java']
 }
 patchPluginXml {
-    changeNotes """Fixed a bug in the browser visualizer regarding primitive variables."""
+    changeNotes """Minor bug fixed: Maps with null keys or values are now visualized correctly in the embedded visualizer."""
 }
 test {
     useJUnitPlatform()

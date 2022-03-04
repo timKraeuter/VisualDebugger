@@ -1,8 +1,6 @@
 package no.hvl.tk.visual.debugger.debugging.visualization;
 
-import com.intellij.debugger.engine.JavaValue;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Pair;
 import com.intellij.ui.components.JBScrollPane;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
@@ -25,6 +23,10 @@ import java.util.stream.Collectors;
 
 public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     private static final Logger LOGGER = Logger.getInstance(PlantUmlDebuggingVisualizer.class);
+    private static final String NULL = "null";
+    private static final String KEY = "key";
+    private static final String VALUE = "value";
+
     private final JPanel pluginUI;
     private JLabel imgLabel;
 
@@ -34,10 +36,9 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
     @Override
     public void finishVisualization() {
-        final var plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(this.diagram);
+        final var plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(this.getDiagramWithDepth());
         SharedState.setLastPlantUMLDiagram(plantUMLString);
-        // Reset diagram
-        this.diagram = new ObjectDiagram();
+        this.resetDiagram();
         try {
             final byte[] pngData = PlantUmlDebuggingVisualizer.toImage(plantUMLString, FileFormat.PNG);
             this.addImageToUI(pngData);
@@ -81,18 +82,18 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         // Use this so we are not dependent on a Graphviz/Dot installation on the host machine.
         stringBuilder.append("!pragma layout smetana\n");
 
-        final Set<ODLink> links = new HashSet<>();
         // Sort objects so the visualisation does not change when there are no objects changes.
         final List<ODObject> sortedObjects = objectDiagram.getObjects()
                                                           .stream()
                                                           .sorted()
                                                           .collect(Collectors.toList());
 
+        final Set<ODLink> mapLinks = new HashSet<>();
         // Add objects with attributes and collect links. They have to be added after objects.
-        PlantUmlDebuggingVisualizer.addObjectsToDiagramAndCollectLinks(stringBuilder, links, sortedObjects);
+        PlantUmlDebuggingVisualizer.addObjectsToDiagramAndCollectLinks(stringBuilder, sortedObjects, mapLinks);
 
         // Add links.
-        PlantUmlDebuggingVisualizer.addLinksToDiagram(stringBuilder, links);
+        PlantUmlDebuggingVisualizer.addLinksToDiagram(stringBuilder, objectDiagram.getLinks(), mapLinks);
 
         // Add primitive root values if there are any.
         if (!objectDiagram.getPrimitiveRootValues().isEmpty()) {
@@ -116,9 +117,14 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         stringBuilder.append("}\n");
     }
 
-    private static void addLinksToDiagram(final StringBuilder stringBuilder, final Set<ODLink> links) {
+    private static void addLinksToDiagram(
+            final StringBuilder stringBuilder,
+            final Set<ODLink> links,
+            final Set<ODLink> mapLinks) {
         links.stream()
              .sorted()
+             // Ignore links already visualized in maps.
+             .filter(odLink -> !mapLinks.contains(odLink))
              .forEach(link -> stringBuilder.append(
                      String.format("%s --> %s : %s%n",
                              link.getFrom().hashCode(),
@@ -126,7 +132,10 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                              link.getType())));
     }
 
-    private static void addObjectsToDiagramAndCollectLinks(final StringBuilder stringBuilder, final Set<ODLink> links, final List<ODObject> sortedObjects) {
+    private static void addObjectsToDiagramAndCollectLinks(
+            final StringBuilder stringBuilder,
+            final List<ODObject> sortedObjects,
+            final Set<ODLink> mapLinks) {
         final HashSet<ODObject> ignoredObjects = new HashSet<>();
         for (final ODObject object : sortedObjects) {
             if (ignoredObjects.contains(object)) {
@@ -135,6 +144,8 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
             // Primitive maps are visualised differently
             if (PlantUmlDebuggingVisualizer.isPrimitiveJavaMap(object)) {
                 PlantUmlDebuggingVisualizer.doPrimitiveMapVisualisation(stringBuilder, ignoredObjects, object);
+                // Links are not allowed to be shown later on.
+                mapLinks.addAll(object.getLinks());
                 continue;
             }
 
@@ -159,7 +170,6 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
             } else {
                 stringBuilder.append("\n");
             }
-            links.addAll(object.getLinks());
         }
     }
 
@@ -177,13 +187,13 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                   final ODObject mapNode = odLink.getTo();
                   ignoredObjects.add(mapNode); // Dont visualize the node as an object anymore!
 
-                  final Optional<ODAttributeValue> key = mapNode.getAttributeByName("key");
-                  final Optional<ODAttributeValue> value = mapNode.getAttributeByName("value");
-                  if (key.isPresent() && value.isPresent()) {
+                  final Optional<ODAttributeValue> key = mapNode.getAttributeByName(KEY);
+                  final Optional<ODAttributeValue> value = mapNode.getAttributeByName(VALUE);
+                  if (key.isPresent() || value.isPresent()) {
                       stringBuilder.append(
                               String.format("%s => %s%n",
-                                      key.get().getValue(),
-                                      value.get().getValue()));
+                                      key.isPresent() ? key.get().getValue() : NULL,
+                                      value.isPresent() ? value.get().getValue() : NULL));
                   }
               });
 
@@ -217,21 +227,5 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
             reader.outputImage(outputStream, new FileFormatOption(format));
             return outputStream.toByteArray();
         }
-    }
-
-    @Override
-    protected void preAddObject() {
-        // NOOP
-    }
-
-    @Override
-    public DebuggingInfoVisualizer addDebugNodeForObject(final ODObject object, final JavaValue jValue) {
-        // NOOP
-        return this;
-    }
-
-    @Override
-    public Pair<ODObject, JavaValue> getDebugNodeAndObjectForObjectId(final String objectId) {
-        throw new UnsupportedOperationException();
     }
 }

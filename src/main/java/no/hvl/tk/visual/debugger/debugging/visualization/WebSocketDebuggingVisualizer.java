@@ -1,12 +1,9 @@
 package no.hvl.tk.visual.debugger.debugging.visualization;
 
-import com.intellij.debugger.engine.JavaValue;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Pair;
 import no.hvl.tk.visual.debugger.SharedState;
-import no.hvl.tk.visual.debugger.domain.ODObject;
-import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
-import no.hvl.tk.visual.debugger.server.DebugAPIServerStarter;
+import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter;
 import no.hvl.tk.visual.debugger.server.ServerConstants;
 import no.hvl.tk.visual.debugger.server.UIServerStarter;
 import no.hvl.tk.visual.debugger.server.endpoint.message.TypedWebsocketMessage;
@@ -17,12 +14,8 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.tyrus.server.Server;
 
 import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Sends visualization information through websocket.
@@ -30,7 +23,6 @@ import java.util.Map;
 public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     private static final Logger LOGGER = Logger.getInstance(WebSocketDebuggingVisualizer.class);
 
-    private Map<String, Pair<ODObject, JavaValue>> objectIDToJValue = new HashMap<>();
     private final JPanel debugUI;
 
     public WebSocketDebuggingVisualizer(final JPanel userInterface) {
@@ -38,32 +30,20 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     }
 
     @Override
-    public DebuggingInfoVisualizer addDebugNodeForObject(final ODObject object, final JavaValue jValue) {
-        this.objectIDToJValue.put(object.getId(), Pair.create(object, jValue));
-        return null;
-    }
-
-    @Override
-    public Pair<ODObject, JavaValue> getDebugNodeAndObjectForObjectId(final String objectId) {
-        return this.objectIDToJValue.get(objectId);
-    }
-
-    @Override
     public void finishVisualization() {
         if (SharedState.getDebugAPIServer() == null) {
             return;
         }
-        final String diagramXML = DiagramToXMLConverter.toXml(this.diagram);
+        final String diagramXML = DiagramToXMLConverter.toXml(this.getDiagramWithDepth());
         SharedState.setLastDiagramXML(diagramXML);
         final String message = new TypedWebsocketMessage(
                 WebsocketMessageType.NEXT_DEBUG_STEP,
                 diagramXML).serialize();
         SharedState.getWebsocketClients().forEach(clientSession ->
                 // If one client fails no more messages are sent. We should change this.
-                DebugAPIServerStarter.sendMessageToClient(clientSession, message)
+                VisualDebuggingAPIServerStarter.sendMessageToClient(clientSession, message)
         );
-        // Reset diagram
-        this.diagram = new ObjectDiagram();
+        this.resetDiagram();
     }
 
     @Override
@@ -77,28 +57,17 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     }
 
     private static void launchUIInBrowser() {
-        if (Desktop.isDesktopSupported()) {
-            // Windows
-            try {
-                Desktop.getDesktop().browse(new URI(ServerConstants.UI_SERVER_URL));
-            } catch (final IOException | URISyntaxException ex) {
-                LOGGER.error(ex);
-            }
-        } else {
-            // Ubuntu
-            final Runtime runtime = Runtime.getRuntime();
-            try {
-                runtime.exec("/usr/bin/firefox -new-window " + ServerConstants.UI_SERVER_URL);
-            } catch (final IOException ex) {
-                LOGGER.error(ex);
-            }
+        try {
+            BrowserUtil.browse(new URI(ServerConstants.UI_SERVER_URL));
+        } catch (final URISyntaxException ex) {
+            LOGGER.error(ex);
         }
     }
 
     private static void startDebugAPIServerIfNeeded() {
         ClassloaderUtil.runWithContextClassloader(() -> {
             if (SharedState.getDebugAPIServer() == null) {
-                final Server server = DebugAPIServerStarter.runNewServer();
+                final Server server = VisualDebuggingAPIServerStarter.runNewServer();
                 SharedState.setDebugAPIServer(server);
             }
             return null; // needed because of generic method.
@@ -137,14 +106,6 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
             server.stop();
             LOGGER.info("Debug API server stopped.");
             SharedState.setDebugAPIServer(null);
-        }
-    }
-
-    @Override
-    protected void preAddObject() {
-        if (this.diagram.isEmpty()) {
-            // reset debug node map.
-            this.objectIDToJValue = new HashMap<>();
         }
     }
 }
