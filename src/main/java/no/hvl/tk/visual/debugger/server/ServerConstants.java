@@ -2,7 +2,7 @@ package no.hvl.tk.visual.debugger.server;
 
 public class ServerConstants {
     public static final String HOST_NAME = "localhost";
-    public static final int DEBUG_SERVER_PORT = 8071;
+    public static final int VISUAL_DEBUGGING_API_SERVER_PORT = 8071;
 
     public static final String STATIC_RESOURCE_PATH = "/ui/";
     public static final int UI_SERVER_PORT = 8070;

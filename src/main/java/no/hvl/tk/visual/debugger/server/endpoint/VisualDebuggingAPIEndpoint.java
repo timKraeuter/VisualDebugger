@@ -9,18 +9,18 @@ import jakarta.websocket.server.ServerEndpoint;
 import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
-import no.hvl.tk.visual.debugger.server.DebugAPIServerStarter;
+import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter;
 import no.hvl.tk.visual.debugger.server.endpoint.message.TypedWebsocketMessage;
 import no.hvl.tk.visual.debugger.server.endpoint.message.WebsocketMessageType;
 import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
 
 @ServerEndpoint("/debug")
-public class DebugAPIEndpoint {
-    private static final Logger LOGGER = Logger.getInstance(DebugAPIEndpoint.class);
+public class VisualDebuggingAPIEndpoint {
+    private static final Logger LOGGER = Logger.getInstance(VisualDebuggingAPIEndpoint.class);
     // One gets one instance of this class per session/client.
 
 
-    public DebugAPIEndpoint() {
+    public VisualDebuggingAPIEndpoint() {
         // Needs public constructor.
     }
 
@@ -33,7 +33,7 @@ public class DebugAPIEndpoint {
         final String message = new TypedWebsocketMessage(
                 WebsocketMessageType.NEXT_DEBUG_STEP,
                 SharedState.getLastDiagramXML()).serialize();
-        DebugAPIServerStarter.sendMessageToClient(session, message);
+        VisualDebuggingAPIServerStarter.sendMessageToClient(session, message);
     }
 
     @OnClose

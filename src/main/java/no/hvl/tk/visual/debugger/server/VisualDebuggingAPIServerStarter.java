@@ -2,7 +2,7 @@ package no.hvl.tk.visual.debugger.server;
 
 import com.intellij.openapi.diagnostic.Logger;
 import jakarta.websocket.Session;
-import no.hvl.tk.visual.debugger.server.endpoint.DebugAPIEndpoint;
+import no.hvl.tk.visual.debugger.server.endpoint.VisualDebuggingAPIEndpoint;
 import org.glassfish.tyrus.server.Server;
 
 import java.io.IOException;
@@ -10,17 +10,22 @@ import java.util.HashMap;
 
 /**
  * This class can start a websocket server which runs an API which provides the client with live debug data.
- * See {@link DebugAPIEndpoint} for the Endpoint.
+ * See {@link VisualDebuggingAPIEndpoint} for the Endpoint.
  */
-public class DebugAPIServerStarter {
-    private static final Logger LOGGER = Logger.getInstance(DebugAPIServerStarter.class);
+public class VisualDebuggingAPIServerStarter {
+    private static final Logger LOGGER = Logger.getInstance(VisualDebuggingAPIServerStarter.class);
 
-    private DebugAPIServerStarter() {
+    private VisualDebuggingAPIServerStarter() {
         // Only helper methods.
     }
 
     public static Server runNewServer() {
-        final Server server = new Server(ServerConstants.HOST_NAME, ServerConstants.DEBUG_SERVER_PORT, "", new HashMap<>(), DebugAPIEndpoint.class);
+        final Server server = new Server(
+                ServerConstants.HOST_NAME,
+                ServerConstants.VISUAL_DEBUGGING_API_SERVER_PORT,
+                "",
+                new HashMap<>(),
+                VisualDebuggingAPIEndpoint.class);
         try {
             server.start();
             LOGGER.info("Debug API server started successfully.");

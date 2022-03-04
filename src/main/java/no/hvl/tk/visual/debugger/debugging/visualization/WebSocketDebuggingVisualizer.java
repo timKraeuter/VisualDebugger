@@ -3,7 +3,7 @@ package no.hvl.tk.visual.debugger.debugging.visualization;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import no.hvl.tk.visual.debugger.SharedState;
-import no.hvl.tk.visual.debugger.server.DebugAPIServerStarter;
+import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter;
 import no.hvl.tk.visual.debugger.server.ServerConstants;
 import no.hvl.tk.visual.debugger.server.UIServerStarter;
 import no.hvl.tk.visual.debugger.server.endpoint.message.TypedWebsocketMessage;
@@ -41,7 +41,7 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                 diagramXML).serialize();
         SharedState.getWebsocketClients().forEach(clientSession ->
                 // If one client fails no more messages are sent. We should change this.
-                DebugAPIServerStarter.sendMessageToClient(clientSession, message)
+                VisualDebuggingAPIServerStarter.sendMessageToClient(clientSession, message)
         );
         this.resetDiagram();
     }
@@ -67,7 +67,7 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     private static void startDebugAPIServerIfNeeded() {
         ClassloaderUtil.runWithContextClassloader(() -> {
             if (SharedState.getDebugAPIServer() == null) {
-                final Server server = DebugAPIServerStarter.runNewServer();
+                final Server server = VisualDebuggingAPIServerStarter.runNewServer();
                 SharedState.setDebugAPIServer(server);
             }
             return null; // needed because of generic method.
