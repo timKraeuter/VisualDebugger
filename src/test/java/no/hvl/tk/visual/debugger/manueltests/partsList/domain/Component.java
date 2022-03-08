@@ -1,16 +1,41 @@
 package no.hvl.tk.visual.debugger.manueltests.partsList.domain;
 
-public interface Component {
+/**
+ * Represents a component in parts lists, which has a name and cost.
+ */
+public abstract class Component {
+    private final String name;
+    private final int cost;
+
+    protected Component(final String name, final int cost) {
+        this.name = name;
+        this.cost = cost;
+    }
 
     /**
      * Returns true if and only if the receiver directly or indirectly
      * contains the given component.
      */
-    boolean contains(Component component);
+    public abstract boolean contains(Component component);
 
-    int getOverallCost();
+    /**
+     * Get the overall cost of the component including material and assembly cost.
+     */
+    public abstract int getOverallCost();
 
-    void accept(ComponentVisitor v);
+    /**
+     * Get the name of the component.
+     */
+    public String getName() {
+        return this.name;
+    }
 
-    String getName();
+    public int getComponentCost() {
+        return cost;
+    }
+
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 }
