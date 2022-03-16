@@ -1,6 +1,10 @@
 package no.hvl.tk.visual.debugger.manueltests.partsList.domain;
 
-public class Material extends ComponentCommon {
+/**
+ * Represent a material which can be part of a parts list.
+ * A material has an associated material cost and name.
+ */
+public class Material extends Component {
     public static Material create(final String name, final int materialCost) {
         return new Material(name, materialCost);
     }
@@ -16,12 +20,7 @@ public class Material extends ComponentCommon {
 
     @Override
     public int getOverallCost() {
-        return this.cost;
-    }
-
-    @Override
-    public void accept(final ComponentVisitor v) {
-        v.handle(this);
+        return this.getComponentCost();
     }
 
 }

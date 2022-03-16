@@ -1,13 +1,16 @@
 package no.hvl.tk.visual.debugger.manueltests.partsList.domain;
 
+/**
+ * Quantifies a {@link Component}.
+ */
 public class QuantifiedComponent {
+
+    private int quantity;
+    private final Component component;
 
     public static QuantifiedComponent create(final int quantity, final Component component) {
         return new QuantifiedComponent(quantity, component);
     }
-
-    private int quantity;
-    final private Component component;
 
     private QuantifiedComponent(final int quantity, final Component component) {
         this.quantity = quantity;
@@ -18,7 +21,7 @@ public class QuantifiedComponent {
         return this.component;
     }
 
-    int getQuantity() {
+    public int getQuantity() {
         return this.quantity;
     }
 
