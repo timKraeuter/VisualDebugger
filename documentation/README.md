@@ -11,14 +11,14 @@ debugging stops. We can then access the debugging variables and create a visual 
 visualization can be embedded in the IDE using the embedded visualizer or shown in a browser using the browser
 visualizer.
 
-## Embedded visualizer
+## Visualization
 
-The embedded visualizer uses [PlantUML](https://plantuml.com/) to visualize the debugging variables. We use
+The **embedded visualizer** uses [PlantUML](https://plantuml.com/) to visualize the debugging variables. We use
 the [PlantUML Smetana project](https://plantuml.com/smetana02) such that a local installation of DOT is not required.
+Since PlantUML generates images, no user interaction is possible.
 
-Since PlantUML generates images, no user interaction is possible. Consequently, we have implemented a browser visualizer
-which supports user interaction, i.e., exploring the generated object diagram similar to the exploration in the
-variables view in the IDE.
+Consequently, we have implemented a **browser visualizer** which supports user interaction, i.e., exploring the generated object diagram similar to the exploration in the variables view in the IDE.
+The browser visualization is based on the object-diagram modeler ([source](https://github.com/timKraeuter/object-diagram-modeler), [demo](https://timkraeuter.com/object-diagram-modeler/)).
 
 ## Browser visualizer
 
