@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 /**
- * Represents an Object in an object diagram.
+ * Represents an object in an object diagram.
  */
 public class ODObject implements Comparable<ODObject> {
 

@@ -6,7 +6,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import java.util.StringJoiner;
 
 /**
- * Represent the attribute value of an object in an object diagram.
+ * Represents the attribute value of an object in an object diagram.
  */
 public class ODAttributeValue {
 
