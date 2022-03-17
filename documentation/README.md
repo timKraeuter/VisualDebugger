@@ -44,7 +44,7 @@ From the point of view of the UI, the following messages are transferred.
 #### Incoming WebSocket messages
 
 The UI expects incoming messages to have a specific JSON format. It has a type (`nextDebugStep` or `loadChildren`) and a
-content which is a string conforming to the XML schema for object diagrams.
+content which is a string conforming to the [XML schema for object diagrams](./api/objectDiagram.xsd).
 
 ```json
 {
