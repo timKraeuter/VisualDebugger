@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.7.3'
+    id 'org.jetbrains.intellij' version '1.5.3'
     id "org.sonarqube" version "3.2.0"
     id 'jacoco'
 }
@@ -39,11 +39,11 @@ dependencies {
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version '2021.3'
-    plugins = ['com.intellij.java']
+    version = '2022.1'
+    plugins = ['java']
 }
 patchPluginXml {
-    changeNotes """Minor bug fixed: Maps with null keys or values are now visualized correctly in the embedded visualizer."""
+    changeNotes = """Now compatible with IntelliJ IDEA 2022.1."""
 }
 test {
     useJUnitPlatform()
