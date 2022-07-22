@@ -21,6 +21,6 @@ class PartsListTest {
         final int cost = folding_wall_table.getOverallCost();
 
         // Assert
-        assertThat(cost, is(56));
+        assertThat(cost, is(71));
     }
 }
