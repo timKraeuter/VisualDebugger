@@ -5,7 +5,7 @@
  [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=timKraeuter_VisualDebugger&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=timKraeuter_VisualDebugger)
  [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=timKraeuter_VisualDebugger&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=timKraeuter_VisualDebugger)
  
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=timKraeuter_VisualDebugger&metric=coverage)](https://sonarcloud.io/dashboard?id=timKraeuter_VisualDebugger)
+<!-- [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=timKraeuter_VisualDebugger&metric=coverage)](https://sonarcloud.io/dashboard?id=timKraeuter_VisualDebugger) -->
 
 # Visual Debugger IntelliJ Plugin
 
