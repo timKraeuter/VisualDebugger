@@ -1,12 +1,12 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '1.5.3'
+    id 'org.jetbrains.intellij' version '1.7.0'
     id "org.sonarqube" version "3.2.0"
     id 'jacoco'
 }
 
 group 'no.hvl.tk'
-version '1.8.8'
+version '1.8.9'
 
 repositories {
     mavenCentral()
@@ -43,7 +43,7 @@ intellij {
     plugins = ['java']
 }
 patchPluginXml {
-    changeNotes = """Now compatible with IntelliJ IDEA 2022.1."""
+    changeNotes = """Arrays are now sorted correctly."""
 }
 test {
     useJUnitPlatform()

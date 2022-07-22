@@ -55,7 +55,9 @@ class StackFrameAnalyzerTest {
 
         final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
-        final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector);
+        final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock,
+                                                                             null,
+                                                                             debuggingInfoCollector);
 
         // When
         stackFrameAnalyzer.analyze();
@@ -69,7 +71,9 @@ class StackFrameAnalyzerTest {
         primitiveVars.add(byteValue);
         final ODPrimitiveRootValue shortValue = new ODPrimitiveRootValue(shortVarName, "java.lang.Short", "1");
         primitiveVars.add(shortValue);
-        final ODPrimitiveRootValue integerValue = new ODPrimitiveRootValue(integerVarName, IntegerValueMock.TYPE_NAME, "1");
+        final ODPrimitiveRootValue integerValue = new ODPrimitiveRootValue(integerVarName,
+                                                                           IntegerValueMock.TYPE_NAME,
+                                                                           "1");
         primitiveVars.add(integerValue);
         final ODPrimitiveRootValue longValue = new ODPrimitiveRootValue(longVarName, "java.lang.Long", "1");
         primitiveVars.add(longValue);
@@ -77,12 +81,15 @@ class StackFrameAnalyzerTest {
         primitiveVars.add(floatValue);
         final ODPrimitiveRootValue doubleValue = new ODPrimitiveRootValue(doubleVarName, "java.lang.Double", "5.1");
         primitiveVars.add(doubleValue);
-        final ODPrimitiveRootValue stringValue = new ODPrimitiveRootValue(stringVarName, "java.lang.String", "\"" + stringVarValue + "\"");
+        final ODPrimitiveRootValue stringValue = new ODPrimitiveRootValue(stringVarName,
+                                                                          "java.lang.String",
+                                                                          "\"" + stringVarValue + "\"");
         primitiveVars.add(stringValue);
         final ODPrimitiveRootValue charValue = new ODPrimitiveRootValue(charVarName, "java.lang.Char", "'a'");
         primitiveVars.add(charValue);
 
-        assertThat(debuggingInfoCollector.getCurrentDiagram().getPrimitiveRootValues(), CoreMatchers.equalTo(primitiveVars));
+        assertThat(debuggingInfoCollector.getCurrentDiagram().getPrimitiveRootValues(),
+                   CoreMatchers.equalTo(primitiveVars));
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -92,13 +99,23 @@ class StackFrameAnalyzerTest {
         final StackFrameMock stackFrameMock = new StackFrameMock(ObjectReferenceMock.create("test"));
 
         final String variableName = "foldingWallTable";
-        final ObjectReferenceMock<Value> objRefMock = StackFrameMockHelper.createObject(stackFrameMock, "Product", variableName);
-        StackFrameMockHelper.addAttributeToObject(objRefMock, "name", "String", new StringReferenceMock("folding wall table"));
-        StackFrameMockHelper.addAttributeToObject(objRefMock, "price", IntegerValueMock.TYPE_NAME, new IntegerValueMock(25));
+        final ObjectReferenceMock<Value> objRefMock = StackFrameMockHelper.createObject(stackFrameMock,
+                                                                                        "Product",
+                                                                                        variableName);
+        StackFrameMockHelper.addAttributeToObject(objRefMock,
+                                                  "name",
+                                                  "String",
+                                                  new StringReferenceMock("folding wall table"));
+        StackFrameMockHelper.addAttributeToObject(objRefMock,
+                                                  "price",
+                                                  IntegerValueMock.TYPE_NAME,
+                                                  new IntegerValueMock(25));
 
         final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
-        final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector);
+        final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock,
+                                                                             null,
+                                                                             debuggingInfoCollector);
 
         // When
         stackFrameAnalyzer.analyze();
@@ -111,9 +128,9 @@ class StackFrameAnalyzerTest {
 
         assertThat(productObject.getAttributeValues().size(), is(2));
         assertThat(productObject.getAttributeByName("name").get(), // must be present for the test case
-                is(new ODAttributeValue("name", "String", "\"folding wall table\"")));
+                   is(new ODAttributeValue("name", "String", "\"folding wall table\"")));
         assertThat(productObject.getAttributeByName("price").get(), // must be present for the test case
-                is(new ODAttributeValue("price", IntegerValueMock.TYPE_NAME, "25")));
+                   is(new ODAttributeValue("price", IntegerValueMock.TYPE_NAME, "25")));
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -123,15 +140,21 @@ class StackFrameAnalyzerTest {
         final StackFrameMock stackFrameMock = new StackFrameMock(ObjectReferenceMock.create("test"));
 
         final String productName = "foldingWallTable";
-        final ObjectReferenceMock<Value> product = StackFrameMockHelper.createObject(stackFrameMock, "Product", productName);
+        final ObjectReferenceMock<Value> product = StackFrameMockHelper.createObject(stackFrameMock,
+                                                                                     "Product",
+                                                                                     productName);
         final String childFieldName = "material";
-        final ObjectReferenceMock<Value> material = StackFrameMockHelper.createChildObject(product, childFieldName, "Material");
+        final ObjectReferenceMock<Value> material = StackFrameMockHelper.createChildObject(product,
+                                                                                           childFieldName,
+                                                                                           "Material");
         StackFrameMockHelper.addAttributeToObject(material, "name", "String", new StringReferenceMock("Main support"));
         StackFrameMockHelper.addAttributeToObject(material, "price", "Integer", new IntegerValueMock(10));
 
         final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
-        final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector);
+        final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock,
+                                                                             null,
+                                                                             debuggingInfoCollector);
 
         // When
         stackFrameAnalyzer.analyze();
@@ -151,9 +174,9 @@ class StackFrameAnalyzerTest {
 
         assertThat(materialObject.getAttributeValues().size(), is(2));
         assertThat(materialObject.getAttributeByName("name").get(), // must be present for the test case
-                is(new ODAttributeValue("name", "String", "\"Main support\"")));
+                   is(new ODAttributeValue("name", "String", "\"Main support\"")));
         assertThat(materialObject.getAttributeByName("price").get(), // must be present for the test case
-                is(new ODAttributeValue("price", "Integer", "10")));
+                   is(new ODAttributeValue("price", "Integer", "10")));
     }
 
     @Test
@@ -250,7 +273,8 @@ class StackFrameAnalyzerTest {
                 mapVarName);
         assertThat(mapObject.getAttributeValues().size(), is(0));
         assertThat(mapObject.getLinks().size(), is(4));
-        assertThat(mapObject.getLinks().stream().allMatch(odLink -> this.checkEntryAttributes(odLink.getTo())), is(true));
+        assertThat(mapObject.getLinks().stream().allMatch(odLink -> this.checkEntryAttributes(odLink.getTo())),
+                   is(true));
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -374,15 +398,12 @@ class StackFrameAnalyzerTest {
         this.checkIntArrayOrList(intArrayObject);
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     private void checkIntArrayOrList(final ODObject intArrayObject) {
         assertThat(intArrayObject.getAttributeValues().size(), is(3));
-        assertThat(intArrayObject.getAttributeByName("0").get(), // must be present for the test case
-                is(new ODAttributeValue("0", IntegerValueMock.TYPE_NAME, "1")));
-        assertThat(intArrayObject.getAttributeByName("1").get(), // must be present for the test case
-                is(new ODAttributeValue("1", IntegerValueMock.TYPE_NAME, "2")));
-        assertThat(intArrayObject.getAttributeByName("2").get(), // must be present for the test case
-                is(new ODAttributeValue("2", IntegerValueMock.TYPE_NAME, "3")));
+        assertThat(intArrayObject.getAttributeValues(),
+                   is(Lists.newArrayList(new ODAttributeValue("0", IntegerValueMock.TYPE_NAME, "1"),
+                                         new ODAttributeValue("1", IntegerValueMock.TYPE_NAME, "2"),
+                                         new ODAttributeValue("2", IntegerValueMock.TYPE_NAME, "3"))));
     }
 
     @Test
@@ -498,7 +519,8 @@ class StackFrameAnalyzerTest {
 
         // Set
         final String setTypeName = "java.util.Set";
-        final ObjectReferenceMock<IntegerValueMock> setObjectReferenceMock = ObjectReferenceMock.createCollectionObjectRefMock(
+        final ObjectReferenceMock<IntegerValueMock> setObjectReferenceMock =
+                ObjectReferenceMock.createCollectionObjectRefMock(
                 setTypeName,
                 Sets.newHashSet(
                         new IntegerValueMock(5),
@@ -508,7 +530,8 @@ class StackFrameAnalyzerTest {
         StackFrameMockHelper.addChildObject(thisObj, intSet, setObjectReferenceMock);
         // List
         final String listTypeName = "java.util.List";
-        final ObjectReferenceMock<IntegerValueMock> listObjectReferenceMock = ObjectReferenceMock.createCollectionObjectRefMock(
+        final ObjectReferenceMock<IntegerValueMock> listObjectReferenceMock =
+                ObjectReferenceMock.createCollectionObjectRefMock(
                 listTypeName,
                 Lists.newArrayList(
                         new IntegerValueMock(1),
@@ -611,7 +634,8 @@ class StackFrameAnalyzerTest {
                              .allMatch(odLink -> odLink.getTo().getType().equals("Material")), is(true));
         assertThat(thisObject.getLinks().stream()
                              .map(ODLink::getType)
-                             .collect(Collectors.toSet()), is(Sets.newHashSet(arrayMaterials, listMaterials, setMaterials)));
+                             .collect(Collectors.toSet()),
+                   is(Sets.newHashSet(arrayMaterials, listMaterials, setMaterials)));
 
     }
 
@@ -694,6 +718,7 @@ class StackFrameAnalyzerTest {
                              .allMatch(odLink -> odLink.getTo().getType().equals("Material")), is(true));
         assertThat(thisObject.getLinks().stream()
                              .map(ODLink::getType)
-                             .collect(Collectors.toSet()), is(Sets.newHashSet(arrayMaterials, listMaterials, setMaterials)));
+                             .collect(Collectors.toSet()),
+                   is(Sets.newHashSet(arrayMaterials, listMaterials, setMaterials)));
     }
 }

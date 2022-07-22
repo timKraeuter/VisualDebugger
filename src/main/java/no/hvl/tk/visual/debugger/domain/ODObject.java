@@ -25,7 +25,7 @@ public class ODObject implements Comparable<ODObject> {
      * All attributes of this object.
      */
     @XmlElement(name = "attributeValue")
-    private final Set<ODAttributeValue> attributeValues;
+    private final List<ODAttributeValue> attributeValues;
 
     /**
      * All links coming from this object.
@@ -38,15 +38,16 @@ public class ODObject implements Comparable<ODObject> {
         this.id = id;
         this.type = type;
         this.variableName = variableName;
-        this.attributeValues = new HashSet<>();
+        this.attributeValues = new ArrayList<>();
         this.links = new HashSet<>();
     }
 
     /**
-     * Returns a read-only set of this objects attributes.
+     * Returns a read-only sorted list of this objects attributes.
      */
-    public Set<ODAttributeValue> getAttributeValues() {
-        return Collections.unmodifiableSet(this.attributeValues);
+    public List<ODAttributeValue> getAttributeValues() {
+        this.attributeValues.sort(Comparator.comparing(ODAttributeValue::getName));
+        return Collections.unmodifiableList(attributeValues);
     }
 
     /**
