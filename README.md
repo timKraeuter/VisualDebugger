@@ -11,3 +11,5 @@
 Repository for the [visual debugger IntelliJ plugin](https://plugins.jetbrains.com/plugin/16851-visual-debugger).
 - A short documentation of the plugin can be found [here](./documentation/README.md).
 - The browser-based UI for the plugin can be found [here](https://github.com/timKraeuter/object-diagram-modeler/tree/master/debugger).
+
+A preprint of my *research paper* about the visual debugger can be found [here](https://github.com/timKraeuter/ICSME-2022/blob/main/visual-debugger.pdf). 
