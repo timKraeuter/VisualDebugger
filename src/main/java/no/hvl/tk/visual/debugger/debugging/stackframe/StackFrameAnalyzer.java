@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import static no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionListenerHelper.*;
 
 public class StackFrameAnalyzer {
+    // TODO: Do not load everything use the new depth setting.
 
     private static final Logger LOGGER = Logger.getInstance(StackFrameAnalyzer.class);
     private static final String KEY = "key";

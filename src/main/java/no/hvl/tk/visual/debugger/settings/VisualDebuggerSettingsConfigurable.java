@@ -64,6 +64,9 @@ public class VisualDebuggerSettingsConfigurable implements Configurable {
 
         final int newDepth = Integer.parseInt(this.settingsComponent.getVisualizationDepthText());
         VisualDebuggerSettingsConfigurable.changedDepthAndRestartDebuggerIfNeeded(settings, newDepth);
+
+        final int newLoadingDepth = Integer.parseInt(this.settingsComponent.getLoadingDepthText());
+        settings.setLoadingDepth(newLoadingDepth);
     }
 
     private static void changedDepthAndRestartDebuggerIfNeeded(final PluginSettingsState settings, final int newDepth) {
@@ -79,6 +82,7 @@ public class VisualDebuggerSettingsConfigurable implements Configurable {
     public void reset() {
         final PluginSettingsState settings = PluginSettingsState.getInstance();
         this.settingsComponent.setVisualizationDepthText(settings.getVisualisationDepth().toString());
+        this.settingsComponent.setLoadingDepthText(settings.getLoadingDepth().toString());
         this.settingsComponent.chooseDebuggingVisualizerOption(settings.getVisualizerOption());
     }
 
