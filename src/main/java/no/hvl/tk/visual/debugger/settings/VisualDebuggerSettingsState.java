@@ -15,24 +15,24 @@ import org.jetbrains.annotations.Nullable;
         name = "no.hvl.tk.visual.debugger.settings.AppSettingsState",
         storages = {@Storage("visualDebuggerPluginSettings.xml")}
 )
-public class PluginSettingsState implements PersistentStateComponent<PluginSettingsState> {
+public class VisualDebuggerSettingsState implements PersistentStateComponent<VisualDebuggerSettingsState> {
 
     private DebuggingVisualizerOption visualizerOption = DebuggingVisualizerOption.WEB_UI;
     private Integer visualisationDepth = 3;
     private Integer loadingDepth = 5;
 
-    public static PluginSettingsState getInstance() {
-        return ApplicationManager.getApplication().getService(PluginSettingsState.class);
+    public static VisualDebuggerSettingsState getInstance() {
+        return ApplicationManager.getApplication().getService(VisualDebuggerSettingsState.class);
     }
 
     @Nullable
     @Override
-    public PluginSettingsState getState() {
+    public VisualDebuggerSettingsState getState() {
         return this;
     }
 
     @Override
-    public void loadState(@NotNull final PluginSettingsState state) {
+    public void loadState(@NotNull final VisualDebuggerSettingsState state) {
         XmlSerializerUtil.copyBean(state, this);
     }
 

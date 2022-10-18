@@ -2,7 +2,7 @@ package no.hvl.tk.visual.debugger.debugging.visualization;
 
 import com.intellij.openapi.diagnostic.Logger;
 import no.hvl.tk.visual.debugger.domain.*;
-import no.hvl.tk.visual.debugger.settings.PluginSettingsState;
+import no.hvl.tk.visual.debugger.settings.VisualDebuggerSettingsState;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -109,7 +109,7 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
     }
 
     protected ObjectDiagram getDiagramWithDepth() {
-        return this.getDiagramWithDepth(PluginSettingsState.getInstance().getVisualisationDepth());
+        return this.getDiagramWithDepth(VisualDebuggerSettingsState.getInstance().getVisualisationDepth());
     }
 
     protected ObjectDiagram getDiagramWithDepth(Integer depth) {

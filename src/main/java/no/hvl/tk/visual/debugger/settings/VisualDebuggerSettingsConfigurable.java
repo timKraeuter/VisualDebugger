@@ -1,8 +1,6 @@
 package no.hvl.tk.visual.debugger.settings;
 
 import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.project.Project;
-import no.hvl.tk.visual.debugger.SharedState;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,11 +8,6 @@ import javax.swing.*;
 
 public class VisualDebuggerSettingsConfigurable implements Configurable {
     private VisualDebuggerSettingsComponent settingsComponent;
-    private final Project project;
-
-    public VisualDebuggerSettingsConfigurable(final Project project) {
-        this.project = project;
-    }
 
     @Nls(capitalization = Nls.Capitalization.Title)
     @Override
@@ -30,27 +23,35 @@ public class VisualDebuggerSettingsConfigurable implements Configurable {
     @Nullable
     @Override
     public JComponent createComponent() {
-        this.settingsComponent = new VisualDebuggerSettingsComponent(this.project);
-        return this.settingsComponent.getPanel();
+        this.settingsComponent = new VisualDebuggerSettingsComponent();
+        return this.settingsComponent.getComponent();
     }
 
     @Override
     public boolean isModified() {
-        final PluginSettingsState settings = PluginSettingsState.getInstance();
-        return this.visualizerOptionChanged(settings) || this.isDepthModified(settings);
+        final VisualDebuggerSettingsState settings = VisualDebuggerSettingsState.getInstance();
+        return this.visualizerOptionChanged(settings) || this.isVisualizationDepthModified(settings) || this.isLoadingDepthModified(settings);
     }
 
-    private boolean visualizerOptionChanged(final PluginSettingsState settings) {
+    private boolean visualizerOptionChanged(final VisualDebuggerSettingsState settings) {
         return settings.getVisualizerOption() != this.settingsComponent.getDebuggingVisualizerOptionChoice();
     }
 
-    private boolean isDepthModified(final PluginSettingsState settings) {
+    private boolean isVisualizationDepthModified(final VisualDebuggerSettingsState settings) {
+        return depthModified(this.settingsComponent.getVisualizationDepthText(), settings.getVisualisationDepth());
+    }
+
+    private boolean isLoadingDepthModified(VisualDebuggerSettingsState settings) {
+        return depthModified(this.settingsComponent.getLoadingDepthText(), settings.getLoadingDepth());
+    }
+
+    private boolean depthModified(String newDepthValue, Integer currentDepth) {
         try {
-            final int newDepth = Integer.parseInt(this.settingsComponent.getVisualizationDepthText());
+            final int newDepth = Integer.parseInt(newDepthValue);
             if (newDepth < 0) {
                 return false;
             }
-            return newDepth != settings.getVisualisationDepth();
+            return newDepth != currentDepth;
         } catch (final NumberFormatException nfe) {
             // Ignore this exception and update since there is a validation error shown in the field!
             return false;
@@ -59,31 +60,14 @@ public class VisualDebuggerSettingsConfigurable implements Configurable {
 
     @Override
     public void apply() {
-        final PluginSettingsState settings = PluginSettingsState.getInstance();
-        settings.setVisualizerOption(this.settingsComponent.getDebuggingVisualizerOptionChoice());
-
-        final int newDepth = Integer.parseInt(this.settingsComponent.getVisualizationDepthText());
-        VisualDebuggerSettingsConfigurable.changedDepthAndRestartDebuggerIfNeeded(settings, newDepth);
-
-        final int newLoadingDepth = Integer.parseInt(this.settingsComponent.getLoadingDepthText());
-        settings.setLoadingDepth(newLoadingDepth);
-    }
-
-    private static void changedDepthAndRestartDebuggerIfNeeded(final PluginSettingsState settings, final int newDepth) {
-        if (newDepth != settings.getVisualisationDepth()) {
-            settings.setVisualisationDepth(newDepth);
-            if (SharedState.getDebugListener() != null) {
-                SharedState.getDebugListener().reprintDiagram();
-            }
-        }
+        final VisualDebuggerSettingsState settings = VisualDebuggerSettingsState.getInstance();
+        this.settingsComponent.applyEditorTo(settings);
     }
 
     @Override
     public void reset() {
-        final PluginSettingsState settings = PluginSettingsState.getInstance();
-        this.settingsComponent.setVisualizationDepthText(settings.getVisualisationDepth().toString());
-        this.settingsComponent.setLoadingDepthText(settings.getLoadingDepth().toString());
-        this.settingsComponent.chooseDebuggingVisualizerOption(settings.getVisualizerOption());
+        final VisualDebuggerSettingsState settings = VisualDebuggerSettingsState.getInstance();
+        this.settingsComponent.resetEditorFrom(settings);
     }
 
     @Override

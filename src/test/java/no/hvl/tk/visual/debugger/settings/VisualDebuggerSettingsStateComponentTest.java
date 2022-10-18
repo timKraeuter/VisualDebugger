@@ -9,7 +9,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class VisualDebuggerSettingsComponentTest {
+class VisualDebuggerSettingsStateComponentTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"a", "", "0", "-1"})
