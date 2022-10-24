@@ -45,7 +45,7 @@ public class ODAttributeValue {
         if (this == o) {
             return true;
         }
-        if (o == null || this.getClass() != o.getClass()) {
+        if (!(o instanceof ODAttributeValue)) {
             return false;
         }
         final ODAttributeValue that = (ODAttributeValue) o;

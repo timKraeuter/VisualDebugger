@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.intellij' version '1.9.0'
     id "org.sonarqube" version "3.2.0"
     id 'jacoco'
+    id ("net.ltgt.errorprone") version "3.0.1"
 }
 
 group 'no.hvl.tk'
@@ -37,6 +38,8 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.1'
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
+
+    errorprone("com.google.errorprone:error_prone_core:2.16")
 }
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/

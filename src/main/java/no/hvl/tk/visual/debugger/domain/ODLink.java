@@ -72,7 +72,7 @@ public class ODLink implements Comparable<ODLink> {
         if (this == o) {
             return true;
         }
-        if (o == null || this.getClass() != o.getClass()) {
+        if (!(o instanceof ODLink)) {
             return false;
         }
         final var odLink = (ODLink) o;
