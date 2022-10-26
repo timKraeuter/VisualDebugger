@@ -73,3 +73,8 @@ sonarqube {
         property "sonar.host.url", "https://sonarcloud.io"
     }
 }
+
+tasks.compileJava {
+    // Ignore scenarios test.
+    options.errorprone.excludedPaths = ".*/DebuggingScenariosTest.java"
+}
