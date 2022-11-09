@@ -1,6 +1,6 @@
 package no.hvl.tk.visual.debugger.settings;
 
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.ComponentValidator;
 import com.intellij.openapi.ui.ValidationInfo;
@@ -25,7 +25,7 @@ public class VisualDebuggerSettingsComponent {
             new ComboBox<>(DebuggingVisualizerOption.values());
 
 
-    public VisualDebuggerSettingsComponent(final Project project) {
+    public VisualDebuggerSettingsComponent(final VisualDebuggerSettingsConfigurable parent) {
         this.myMainPanel = FormBuilder.createFormBuilder()
                                          .addLabeledComponent(new JBLabel("Choose visualizer: "), this.visualizerOptionsCombobox, 1, false)
                                       .addLabeledComponent(new JBLabel("Initial visualization depth: "), this.visualizationDepthField, 1, false)
@@ -33,13 +33,11 @@ public class VisualDebuggerSettingsComponent {
                                       .addComponentFillVertically(new JPanel(), 0)
                                       .getPanel();
 
-        this.addInputFieldValidators(project);
+        this.addInputFieldValidators(parent);
     }
 
-    private void addInputFieldValidators(final Project project) {
-        // TODO: Do not use project as parent disposable here.
-        new ComponentValidator(project).withValidator(() -> validateDepthField(VisualDebuggerSettingsComponent.this.visualizationDepthField)).installOn(this.visualizationDepthField);
-
+    private void addInputFieldValidators(final Disposable parent) {
+        new ComponentValidator(parent).withValidator(() -> validateDepthField(VisualDebuggerSettingsComponent.this.visualizationDepthField)).installOn(this.visualizationDepthField);
         this.visualizationDepthField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
             protected void textChanged(@NotNull final DocumentEvent e) {
@@ -48,9 +46,7 @@ public class VisualDebuggerSettingsComponent {
             }
         });
 
-        // TODO: Do not use project as parent disposable here.
-        new ComponentValidator(project).withValidator(() -> validateDepthField(VisualDebuggerSettingsComponent.this.loadingDepthField)).installOn(this.loadingDepthField);
-
+        new ComponentValidator(parent).withValidator(() -> validateDepthField(VisualDebuggerSettingsComponent.this.loadingDepthField)).installOn(this.loadingDepthField);
         this.loadingDepthField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
             protected void textChanged(@NotNull final DocumentEvent e) {
