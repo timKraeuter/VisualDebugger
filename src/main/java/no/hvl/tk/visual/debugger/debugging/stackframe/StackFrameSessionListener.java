@@ -25,7 +25,7 @@ import no.hvl.tk.visual.debugger.debugging.stackframe.exceptions.StackFrameAnaly
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.WebSocketDebuggingVisualizer;
-import no.hvl.tk.visual.debugger.settings.VisualDebuggerSettingsState;
+import no.hvl.tk.visual.debugger.settings.PluginSettingsState;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -152,7 +152,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     @NotNull
     public DebuggingInfoVisualizer getOrCreateDebuggingInfoVisualizer() {
         if (this.debuggingVisualizer == null) {
-            switch (VisualDebuggerSettingsState.getInstance().getVisualizerOption()) {
+            switch (PluginSettingsState.getInstance().getVisualizerOption()) {
                 case WEB_UI:
                     this.debuggingVisualizer = new WebSocketDebuggingVisualizer(this.userInterface);
                     break;

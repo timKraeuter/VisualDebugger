@@ -57,7 +57,7 @@
         <projectConfigurable parentId="tools"
                              instance="no.hvl.tk.visual.debugger.settings.VisualDebuggerSettingsConfigurable"
                              id="no.hvl.tk.visualDebugger.settings" displayName="Visual Debugger Settings"/>
-        <applicationService serviceImplementation="no.hvl.tk.visual.debugger.settings.VisualDebuggerSettingsState"/>
+        <applicationService serviceImplementation="no.hvl.tk.visual.debugger.settings.PluginSettingsState"/>
     </extensions>
 
     <actions>
