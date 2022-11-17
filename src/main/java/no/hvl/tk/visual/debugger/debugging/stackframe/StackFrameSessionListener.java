@@ -90,7 +90,8 @@ public class StackFrameSessionListener implements XDebugSessionListener {
         StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(
                 stackFrame,
                 this.thread,
-                this.debuggingVisualizer);
+                this.debuggingVisualizer,
+                PluginSettingsState.getInstance().getLoadingDepth());
         stackFrameAnalyzer.analyze();
 
         this.debuggingVisualizer.finishVisualization();
@@ -182,21 +183,25 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             if (first.isPresent()) {
                 return first.get();
             }
-        } catch (IncompatibleThreadStateException e) {
+        }
+        catch (IncompatibleThreadStateException e) {
             LOGGER.error(e);
             throw new StackFrameAnalyzerException("Correct stack frame for debugging not found!", e);
         }
         throw new StackFrameAnalyzerException(String.format("Correct stack frame for debugging not found! " +
-                        "Looking for stack frame with the type \"%s\" but only found the following stack frames \"%s\".",
-                this.getCurrentStackFrameType(),
-                this.getGivenStackFrames()));
+                                                                    "Looking for stack frame with the type \"%s\" but" +
+                                                                    " only found the following stack frames \"%s\".",
+                                                            this.getCurrentStackFrameType(),
+                                                            this.getGivenStackFrames()));
     }
 
     @NotNull
     private java.util.List<String> getGivenStackFrames() {
         try {
-            return this.thread.frames().stream().map(stackFrame -> stackFrame.location().declaringType().name()).collect(Collectors.toList());
-        } catch (IncompatibleThreadStateException e) {
+            return this.thread.frames().stream().map(stackFrame -> stackFrame.location().declaringType().name()).collect(
+                    Collectors.toList());
+        }
+        catch (IncompatibleThreadStateException e) {
             LOGGER.error(e);
             throw new StackFrameAnalyzerException("Correct stack frame for debugging not found!", e);
         }
