@@ -99,7 +99,7 @@ public class ODObject implements Comparable<ODObject> {
         if (this == o) {
             return true;
         }
-        if (o == null || this.getClass() != o.getClass()) {
+        if (!(o instanceof ODObject)) {
             return false;
         }
         final var odObject = (ODObject) o;

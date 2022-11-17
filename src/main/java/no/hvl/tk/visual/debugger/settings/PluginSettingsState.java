@@ -18,7 +18,8 @@ import org.jetbrains.annotations.Nullable;
 public class PluginSettingsState implements PersistentStateComponent<PluginSettingsState> {
 
     private DebuggingVisualizerOption visualizerOption = DebuggingVisualizerOption.WEB_UI;
-    private Integer visualisationDepth = 5;
+    private Integer visualisationDepth = 0;
+    private Integer loadingDepth = 5;
 
     public static PluginSettingsState getInstance() {
         return ApplicationManager.getApplication().getService(PluginSettingsState.class);
@@ -49,5 +50,13 @@ public class PluginSettingsState implements PersistentStateComponent<PluginSetti
 
     public void setVisualisationDepth(final Integer visualisationDepth) {
         this.visualisationDepth = visualisationDepth;
+    }
+
+    public Integer getLoadingDepth() {
+        return loadingDepth;
+    }
+
+    public void setLoadingDepth(Integer loadingDepth) {
+        this.loadingDepth = loadingDepth;
     }
 }
