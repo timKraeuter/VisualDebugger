@@ -16,7 +16,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 
 public class VisualDebuggerSettingsComponent {
-    static final String NUMBER_GREATER_THAN_0 = "The depth must be a number greater than 0.";
+    static final String NUMBER_GREATER_THAN_0 = "The depth must be 0 or higher.";
 
     private final JPanel myMainPanel;
     private final JBTextField visualizationDepthField = new JBTextField();
@@ -28,8 +28,8 @@ public class VisualDebuggerSettingsComponent {
     public VisualDebuggerSettingsComponent(final VisualDebuggerSettingsConfigurable parent) {
         this.myMainPanel = FormBuilder.createFormBuilder()
                                          .addLabeledComponent(new JBLabel("Choose visualizer: "), this.visualizerOptionsCombobox, 1, false)
-                                      .addLabeledComponent(new JBLabel("Initial visualization depth: "), this.visualizationDepthField, 1, false)
-                                      .addLabeledComponent(new JBLabel("Loading depth: "), this.loadingDepthField, 1, false)
+                                      .addLabeledComponent(new JBLabel("Initial visualization depth: "), this.visualizationDepthField, 0, false)
+                                      .addLabeledComponent(new JBLabel("Loading depth: "), this.loadingDepthField, 5, false)
                                       .addComponentFillVertically(new JPanel(), 0)
                                       .getPanel();
 
@@ -59,13 +59,13 @@ public class VisualDebuggerSettingsComponent {
     @Nullable
     static ValidationInfo validateDepthField(JBTextField depthField) {
         final String enteredDepth = depthField.getText();
-        if (StringUtil.isEmpty(enteredDepth) || !StringUtil.isNotNegativeNumber(enteredDepth)) {
+        if (StringUtil.isEmpty(enteredDepth)) {
             return new ValidationInfo(
                     VisualDebuggerSettingsComponent.NUMBER_GREATER_THAN_0,
                     depthField);
         }
         int depth = Integer.parseInt(enteredDepth);
-        if (depth <= 0) {
+        if (depth < 0) {
             return new ValidationInfo(
                     VisualDebuggerSettingsComponent.NUMBER_GREATER_THAN_0,
                     depthField);
