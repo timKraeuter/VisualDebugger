@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.8.10'
+version '1.9.1'
 
 repositories {
     mavenCentral()
@@ -48,7 +48,7 @@ intellij {
     plugins = ['java']
 }
 patchPluginXml {
-    changeNotes = """Updated to IntelliJ 2022.2."""
+    changeNotes = """A new loading depth setting was temporarily added to avoid loading unnecessary objects in the background. Loading objects on demand is under investigation."""
 }
 test {
     useJUnitPlatform()
