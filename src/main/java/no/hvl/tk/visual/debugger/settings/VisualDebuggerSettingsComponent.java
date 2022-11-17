@@ -9,6 +9,7 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.FormBuilder;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +17,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 
 public class VisualDebuggerSettingsComponent {
-    static final String NUMBER_GREATER_THAN_0 = "The depth must be 0 or higher.";
+    static final String NUMBER_GREATER_EQUALS_0 = "The depth must be 0 or higher.";
 
     private final JPanel myMainPanel;
     private final JBTextField visualizationDepthField = new JBTextField();
@@ -59,15 +60,15 @@ public class VisualDebuggerSettingsComponent {
     @Nullable
     static ValidationInfo validateDepthField(JBTextField depthField) {
         final String enteredDepth = depthField.getText();
-        if (StringUtil.isEmpty(enteredDepth)) {
+        if (StringUtil.isEmpty(enteredDepth) || !StringUtils.isNumeric(enteredDepth)) {
             return new ValidationInfo(
-                    VisualDebuggerSettingsComponent.NUMBER_GREATER_THAN_0,
+                    VisualDebuggerSettingsComponent.NUMBER_GREATER_EQUALS_0,
                     depthField);
         }
         int depth = Integer.parseInt(enteredDepth);
         if (depth < 0) {
             return new ValidationInfo(
-                    VisualDebuggerSettingsComponent.NUMBER_GREATER_THAN_0,
+                    VisualDebuggerSettingsComponent.NUMBER_GREATER_EQUALS_0,
                     depthField);
         }
         // Means everything is ok.

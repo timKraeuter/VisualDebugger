@@ -12,11 +12,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class VisualDebuggerSettingsComponentTest {
 
     @ParameterizedTest
-    @ValueSource(strings = {"a", "", "0", "-1"})
+    @ValueSource(strings = {"a", "", "-1", "-2"})
     void validateDepthField(String input) {
         JBTextField textField = new JBTextField(input);
         ValidationInfo validationInfo = VisualDebuggerSettingsComponent.validateDepthField(textField);
         assertNotNull(validationInfo);
-        assertThat(validationInfo.message, is(VisualDebuggerSettingsComponent.NUMBER_GREATER_THAN_0));
+        assertThat(validationInfo.message, is(VisualDebuggerSettingsComponent.NUMBER_GREATER_EQUALS_0));
     }
 }
