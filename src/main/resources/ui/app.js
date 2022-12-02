@@ -504,24 +504,24 @@ BaseViewer.prototype.saveXML = function(options) {
  */
 BaseViewer.prototype.saveSVG = function(options) {
 
-  var self = this;
+  const self = this;
 
   return new Promise(function(resolve, reject) {
 
     self._emit('saveSVG.start');
 
-    var svg, err;
+    let svg, err;
 
     try {
-      var canvas = self.get('canvas');
+      const canvas = self.get('canvas');
 
-      var contentNode = canvas.getDefaultLayer(),
-          defsNode = (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.query)('defs', canvas._svg);
+      const contentNode = canvas.getActiveLayer(),
+            defsNode = (0,min_dom__WEBPACK_IMPORTED_MODULE_4__.query)('defs', canvas._svg);
 
-      var contents = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_5__.innerSVG)(contentNode),
-          defs = defsNode ? '<defs>' + (0,tiny_svg__WEBPACK_IMPORTED_MODULE_5__.innerSVG)(defsNode) + '</defs>' : '';
+      const contents = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_5__.innerSVG)(contentNode),
+            defs = defsNode ? '<defs>' + (0,tiny_svg__WEBPACK_IMPORTED_MODULE_5__.innerSVG)(defsNode) + '</defs>' : '';
 
-      var bbox = contentNode.getBBox();
+      const bbox = contentNode.getBBox();
 
       svg =
         '<?xml version="1.0" encoding="utf-8"?>\n' +
@@ -8595,7 +8595,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ DirectEditing)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js-direct-editing/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _TextBox__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TextBox */ "../node_modules/diagram-js-direct-editing/lib/TextBox.js");
 
 
@@ -8758,7 +8758,7 @@ DirectEditing.prototype.activate = function(element) {
   var context;
 
   var provider = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.find)(this._providers, function(p) {
-    return (context = p.activate(element)) ? p : null;
+    return ((context = p.activate(element))) ? p : null;
   });
 
   // check if activation took place
@@ -8800,8 +8800,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ TextBox)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js-direct-editing/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js-direct-editing/node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
 
 
 
@@ -9257,1386 +9257,6 @@ function normalizeEndOfLineSequences(string) {
 
 /***/ }),
 
-/***/ "../node_modules/diagram-js-direct-editing/node_modules/min-dash/dist/index.esm.js":
-/*!*****************************************************************************************!*\
-  !*** ../node_modules/diagram-js-direct-editing/node_modules/min-dash/dist/index.esm.js ***!
-  \*****************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "assign": () => (/* binding */ assign),
-/* harmony export */   "bind": () => (/* binding */ bind),
-/* harmony export */   "debounce": () => (/* binding */ debounce),
-/* harmony export */   "ensureArray": () => (/* binding */ ensureArray),
-/* harmony export */   "every": () => (/* binding */ every),
-/* harmony export */   "filter": () => (/* binding */ filter),
-/* harmony export */   "find": () => (/* binding */ find),
-/* harmony export */   "findIndex": () => (/* binding */ findIndex),
-/* harmony export */   "flatten": () => (/* binding */ flatten),
-/* harmony export */   "forEach": () => (/* binding */ forEach),
-/* harmony export */   "get": () => (/* binding */ get),
-/* harmony export */   "groupBy": () => (/* binding */ groupBy),
-/* harmony export */   "has": () => (/* binding */ has),
-/* harmony export */   "isArray": () => (/* binding */ isArray),
-/* harmony export */   "isDefined": () => (/* binding */ isDefined),
-/* harmony export */   "isFunction": () => (/* binding */ isFunction),
-/* harmony export */   "isNil": () => (/* binding */ isNil),
-/* harmony export */   "isNumber": () => (/* binding */ isNumber),
-/* harmony export */   "isObject": () => (/* binding */ isObject),
-/* harmony export */   "isString": () => (/* binding */ isString),
-/* harmony export */   "isUndefined": () => (/* binding */ isUndefined),
-/* harmony export */   "keys": () => (/* binding */ keys),
-/* harmony export */   "map": () => (/* binding */ map),
-/* harmony export */   "matchPattern": () => (/* binding */ matchPattern),
-/* harmony export */   "merge": () => (/* binding */ merge),
-/* harmony export */   "omit": () => (/* binding */ omit),
-/* harmony export */   "pick": () => (/* binding */ pick),
-/* harmony export */   "reduce": () => (/* binding */ reduce),
-/* harmony export */   "set": () => (/* binding */ set),
-/* harmony export */   "size": () => (/* binding */ size),
-/* harmony export */   "some": () => (/* binding */ some),
-/* harmony export */   "sortBy": () => (/* binding */ sortBy),
-/* harmony export */   "throttle": () => (/* binding */ throttle),
-/* harmony export */   "unionBy": () => (/* binding */ unionBy),
-/* harmony export */   "uniqueBy": () => (/* binding */ uniqueBy),
-/* harmony export */   "values": () => (/* binding */ values),
-/* harmony export */   "without": () => (/* binding */ without)
-/* harmony export */ });
-/**
- * Flatten array, one level deep.
- *
- * @param {Array<?>} arr
- *
- * @return {Array<?>}
- */
-function flatten(arr) {
-  return Array.prototype.concat.apply([], arr);
-}
-
-var nativeToString = Object.prototype.toString;
-var nativeHasOwnProperty = Object.prototype.hasOwnProperty;
-function isUndefined(obj) {
-  return obj === undefined;
-}
-function isDefined(obj) {
-  return obj !== undefined;
-}
-function isNil(obj) {
-  return obj == null;
-}
-function isArray(obj) {
-  return nativeToString.call(obj) === '[object Array]';
-}
-function isObject(obj) {
-  return nativeToString.call(obj) === '[object Object]';
-}
-function isNumber(obj) {
-  return nativeToString.call(obj) === '[object Number]';
-}
-function isFunction(obj) {
-  var tag = nativeToString.call(obj);
-  return tag === '[object Function]' || tag === '[object AsyncFunction]' || tag === '[object GeneratorFunction]' || tag === '[object AsyncGeneratorFunction]' || tag === '[object Proxy]';
-}
-function isString(obj) {
-  return nativeToString.call(obj) === '[object String]';
-}
-/**
- * Ensure collection is an array.
- *
- * @param {Object} obj
- */
-
-function ensureArray(obj) {
-  if (isArray(obj)) {
-    return;
-  }
-
-  throw new Error('must supply array');
-}
-/**
- * Return true, if target owns a property with the given key.
- *
- * @param {Object} target
- * @param {String} key
- *
- * @return {Boolean}
- */
-
-function has(target, key) {
-  return nativeHasOwnProperty.call(target, key);
-}
-
-/**
- * Find element in collection.
- *
- * @param  {Array|Object} collection
- * @param  {Function|Object} matcher
- *
- * @return {Object}
- */
-
-function find(collection, matcher) {
-  matcher = toMatcher(matcher);
-  var match;
-  forEach(collection, function (val, key) {
-    if (matcher(val, key)) {
-      match = val;
-      return false;
-    }
-  });
-  return match;
-}
-/**
- * Find element index in collection.
- *
- * @param  {Array|Object} collection
- * @param  {Function} matcher
- *
- * @return {Object}
- */
-
-function findIndex(collection, matcher) {
-  matcher = toMatcher(matcher);
-  var idx = isArray(collection) ? -1 : undefined;
-  forEach(collection, function (val, key) {
-    if (matcher(val, key)) {
-      idx = key;
-      return false;
-    }
-  });
-  return idx;
-}
-/**
- * Find element in collection.
- *
- * @param  {Array|Object} collection
- * @param  {Function} matcher
- *
- * @return {Array} result
- */
-
-function filter(collection, matcher) {
-  var result = [];
-  forEach(collection, function (val, key) {
-    if (matcher(val, key)) {
-      result.push(val);
-    }
-  });
-  return result;
-}
-/**
- * Iterate over collection; returning something
- * (non-undefined) will stop iteration.
- *
- * @param  {Array|Object} collection
- * @param  {Function} iterator
- *
- * @return {Object} return result that stopped the iteration
- */
-
-function forEach(collection, iterator) {
-  var val, result;
-
-  if (isUndefined(collection)) {
-    return;
-  }
-
-  var convertKey = isArray(collection) ? toNum : identity;
-
-  for (var key in collection) {
-    if (has(collection, key)) {
-      val = collection[key];
-      result = iterator(val, convertKey(key));
-
-      if (result === false) {
-        return val;
-      }
-    }
-  }
-}
-/**
- * Return collection without element.
- *
- * @param  {Array} arr
- * @param  {Function} matcher
- *
- * @return {Array}
- */
-
-function without(arr, matcher) {
-  if (isUndefined(arr)) {
-    return [];
-  }
-
-  ensureArray(arr);
-  matcher = toMatcher(matcher);
-  return arr.filter(function (el, idx) {
-    return !matcher(el, idx);
-  });
-}
-/**
- * Reduce collection, returning a single result.
- *
- * @param  {Object|Array} collection
- * @param  {Function} iterator
- * @param  {Any} result
- *
- * @return {Any} result returned from last iterator
- */
-
-function reduce(collection, iterator, result) {
-  forEach(collection, function (value, idx) {
-    result = iterator(result, value, idx);
-  });
-  return result;
-}
-/**
- * Return true if every element in the collection
- * matches the criteria.
- *
- * @param  {Object|Array} collection
- * @param  {Function} matcher
- *
- * @return {Boolean}
- */
-
-function every(collection, matcher) {
-  return !!reduce(collection, function (matches, val, key) {
-    return matches && matcher(val, key);
-  }, true);
-}
-/**
- * Return true if some elements in the collection
- * match the criteria.
- *
- * @param  {Object|Array} collection
- * @param  {Function} matcher
- *
- * @return {Boolean}
- */
-
-function some(collection, matcher) {
-  return !!find(collection, matcher);
-}
-/**
- * Transform a collection into another collection
- * by piping each member through the given fn.
- *
- * @param  {Object|Array}   collection
- * @param  {Function} fn
- *
- * @return {Array} transformed collection
- */
-
-function map(collection, fn) {
-  var result = [];
-  forEach(collection, function (val, key) {
-    result.push(fn(val, key));
-  });
-  return result;
-}
-/**
- * Get the collections keys.
- *
- * @param  {Object|Array} collection
- *
- * @return {Array}
- */
-
-function keys(collection) {
-  return collection && Object.keys(collection) || [];
-}
-/**
- * Shorthand for `keys(o).length`.
- *
- * @param  {Object|Array} collection
- *
- * @return {Number}
- */
-
-function size(collection) {
-  return keys(collection).length;
-}
-/**
- * Get the values in the collection.
- *
- * @param  {Object|Array} collection
- *
- * @return {Array}
- */
-
-function values(collection) {
-  return map(collection, function (val) {
-    return val;
-  });
-}
-/**
- * Group collection members by attribute.
- *
- * @param  {Object|Array} collection
- * @param  {Function} extractor
- *
- * @return {Object} map with { attrValue => [ a, b, c ] }
- */
-
-function groupBy(collection, extractor) {
-  var grouped = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  extractor = toExtractor(extractor);
-  forEach(collection, function (val) {
-    var discriminator = extractor(val) || '_';
-    var group = grouped[discriminator];
-
-    if (!group) {
-      group = grouped[discriminator] = [];
-    }
-
-    group.push(val);
-  });
-  return grouped;
-}
-function uniqueBy(extractor) {
-  extractor = toExtractor(extractor);
-  var grouped = {};
-
-  for (var _len = arguments.length, collections = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    collections[_key - 1] = arguments[_key];
-  }
-
-  forEach(collections, function (c) {
-    return groupBy(c, extractor, grouped);
-  });
-  var result = map(grouped, function (val, key) {
-    return val[0];
-  });
-  return result;
-}
-var unionBy = uniqueBy;
-/**
- * Sort collection by criteria.
- *
- * @param  {Object|Array} collection
- * @param  {String|Function} extractor
- *
- * @return {Array}
- */
-
-function sortBy(collection, extractor) {
-  extractor = toExtractor(extractor);
-  var sorted = [];
-  forEach(collection, function (value, key) {
-    var disc = extractor(value, key);
-    var entry = {
-      d: disc,
-      v: value
-    };
-
-    for (var idx = 0; idx < sorted.length; idx++) {
-      var d = sorted[idx].d;
-
-      if (disc < d) {
-        sorted.splice(idx, 0, entry);
-        return;
-      }
-    } // not inserted, append (!)
-
-
-    sorted.push(entry);
-  });
-  return map(sorted, function (e) {
-    return e.v;
-  });
-}
-/**
- * Create an object pattern matcher.
- *
- * @example
- *
- * const matcher = matchPattern({ id: 1 });
- *
- * let element = find(elements, matcher);
- *
- * @param  {Object} pattern
- *
- * @return {Function} matcherFn
- */
-
-function matchPattern(pattern) {
-  return function (el) {
-    return every(pattern, function (val, key) {
-      return el[key] === val;
-    });
-  };
-}
-
-function toExtractor(extractor) {
-  return isFunction(extractor) ? extractor : function (e) {
-    return e[extractor];
-  };
-}
-
-function toMatcher(matcher) {
-  return isFunction(matcher) ? matcher : function (e) {
-    return e === matcher;
-  };
-}
-
-function identity(arg) {
-  return arg;
-}
-
-function toNum(arg) {
-  return Number(arg);
-}
-
-/**
- * Debounce fn, calling it only once if the given time
- * elapsed between calls.
- *
- * Lodash-style the function exposes methods to `#clear`
- * and `#flush` to control internal behavior.
- *
- * @param  {Function} fn
- * @param  {Number} timeout
- *
- * @return {Function} debounced function
- */
-function debounce(fn, timeout) {
-  var timer;
-  var lastArgs;
-  var lastThis;
-  var lastNow;
-
-  function fire(force) {
-    var now = Date.now();
-    var scheduledDiff = force ? 0 : lastNow + timeout - now;
-
-    if (scheduledDiff > 0) {
-      return schedule(scheduledDiff);
-    }
-
-    fn.apply(lastThis, lastArgs);
-    clear();
-  }
-
-  function schedule(timeout) {
-    timer = setTimeout(fire, timeout);
-  }
-
-  function clear() {
-    if (timer) {
-      clearTimeout(timer);
-    }
-
-    timer = lastNow = lastArgs = lastThis = undefined;
-  }
-
-  function flush() {
-    if (timer) {
-      fire(true);
-    }
-
-    clear();
-  }
-
-  function callback() {
-    lastNow = Date.now();
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    lastArgs = args;
-    lastThis = this; // ensure an execution is scheduled
-
-    if (!timer) {
-      schedule(timeout);
-    }
-  }
-
-  callback.flush = flush;
-  callback.cancel = clear;
-  return callback;
-}
-/**
- * Throttle fn, calling at most once
- * in the given interval.
- *
- * @param  {Function} fn
- * @param  {Number} interval
- *
- * @return {Function} throttled function
- */
-
-function throttle(fn, interval) {
-  var throttling = false;
-  return function () {
-    if (throttling) {
-      return;
-    }
-
-    fn.apply(void 0, arguments);
-    throttling = true;
-    setTimeout(function () {
-      throttling = false;
-    }, interval);
-  };
-}
-/**
- * Bind function against target <this>.
- *
- * @param  {Function} fn
- * @param  {Object}   target
- *
- * @return {Function} bound function
- */
-
-function bind(fn, target) {
-  return fn.bind(target);
-}
-
-function _typeof(obj) {
-  "@babel/helpers - typeof";
-
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function (obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function (obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
-
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
-}
-
-/**
- * Convenience wrapper for `Object.assign`.
- *
- * @param {Object} target
- * @param {...Object} others
- *
- * @return {Object} the target
- */
-
-function assign(target) {
-  for (var _len = arguments.length, others = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    others[_key - 1] = arguments[_key];
-  }
-
-  return _extends.apply(void 0, [target].concat(others));
-}
-/**
- * Sets a nested property of a given object to the specified value.
- *
- * This mutates the object and returns it.
- *
- * @param {Object} target The target of the set operation.
- * @param {(string|number)[]} path The path to the nested value.
- * @param {any} value The value to set.
- */
-
-function set(target, path, value) {
-  var currentTarget = target;
-  forEach(path, function (key, idx) {
-    if (typeof key !== 'number' && typeof key !== 'string') {
-      throw new Error('illegal key type: ' + _typeof(key) + '. Key should be of type number or string.');
-    }
-
-    if (key === 'constructor') {
-      throw new Error('illegal key: constructor');
-    }
-
-    if (key === '__proto__') {
-      throw new Error('illegal key: __proto__');
-    }
-
-    var nextKey = path[idx + 1];
-    var nextTarget = currentTarget[key];
-
-    if (isDefined(nextKey) && isNil(nextTarget)) {
-      nextTarget = currentTarget[key] = isNaN(+nextKey) ? {} : [];
-    }
-
-    if (isUndefined(nextKey)) {
-      if (isUndefined(value)) {
-        delete currentTarget[key];
-      } else {
-        currentTarget[key] = value;
-      }
-    } else {
-      currentTarget = nextTarget;
-    }
-  });
-  return target;
-}
-/**
- * Gets a nested property of a given object.
- *
- * @param {Object} target The target of the get operation.
- * @param {(string|number)[]} path The path to the nested value.
- * @param {any} [defaultValue] The value to return if no value exists.
- */
-
-function get(target, path, defaultValue) {
-  var currentTarget = target;
-  forEach(path, function (key) {
-    // accessing nil property yields <undefined>
-    if (isNil(currentTarget)) {
-      currentTarget = undefined;
-      return false;
-    }
-
-    currentTarget = currentTarget[key];
-  });
-  return isUndefined(currentTarget) ? defaultValue : currentTarget;
-}
-/**
- * Pick given properties from the target object.
- *
- * @param {Object} target
- * @param {Array} properties
- *
- * @return {Object} target
- */
-
-function pick(target, properties) {
-  var result = {};
-  var obj = Object(target);
-  forEach(properties, function (prop) {
-    if (prop in obj) {
-      result[prop] = target[prop];
-    }
-  });
-  return result;
-}
-/**
- * Pick all target properties, excluding the given ones.
- *
- * @param {Object} target
- * @param {Array} properties
- *
- * @return {Object} target
- */
-
-function omit(target, properties) {
-  var result = {};
-  var obj = Object(target);
-  forEach(obj, function (prop, key) {
-    if (properties.indexOf(key) === -1) {
-      result[key] = prop;
-    }
-  });
-  return result;
-}
-/**
- * Recursively merge `...sources` into given target.
- *
- * Does support merging objects; does not support merging arrays.
- *
- * @param {Object} target
- * @param {...Object} sources
- *
- * @return {Object} the target
- */
-
-function merge(target) {
-  for (var _len2 = arguments.length, sources = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-    sources[_key2 - 1] = arguments[_key2];
-  }
-
-  if (!sources.length) {
-    return target;
-  }
-
-  forEach(sources, function (source) {
-    // skip non-obj sources, i.e. null
-    if (!source || !isObject(source)) {
-      return;
-    }
-
-    forEach(source, function (sourceVal, key) {
-      if (key === '__proto__') {
-        return;
-      }
-
-      var targetVal = target[key];
-
-      if (isObject(sourceVal)) {
-        if (!isObject(targetVal)) {
-          // override target[key] with object
-          targetVal = {};
-        }
-
-        target[key] = merge(targetVal, sourceVal);
-      } else {
-        target[key] = sourceVal;
-      }
-    });
-  });
-  return target;
-}
-
-
-
-
-/***/ }),
-
-/***/ "../node_modules/diagram-js-direct-editing/node_modules/min-dom/dist/index.esm.js":
-/*!****************************************************************************************!*\
-  !*** ../node_modules/diagram-js-direct-editing/node_modules/min-dom/dist/index.esm.js ***!
-  \****************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "assignStyle": () => (/* binding */ assign$1),
-/* harmony export */   "attr": () => (/* binding */ attr),
-/* harmony export */   "classes": () => (/* binding */ classes),
-/* harmony export */   "clear": () => (/* binding */ clear),
-/* harmony export */   "closest": () => (/* binding */ closest),
-/* harmony export */   "delegate": () => (/* binding */ delegate),
-/* harmony export */   "domify": () => (/* binding */ domify),
-/* harmony export */   "event": () => (/* binding */ componentEvent),
-/* harmony export */   "matches": () => (/* binding */ matchesSelector),
-/* harmony export */   "query": () => (/* binding */ query),
-/* harmony export */   "queryAll": () => (/* binding */ all),
-/* harmony export */   "remove": () => (/* binding */ remove)
-/* harmony export */ });
-/**
- * Flatten array, one level deep.
- *
- * @param {Array<?>} arr
- *
- * @return {Array<?>}
- */
-
-var nativeToString = Object.prototype.toString;
-var nativeHasOwnProperty = Object.prototype.hasOwnProperty;
-function isUndefined(obj) {
-  return obj === undefined;
-}
-function isArray(obj) {
-  return nativeToString.call(obj) === '[object Array]';
-}
-/**
- * Return true, if target owns a property with the given key.
- *
- * @param {Object} target
- * @param {String} key
- *
- * @return {Boolean}
- */
-
-function has(target, key) {
-  return nativeHasOwnProperty.call(target, key);
-}
-/**
- * Iterate over collection; returning something
- * (non-undefined) will stop iteration.
- *
- * @param  {Array|Object} collection
- * @param  {Function} iterator
- *
- * @return {Object} return result that stopped the iteration
- */
-
-function forEach(collection, iterator) {
-  var val, result;
-
-  if (isUndefined(collection)) {
-    return;
-  }
-
-  var convertKey = isArray(collection) ? toNum : identity;
-
-  for (var key in collection) {
-    if (has(collection, key)) {
-      val = collection[key];
-      result = iterator(val, convertKey(key));
-
-      if (result === false) {
-        return val;
-      }
-    }
-  }
-}
-
-function identity(arg) {
-  return arg;
-}
-
-function toNum(arg) {
-  return Number(arg);
-}
-
-/**
- * Assigns style attributes in a style-src compliant way.
- *
- * @param {Element} element
- * @param {...Object} styleSources
- *
- * @return {Element} the element
- */
-function assign$1(element) {
-  var target = element.style;
-
-  for (var _len = arguments.length, styleSources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    styleSources[_key - 1] = arguments[_key];
-  }
-
-  forEach(styleSources, function (style) {
-    if (!style) {
-      return;
-    }
-
-    forEach(style, function (value, key) {
-      target[key] = value;
-    });
-  });
-
-  return element;
-}
-
-/**
- * Set attribute `name` to `val`, or get attr `name`.
- *
- * @param {Element} el
- * @param {String} name
- * @param {String} [val]
- * @api public
- */
-function attr(el, name, val) {
-  // get
-  if (arguments.length == 2) {
-    return el.getAttribute(name);
-  }
-
-  // remove
-  if (val === null) {
-    return el.removeAttribute(name);
-  }
-
-  // set
-  el.setAttribute(name, val);
-
-  return el;
-}
-
-var indexOf = [].indexOf;
-
-var indexof = function(arr, obj){
-  if (indexOf) return arr.indexOf(obj);
-  for (var i = 0; i < arr.length; ++i) {
-    if (arr[i] === obj) return i;
-  }
-  return -1;
-};
-
-/**
- * Taken from https://github.com/component/classes
- *
- * Without the component bits.
- */
-
-/**
- * Whitespace regexp.
- */
-
-var re = /\s+/;
-
-/**
- * toString reference.
- */
-
-var toString = Object.prototype.toString;
-
-/**
- * Wrap `el` in a `ClassList`.
- *
- * @param {Element} el
- * @return {ClassList}
- * @api public
- */
-
-function classes(el) {
-  return new ClassList(el);
-}
-
-/**
- * Initialize a new ClassList for `el`.
- *
- * @param {Element} el
- * @api private
- */
-
-function ClassList(el) {
-  if (!el || !el.nodeType) {
-    throw new Error('A DOM element reference is required');
-  }
-  this.el = el;
-  this.list = el.classList;
-}
-
-/**
- * Add class `name` if not already present.
- *
- * @param {String} name
- * @return {ClassList}
- * @api public
- */
-
-ClassList.prototype.add = function (name) {
-  // classList
-  if (this.list) {
-    this.list.add(name);
-    return this;
-  }
-
-  // fallback
-  var arr = this.array();
-  var i = indexof(arr, name);
-  if (!~i) arr.push(name);
-  this.el.className = arr.join(' ');
-  return this;
-};
-
-/**
- * Remove class `name` when present, or
- * pass a regular expression to remove
- * any which match.
- *
- * @param {String|RegExp} name
- * @return {ClassList}
- * @api public
- */
-
-ClassList.prototype.remove = function (name) {
-  if ('[object RegExp]' == toString.call(name)) {
-    return this.removeMatching(name);
-  }
-
-  // classList
-  if (this.list) {
-    this.list.remove(name);
-    return this;
-  }
-
-  // fallback
-  var arr = this.array();
-  var i = indexof(arr, name);
-  if (~i) arr.splice(i, 1);
-  this.el.className = arr.join(' ');
-  return this;
-};
-
-/**
- * Remove all classes matching `re`.
- *
- * @param {RegExp} re
- * @return {ClassList}
- * @api private
- */
-
-ClassList.prototype.removeMatching = function (re) {
-  var arr = this.array();
-  for (var i = 0; i < arr.length; i++) {
-    if (re.test(arr[i])) {
-      this.remove(arr[i]);
-    }
-  }
-  return this;
-};
-
-/**
- * Toggle class `name`, can force state via `force`.
- *
- * For browsers that support classList, but do not support `force` yet,
- * the mistake will be detected and corrected.
- *
- * @param {String} name
- * @param {Boolean} force
- * @return {ClassList}
- * @api public
- */
-
-ClassList.prototype.toggle = function (name, force) {
-  // classList
-  if (this.list) {
-    if ('undefined' !== typeof force) {
-      if (force !== this.list.toggle(name, force)) {
-        this.list.toggle(name); // toggle again to correct
-      }
-    } else {
-      this.list.toggle(name);
-    }
-    return this;
-  }
-
-  // fallback
-  if ('undefined' !== typeof force) {
-    if (!force) {
-      this.remove(name);
-    } else {
-      this.add(name);
-    }
-  } else {
-    if (this.has(name)) {
-      this.remove(name);
-    } else {
-      this.add(name);
-    }
-  }
-
-  return this;
-};
-
-/**
- * Return an array of classes.
- *
- * @return {Array}
- * @api public
- */
-
-ClassList.prototype.array = function () {
-  var className = this.el.getAttribute('class') || '';
-  var str = className.replace(/^\s+|\s+$/g, '');
-  var arr = str.split(re);
-  if ('' === arr[0]) arr.shift();
-  return arr;
-};
-
-/**
- * Check if class `name` is present.
- *
- * @param {String} name
- * @return {ClassList}
- * @api public
- */
-
-ClassList.prototype.has = ClassList.prototype.contains = function (name) {
-  return this.list ? this.list.contains(name) : !!~indexof(this.array(), name);
-};
-
-/**
- * Remove all children from the given element.
- */
-function clear(el) {
-
-  var c;
-
-  while (el.childNodes.length) {
-    c = el.childNodes[0];
-    el.removeChild(c);
-  }
-
-  return el;
-}
-
-var proto = typeof Element !== 'undefined' ? Element.prototype : {};
-var vendor = proto.matches
-  || proto.matchesSelector
-  || proto.webkitMatchesSelector
-  || proto.mozMatchesSelector
-  || proto.msMatchesSelector
-  || proto.oMatchesSelector;
-
-var matchesSelector = match;
-
-/**
- * Match `el` to `selector`.
- *
- * @param {Element} el
- * @param {String} selector
- * @return {Boolean}
- * @api public
- */
-
-function match(el, selector) {
-  if (!el || el.nodeType !== 1) return false;
-  if (vendor) return vendor.call(el, selector);
-  var nodes = el.parentNode.querySelectorAll(selector);
-  for (var i = 0; i < nodes.length; i++) {
-    if (nodes[i] == el) return true;
-  }
-  return false;
-}
-
-/**
- * Closest
- *
- * @param {Element} el
- * @param {String} selector
- * @param {Boolean} checkYourSelf (optional)
- */
-function closest (element, selector, checkYourSelf) {
-  var currentElem = checkYourSelf ? element : element.parentNode;
-
-  while (currentElem && currentElem.nodeType !== document.DOCUMENT_NODE && currentElem.nodeType !== document.DOCUMENT_FRAGMENT_NODE) {
-
-    if (matchesSelector(currentElem, selector)) {
-      return currentElem;
-    }
-
-    currentElem = currentElem.parentNode;
-  }
-
-  return matchesSelector(currentElem, selector) ? currentElem : null;
-}
-
-var bind$1 = window.addEventListener ? 'addEventListener' : 'attachEvent',
-    unbind = window.removeEventListener ? 'removeEventListener' : 'detachEvent',
-    prefix = bind$1 !== 'addEventListener' ? 'on' : '';
-
-/**
- * Bind `el` event `type` to `fn`.
- *
- * @param {Element} el
- * @param {String} type
- * @param {Function} fn
- * @param {Boolean} capture
- * @return {Function}
- * @api public
- */
-
-var bind_1 = function(el, type, fn, capture){
-  el[bind$1](prefix + type, fn, capture || false);
-  return fn;
-};
-
-/**
- * Unbind `el` event `type`'s callback `fn`.
- *
- * @param {Element} el
- * @param {String} type
- * @param {Function} fn
- * @param {Boolean} capture
- * @return {Function}
- * @api public
- */
-
-var unbind_1 = function(el, type, fn, capture){
-  el[unbind](prefix + type, fn, capture || false);
-  return fn;
-};
-
-var componentEvent = {
-	bind: bind_1,
-	unbind: unbind_1
-};
-
-/**
- * Module dependencies.
- */
-
-/**
- * Delegate event `type` to `selector`
- * and invoke `fn(e)`. A callback function
- * is returned which may be passed to `.unbind()`.
- *
- * @param {Element} el
- * @param {String} selector
- * @param {String} type
- * @param {Function} fn
- * @param {Boolean} capture
- * @return {Function}
- * @api public
- */
-
-// Some events don't bubble, so we want to bind to the capture phase instead
-// when delegating.
-var forceCaptureEvents = ['focus', 'blur'];
-
-function bind$2(el, selector, type, fn, capture) {
-  if (forceCaptureEvents.indexOf(type) !== -1) {
-    capture = true;
-  }
-
-  return componentEvent.bind(el, type, function (e) {
-    var target = e.target || e.srcElement;
-    e.delegateTarget = closest(target, selector, true, el);
-    if (e.delegateTarget) {
-      fn.call(el, e);
-    }
-  }, capture);
-}
-
-/**
- * Unbind event `type`'s callback `fn`.
- *
- * @param {Element} el
- * @param {String} type
- * @param {Function} fn
- * @param {Boolean} capture
- * @api public
- */
-function unbind$1(el, type, fn, capture) {
-  if (forceCaptureEvents.indexOf(type) !== -1) {
-    capture = true;
-  }
-
-  return componentEvent.unbind(el, type, fn, capture);
-}
-
-var delegate = {
-  bind: bind$2,
-  unbind: unbind$1
-};
-
-/**
- * Expose `parse`.
- */
-
-var domify = parse;
-
-/**
- * Tests for browser support.
- */
-
-var innerHTMLBug = false;
-var bugTestDiv;
-if (typeof document !== 'undefined') {
-  bugTestDiv = document.createElement('div');
-  // Setup
-  bugTestDiv.innerHTML = '  <link/><table></table><a href="/a">a</a><input type="checkbox"/>';
-  // Make sure that link elements get serialized correctly by innerHTML
-  // This requires a wrapper element in IE
-  innerHTMLBug = !bugTestDiv.getElementsByTagName('link').length;
-  bugTestDiv = undefined;
-}
-
-/**
- * Wrap map from jquery.
- */
-
-var map$1 = {
-  legend: [1, '<fieldset>', '</fieldset>'],
-  tr: [2, '<table><tbody>', '</tbody></table>'],
-  col: [2, '<table><tbody></tbody><colgroup>', '</colgroup></table>'],
-  // for script/link/style tags to work in IE6-8, you have to wrap
-  // in a div with a non-whitespace character in front, ha!
-  _default: innerHTMLBug ? [1, 'X<div>', '</div>'] : [0, '', '']
-};
-
-map$1.td =
-map$1.th = [3, '<table><tbody><tr>', '</tr></tbody></table>'];
-
-map$1.option =
-map$1.optgroup = [1, '<select multiple="multiple">', '</select>'];
-
-map$1.thead =
-map$1.tbody =
-map$1.colgroup =
-map$1.caption =
-map$1.tfoot = [1, '<table>', '</table>'];
-
-map$1.polyline =
-map$1.ellipse =
-map$1.polygon =
-map$1.circle =
-map$1.text =
-map$1.line =
-map$1.path =
-map$1.rect =
-map$1.g = [1, '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">','</svg>'];
-
-/**
- * Parse `html` and return a DOM Node instance, which could be a TextNode,
- * HTML DOM Node of some kind (<div> for example), or a DocumentFragment
- * instance, depending on the contents of the `html` string.
- *
- * @param {String} html - HTML string to "domify"
- * @param {Document} doc - The `document` instance to create the Node for
- * @return {DOMNode} the TextNode, DOM Node, or DocumentFragment instance
- * @api private
- */
-
-function parse(html, doc) {
-  if ('string' != typeof html) throw new TypeError('String expected');
-
-  // default to the global `document` object
-  if (!doc) doc = document;
-
-  // tag name
-  var m = /<([\w:]+)/.exec(html);
-  if (!m) return doc.createTextNode(html);
-
-  html = html.replace(/^\s+|\s+$/g, ''); // Remove leading/trailing whitespace
-
-  var tag = m[1];
-
-  // body support
-  if (tag == 'body') {
-    var el = doc.createElement('html');
-    el.innerHTML = html;
-    return el.removeChild(el.lastChild);
-  }
-
-  // wrap map
-  var wrap = map$1[tag] || map$1._default;
-  var depth = wrap[0];
-  var prefix = wrap[1];
-  var suffix = wrap[2];
-  var el = doc.createElement('div');
-  el.innerHTML = prefix + html + suffix;
-  while (depth--) el = el.lastChild;
-
-  // one element
-  if (el.firstChild == el.lastChild) {
-    return el.removeChild(el.firstChild);
-  }
-
-  // several elements
-  var fragment = doc.createDocumentFragment();
-  while (el.firstChild) {
-    fragment.appendChild(el.removeChild(el.firstChild));
-  }
-
-  return fragment;
-}
-
-function query(selector, el) {
-  el = el || document;
-
-  return el.querySelector(selector);
-}
-
-function all(selector, el) {
-  el = el || document;
-
-  return el.querySelectorAll(selector);
-}
-
-function remove(el) {
-  el.parentNode && el.parentNode.removeChild(el);
-}
-
-
-
-
-/***/ }),
-
 /***/ "../node_modules/diagram-js/lib/Diagram.js":
 /*!*************************************************!*\
   !*** ../node_modules/diagram-js/lib/Diagram.js ***!
@@ -10654,63 +9274,21 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+/**
+ * @typedef { import('didi').ModuleDeclaration } Module
+ */
 
 /**
  * Bootstrap an injector from a list of modules, instantiating a number of default components
  *
- * @ignore
- * @param {Array<didi.Module>} bootstrapModules
+ * @param {Array<Module>} modules
  *
- * @return {didi.Injector} a injector to use to access the components
+ * @return {Injector} a injector to use to access the components
  */
-function bootstrap(bootstrapModules) {
-
-  var modules = [],
-      components = [];
-
-  function hasModule(m) {
-    return modules.indexOf(m) >= 0;
-  }
-
-  function addModule(m) {
-    modules.push(m);
-  }
-
-  function visit(m) {
-    if (hasModule(m)) {
-      return;
-    }
-
-    (m.__depends__ || []).forEach(visit);
-
-    if (hasModule(m)) {
-      return;
-    }
-
-    addModule(m);
-
-    (m.__init__ || []).forEach(function(c) {
-      components.push(c);
-    });
-  }
-
-  bootstrapModules.forEach(visit);
-
+function bootstrap(modules) {
   var injector = new didi__WEBPACK_IMPORTED_MODULE_0__.Injector(modules);
 
-  components.forEach(function(c) {
-
-    try {
-
-      // eagerly resolve component (fn or string)
-      injector[typeof c === 'string' ? 'get' : 'invoke'](c);
-    } catch (e) {
-      console.error('Failed to instantiate component');
-      console.error(e.stack);
-
-      throw e;
-    }
-  });
+  injector.init();
 
   return injector;
 }
@@ -10718,16 +9296,15 @@ function bootstrap(bootstrapModules) {
 /**
  * Creates an injector from passed options.
  *
- * @ignore
- * @param  {Object} options
- * @return {didi.Injector}
+ * @param {Object} options
+ * @return {Injector}
  */
 function createInjector(options) {
 
   options = options || {};
 
   var configModule = {
-    'config': ['value', options]
+    'config': [ 'value', options ]
   };
 
   var modules = [ configModule, _core__WEBPACK_IMPORTED_MODULE_1__["default"] ].concat(options.modules || []);
@@ -10740,7 +9317,7 @@ function createInjector(options) {
  * The main diagram-js entry point that bootstraps the diagram with the given
  * configuration.
  *
- * To register extensions with the diagram, pass them as Array<didi.Module> to the constructor.
+ * To register extensions with the diagram, pass them as Array<Module> to the constructor.
  *
  * @class djs.Diagram
  * @memberOf djs
@@ -10782,8 +9359,8 @@ function createInjector(options) {
  * // 'shape ... was added to the diagram' logged to console
  *
  * @param {Object} options
- * @param {Array<didi.Module>} [options.modules] external modules to instantiate with the diagram
- * @param {didi.Injector} [injector] an (optional) injector to bootstrap the diagram with
+ * @param {Array<Module>} [options.modules] external modules to instantiate with the diagram
+ * @param {Injector} [injector] an (optional) injector to bootstrap the diagram with
  */
 function Diagram(options, injector) {
 
@@ -10868,7 +9445,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ CommandInterceptor)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -10882,7 +9459,7 @@ var DEFAULT_PRIORITY = 1000;
  *
  * @example
  *
- * import inherits from 'inherits';
+ * import inherits from 'inherits-browser';
  *
  * import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor';
  *
@@ -11022,7 +9599,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ CommandStack)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -11169,7 +9746,7 @@ CommandStack.prototype.execute = function(command, context) {
 
   this._currentExecution.trigger = 'execute';
 
-  var action = { command: command, context: context };
+  const action = { command: command, context: context };
 
   this._pushAction(action);
   this._internalExecute(action);
@@ -11199,11 +9776,11 @@ CommandStack.prototype.execute = function(command, context) {
  */
 CommandStack.prototype.canExecute = function(command, context) {
 
-  var action = { command: command, context: context };
+  const action = { command: command, context: context };
 
-  var handler = this._getHandler(command);
+  const handler = this._getHandler(command);
 
-  var result = this._fire(command, 'canExecute', action);
+  let result = this._fire(command, 'canExecute', action);
 
   // handler#canExecute will only be called if no listener
   // decided on a result already
@@ -11238,7 +9815,7 @@ CommandStack.prototype.clear = function(emit) {
  * Undo last command(s)
  */
 CommandStack.prototype.undo = function() {
-  var action = this._getUndoAction(),
+  let action = this._getUndoAction(),
       next;
 
   if (action) {
@@ -11266,7 +9843,7 @@ CommandStack.prototype.undo = function() {
  * Redo last command(s)
  */
 CommandStack.prototype.redo = function() {
-  var action = this._getRedoAction(),
+  let action = this._getRedoAction(),
       next;
 
   if (action) {
@@ -11314,7 +9891,7 @@ CommandStack.prototype.registerHandler = function(command, handlerCls) {
     throw new Error('command and handlerCls must be defined');
   }
 
-  var handler = this._injector.instantiate(handlerCls);
+  const handler = this._injector.instantiate(handlerCls);
   this.register(command, handler);
 };
 
@@ -11341,24 +9918,22 @@ CommandStack.prototype._getUndoAction = function() {
 // internal functionality //////////////////////
 
 CommandStack.prototype._internalUndo = function(action) {
-  var self = this;
+  const command = action.command,
+        context = action.context;
 
-  var command = action.command,
-      context = action.context;
-
-  var handler = this._getHandler(command);
+  const handler = this._getHandler(command);
 
   // guard against illegal nested command stack invocations
-  this._atomicDo(function() {
-    self._fire(command, 'revert', action);
+  this._atomicDo(() => {
+    this._fire(command, 'revert', action);
 
     if (handler.revert) {
-      self._markDirty(handler.revert(context));
+      this._markDirty(handler.revert(context));
     }
 
-    self._revertedAction(action);
+    this._revertedAction(action);
 
-    self._fire(command, 'reverted', action);
+    this._fire(command, 'reverted', action);
   });
 };
 
@@ -11369,12 +9944,12 @@ CommandStack.prototype._fire = function(command, qualifier, event) {
     qualifier = null;
   }
 
-  var names = qualifier ? [ command + '.' + qualifier, qualifier ] : [ command ],
-      i, name, result;
+  const names = qualifier ? [ command + '.' + qualifier, qualifier ] : [ command ];
+  let result;
 
   event = this._eventBus.createEvent(event);
 
-  for (i = 0; (name = names[i]); i++) {
+  for (const name of names) {
     result = this._eventBus.fire('commandStack.' + name, event);
 
     if (event.cancelBubble) {
@@ -11391,7 +9966,7 @@ CommandStack.prototype._createId = function() {
 
 CommandStack.prototype._atomicDo = function(fn) {
 
-  var execution = this._currentExecution;
+  const execution = this._currentExecution;
 
   execution.atomic = true;
 
@@ -11403,12 +9978,10 @@ CommandStack.prototype._atomicDo = function(fn) {
 };
 
 CommandStack.prototype._internalExecute = function(action, redo) {
-  var self = this;
+  const command = action.command,
+        context = action.context;
 
-  var command = action.command,
-      context = action.context;
-
-  var handler = this._getHandler(command);
+  const handler = this._getHandler(command);
 
   if (!handler) {
     throw new Error('no command handler registered for <' + command + '>');
@@ -11427,20 +10000,20 @@ CommandStack.prototype._internalExecute = function(action, redo) {
   }
 
   // guard against illegal nested command stack invocations
-  this._atomicDo(function() {
+  this._atomicDo(() => {
 
-    self._fire(command, 'execute', action);
+    this._fire(command, 'execute', action);
 
     if (handler.execute) {
 
       // actual execute + mark return results as dirty
-      self._markDirty(handler.execute(context));
+      this._markDirty(handler.execute(context));
     }
 
     // log to stack
-    self._executedAction(action, redo);
+    this._executedAction(action, redo);
 
-    self._fire(command, 'executed', action);
+    this._fire(command, 'executed', action);
   });
 
   if (!redo) {
@@ -11459,10 +10032,10 @@ CommandStack.prototype._internalExecute = function(action, redo) {
 
 CommandStack.prototype._pushAction = function(action) {
 
-  var execution = this._currentExecution,
-      actions = execution.actions;
+  const execution = this._currentExecution,
+        actions = execution.actions;
 
-  var baseAction = actions[0];
+  const baseAction = actions[0];
 
   if (execution.atomic) {
     throw new Error('illegal invocation in <execute> or <revert> phase (action: ' + action.command + ')');
@@ -11477,10 +10050,10 @@ CommandStack.prototype._pushAction = function(action) {
 
 
 CommandStack.prototype._popAction = function() {
-  var execution = this._currentExecution,
-      trigger = execution.trigger,
-      actions = execution.actions,
-      dirty = execution.dirty;
+  const execution = this._currentExecution,
+        trigger = execution.trigger,
+        actions = execution.actions,
+        dirty = execution.dirty;
 
   actions.pop();
 
@@ -11497,7 +10070,7 @@ CommandStack.prototype._popAction = function() {
 
 
 CommandStack.prototype._markDirty = function(elements) {
-  var execution = this._currentExecution;
+  const execution = this._currentExecution;
 
   if (!elements) {
     return;
@@ -11510,7 +10083,7 @@ CommandStack.prototype._markDirty = function(elements) {
 
 
 CommandStack.prototype._executedAction = function(action, redo) {
-  var stackIdx = ++this._stackIdx;
+  const stackIdx = ++this._stackIdx;
 
   if (!redo) {
     this._stack.splice(stackIdx, this._stack.length, action);
@@ -11574,11 +10147,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Canvas)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var _util_Collections__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../util/Collections */ "../node_modules/diagram-js/lib/util/Collections.js");
-/* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
-/* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var _util_Collections__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../util/Collections */ "../node_modules/diagram-js/lib/util/Collections.js");
+/* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
+/* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+
+
 
 
 
@@ -11619,15 +10195,15 @@ function createContainer(options) {
 
   options = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, { width: '100%', height: '100%' }, options);
 
-  var container = options.container || document.body;
+  const container = options.container || document.body;
 
   // create a <div> around the svg element with the respective size
   // this way we can always get the correct container size
   // (this is impossible for <svg> elements at the moment)
-  var parent = document.createElement('div');
-  parent.setAttribute('class', 'djs-container');
+  const parent = document.createElement('div');
+  parent.setAttribute('class', 'djs-container djs-parent');
 
-  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(parent.style, {
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.assignStyle)(parent, {
     position: 'relative',
     overflow: 'hidden',
     width: ensurePx(options.width),
@@ -11640,10 +10216,10 @@ function createContainer(options) {
 }
 
 function createGroup(parent, cls, childIndex) {
-  var group = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.create)('g');
-  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.classes)(group).add(cls);
+  const group = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('g');
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.classes)(group).add(cls);
 
-  var index = childIndex !== undefined ? childIndex : parent.childNodes.length - 1;
+  const index = childIndex !== undefined ? childIndex : parent.childNodes.length - 1;
 
   // must ensure second argument is node or _null_
   // cf. https://developer.mozilla.org/en-US/docs/Web/API/Node/insertBefore
@@ -11652,15 +10228,14 @@ function createGroup(parent, cls, childIndex) {
   return group;
 }
 
-var BASE_LAYER = 'base';
-var HIDDEN_MARKER = 'djs-element-hidden';
+const BASE_LAYER = 'base';
 
 // render plane contents behind utility layers
-var PLANE_LAYER_INDEX = 0;
-var UTILITY_LAYER_INDEX = 1;
+const PLANE_LAYER_INDEX = 0;
+const UTILITY_LAYER_INDEX = 1;
 
 
-var REQUIRED_MODEL_ATTRS = {
+const REQUIRED_MODEL_ATTRS = {
   shape: [ 'x', 'y', 'width', 'height' ],
   connection: [ 'waypoints' ]
 };
@@ -11683,6 +10258,12 @@ function Canvas(config, eventBus, graphicsFactory, elementRegistry) {
   this._eventBus = eventBus;
   this._elementRegistry = elementRegistry;
   this._graphicsFactory = graphicsFactory;
+
+  this._rootsIdx = 0;
+
+  this._layers = {};
+  this._planes = [];
+  this._rootElement = null;
 
   this._init(config || {});
 }
@@ -11709,20 +10290,17 @@ Canvas.$inject = [
  */
 Canvas.prototype._init = function(config) {
 
-  var eventBus = this._eventBus;
+  const eventBus = this._eventBus;
 
   // html container
-  var container = this._container = createContainer(config);
+  const container = this._container = createContainer(config);
 
-  var svg = this._svg = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.create)('svg');
-  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(svg, { width: '100%', height: '100%' });
+  const svg = this._svg = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('svg');
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(svg, { width: '100%', height: '100%' });
 
-  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.append)(container, svg);
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.append)(container, svg);
 
-  var viewport = this._viewport = createGroup(svg, 'viewport');
-
-  this._layers = {};
-  this._planes = {};
+  const viewport = this._viewport = createGroup(svg, 'viewport');
 
   // debounce canvas.viewbox.changed events
   // for smoother diagram interaction
@@ -11758,7 +10336,7 @@ Canvas.prototype._init = function(config) {
     'shape.removed',
     'connection.removed',
     'elements.changed',
-    'plane.set'
+    'root.set'
   ], function() {
     delete this._cachedViewbox;
   }, this);
@@ -11773,7 +10351,7 @@ Canvas.prototype._destroy = function(emit) {
     viewport: this._viewport
   });
 
-  var parent = this._container.parentNode;
+  const parent = this._container.parentNode;
 
   if (parent) {
     parent.removeChild(this._container);
@@ -11783,30 +10361,28 @@ Canvas.prototype._destroy = function(emit) {
   delete this._container;
   delete this._layers;
   delete this._planes;
-  delete this._activePlane;
+  delete this._rootElement;
   delete this._viewport;
 };
 
 Canvas.prototype._clear = function() {
 
-  var self = this;
-
-  var allElements = this._elementRegistry.getAll();
+  const allElements = this._elementRegistry.getAll();
 
   // remove all elements
-  allElements.forEach(function(element) {
-    var type = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getType)(element);
+  allElements.forEach(element => {
+    const type = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_3__.getType)(element);
 
     if (type === 'root') {
-      self.setRootElementForPlane(null, self.findPlane(element), true);
+      this.removeRootElement(element);
     } else {
-      self._removeElement(element, type);
+      this._removeElement(element, type);
     }
   });
 
   // remove all planes
-  this._activePlane = null;
-  this._planes = {};
+  this._planes = [];
+  this._rootElement = null;
 
   // force recomputation of view box
   delete this._cachedViewbox;
@@ -11843,7 +10419,7 @@ Canvas.prototype.getLayer = function(name, index) {
     throw new Error('must specify a name');
   }
 
-  var layer = this._layers[name];
+  let layer = this._layers[name];
 
   if (!layer) {
     layer = this._layers[name] = this._createLayer(name, index);
@@ -11856,6 +10432,25 @@ Canvas.prototype.getLayer = function(name, index) {
   }
 
   return layer.group;
+};
+
+/**
+ * For a given index, return the number of layers that have a higher index and
+ * are visible.
+ *
+ * This is used to determine the node a layer should be inserted at.
+ *
+ * @param {Number} index
+ * @returns {Number}
+ */
+Canvas.prototype._getChildIndex = function(index) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.reduce)(this._layers, function(childIndex, layer) {
+    if (layer.visible && index >= layer.index) {
+      childIndex++;
+    }
+
+    return childIndex;
+  }, 0);
 };
 
 /**
@@ -11872,154 +10467,150 @@ Canvas.prototype._createLayer = function(name, index) {
     index = UTILITY_LAYER_INDEX;
   }
 
-  var childIndex = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.reduce)(this._layers, function(childIndex, layer) {
-    if (index >= layer.index) {
-      childIndex++;
-    }
-
-    return childIndex;
-  }, 0);
+  const childIndex = this._getChildIndex(index);
 
   return {
     group: createGroup(this._viewport, 'layer-' + name, childIndex),
-    index: index
+    index: index,
+    visible: true
   };
-
 };
 
-/**
- * Returns a plane that is used to draw elements on it.
- *
- * @param {string} name
- *
- * @return {Object} plane descriptor with { layer, rootElement, name }
- */
-Canvas.prototype.getPlane = function(name) {
-  if (!name) {
-    throw new Error('must specify a name');
-  }
-
-  return this._planes[name];
-};
 
 /**
- * Creates a plane that is used to draw elements on it. If no
- * root element is provided, an implicit root will be used.
+ * Shows a given layer.
  *
- * @param {string} name
- * @param {Object|djs.model.Root} [rootElement] optional root element
- *
- * @return {Object} plane descriptor with { layer, rootElement, name }
- */
-Canvas.prototype.createPlane = function(name, rootElement) {
-  if (!name) {
-    throw new Error('must specify a name');
-  }
-
-  if (this._planes[name]) {
-    throw new Error('plane ' + name + ' already exists');
-  }
-
-  if (!rootElement) {
-    rootElement = {
-      id: '__implicitroot' + name,
-      children: [],
-      isImplicit: true
-    };
-  }
-
-  var svgLayer = this.getLayer(name, PLANE_LAYER_INDEX);
-  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.classes)(svgLayer).add(HIDDEN_MARKER);
-
-  var plane = this._planes[name] = {
-    layer: svgLayer,
-    name: name,
-    rootElement: null
-  };
-
-  this.setRootElementForPlane(rootElement, plane);
-
-  return plane;
-};
-
-/**
- * Sets the active plane and hides the previously active plane.
- *
- * @param {string|Object} plane
- *
- * @return {Object} plane descriptor with { layer, rootElement, name }
- */
-Canvas.prototype.setActivePlane = function(plane) {
-  if (!plane) {
-    throw new Error('must specify a plane');
-  }
-
-  if (typeof plane === 'string') {
-    plane = this.getPlane(plane);
-  }
-
-  // hide previous Plane
-  if (this._activePlane) {
-    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.classes)(this._activePlane.layer).add(HIDDEN_MARKER);
-  }
-
-  this._activePlane = plane;
-
-  // show current Plane
-  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.classes)(plane.layer).remove(HIDDEN_MARKER);
-
-  if (plane.rootElement) {
-    this._elementRegistry.updateGraphics(plane.rootElement, this._svg, true);
-  }
-
-  this._eventBus.fire('plane.set', { plane: plane });
-
-  return plane;
-};
-
-/**
- * Returns the currently active layer
- *
+ * @param {String} layer
  * @returns {SVGElement}
  */
+Canvas.prototype.showLayer = function(name) {
 
-Canvas.prototype.getActiveLayer = function() {
-  return this.getActivePlane().layer;
+  if (!name) {
+    throw new Error('must specify a name');
+  }
+
+  const layer = this._layers[name];
+
+  if (!layer) {
+    throw new Error('layer <' + name + '> does not exist');
+  }
+
+  const viewport = this._viewport;
+  const group = layer.group;
+  const index = layer.index;
+
+  if (layer.visible) {
+    return group;
+  }
+
+  const childIndex = this._getChildIndex(index);
+
+  viewport.insertBefore(group, viewport.childNodes[childIndex] || null);
+
+  layer.visible = true;
+
+  return group;
 };
 
 /**
- * Returns the currently active plane.
+ * Hides a given layer.
  *
- * @return {Object} plane descriptor with { layer, rootElement, name }
+ * @param {String} layer
+ * @returns {SVGElement}
  */
-Canvas.prototype.getActivePlane = function() {
-  var plane = this._activePlane;
-  if (!plane) {
-    plane = this.createPlane(BASE_LAYER);
-    this.setActivePlane(BASE_LAYER);
+Canvas.prototype.hideLayer = function(name) {
+
+  if (!name) {
+    throw new Error('must specify a name');
   }
 
-  return plane;
+  const layer = this._layers[name];
+
+  if (!layer) {
+    throw new Error('layer <' + name + '> does not exist');
+  }
+
+  const group = layer.group;
+
+  if (!layer.visible) {
+    return group;
+  }
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.remove)(group);
+
+  layer.visible = false;
+
+  return group;
 };
+
+
+Canvas.prototype._removeLayer = function(name) {
+
+  const layer = this._layers[name];
+
+  if (layer) {
+    delete this._layers[name];
+
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.remove)(layer.group);
+  }
+};
+
+/**
+ * Returns the currently active layer. Can be null.
+ *
+ * @returns {SVGElement|null}
+ */
+Canvas.prototype.getActiveLayer = function() {
+  const plane = this._findPlaneForRoot(this.getRootElement());
+
+  if (!plane) {
+    return null;
+  }
+
+  return plane.layer;
+};
+
 
 /**
  * Returns the plane which contains the given element.
  *
  * @param {string|djs.model.Base} element
  *
- * @return {Object} plane descriptor with { layer, rootElement, name }
+ * @return {djs.model.Base} root for element
  */
-Canvas.prototype.findPlane = function(element) {
+Canvas.prototype.findRoot = function(element) {
   if (typeof element === 'string') {
     element = this._elementRegistry.get(element);
   }
 
-  var root = findRoot(element);
+  if (!element) {
+    return;
+  }
 
-  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.find)(this._planes, function(plane) {
-    return plane.rootElement === root;
+  const plane = this._findPlaneForRoot(
+    findRoot(element)
+  ) || {};
+
+  return plane.rootElement;
+};
+
+/**
+ * Return a list of all root elements on the diagram.
+ *
+ * @return {djs.model.Root[]}
+ */
+Canvas.prototype.getRootElements = function() {
+  return this._planes.map(function(plane) {
+    return plane.rootElement;
   });
 };
+
+Canvas.prototype._findPlaneForRoot = function(rootElement) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.find)(this._planes, function(plane) {
+    return plane.rootElement === rootElement;
+  });
+};
+
 
 /**
  * Returns the html element that encloses the
@@ -12035,7 +10626,7 @@ Canvas.prototype.getContainer = function() {
 // markers //////////////////////
 
 Canvas.prototype._updateMarker = function(element, marker, add) {
-  var container;
+  let container;
 
   if (!element.id) {
     element = this._elementRegistry.get(element);
@@ -12053,9 +10644,9 @@ Canvas.prototype._updateMarker = function(element, marker, add) {
 
       // invoke either addClass or removeClass based on mode
       if (add) {
-        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.classes)(gfx).add(marker);
+        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.classes)(gfx).add(marker);
       } else {
-        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.classes)(gfx).remove(marker);
+        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.classes)(gfx).remove(marker);
       }
     }
   });
@@ -12083,7 +10674,7 @@ Canvas.prototype._updateMarker = function(element, marker, add) {
  * @example
  * canvas.addMarker('foo', 'some-marker');
  *
- * var fooGfx = canvas.getGraphics('foo');
+ * const fooGfx = canvas.getGraphics('foo');
  *
  * fooGfx; // <g class="... some-marker"> ... </g>
  *
@@ -12119,9 +10710,9 @@ Canvas.prototype.hasMarker = function(element, marker) {
     element = this._elementRegistry.get(element);
   }
 
-  var gfx = this.getGraphics(element);
+  const gfx = this.getGraphics(element);
 
-  return (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.classes)(gfx).has(marker);
+  return (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.classes)(gfx).has(marker);
 };
 
 /**
@@ -12141,12 +10732,106 @@ Canvas.prototype.toggleMarker = function(element, marker) {
   }
 };
 
+/**
+ * Returns the current root element.
+ *
+ * Supports two different modes for handling root elements:
+ *
+ * 1. if no root element has been added before, an implicit root will be added
+ * and returned. This is used in applications that don't require explicit
+ * root elements.
+ *
+ * 2. when root elements have been added before calling `getRootElement`,
+ * root elements can be null. This is used for applications that want to manage
+ * root elements themselves.
+ *
+ * @returns {Object|djs.model.Root|null} rootElement.
+ */
 Canvas.prototype.getRootElement = function() {
-  var plane = this.getActivePlane();
+  const rootElement = this._rootElement;
 
-  return plane.rootElement;
+  // can return null if root elements are present but none was set yet
+  if (rootElement || this._planes.length) {
+    return rootElement;
+  }
+
+  return this.setRootElement(this.addRootElement(null));
 };
 
+/**
+ * Adds a given root element and returns it.
+ *
+ * @param {Object|djs.model.Root} rootElement
+ *
+ * @return {Object|djs.model.Root} rootElement
+ */
+
+Canvas.prototype.addRootElement = function(rootElement) {
+  const idx = this._rootsIdx++;
+
+  if (!rootElement) {
+    rootElement = {
+      id: '__implicitroot_' + idx,
+      children: [],
+      isImplicit: true
+    };
+  }
+
+  const layerName = rootElement.layer = 'root-' + idx;
+
+  this._ensureValid('root', rootElement);
+
+  const layer = this.getLayer(layerName, PLANE_LAYER_INDEX);
+
+  this.hideLayer(layerName);
+
+  this._addRoot(rootElement, layer);
+
+  this._planes.push({
+    rootElement: rootElement,
+    layer: layer
+  });
+
+  return rootElement;
+};
+
+/**
+ * Removes a given rootElement and returns it.
+ *
+ * @param {djs.model.Root|String} rootElement
+ *
+ * @return {Object|djs.model.Root} rootElement
+ */
+Canvas.prototype.removeRootElement = function(rootElement) {
+
+  if (typeof rootElement === 'string') {
+    rootElement = this._elementRegistry.get(rootElement);
+  }
+
+  const plane = this._findPlaneForRoot(rootElement);
+
+  if (!plane) {
+    return;
+  }
+
+  // hook up life-cycle events
+  this._removeRoot(rootElement);
+
+  // clean up layer
+  this._removeLayer(rootElement.layer);
+
+  // clean up plane
+  this._planes = this._planes.filter(function(plane) {
+    return plane.rootElement !== rootElement;
+  });
+
+  // clean up active root
+  if (this._rootElement === rootElement) {
+    this._rootElement = null;
+  }
+
+  return rootElement;
+};
 
 
 // root element handling //////////////////////
@@ -12155,81 +10840,93 @@ Canvas.prototype.getRootElement = function() {
  * Sets a given element as the new root element for the canvas
  * and returns the new root element.
  *
- * @param {Object|djs.model.Root} element
- * @param {boolean} [override] whether to override the current root element, if any
+ * @param {Object|djs.model.Root} rootElement
  *
  * @return {Object|djs.model.Root} new root element
  */
-Canvas.prototype.setRootElement = function(element, override) {
-  var activePlane = this._activePlane;
+Canvas.prototype.setRootElement = function(rootElement, override) {
 
-  if (activePlane) {
-    return this.setRootElementForPlane(element, activePlane, override);
-  } else {
-    var basePlane = this.createPlane(BASE_LAYER, element);
-
-    this.setActivePlane(basePlane);
-
-    return basePlane.rootElement;
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isDefined)(override)) {
+    throw new Error('override not supported');
   }
+
+  if (rootElement === this._rootElement) {
+    return;
+  }
+
+  let plane;
+
+  if (!rootElement) {
+    throw new Error('rootElement required');
+  }
+
+  plane = this._findPlaneForRoot(rootElement);
+
+  // give set add semantics for backwards compatibility
+  if (!plane) {
+    rootElement = this.addRootElement(rootElement);
+  }
+
+  this._setRoot(rootElement);
+
+  return rootElement;
 };
 
 
-/**
- * Sets a given element as the new root element for the canvas
- * and returns the new root element.
- *
- * @param {Object|djs.model.Root} element
- * @param {Object|djs.model.Root} plane
- * @param {boolean} [override] whether to override the current root element, if any
- *
- * @return {Object|djs.model.Root} new root element
- */
-Canvas.prototype.setRootElementForPlane = function(element, plane, override) {
+Canvas.prototype._removeRoot = function(element) {
+  const elementRegistry = this._elementRegistry,
+        eventBus = this._eventBus;
 
-  if (typeof plane === 'string') {
-    plane = this.getPlane(plane);
-  }
+  // simulate element remove event sequence
+  eventBus.fire('root.remove', { element: element });
+  eventBus.fire('root.removed', { element: element });
 
-  if (element) {
-    this._ensureValid('root', element);
-  }
+  elementRegistry.remove(element);
+};
 
-  var currentRoot = plane.rootElement,
-      elementRegistry = this._elementRegistry,
-      eventBus = this._eventBus;
+
+Canvas.prototype._addRoot = function(element, gfx) {
+  const elementRegistry = this._elementRegistry,
+        eventBus = this._eventBus;
+
+  // resemble element add event sequence
+  eventBus.fire('root.add', { element: element });
+
+  elementRegistry.add(element, gfx);
+
+  eventBus.fire('root.added', { element: element, gfx: gfx });
+};
+
+
+Canvas.prototype._setRoot = function(rootElement, layer) {
+
+  const currentRoot = this._rootElement;
 
   if (currentRoot) {
-    if (!override) {
-      throw new Error('rootElement already set, need to specify override');
-    }
 
-    // simulate element remove event sequence
-    eventBus.fire('root.remove', { element: currentRoot });
-    eventBus.fire('root.removed', { element: currentRoot });
+    // un-associate previous root element <svg>
+    this._elementRegistry.updateGraphics(currentRoot, null, true);
 
-    elementRegistry.remove(currentRoot);
+    // hide previous layer
+    this.hideLayer(currentRoot.layer);
   }
 
-  if (element) {
-    var gfx = plane.layer;
+  if (rootElement) {
 
-    // resemble element add event sequence
-    eventBus.fire('root.add', { element: element });
-
-    elementRegistry.add(element, gfx);
-
-    eventBus.fire('root.added', { element: element, gfx: gfx });
-
-    // associate SVG with root element when active
-    if (plane === this._activePlane) {
-      this._elementRegistry.updateGraphics(element, this._svg, true);
+    if (!layer) {
+      layer = this._findPlaneForRoot(rootElement).layer;
     }
+
+    // associate element with <svg>
+    this._elementRegistry.updateGraphics(rootElement, this._svg, true);
+
+    // show root layer
+    this.showLayer(rootElement.layer);
   }
 
-  plane.rootElement = element;
+  this._rootElement = rootElement;
 
-  return element;
+  this._eventBus.fire('root.set', { element: rootElement });
 };
 
 // add functionality //////////////////////
@@ -12240,12 +10937,12 @@ Canvas.prototype._ensureValid = function(type, element) {
   }
 
   if (this._elementRegistry.get(element.id)) {
-    throw new Error('element with id ' + element.id + ' already exists');
+    throw new Error('element <' + element.id + '> already exists');
   }
 
-  var requiredAttrs = REQUIRED_MODEL_ATTRS[type];
+  const requiredAttrs = REQUIRED_MODEL_ATTRS[type];
 
-  var valid = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.every)(requiredAttrs, function(attr) {
+  const valid = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.every)(requiredAttrs, function(attr) {
     return typeof element[attr] !== 'undefined';
   });
 
@@ -12256,7 +10953,7 @@ Canvas.prototype._ensureValid = function(type, element) {
 };
 
 Canvas.prototype._setParent = function(element, parent, parentIndex) {
-  (0,_util_Collections__WEBPACK_IMPORTED_MODULE_3__.add)(parent.children, element, parentIndex);
+  (0,_util_Collections__WEBPACK_IMPORTED_MODULE_4__.add)(parent.children, element, parentIndex);
   element.parent = parent;
 };
 
@@ -12284,8 +10981,8 @@ Canvas.prototype._addElement = function(type, element, parent, parentIndex) {
 
   parent = parent || this.getRootElement();
 
-  var eventBus = this._eventBus,
-      graphicsFactory = this._graphicsFactory;
+  const eventBus = this._eventBus,
+        graphicsFactory = this._graphicsFactory;
 
   this._ensureValid(type, element);
 
@@ -12294,7 +10991,7 @@ Canvas.prototype._addElement = function(type, element, parent, parentIndex) {
   this._setParent(element, parent, parentIndex);
 
   // create graphics
-  var gfx = graphicsFactory.create(type, element, parentIndex);
+  const gfx = graphicsFactory.create(type, element, parentIndex);
 
   this._elementRegistry.add(element, gfx);
 
@@ -12338,9 +11035,9 @@ Canvas.prototype.addConnection = function(connection, parent, parentIndex) {
  */
 Canvas.prototype._removeElement = function(element, type) {
 
-  var elementRegistry = this._elementRegistry,
-      graphicsFactory = this._graphicsFactory,
-      eventBus = this._eventBus;
+  const elementRegistry = this._elementRegistry,
+        graphicsFactory = this._graphicsFactory,
+        eventBus = this._eventBus;
 
   element = elementRegistry.get(element.id || element);
 
@@ -12355,7 +11052,7 @@ Canvas.prototype._removeElement = function(element, type) {
   graphicsFactory.remove(element);
 
   // unset parent <-> child relationship
-  (0,_util_Collections__WEBPACK_IMPORTED_MODULE_3__.remove)(element.parent && element.parent.children, element);
+  (0,_util_Collections__WEBPACK_IMPORTED_MODULE_4__.remove)(element.parent && element.parent.children, element);
   element.parent = null;
 
   eventBus.fire(type + '.removed', { element: element });
@@ -12489,7 +11186,7 @@ Canvas.prototype._viewboxChanged = function() {
  * // sets the visible area of the diagram to (100|100) -> (600|100)
  * // and and scales it according to the diagram width
  *
- * var viewbox = canvas.viewbox(); // pass `false` to force recomputing the box.
+ * const viewbox = canvas.viewbox(); // pass `false` to force recomputing the box.
  *
  * console.log(viewbox);
  * // {
@@ -12503,7 +11200,7 @@ Canvas.prototype._viewboxChanged = function() {
  * // if the current diagram is zoomed and scrolled, you may reset it to the
  * // default zoom via this method, too:
  *
- * var zoomedAndScrolledViewbox = canvas.viewbox();
+ * const zoomedAndScrolledViewbox = canvas.viewbox();
  *
  * canvas.viewbox({
  *   x: 0,
@@ -12526,10 +11223,11 @@ Canvas.prototype.viewbox = function(box) {
     return this._cachedViewbox;
   }
 
-  var viewport = this._viewport,
-      innerBox,
-      outerBox = this.getSize(),
+  const viewport = this._viewport,
+        outerBox = this.getSize();
+  let innerBox,
       matrix,
+      activeLayer,
       transform,
       scale,
       x, y;
@@ -12537,13 +11235,14 @@ Canvas.prototype.viewbox = function(box) {
   if (!box) {
 
     // compute the inner box based on the
-    // diagrams active plane. This allows us to exclude
+    // diagrams active layer. This allows us to exclude
     // external components, such as overlays
 
-    innerBox = (this._activePlane && this._activePlane.layer.getBBox()) || {};
+    activeLayer = this._rootElement ? this.getActiveLayer() : null;
+    innerBox = activeLayer && activeLayer.getBBox() || {};
 
-    transform = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.transform)(viewport);
-    matrix = transform ? transform.matrix : (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.createMatrix)();
+    transform = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.transform)(viewport);
+    matrix = transform ? transform.matrix : (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.createMatrix)();
     scale = round(matrix.a, 1000);
 
     x = round(-matrix.e || 0, 1000);
@@ -12570,11 +11269,11 @@ Canvas.prototype.viewbox = function(box) {
     this._changeViewbox(function() {
       scale = Math.min(outerBox.width / box.width, outerBox.height / box.height);
 
-      var matrix = this._svg.createSVGMatrix()
+      const matrix = this._svg.createSVGMatrix()
         .scale(scale)
         .translate(-box.x, -box.y);
 
-      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.transform)(viewport, matrix);
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.transform)(viewport, matrix);
     });
   }
 
@@ -12592,8 +11291,8 @@ Canvas.prototype.viewbox = function(box) {
  */
 Canvas.prototype.scroll = function(delta) {
 
-  var node = this._viewport;
-  var matrix = node.getCTM();
+  const node = this._viewport;
+  let matrix = node.getCTM();
 
   if (delta) {
     this._changeViewbox(function() {
@@ -12617,16 +11316,17 @@ Canvas.prototype.scroll = function(delta) {
  *
  */
 Canvas.prototype.scrollToElement = function(element, padding) {
-  var defaultPadding = 100;
+  let defaultPadding = 100;
 
   if (typeof element === 'string') {
     element = this._elementRegistry.get(element);
   }
 
-  // switch to correct Plane
-  var targetPlane = this.findPlane(element);
-  if (targetPlane !== this._activePlane) {
-    this.setActivePlane(targetPlane);
+  // set to correct rootElement
+  const rootElement = this.findRoot(element);
+
+  if (rootElement !== this.getRootElement()) {
+    this.setRootElement(rootElement);
   }
 
   if (!padding) {
@@ -12643,11 +11343,11 @@ Canvas.prototype.scrollToElement = function(element, padding) {
     left: padding.left || defaultPadding
   };
 
-  var elementBounds = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getBBox)(element),
-      elementTrbl = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_4__.asTRBL)(elementBounds),
-      viewboxBounds = this.viewbox(),
-      zoom = this.zoom(),
-      dx, dy;
+  const elementBounds = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_3__.getBBox)(element),
+        elementTrbl = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__.asTRBL)(elementBounds),
+        viewboxBounds = this.viewbox(),
+        zoom = this.zoom();
+  let dx, dy;
 
   // shrink viewboxBounds with padding
   viewboxBounds.y += padding.top / zoom;
@@ -12655,9 +11355,9 @@ Canvas.prototype.scrollToElement = function(element, padding) {
   viewboxBounds.width -= (padding.right + padding.left) / zoom;
   viewboxBounds.height -= (padding.bottom + padding.top) / zoom;
 
-  var viewboxTrbl = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_4__.asTRBL)(viewboxBounds);
+  const viewboxTrbl = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__.asTRBL)(viewboxBounds);
 
-  var canFit = elementBounds.width < viewboxBounds.width && elementBounds.height < viewboxBounds.height;
+  const canFit = elementBounds.width < viewboxBounds.width && elementBounds.height < viewboxBounds.height;
 
   if (!canFit) {
 
@@ -12667,10 +11367,10 @@ Canvas.prototype.scrollToElement = function(element, padding) {
 
   } else {
 
-    var dRight = Math.max(0, elementTrbl.right - viewboxTrbl.right),
-        dLeft = Math.min(0, elementTrbl.left - viewboxTrbl.left),
-        dBottom = Math.max(0, elementTrbl.bottom - viewboxTrbl.bottom),
-        dTop = Math.min(0, elementTrbl.top - viewboxTrbl.top);
+    const dRight = Math.max(0, elementTrbl.right - viewboxTrbl.right),
+          dLeft = Math.min(0, elementTrbl.left - viewboxTrbl.left),
+          dBottom = Math.max(0, elementTrbl.bottom - viewboxTrbl.bottom),
+          dTop = Math.min(0, elementTrbl.top - viewboxTrbl.top);
 
     dx = dRight || dLeft;
     dy = dBottom || dTop;
@@ -12703,7 +11403,7 @@ Canvas.prototype.zoom = function(newScale, center) {
     return this._fitViewport(center);
   }
 
-  var outer,
+  let outer,
       matrix;
 
   this._changeViewbox(function() {
@@ -12724,16 +11424,16 @@ Canvas.prototype.zoom = function(newScale, center) {
 };
 
 function setCTM(node, m) {
-  var mstr = 'matrix(' + m.a + ',' + m.b + ',' + m.c + ',' + m.d + ',' + m.e + ',' + m.f + ')';
+  const mstr = 'matrix(' + m.a + ',' + m.b + ',' + m.c + ',' + m.d + ',' + m.e + ',' + m.f + ')';
   node.setAttribute('transform', mstr);
 }
 
 Canvas.prototype._fitViewport = function(center) {
 
-  var vbox = this.viewbox(),
-      outer = vbox.outer,
-      inner = vbox.inner,
-      newScale,
+  const vbox = this.viewbox(),
+        outer = vbox.outer,
+        inner = vbox.inner;
+  let newScale,
       newViewbox;
 
   // display the complete diagram without zooming in.
@@ -12774,13 +11474,13 @@ Canvas.prototype._fitViewport = function(center) {
 
 Canvas.prototype._setZoom = function(scale, center) {
 
-  var svg = this._svg,
-      viewport = this._viewport;
+  const svg = this._svg,
+        viewport = this._viewport;
 
-  var matrix = svg.createSVGMatrix();
-  var point = svg.createSVGPoint();
+  const matrix = svg.createSVGMatrix();
+  const point = svg.createSVGPoint();
 
-  var centerPoint,
+  let centerPoint,
       originalPoint,
       currentMatrix,
       scaleMatrix,
@@ -12788,7 +11488,7 @@ Canvas.prototype._setZoom = function(scale, center) {
 
   currentMatrix = viewport.getCTM();
 
-  var currentScale = currentMatrix.a;
+  const currentScale = currentMatrix.a;
 
   if (center) {
     centerPoint = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(point, center);
@@ -12837,13 +11537,13 @@ Canvas.prototype.getSize = function() {
  * @return {Bounds} the absolute bounding box
  */
 Canvas.prototype.getAbsoluteBBox = function(element) {
-  var vbox = this.viewbox();
-  var bbox;
+  const vbox = this.viewbox();
+  let bbox;
 
   // connection
   // use svg bbox
   if (element.waypoints) {
-    var gfx = this.getGraphics(element);
+    const gfx = this.getGraphics(element);
 
     bbox = gfx.getBBox();
   }
@@ -12854,11 +11554,11 @@ Canvas.prototype.getAbsoluteBBox = function(element) {
     bbox = element;
   }
 
-  var x = bbox.x * vbox.scale - vbox.x * vbox.scale;
-  var y = bbox.y * vbox.scale - vbox.y * vbox.scale;
+  const x = bbox.x * vbox.scale - vbox.x * vbox.scale;
+  const y = bbox.y * vbox.scale - vbox.y * vbox.scale;
 
-  var width = bbox.width * vbox.scale;
-  var height = bbox.height * vbox.scale;
+  const width = bbox.width * vbox.scale;
+  const height = bbox.height * vbox.scale;
 
   return {
     x: x,
@@ -12895,7 +11595,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ ElementFactory)
 /* harmony export */ });
 /* harmony import */ var _model__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../model */ "../node_modules/diagram-js/lib/model/index.js");
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -12956,7 +11656,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ElementRegistry)
 /* harmony export */ });
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
 var ELEMENT_ID = 'data-element-id';
 
 
@@ -13001,7 +11701,7 @@ ElementRegistry.prototype.add = function(element, gfx, secondaryGfx) {
 /**
  * Removes an element from the registry.
  *
- * @param {djs.model.Base} element
+ * @param {string|djs.model.Base} element
  */
 ElementRegistry.prototype.remove = function(element) {
   var elements = this._elements,
@@ -13024,7 +11724,7 @@ ElementRegistry.prototype.remove = function(element) {
 /**
  * Update the id of an element
  *
- * @param {djs.model.Base} element
+ * @param {string|djs.model.Base} element
  * @param {string} newId
  */
 ElementRegistry.prototype.updateId = function(element, newId) {
@@ -13053,7 +11753,7 @@ ElementRegistry.prototype.updateId = function(element, newId) {
 /**
  * Update the graphics of an element
  *
- * @param {djs.model.Base} element
+ * @param {string|djs.model.Base} element
  * @param {SVGElement} gfx
  * @param {boolean} [secondary=false] whether to update the secondary connected element
  */
@@ -13068,7 +11768,9 @@ ElementRegistry.prototype.updateGraphics = function(filter, gfx, secondary) {
     container.gfx = gfx;
   }
 
-  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(gfx, ELEMENT_ID, id);
+  if (gfx) {
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(gfx, ELEMENT_ID, id);
+  }
 
   return gfx;
 };
@@ -13223,7 +11925,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ EventBus)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 var FN_REF = '__fn';
@@ -13753,11 +12455,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ GraphicsFactory)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _util_GraphicsUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/GraphicsUtil */ "../node_modules/diagram-js/lib/util/GraphicsUtil.js");
 /* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
 /* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
 
 
@@ -14072,7 +12774,7 @@ function BaseRenderer(eventBus, renderPriority) {
     }
   });
 
-  eventBus.on([ 'render.getShapePath', 'render.getConnectionPath'], renderPriority, function(evt, element) {
+  eventBus.on([ 'render.getShapePath', 'render.getConnectionPath' ], renderPriority, function(evt, element) {
     if (self.canRender(element)) {
       if (evt.type === 'render.getShapePath') {
         return self.getShapePath(element);
@@ -14145,12 +12847,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ DefaultRenderer)
 /* harmony export */ });
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! inherits */ "../node_modules/inherits/inherits_browser.js");
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(inherits__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _BaseRenderer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BaseRenderer */ "../node_modules/diagram-js/lib/draw/BaseRenderer.js");
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _BaseRenderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BaseRenderer */ "../node_modules/diagram-js/lib/draw/BaseRenderer.js");
 /* harmony import */ var _util_RenderUtil__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../util/RenderUtil */ "../node_modules/diagram-js/lib/util/RenderUtil.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
 
 
@@ -14177,14 +12878,14 @@ var DEFAULT_RENDER_PRIORITY = 1;
 function DefaultRenderer(eventBus, styles) {
 
   //
-  _BaseRenderer__WEBPACK_IMPORTED_MODULE_1__["default"].call(this, eventBus, DEFAULT_RENDER_PRIORITY);
+  _BaseRenderer__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus, DEFAULT_RENDER_PRIORITY);
 
   this.CONNECTION_STYLE = styles.style([ 'no-fill' ], { strokeWidth: 5, stroke: 'fuchsia' });
   this.SHAPE_STYLE = styles.style({ fill: 'white', stroke: 'fuchsia', strokeWidth: 2 });
   this.FRAME_STYLE = styles.style([ 'no-fill' ], { stroke: 'fuchsia', strokeDasharray: 4, strokeWidth: 2 });
 }
 
-inherits__WEBPACK_IMPORTED_MODULE_0___default()(DefaultRenderer, _BaseRenderer__WEBPACK_IMPORTED_MODULE_1__["default"]);
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(DefaultRenderer, _BaseRenderer__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 
 DefaultRenderer.prototype.canRender = function() {
@@ -14228,11 +12929,11 @@ DefaultRenderer.prototype.getShapePath = function getShapePath(shape) {
       height = shape.height;
 
   var shapePath = [
-    ['M', x, y],
-    ['l', width, 0],
-    ['l', 0, height],
-    ['l', -width, 0],
-    ['z']
+    [ 'M', x, y ],
+    [ 'l', width, 0 ],
+    [ 'l', 0, height ],
+    [ 'l', -width, 0 ],
+    [ 'z' ]
   ];
 
   return (0,_util_RenderUtil__WEBPACK_IMPORTED_MODULE_5__.componentsToPath)(shapePath);
@@ -14272,7 +12973,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Styles)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -14382,7 +13083,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ AlignElements)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 function last(arr) {
@@ -14418,11 +13119,12 @@ var ALIGNMENT_SORTING = {
 };
 
 
-function AlignElements(modeling) {
+function AlignElements(modeling, rules) {
   this._modeling = modeling;
+  this._rules = rules;
 }
 
-AlignElements.$inject = [ 'modeling' ];
+AlignElements.$inject = [ 'modeling', 'rules' ];
 
 
 /**
@@ -14535,13 +13237,21 @@ AlignElements.prototype._alignmentPosition = function(type, sortedElements) {
  * @param  {string} type left|right|center|top|bottom|middle
  */
 AlignElements.prototype.trigger = function(elements, type) {
-  var modeling = this._modeling;
+  var modeling = this._modeling,
+      allowed;
 
+  // filter out elements which cannot be aligned
   var filteredElements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.filter)(elements, function(element) {
     return !(element.waypoints || element.host || element.labelTarget);
   });
 
-  if (filteredElements.length < 2) {
+  // filter out elements via rules
+  allowed = this._rules.allowed('elements.align', { elements: filteredElements });
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(allowed)) {
+    filteredElements = allowed;
+  }
+
+  if (filteredElements.length < 2 || !allowed) {
     return;
   }
 
@@ -14590,12 +13300,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ AttachSupport)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var _util_Removal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Removal */ "../node_modules/diagram-js/lib/util/Removal.js");
-/* harmony import */ var _util_AttachUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/AttachUtil */ "../node_modules/diagram-js/lib/util/AttachUtil.js");
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! inherits */ "../node_modules/inherits/inherits_browser.js");
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(inherits__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _util_Removal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Removal */ "../node_modules/diagram-js/lib/util/Removal.js");
+/* harmony import */ var _util_AttachUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/AttachUtil */ "../node_modules/diagram-js/lib/util/AttachUtil.js");
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
 
 
 
@@ -14629,7 +13338,7 @@ var MARKER_ATTACH = 'attach-ok';
  */
 function AttachSupport(injector, eventBus, canvas, rules, modeling) {
 
-  _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_1__["default"].call(this, eventBus);
+  _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
 
   var movePreview = injector.get('movePreview', false);
 
@@ -14654,10 +13363,10 @@ function AttachSupport(injector, eventBus, canvas, rules, modeling) {
         shapes = context.shapes,
         attachers = getAttachers(shapes);
 
-    (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(attachers, function(attacher) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(attachers, function(attacher) {
       movePreview.makeDraggable(context, attacher, true);
 
-      (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(attacher.labels, function(label) {
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(attacher.labels, function(label) {
         movePreview.makeDraggable(context, label, true);
       });
     });
@@ -14695,7 +13404,7 @@ function AttachSupport(injector, eventBus, canvas, rules, modeling) {
         shapes = context.shapes,
         attachers = getAttachers(shapes);
 
-    (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(attachers, function(attacher) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(attachers, function(attacher) {
       closure.add(attacher, closure.topLevel[attacher.host.id]);
     });
   });
@@ -14719,14 +13428,14 @@ function AttachSupport(injector, eventBus, canvas, rules, modeling) {
     } else {
 
       // find attachers moved without host
-      attachers = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.filter)(shapes, function(shape) {
+      attachers = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.filter)(shapes, function(shape) {
         var host = shape.host;
 
         return isAttacher(shape) && !includes(shapes, host);
       });
     }
 
-    (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(attachers, function(attacher) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(attachers, function(attacher) {
       modeling.updateAttachment(attacher, newHost);
     });
   });
@@ -14736,12 +13445,12 @@ function AttachSupport(injector, eventBus, canvas, rules, modeling) {
 
     var shapes = e.context.shapes;
 
-    (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(shapes, function(shape) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(shapes, function(shape) {
 
-      (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(shape.attachers, function(attacher) {
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(shape.attachers, function(attacher) {
 
         // remove invalid outgoing connections
-        (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(attacher.outgoing.slice(), function(connection) {
+        (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(attacher.outgoing.slice(), function(connection) {
           var allowed = rules.allowed('connection.reconnect', {
             connection: connection,
             source: connection.source,
@@ -14754,7 +13463,7 @@ function AttachSupport(injector, eventBus, canvas, rules, modeling) {
         });
 
         // remove invalid incoming connections
-        (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(attacher.incoming.slice(), function(connection) {
+        (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(attacher.incoming.slice(), function(connection) {
           var allowed = rules.allowed('connection.reconnect', {
             connection: connection,
             source: connection.source,
@@ -14787,10 +13496,10 @@ function AttachSupport(injector, eventBus, canvas, rules, modeling) {
         newShape = context.newShape;
 
     // move the attachers to the new host
-    (0,_util_Removal__WEBPACK_IMPORTED_MODULE_3__.saveClear)(oldShape.attachers, function(attacher) {
+    (0,_util_Removal__WEBPACK_IMPORTED_MODULE_2__.saveClear)(oldShape.attachers, function(attacher) {
       var allowed = rules.allowed('elements.move', {
         target: newShape,
-        shapes: [attacher]
+        shapes: [ attacher ]
       });
 
       if (allowed === 'attach') {
@@ -14803,8 +13512,8 @@ function AttachSupport(injector, eventBus, canvas, rules, modeling) {
     // move attachers if new host has different size
     if (newShape.attachers.length) {
 
-      (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(newShape.attachers, function(attacher) {
-        var delta = (0,_util_AttachUtil__WEBPACK_IMPORTED_MODULE_4__.getNewAttachShapeDelta)(attacher, oldShape, newShape);
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(newShape.attachers, function(attacher) {
+        var delta = (0,_util_AttachUtil__WEBPACK_IMPORTED_MODULE_3__.getNewAttachShapeDelta)(attacher, oldShape, newShape);
         modeling.moveShape(attacher, delta, attacher.parent);
       });
     }
@@ -14824,12 +13533,12 @@ function AttachSupport(injector, eventBus, canvas, rules, modeling) {
       return;
     }
 
-    (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(attachers, function(attacher) {
-      var delta = (0,_util_AttachUtil__WEBPACK_IMPORTED_MODULE_4__.getNewAttachShapeDelta)(attacher, oldBounds, newBounds);
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(attachers, function(attacher) {
+      var delta = (0,_util_AttachUtil__WEBPACK_IMPORTED_MODULE_3__.getNewAttachShapeDelta)(attacher, oldBounds, newBounds);
 
       modeling.moveShape(attacher, delta, attacher.parent);
 
-      (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(attacher.labels, function(label) {
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(attacher.labels, function(label) {
         modeling.moveShape(label, delta, label.parent);
       });
     });
@@ -14840,7 +13549,7 @@ function AttachSupport(injector, eventBus, canvas, rules, modeling) {
 
     var shape = event.context.shape;
 
-    (0,_util_Removal__WEBPACK_IMPORTED_MODULE_3__.saveClear)(shape.attachers, function(attacher) {
+    (0,_util_Removal__WEBPACK_IMPORTED_MODULE_2__.saveClear)(shape.attachers, function(attacher) {
       modeling.removeShape(attacher);
     });
 
@@ -14850,7 +13559,7 @@ function AttachSupport(injector, eventBus, canvas, rules, modeling) {
   });
 }
 
-inherits__WEBPACK_IMPORTED_MODULE_0___default()(AttachSupport, _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_1__["default"]);
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_4__["default"])(AttachSupport, _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 AttachSupport.$inject = [
   'injector',
@@ -14868,7 +13577,7 @@ AttachSupport.$inject = [
  * @return {Array<djs.model.Base>}
  */
 function getAttachers(shapes) {
-  return (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.flatten)((0,min_dash__WEBPACK_IMPORTED_MODULE_2__.map)(shapes, function(s) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.flatten)((0,min_dash__WEBPACK_IMPORTED_MODULE_1__.map)(shapes, function(s) {
     return s.attachers || [];
   }));
 }
@@ -14883,7 +13592,7 @@ function getAttachers(shapes) {
 function addAttached(elements) {
   var attachers = getAttachers(elements);
 
-  return (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.unionBy)('id', elements, attachers);
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.unionBy)('id', elements, attachers);
 }
 
 /**
@@ -14897,9 +13606,9 @@ function addAttached(elements) {
  */
 function removeAttached(elements) {
 
-  var ids = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.groupBy)(elements, 'id');
+  var ids = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.groupBy)(elements, 'id');
 
-  return (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.filter)(elements, function(element) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.filter)(elements, function(element) {
     while (element) {
 
       // host in selection
@@ -15111,7 +13820,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getConnectedDistance": () => (/* binding */ getConnectedDistance)
 /* harmony export */ });
 /* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -15441,7 +14150,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ AutoScroll)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _util_Event__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/Event */ "../node_modules/diagram-js/lib/util/Event.js");
 
 
@@ -15883,7 +14592,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ BendpointMovePreview)
 /* harmony export */ });
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
 /* harmony import */ var _BendpointUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BendpointUtil */ "../node_modules/diagram-js/lib/features/bendpoints/BendpointUtil.js");
 /* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
 /* harmony import */ var _BendpointMove__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./BendpointMove */ "../node_modules/diagram-js/lib/features/bendpoints/BendpointMove.js");
@@ -16101,13 +14810,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ BendpointSnapping)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var _snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../snapping/SnapUtil */ "../node_modules/diagram-js/lib/features/snapping/SnapUtil.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../snapping/SnapUtil */ "../node_modules/diagram-js/lib/features/snapping/SnapUtil.js");
+/* harmony import */ var _BendpointUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BendpointUtil */ "../node_modules/diagram-js/lib/features/bendpoints/BendpointUtil.js");
 
 
 
 
-var abs= Math.abs,
+
+
+var abs = Math.abs,
     round = Math.round;
 
 var TOLERANCE = 10;
@@ -16139,7 +14851,12 @@ function BendpointSnapping(eventBus) {
     return value;
   }
 
-  function mid(element) {
+  function getSnapPoint(element, event) {
+
+    if (element.waypoints) {
+      return (0,_BendpointUtil__WEBPACK_IMPORTED_MODULE_1__.getClosestPointOnConnection)(event, element);
+    }
+
     if (element.width) {
       return {
         x: round(element.width / 2 + element.x),
@@ -16150,9 +14867,10 @@ function BendpointSnapping(eventBus) {
 
   // connection segment snapping //////////////////////
 
-  function getConnectionSegmentSnaps(context) {
+  function getConnectionSegmentSnaps(event) {
 
-    var snapPoints = context.snapPoints,
+    var context = event.context,
+        snapPoints = context.snapPoints,
         connection = context.connection,
         waypoints = connection.waypoints,
         segmentStart = context.segmentStart,
@@ -16173,11 +14891,11 @@ function BendpointSnapping(eventBus) {
     ];
 
     if (segmentStartIndex < 2) {
-      referenceWaypoints.unshift(mid(connection.source));
+      referenceWaypoints.unshift(getSnapPoint(connection.source, event));
     }
 
     if (segmentEndIndex > waypoints.length - 3) {
-      referenceWaypoints.unshift(mid(connection.target));
+      referenceWaypoints.unshift(getSnapPoint(connection.target, event));
     }
 
     context.snapPoints = snapPoints = { horizontal: [] , vertical: [] };
@@ -16203,8 +14921,7 @@ function BendpointSnapping(eventBus) {
   }
 
   eventBus.on('connectionSegment.move.move', 1500, function(event) {
-    var context = event.context,
-        snapPoints = getConnectionSegmentSnaps(context),
+    var snapPoints = getConnectionSegmentSnaps(event),
         x = event.x,
         y = event.y,
         sx, sy;
@@ -16232,11 +14949,11 @@ function BendpointSnapping(eventBus) {
 
     // only set snapped if actually snapped
     if (cx || snapPoints.vertical.indexOf(x) !== -1) {
-      (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.setSnapped)(event, 'x', sx);
+      (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__.setSnapped)(event, 'x', sx);
     }
 
     if (cy || snapPoints.horizontal.indexOf(y) !== -1) {
-      (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.setSnapped)(event, 'y', sy);
+      (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__.setSnapped)(event, 'y', sy);
     }
   });
 
@@ -16272,13 +14989,31 @@ function BendpointSnapping(eventBus) {
     return snapPoints;
   }
 
+  // Snap Endpoint of new connection
+  eventBus.on([
+    'connect.hover',
+    'connect.move',
+    'connect.end'
+  ], 1500, function(event) {
+    var context = event.context,
+        hover = context.hover,
+        hoverMid = hover && getSnapPoint(hover, event);
+
+    // only snap on connections, elements can have multiple connect endpoints
+    if (!isConnection(hover) || !hoverMid || !hoverMid.x || !hoverMid.y) {
+      return;
+    }
+
+    (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__.setSnapped)(event, 'x', hoverMid.x);
+    (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__.setSnapped)(event, 'y', hoverMid.y);
+  });
 
   eventBus.on([ 'bendpoint.move.move', 'bendpoint.move.end' ], 1500, function(event) {
 
     var context = event.context,
         snapPoints = getBendpointSnaps(context),
         hover = context.hover,
-        hoverMid = hover && mid(hover),
+        hoverMid = hover && getSnapPoint(hover, event),
         x = event.x,
         y = event.y,
         sx, sy;
@@ -16305,17 +15040,25 @@ function BendpointSnapping(eventBus) {
 
     // only set snapped if actually snapped
     if (cx || snapPoints.vertical.indexOf(x) !== -1) {
-      (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.setSnapped)(event, 'x', sx);
+      (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__.setSnapped)(event, 'x', sx);
     }
 
     if (cy || snapPoints.horizontal.indexOf(y) !== -1) {
-      (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.setSnapped)(event, 'y', sy);
+      (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__.setSnapped)(event, 'y', sy);
     }
   });
 }
 
 
 BendpointSnapping.$inject = [ 'eventBus' ];
+
+
+// helpers //////////////////////
+
+function isConnection(element) {
+  return element && !!element.waypoints;
+}
+
 
 /***/ }),
 
@@ -16333,14 +15076,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "addBendpoint": () => (/* binding */ addBendpoint),
 /* harmony export */   "addSegmentDragger": () => (/* binding */ addSegmentDragger),
 /* harmony export */   "calculateSegmentMoveRegion": () => (/* binding */ calculateSegmentMoveRegion),
+/* harmony export */   "getClosestPointOnConnection": () => (/* binding */ getClosestPointOnConnection),
 /* harmony export */   "getConnectionIntersection": () => (/* binding */ getConnectionIntersection),
 /* harmony export */   "toCanvasCoordinates": () => (/* binding */ toCanvasCoordinates)
 /* harmony export */ });
 /* harmony import */ var _util_Event__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Event */ "../node_modules/diagram-js/lib/util/Event.js");
 /* harmony import */ var _util_Geometry__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/Geometry */ "../node_modules/diagram-js/lib/util/Geometry.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
 /* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
 /* harmony import */ var _util_LineIntersection__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/LineIntersection */ "../node_modules/diagram-js/lib/util/LineIntersection.js");
+/* harmony import */ var _GeometricUtil__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./GeometricUtil */ "../node_modules/diagram-js/lib/features/bendpoints/GeometricUtil.js");
+
+
 
 
 
@@ -16422,8 +15169,8 @@ function createParallelDragger(parentGfx, segmentStart, segmentEnd, alignment) {
 
   (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.append)(parentGfx, draggerGfx);
 
-  var width = 14,
-      height = 3,
+  var width = 18,
+      height = 6,
       padding = 11,
       hitWidth = calculateHitWidth(segmentStart, segmentEnd, alignment),
       hitHeight = height + padding;
@@ -16484,6 +15231,20 @@ function calculateSegmentMoveRegion(segmentLength) {
   return Math.abs(Math.round(segmentLength * 2 / 3));
 }
 
+/**
+ * Returns the point with the closest distance that is on the connection path.
+ *
+ * @param {Point} position
+ * @param {djs.Base.Connection} connection
+ * @returns {Point}
+ */
+function getClosestPointOnConnection(position, connection) {
+  var segment = getClosestSegment(position, connection);
+
+  return (0,_GeometricUtil__WEBPACK_IMPORTED_MODULE_5__.perpendicularFoot)(position, segment);
+}
+
+
 // helper //////////
 
 function calculateHitWidth(segmentStart, segmentEnd, alignment) {
@@ -16495,6 +15256,25 @@ function calculateHitWidth(segmentStart, segmentEnd, alignment) {
     calculateSegmentMoveRegion(segmentLengthYAxis);
 }
 
+function getClosestSegment(position, connection) {
+  var waypoints = connection.waypoints;
+
+  var minDistance = Infinity,
+      segmentIndex;
+
+  for (var i = 0; i < waypoints.length - 1; i++) {
+    var start = waypoints[i],
+        end = waypoints[i + 1],
+        distance = (0,_GeometricUtil__WEBPACK_IMPORTED_MODULE_5__.getDistancePointLine)(position, [ start, end ]);
+
+    if (distance < minDistance) {
+      minDistance = distance;
+      segmentIndex = i;
+    }
+  }
+
+  return [ waypoints[segmentIndex], waypoints[segmentIndex + 1] ];
+}
 
 /***/ }),
 
@@ -16509,14 +15289,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Bendpoints)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var _BendpointUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BendpointUtil */ "../node_modules/diagram-js/lib/features/bendpoints/BendpointUtil.js");
 /* harmony import */ var _util_EscapeUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/EscapeUtil */ "../node_modules/css.escape/css.escape.js");
 /* harmony import */ var _util_EscapeUtil__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_util_EscapeUtil__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _util_Geometry__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Geometry */ "../node_modules/diagram-js/lib/util/Geometry.js");
 /* harmony import */ var _util_Mouse__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../util/Mouse */ "../node_modules/diagram-js/lib/util/Mouse.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
 /* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
 
 
@@ -16922,7 +15702,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_Geometry__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Geometry */ "../node_modules/diagram-js/lib/util/Geometry.js");
 /* harmony import */ var _BendpointUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BendpointUtil */ "../node_modules/diagram-js/lib/features/bendpoints/BendpointUtil.js");
 /* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
 /* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
 
 
@@ -17340,6 +16120,147 @@ ConnectionSegmentMove.$inject = [
 
 /***/ }),
 
+/***/ "../node_modules/diagram-js/lib/features/bendpoints/GeometricUtil.js":
+/*!***************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/bendpoints/GeometricUtil.js ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getAngle": () => (/* binding */ getAngle),
+/* harmony export */   "getDistancePointLine": () => (/* binding */ getDistancePointLine),
+/* harmony export */   "getDistancePointPoint": () => (/* binding */ getDistancePointPoint),
+/* harmony export */   "perpendicularFoot": () => (/* binding */ perpendicularFoot),
+/* harmony export */   "rotateVector": () => (/* binding */ rotateVector),
+/* harmony export */   "vectorLength": () => (/* binding */ vectorLength)
+/* harmony export */ });
+
+/**
+ * Returns the length of a vector
+ *
+ * @param {Vector}
+ * @return {Float}
+ */
+function vectorLength(v) {
+  return Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2));
+}
+
+
+/**
+ * Calculates the angle between a line a the yAxis
+ *
+ * @param {Array}
+ * @return {Float}
+ */
+function getAngle(line) {
+
+  // return value is between 0, 180 and -180, -0
+  // @janstuemmel: maybe replace return a/b with b/a
+  return Math.atan((line[1].y - line[0].y) / (line[1].x - line[0].x));
+}
+
+
+/**
+ * Rotates a vector by a given angle
+ *
+ * @param {Vector}
+ * @param {Float} Angle in radians
+ * @return {Vector}
+ */
+function rotateVector(vector, angle) {
+  return (!angle) ? vector : {
+    x: Math.cos(angle) * vector.x - Math.sin(angle) * vector.y,
+    y: Math.sin(angle) * vector.x + Math.cos(angle) * vector.y
+  };
+}
+
+
+/**
+ * Solves a 2D equation system
+ * a + r*b = c, where a,b,c are 2D vectors
+ *
+ * @param {Vector}
+ * @param {Vector}
+ * @param {Vector}
+ * @return {Float}
+ */
+function solveLambaSystem(a, b, c) {
+
+  // the 2d system
+  var system = [
+    { n: a[0] - c[0], lambda: b[0] },
+    { n: a[1] - c[1], lambda: b[1] }
+  ];
+
+  // solve
+  var n = system[0].n * b[0] + system[1].n * b[1],
+      l = system[0].lambda * b[0] + system[1].lambda * b[1];
+
+  return -n / l;
+}
+
+
+/**
+ * Position of perpendicular foot
+ *
+ * @param {Point}
+ * @param [ {Point}, {Point} ] line defined through two points
+ * @return {Point} the perpendicular foot position
+ */
+function perpendicularFoot(point, line) {
+
+  var a = line[0], b = line[1];
+
+  // relative position of b from a
+  var bd = { x: b.x - a.x, y: b.y - a.y };
+
+  // solve equation system to the parametrized vectors param real value
+  var r = solveLambaSystem([ a.x, a.y ], [ bd.x, bd.y ], [ point.x, point.y ]);
+
+  return { x: a.x + r * bd.x, y: a.y + r * bd.y };
+}
+
+
+/**
+ * Calculates the distance between a point and a line
+ *
+ * @param {Point}
+ * @param [ {Point}, {Point} ] line defined through two points
+ * @return {Float} distance
+ */
+function getDistancePointLine(point, line) {
+
+  var pfPoint = perpendicularFoot(point, line);
+
+  // distance vector
+  var connectionVector = {
+    x: pfPoint.x - point.x,
+    y: pfPoint.y - point.y
+  };
+
+  return vectorLength(connectionVector);
+}
+
+
+/**
+ * Calculates the distance between two points
+ *
+ * @param {Point}
+ * @param {Point}
+ * @return {Float} distance
+ */
+function getDistancePointPoint(point1, point2) {
+
+  return vectorLength({
+    x: point1.x - point2.x,
+    y: point1.y - point2.y
+  });
+}
+
+/***/ }),
+
 /***/ "../node_modules/diagram-js/lib/features/bendpoints/index.js":
 /*!*******************************************************************!*\
   !*** ../node_modules/diagram-js/lib/features/bendpoints/index.js ***!
@@ -17479,7 +16400,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  __init__: [ 'changeSupport'],
+  __init__: [ 'changeSupport' ],
   changeSupport: [ 'type', _ChangeSupport__WEBPACK_IMPORTED_MODULE_0__["default"] ]
 });
 
@@ -17558,7 +16479,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "isReverse": () => (/* binding */ isReverse)
 /* harmony export */ });
 /* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -17653,7 +16574,7 @@ function Connect(eventBus, dragging, modeling, rules) {
       attrs = canExecute;
     }
 
-    modeling.connect(source, target, attrs, hints);
+    context.connection = modeling.connect(source, target, attrs, hints);
   });
 
 
@@ -17854,8 +16775,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ConnectionPreview)
 /* harmony export */ });
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
 
 
@@ -18177,7 +17098,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ CopyPaste)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
 
 
@@ -18202,6 +17123,14 @@ __webpack_require__.r(__webpack_exports__);
  * @param {Object} context.descriptor
  * @param {djs.model.Base} context.element
  * @param {Array<djs.model.Base>} context.elements
+ */
+
+/**
+ * @typedef {Function} <copyPaste.createTree> listener
+ *
+ * @param {Object} context
+ * @param {djs.model.Base} context.element
+ * @param {Array<djs.model.Base>} context.children - Add children to be added to tree.
  */
 
 /**
@@ -18674,7 +17603,19 @@ CopyPaste.prototype.createTree = function(elements) {
 
     addElementData(element, depth);
 
-    return element.children;
+    var children = [];
+
+    if (element.children) {
+      children = element.children.slice();
+    }
+
+    // allow others to add children to tree
+    self._eventBus.fire('copyPaste.createTree', {
+      element: element,
+      children: children
+    });
+
+    return children;
   });
 
   elements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.map)(elementsData, function(elementData) {
@@ -18822,7 +17763,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Create)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
 var MARKER_OK = 'drop-ok',
     MARKER_NOT_OK = 'drop-not-ok',
@@ -19102,7 +18043,11 @@ function Create(
       }
     });
 
-    var bbox = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_1__.getBBox)(elements);
+    var visibleElements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.filter)(elements, function(element) {
+      return !element.hidden;
+    });
+
+    var bbox = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_1__.getBBox)(visibleElements);
 
     // center elements around cursor
     (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(elements, function(element) {
@@ -19196,7 +18141,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
 /* harmony import */ var _util_GraphicsUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/GraphicsUtil */ "../node_modules/diagram-js/lib/util/GraphicsUtil.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
 
 
 
@@ -19351,13 +18296,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Dragging)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var _util_Event__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/Event */ "../node_modules/diagram-js/lib/util/Event.js");
 /* harmony import */ var _util_Cursor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Cursor */ "../node_modules/diagram-js/lib/util/Cursor.js");
-/* harmony import */ var _util_ClickTrap__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/ClickTrap */ "../node_modules/diagram-js/lib/util/ClickTrap.js");
+/* harmony import */ var _util_ClickTrap__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../util/ClickTrap */ "../node_modules/diagram-js/lib/util/ClickTrap.js");
 /* harmony import */ var _util_PositionUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/PositionUtil */ "../node_modules/diagram-js/lib/util/PositionUtil.js");
+/* harmony import */ var _keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../keyboard/KeyboardUtil */ "../node_modules/diagram-js/lib/features/keyboard/KeyboardUtil.js");
 var round = Math.round;
+
+
 
 
 
@@ -19628,7 +18576,7 @@ function Dragging(eventBus, canvas, selection, elementRegistry) {
 
   function checkCancel(event) {
 
-    if (event.which === 27) {
+    if ((0,_keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_4__.isKey)('Escape', event)) {
       preventDefault(event);
 
       cancel();
@@ -19648,7 +18596,7 @@ function Dragging(eventBus, canvas, selection, elementRegistry) {
     // the ghost click that cannot be canceled otherwise.
     if (context.active) {
 
-      untrap = (0,_util_ClickTrap__WEBPACK_IMPORTED_MODULE_4__.install)(eventBus);
+      untrap = (0,_util_ClickTrap__WEBPACK_IMPORTED_MODULE_5__.install)(eventBus);
 
       // remove trap after minimal delay
       setTimeout(untrap, 400);
@@ -19728,20 +18676,20 @@ function Dragging(eventBus, canvas, selection, elementRegistry) {
     }
 
     // reset dom listeners
-    min_dom__WEBPACK_IMPORTED_MODULE_5__.event.unbind(document, 'mousemove', move);
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'mousemove', move);
 
-    min_dom__WEBPACK_IMPORTED_MODULE_5__.event.unbind(document, 'dragstart', preventDefault);
-    min_dom__WEBPACK_IMPORTED_MODULE_5__.event.unbind(document, 'selectstart', preventDefault);
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'dragstart', preventDefault);
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'selectstart', preventDefault);
 
-    min_dom__WEBPACK_IMPORTED_MODULE_5__.event.unbind(document, 'mousedown', endDrag, true);
-    min_dom__WEBPACK_IMPORTED_MODULE_5__.event.unbind(document, 'mouseup', endDrag, true);
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'mousedown', endDrag, true);
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'mouseup', endDrag, true);
 
-    min_dom__WEBPACK_IMPORTED_MODULE_5__.event.unbind(document, 'keyup', checkCancel);
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'keyup', checkCancel);
 
-    min_dom__WEBPACK_IMPORTED_MODULE_5__.event.unbind(document, 'touchstart', trapTouch, true);
-    min_dom__WEBPACK_IMPORTED_MODULE_5__.event.unbind(document, 'touchcancel', cancel, true);
-    min_dom__WEBPACK_IMPORTED_MODULE_5__.event.unbind(document, 'touchmove', move, true);
-    min_dom__WEBPACK_IMPORTED_MODULE_5__.event.unbind(document, 'touchend', end, true);
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'touchstart', trapTouch, true);
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'touchcancel', cancel, true);
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'touchmove', move, true);
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'touchend', end, true);
 
     eventBus.off('element.hover', hover);
     eventBus.off('element.out', out);
@@ -19842,24 +18790,24 @@ function Dragging(eventBus, canvas, selection, elementRegistry) {
       // add dom listeners
 
       if (isTouch) {
-        min_dom__WEBPACK_IMPORTED_MODULE_5__.event.bind(document, 'touchstart', trapTouch, true);
-        min_dom__WEBPACK_IMPORTED_MODULE_5__.event.bind(document, 'touchcancel', cancel, true);
-        min_dom__WEBPACK_IMPORTED_MODULE_5__.event.bind(document, 'touchmove', move, true);
-        min_dom__WEBPACK_IMPORTED_MODULE_5__.event.bind(document, 'touchend', end, true);
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'touchstart', trapTouch, true);
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'touchcancel', cancel, true);
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'touchmove', move, true);
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'touchend', end, true);
       } else {
 
         // assume we use the mouse to interact per default
-        min_dom__WEBPACK_IMPORTED_MODULE_5__.event.bind(document, 'mousemove', move);
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'mousemove', move);
 
         // prevent default browser drag and text selection behavior
-        min_dom__WEBPACK_IMPORTED_MODULE_5__.event.bind(document, 'dragstart', preventDefault);
-        min_dom__WEBPACK_IMPORTED_MODULE_5__.event.bind(document, 'selectstart', preventDefault);
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'dragstart', preventDefault);
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'selectstart', preventDefault);
 
-        min_dom__WEBPACK_IMPORTED_MODULE_5__.event.bind(document, 'mousedown', endDrag, true);
-        min_dom__WEBPACK_IMPORTED_MODULE_5__.event.bind(document, 'mouseup', endDrag, true);
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'mousedown', endDrag, true);
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'mouseup', endDrag, true);
       }
 
-      min_dom__WEBPACK_IMPORTED_MODULE_5__.event.bind(document, 'keyup', checkCancel);
+      min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'keyup', checkCancel);
 
       eventBus.on('element.hover', hover);
       eventBus.on('element.out', out);
@@ -19948,7 +18896,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ EditorActions)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 var NOT_REGISTERED_ERROR = 'is not a registered action',
@@ -20037,7 +18985,9 @@ EditorActions.prototype._registerDefaultActions = function(injector) {
     this.register('copy', function() {
       var selectedElements = selection.get();
 
-      copyPaste.copy(selectedElements);
+      if (selectedElements.length) {
+        return copyPaste.copy(selectedElements);
+      }
     });
   }
 
@@ -20243,7 +19193,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../snapping/SnapUtil */ "../node_modules/diagram-js/lib/features/snapping/SnapUtil.js");
 /* harmony import */ var _keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../keyboard/KeyboardUtil */ "../node_modules/diagram-js/lib/features/keyboard/KeyboardUtil.js");
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _GridUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./GridUtil */ "../node_modules/diagram-js/lib/features/grid-snapping/GridUtil.js");
 
 
@@ -20619,10 +19569,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ResizeBehavior)
 /* harmony export */ });
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! inherits */ "../node_modules/inherits/inherits_browser.js");
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(inherits__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -20634,7 +19583,7 @@ __webpack_require__.r(__webpack_exports__);
  * Integrates resizing with grid snapping.
  */
 function ResizeBehavior(eventBus, gridSnapping) {
-  _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_1__["default"].call(this, eventBus);
+  _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
 
   this._gridSnapping = gridSnapping;
 
@@ -20652,7 +19601,7 @@ function ResizeBehavior(eventBus, gridSnapping) {
     var shape = context.shape,
         newBounds = context.newBounds;
 
-    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_2__.isString)(autoResize)) {
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isString)(autoResize)) {
       context.newBounds = self.snapComplex(newBounds, autoResize);
     } else {
       context.newBounds = self.snapSimple(shape, newBounds);
@@ -20666,7 +19615,7 @@ ResizeBehavior.$inject = [
   'modeling'
 ];
 
-inherits__WEBPACK_IMPORTED_MODULE_0___default()(ResizeBehavior, _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_1__["default"]);
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_2__["default"])(ResizeBehavior, _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /**
  * Snap width and height in relation to center.
@@ -20752,7 +19701,7 @@ ResizeBehavior.prototype.snapHorizontally = function(newBounds, directions) {
   }
 
   // assign snapped x and width
-  (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)(newBounds, snappedNewBounds);
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(newBounds, snappedNewBounds);
 
   return newBounds;
 };
@@ -20796,7 +19745,7 @@ ResizeBehavior.prototype.snapVertically = function(newBounds, directions) {
   }
 
   // assign snapped y and height
-  (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)(newBounds, snappedNewBounds);
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(newBounds, snappedNewBounds);
 
   return newBounds;
 };
@@ -20922,7 +19871,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ HoverFix)
 /* harmony export */ });
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var _util_Event__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Event */ "../node_modules/diagram-js/lib/util/Event.js");
 
 
@@ -21117,10 +20066,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ InteractionEvents)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var _util_Mouse__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Mouse */ "../node_modules/diagram-js/lib/util/Mouse.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
 /* harmony import */ var _util_RenderUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/RenderUtil */ "../node_modules/diagram-js/lib/util/RenderUtil.js");
 
 
@@ -21364,10 +20313,13 @@ function InteractionEvents(eventBus, elementRegistry, styles) {
 
   var ALL_HIT_STYLE = createHitStyle('djs-hit djs-hit-all');
 
+  var NO_MOVE_HIT_STYLE = createHitStyle('djs-hit djs-hit-no-move');
+
   var HIT_TYPES = {
     'all': ALL_HIT_STYLE,
     'click-stroke': CLICK_STROKE_HIT_STYLE,
-    'stroke': STROKE_HIT_STYLE
+    'stroke': STROKE_HIT_STYLE,
+    'no-move': NO_MOVE_HIT_STYLE
   };
 
   function createHitStyle(classNames, attrs) {
@@ -21644,7 +20596,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ KeyboardMoveSelection)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -21833,8 +20785,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Keyboard)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var _KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./KeyboardUtil */ "../node_modules/diagram-js/lib/features/keyboard/KeyboardUtil.js");
 
 
@@ -21851,7 +20803,7 @@ var DEFAULT_PRIORITY = 1000;
 
 /**
  * A keyboard abstraction that may be activated and
- * deactivated by users at will, consuming key events
+ * deactivated by users at will, consuming global key events
  * and triggering diagram actions.
  *
  * For keys pressed down, keyboard fires `keyboard.keydown` event.
@@ -21936,6 +20888,10 @@ Keyboard.prototype._keyHandler = function(event, type) {
 };
 
 Keyboard.prototype._isEventIgnored = function(event) {
+  if (event.defaultPrevented) {
+    return true;
+  }
+
   return isInput(event.target) && this._isModifiedKeyIgnored(event);
 };
 
@@ -21945,7 +20901,7 @@ Keyboard.prototype._isModifiedKeyIgnored = function(event) {
   }
 
   var allowedModifiers = this._getAllowedModifiers(event.target);
-  return !allowedModifiers.includes(event.key);
+  return allowedModifiers.indexOf(event.key) === -1;
 };
 
 Keyboard.prototype._getAllowedModifiers = function(element) {
@@ -21966,8 +20922,8 @@ Keyboard.prototype.bind = function(node) {
   this._node = node;
 
   // bind key events
-  min_dom__WEBPACK_IMPORTED_MODULE_1__.event.bind(node, 'keydown', this._keydownHandler, true);
-  min_dom__WEBPACK_IMPORTED_MODULE_1__.event.bind(node, 'keyup', this._keyupHandler, true);
+  min_dom__WEBPACK_IMPORTED_MODULE_1__.event.bind(node, 'keydown', this._keydownHandler);
+  min_dom__WEBPACK_IMPORTED_MODULE_1__.event.bind(node, 'keyup', this._keyupHandler);
 
   this._fire('bind');
 };
@@ -21983,8 +20939,8 @@ Keyboard.prototype.unbind = function() {
     this._fire('unbind');
 
     // unbind key events
-    min_dom__WEBPACK_IMPORTED_MODULE_1__.event.unbind(node, 'keydown', this._keydownHandler, true);
-    min_dom__WEBPACK_IMPORTED_MODULE_1__.event.unbind(node, 'keyup', this._keyupHandler, true);
+    min_dom__WEBPACK_IMPORTED_MODULE_1__.event.unbind(node, 'keydown', this._keydownHandler);
+    min_dom__WEBPACK_IMPORTED_MODULE_1__.event.unbind(node, 'keyup', this._keyupHandler);
   }
 
   this._node = null;
@@ -22042,10 +20998,6 @@ function isInput(target) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "KEYCODE_C": () => (/* binding */ KEYCODE_C),
-/* harmony export */   "KEYCODE_V": () => (/* binding */ KEYCODE_V),
-/* harmony export */   "KEYCODE_Y": () => (/* binding */ KEYCODE_Y),
-/* harmony export */   "KEYCODE_Z": () => (/* binding */ KEYCODE_Z),
 /* harmony export */   "KEYS_COPY": () => (/* binding */ KEYS_COPY),
 /* harmony export */   "KEYS_PASTE": () => (/* binding */ KEYS_PASTE),
 /* harmony export */   "KEYS_REDO": () => (/* binding */ KEYS_REDO),
@@ -22057,15 +21009,10 @@ __webpack_require__.r(__webpack_exports__);
 
 var LOW_PRIORITY = 500;
 
-var KEYCODE_C = 67;
-var KEYCODE_V = 86;
-var KEYCODE_Y = 89;
-var KEYCODE_Z = 90;
-
-var KEYS_COPY = ['c', 'C', KEYCODE_C ];
-var KEYS_PASTE = [ 'v', 'V', KEYCODE_V ];
-var KEYS_REDO = [ 'y', 'Y', KEYCODE_Y ];
-var KEYS_UNDO = [ 'z', 'Z', KEYCODE_Z ];
+var KEYS_COPY = [ 'c', 'C', 'KeyC' ];
+var KEYS_PASTE = [ 'v', 'V', 'KeyV' ];
+var KEYS_REDO = [ 'y', 'Y', 'KeyY' ];
+var KEYS_UNDO = [ 'z', 'Z', 'KeyZ' ];
 
 
 /**
@@ -22124,7 +21071,7 @@ KeyboardBindings.prototype.registerBindings = function(keyboard, editorActions) 
 
     var event = context.keyEvent;
 
-    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isCmd)(event) && !(0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isShift)(event) && (0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isKey)(KEYS_UNDO, event)) {
+    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isUndo)(event)) {
       editorActions.trigger('undo');
 
       return true;
@@ -22138,7 +21085,7 @@ KeyboardBindings.prototype.registerBindings = function(keyboard, editorActions) 
 
     var event = context.keyEvent;
 
-    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isCmd)(event) && ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isKey)(KEYS_REDO, event) || ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isKey)(KEYS_UNDO, event) && (0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isShift)(event)))) {
+    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isRedo)(event)) {
       editorActions.trigger('redo');
 
       return true;
@@ -22151,7 +21098,7 @@ KeyboardBindings.prototype.registerBindings = function(keyboard, editorActions) 
 
     var event = context.keyEvent;
 
-    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isCmd)(event) && (0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isKey)(KEYS_COPY, event)) {
+    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isCopy)(event)) {
       editorActions.trigger('copy');
 
       return true;
@@ -22164,7 +21111,7 @@ KeyboardBindings.prototype.registerBindings = function(keyboard, editorActions) 
 
     var event = context.keyEvent;
 
-    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isCmd)(event) && (0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isKey)(KEYS_PASTE, event)) {
+    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isPaste)(event)) {
       editorActions.trigger('paste');
 
       return true;
@@ -22218,7 +21165,7 @@ KeyboardBindings.prototype.registerBindings = function(keyboard, editorActions) 
 
     var event = context.keyEvent;
 
-    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isKey)(['Backspace', 'Delete', 'Del' ], event)) {
+    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isKey)([ 'Backspace', 'Delete', 'Del' ], event)) {
       editorActions.trigger('removeSelection');
 
       return true;
@@ -22239,11 +21186,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "hasModifier": () => (/* binding */ hasModifier),
 /* harmony export */   "isCmd": () => (/* binding */ isCmd),
+/* harmony export */   "isCopy": () => (/* binding */ isCopy),
 /* harmony export */   "isKey": () => (/* binding */ isKey),
-/* harmony export */   "isShift": () => (/* binding */ isShift)
+/* harmony export */   "isPaste": () => (/* binding */ isPaste),
+/* harmony export */   "isRedo": () => (/* binding */ isRedo),
+/* harmony export */   "isShift": () => (/* binding */ isShift),
+/* harmony export */   "isUndo": () => (/* binding */ isUndo)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
+
+var KEYS_COPY = [ 'c', 'C', 'KeyC' ];
+var KEYS_PASTE = [ 'v', 'V', 'KeyV' ];
+var KEYS_REDO = [ 'y', 'Y', 'KeyY' ];
+var KEYS_UNDO = [ 'z', 'Z', 'KeyZ' ];
 
 /**
  * Returns true if event was triggered with any modifier
@@ -22276,7 +21232,7 @@ function isCmd(event) {
 function isKey(keys, event) {
   keys = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(keys) ? keys : [ keys ];
 
-  return keys.indexOf(event.key) !== -1 || keys.indexOf(event.keyCode) !== -1;
+  return keys.indexOf(event.key) !== -1 || keys.indexOf(event.code) !== -1;
 }
 
 /**
@@ -22284,6 +21240,26 @@ function isKey(keys, event) {
  */
 function isShift(event) {
   return event.shiftKey;
+}
+
+function isCopy(event) {
+  return isCmd(event) && isKey(KEYS_COPY, event);
+}
+
+function isPaste(event) {
+  return isCmd(event) && isKey(KEYS_PASTE, event);
+}
+
+function isUndo(event) {
+  return isCmd(event) && !isShift(event) && isKey(KEYS_UNDO, event);
+}
+
+function isRedo(event) {
+  return isCmd(event) && (
+    isKey(KEYS_REDO, event) || (
+      isKey(KEYS_UNDO, event) && isShift(event)
+    )
+  );
 }
 
 /***/ }),
@@ -22324,12 +21300,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ LabelSupport)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! inherits */ "../node_modules/inherits/inherits_browser.js");
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(inherits__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _util_Collections__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/Collections */ "../node_modules/diagram-js/lib/util/Collections.js");
-/* harmony import */ var _util_Removal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Removal */ "../node_modules/diagram-js/lib/util/Removal.js");
-/* harmony import */ var _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _util_Collections__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Collections */ "../node_modules/diagram-js/lib/util/Collections.js");
+/* harmony import */ var _util_Removal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Removal */ "../node_modules/diagram-js/lib/util/Removal.js");
+/* harmony import */ var _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
 
 
 
@@ -22354,7 +21329,7 @@ var LOW_PRIORITY = 250,
  */
 function LabelSupport(injector, eventBus, modeling) {
 
-  _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_1__["default"].call(this, eventBus);
+  _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
 
   var movePreview = injector.get('movePreview', false);
 
@@ -22378,9 +21353,9 @@ function LabelSupport(injector, eventBus, modeling) {
 
     var labels = [];
 
-    (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(shapes, function(element) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(shapes, function(element) {
 
-      (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(element.labels, function(label) {
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(element.labels, function(label) {
 
         if (!label.hidden && context.shapes.indexOf(label) === -1) {
           labels.push(label);
@@ -22392,7 +21367,7 @@ function LabelSupport(injector, eventBus, modeling) {
       });
     });
 
-    (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(labels, function(label) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(labels, function(label) {
       movePreview.makeDraggable(context, label, true);
     });
 
@@ -22408,8 +21383,8 @@ function LabelSupport(injector, eventBus, modeling) {
 
     // find labels that are not part of
     // move closure yet and add them
-    (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(enclosedElements, function(element) {
-      (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(element.labels, function(label) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(enclosedElements, function(element) {
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(element.labels, function(label) {
 
         if (!enclosedElements[label.id]) {
           enclosedLabels.push(label);
@@ -22429,7 +21404,7 @@ function LabelSupport(injector, eventBus, modeling) {
     var context = e.context,
         element = context.connection || context.shape;
 
-    (0,_util_Removal__WEBPACK_IMPORTED_MODULE_3__.saveClear)(element.labels, function(label) {
+    (0,_util_Removal__WEBPACK_IMPORTED_MODULE_2__.saveClear)(element.labels, function(label) {
       modeling.removeShape(label, { nested: true });
     });
   });
@@ -22443,7 +21418,7 @@ function LabelSupport(injector, eventBus, modeling) {
 
     // unset labelTarget
     if (labelTarget) {
-      context.labelTargetIndex = (0,_util_Collections__WEBPACK_IMPORTED_MODULE_4__.indexOf)(labelTarget.labels, shape);
+      context.labelTargetIndex = (0,_util_Collections__WEBPACK_IMPORTED_MODULE_3__.indexOf)(labelTarget.labels, shape);
       context.labelTarget = labelTarget;
 
       shape.labelTarget = null;
@@ -22459,7 +21434,7 @@ function LabelSupport(injector, eventBus, modeling) {
 
     // restore labelTarget
     if (labelTarget) {
-      (0,_util_Collections__WEBPACK_IMPORTED_MODULE_4__.add)(labelTarget.labels, shape, labelTargetIndex);
+      (0,_util_Collections__WEBPACK_IMPORTED_MODULE_3__.add)(labelTarget.labels, shape, labelTargetIndex);
 
       shape.labelTarget = labelTarget;
     }
@@ -22467,7 +21442,7 @@ function LabelSupport(injector, eventBus, modeling) {
 
 }
 
-inherits__WEBPACK_IMPORTED_MODULE_0___default()(LabelSupport, _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_1__["default"]);
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_4__["default"])(LabelSupport, _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 LabelSupport.$inject = [
   'injector',
@@ -22487,7 +21462,7 @@ LabelSupport.$inject = [
  */
 function removeLabels(elements) {
 
-  return (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.filter)(elements, function(element) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.filter)(elements, function(element) {
 
     // filter out labels that are move together
     // with their label targets
@@ -22513,7 +21488,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  __init__: [ 'labelSupport'],
+  __init__: [ 'labelSupport' ],
   labelSupport: [ 'type', _LabelSupport__WEBPACK_IMPORTED_MODULE_0__["default"] ]
 });
 
@@ -22531,7 +21506,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Modeling)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _model__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../../model */ "../node_modules/diagram-js/lib/model/index.js");
 /* harmony import */ var _cmd_AlignElementsHandler__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./cmd/AlignElementsHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/AlignElementsHandler.js");
 /* harmony import */ var _cmd_AppendShapeHandler__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./cmd/AppendShapeHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/AppendShapeHandler.js");
@@ -23084,7 +22059,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ AlignElements)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 /**
@@ -23153,7 +22128,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ AppendShapeHandler)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -23312,7 +22287,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ CreateElementsHandler)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
 
 
@@ -23348,7 +22323,11 @@ CreateElementsHandler.prototype.preExecute = function(context) {
     }
   });
 
-  var bbox = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_1__.getBBox)(elements);
+  var visibleElements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.filter)(elements, function(element) {
+    return !element.hidden;
+  });
+
+  var bbox = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_1__.getBBox)(visibleElements);
 
   // center elements around position
   (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(elements, function(element) {
@@ -23437,9 +22416,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ CreateLabelHandler)
 /* harmony export */ });
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! inherits */ "../node_modules/inherits/inherits_browser.js");
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(inherits__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _CreateShapeHandler__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CreateShapeHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/CreateShapeHandler.js");
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _CreateShapeHandler__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CreateShapeHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/CreateShapeHandler.js");
 
 
 
@@ -23451,10 +22429,10 @@ __webpack_require__.r(__webpack_exports__);
  * @param {Canvas} canvas
  */
 function CreateLabelHandler(canvas) {
-  _CreateShapeHandler__WEBPACK_IMPORTED_MODULE_1__["default"].call(this, canvas);
+  _CreateShapeHandler__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, canvas);
 }
 
-inherits__WEBPACK_IMPORTED_MODULE_0___default()(CreateLabelHandler, _CreateShapeHandler__WEBPACK_IMPORTED_MODULE_1__["default"]);
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(CreateLabelHandler, _CreateShapeHandler__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 CreateLabelHandler.$inject = [ 'canvas' ];
 
@@ -23462,7 +22440,7 @@ CreateLabelHandler.$inject = [ 'canvas' ];
 // api //////////////////////
 
 
-var originalExecute = _CreateShapeHandler__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.execute;
+var originalExecute = _CreateShapeHandler__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.execute;
 
 /**
  * Appends a label to a target shape.
@@ -23485,7 +22463,7 @@ CreateLabelHandler.prototype.execute = function(context) {
   return originalExecute.call(this, context);
 };
 
-var originalRevert = _CreateShapeHandler__WEBPACK_IMPORTED_MODULE_1__["default"].prototype.revert;
+var originalRevert = _CreateShapeHandler__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.revert;
 
 /**
  * Undo append by removing the shape
@@ -23522,7 +22500,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ CreateShapeHandler)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 var round = Math.round;
@@ -23608,7 +22586,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ DeleteConnectionHandler)
 /* harmony export */ });
-/* harmony import */ var _util_Collections__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../util/Collections */ "../node_modules/diagram-js/lib/util/Collections.js");
+/* harmony import */ var _util_Collections__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../util/Collections */ "../node_modules/diagram-js/lib/util/Collections.js");
+/* harmony import */ var _util_Removal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../util/Removal */ "../node_modules/diagram-js/lib/util/Removal.js");
+
 
 
 
@@ -23626,6 +22606,30 @@ DeleteConnectionHandler.$inject = [
 ];
 
 
+/**
+ * - Remove connections
+ */
+DeleteConnectionHandler.prototype.preExecute = function(context) {
+
+  var modeling = this._modeling;
+
+  var connection = context.connection;
+
+  // remove connections
+  (0,_util_Removal__WEBPACK_IMPORTED_MODULE_0__.saveClear)(connection.incoming, function(connection) {
+
+    // To make sure that the connection isn't removed twice
+    // For example if a container is removed
+    modeling.removeConnection(connection, { nested: true });
+  });
+
+  (0,_util_Removal__WEBPACK_IMPORTED_MODULE_0__.saveClear)(connection.outgoing, function(connection) {
+    modeling.removeConnection(connection, { nested: true });
+  });
+
+};
+
+
 DeleteConnectionHandler.prototype.execute = function(context) {
 
   var connection = context.connection,
@@ -23634,7 +22638,7 @@ DeleteConnectionHandler.prototype.execute = function(context) {
   context.parent = parent;
 
   // remember containment
-  context.parentIndex = (0,_util_Collections__WEBPACK_IMPORTED_MODULE_0__.indexOf)(parent.children, connection);
+  context.parentIndex = (0,_util_Collections__WEBPACK_IMPORTED_MODULE_1__.indexOf)(parent.children, connection);
 
   context.source = connection.source;
   context.target = connection.target;
@@ -23660,7 +22664,7 @@ DeleteConnectionHandler.prototype.revert = function(context) {
   connection.target = context.target;
 
   // restore containment
-  (0,_util_Collections__WEBPACK_IMPORTED_MODULE_0__.add)(parent.children, connection, parentIndex);
+  (0,_util_Collections__WEBPACK_IMPORTED_MODULE_1__.add)(parent.children, connection, parentIndex);
 
   this._canvas.addConnection(connection, parent);
 
@@ -23681,7 +22685,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ DeleteElementsHandler)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -23840,7 +22844,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ DistributeElements)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -24007,7 +23011,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ LayoutConnectionHandler)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -24059,7 +23063,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ MoveConnectionHandler)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _util_Collections__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../util/Collections */ "../node_modules/diagram-js/lib/util/Collections.js");
 
 
@@ -24202,7 +23206,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ MoveShapeHandler)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _helper_MoveHelper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./helper/MoveHelper */ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/MoveHelper.js");
 /* harmony import */ var _util_Collections__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../util/Collections */ "../node_modules/diagram-js/lib/util/Collections.js");
 /* harmony import */ var _helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./helper/AnchorsHelper */ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/AnchorsHelper.js");
@@ -24235,7 +23239,7 @@ MoveShapeHandler.prototype.execute = function(context) {
       newParentIndex = context.newParentIndex,
       oldParent = shape.parent;
 
-  context.oldBounds = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.pick)(shape, [ 'x', 'y', 'width', 'height']);
+  context.oldBounds = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.pick)(shape, [ 'x', 'y', 'width', 'height' ]);
 
   // save old parent in context
   context.oldParent = oldParent;
@@ -24328,7 +23332,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ReconnectConnectionHandler)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -24449,7 +23453,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ReplaceShapeHandler)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./helper/AnchorsHelper */ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/AnchorsHelper.js");
 
 
@@ -24609,7 +23613,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ResizeShapeHandler)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./helper/AnchorsHelper */ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/AnchorsHelper.js");
 
 
@@ -24731,7 +23735,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ SpaceToolHandler)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _space_tool_SpaceUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../space-tool/SpaceUtil */ "../node_modules/diagram-js/lib/features/space-tool/SpaceUtil.js");
 /* harmony import */ var _helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./helper/AnchorsHelper */ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/AnchorsHelper.js");
 
@@ -24832,9 +23836,7 @@ SpaceToolHandler.prototype.updateConnectionWaypoints = function(
         target = connection.target,
         waypoints = copyWaypoints(connection),
         axis = getAxisFromDirection(direction),
-        layoutHints = {
-          labelBehavior: false
-        };
+        layoutHints = {};
 
     if (includes(affectedShapes, source) && includes(affectedShapes, target)) {
 
@@ -24950,7 +23952,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ToggleShapeCollapseHandler)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 /**
@@ -24980,7 +23982,7 @@ ToggleShapeCollapseHandler.prototype.execute = function(context) {
   // recursively hide/show children
   var result = setHiddenRecursive(children, shape.collapsed);
 
-  return [shape].concat(result);
+  return [ shape ].concat(result);
 };
 
 
@@ -24997,7 +23999,7 @@ ToggleShapeCollapseHandler.prototype.revert = function(context) {
   // retoggle state
   shape.collapsed = !shape.collapsed;
 
-  return [shape].concat(result);
+  return [ shape ].concat(result);
 };
 
 
@@ -25197,7 +24199,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _util_AttachUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../util/AttachUtil */ "../node_modules/diagram-js/lib/util/AttachUtil.js");
 /* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -25321,7 +24323,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ MoveClosure)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
 
 
@@ -25367,7 +24369,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ MoveHelper)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _AnchorsHelper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AnchorsHelper */ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/AnchorsHelper.js");
 /* harmony import */ var _MoveClosure__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./MoveClosure */ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/MoveClosure.js");
 
@@ -25575,9 +24577,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ MoveEvents)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
 /* harmony import */ var _util_Event__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Event */ "../node_modules/diagram-js/lib/util/Event.js");
 /* harmony import */ var _util_Mouse__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/Mouse */ "../node_modules/diagram-js/lib/util/Mouse.js");
+
+
 
 
 var LOW_PRIORITY = 500,
@@ -25775,6 +24780,11 @@ function MoveEvents(
       return;
     }
 
+    // ignore non-draggable hits
+    if ((0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.classes)(event.target).has('djs-hit-no-move')) {
+      return;
+    }
+
     var referencePoint = mid(element);
 
     dragging.init(event, referencePoint, 'shape.move', {
@@ -25843,9 +24853,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ MovePreview)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
 /* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
 
 
@@ -26147,9 +25157,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ OrderingProvider)
 /* harmony export */ });
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! inherits */ "../node_modules/inherits/inherits_browser.js");
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(inherits__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
 
 
 
@@ -26186,7 +25195,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 function OrderingProvider(eventBus) {
 
-  _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_1__["default"].call(this, eventBus);
+  _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
 
 
   var self = this;
@@ -26244,7 +25253,7 @@ OrderingProvider.prototype.getOrdering = function(element, newParent) {
   return null;
 };
 
-inherits__WEBPACK_IMPORTED_MODULE_0___default()(OrderingProvider, _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_1__["default"]);
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(OrderingProvider, _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -26260,9 +25269,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ Outline)
 /* harmony export */ });
 /* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js");
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 var LOW_PRIORITY = 500;
@@ -26298,6 +25307,7 @@ function Outline(eventBus, styles, elementRegistry) {
     (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(outline, (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)({
       x: 10,
       y: 10,
+      rx: 3,
       width: 100,
       height: 100
     }, OUTLINE_STYLE));
@@ -26377,7 +25387,7 @@ Outline.prototype.updateConnectionOutline = function(outline, connection) {
 };
 
 
-Outline.$inject = ['eventBus', 'styles', 'elementRegistry'];
+Outline.$inject = [ 'eventBus', 'styles', 'elementRegistry' ];
 
 /***/ }),
 
@@ -26413,8 +25423,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Overlays)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
 /* harmony import */ var _util_IdGenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/IdGenerator */ "../node_modules/diagram-js/lib/util/IdGenerator.js");
 
@@ -26658,8 +25668,7 @@ Overlays.prototype.add = function(element, type, overlay) {
  *
  * @see Overlays#get for filter options.
  *
- * @param {string} [id]
- * @param {Object} [filter]
+ * @param {string|object} [filter]
  */
 Overlays.prototype.remove = function(filter) {
 
@@ -26775,11 +25784,13 @@ Overlays.prototype._updateOverlay = function(overlay) {
   }
 
   setPosition(htmlContainer, left || 0, top || 0);
+  this._updateOverlayVisibilty(overlay, this._canvas.viewbox());
 };
 
 
 Overlays.prototype._createOverlayContainer = function(element) {
-  var html = (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.domify)('<div class="djs-overlays" style="position: absolute" />');
+  var html = (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.domify)('<div class="djs-overlays" />');
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.assignStyle)(html, { position: 'absolute' });
 
   this._overlayRoot.appendChild(html);
 
@@ -26850,7 +25861,8 @@ Overlays.prototype._addOverlay = function(overlay) {
 
   overlayContainer = this._getOverlayContainer(element);
 
-  htmlContainer = (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.domify)('<div class="djs-overlay" data-overlay-id="' + id + '" style="position: absolute">');
+  htmlContainer = (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.domify)('<div class="djs-overlay" data-overlay-id="' + id + '">');
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.assignStyle)(htmlContainer, { position: 'absolute' });
 
   htmlContainer.appendChild(html);
 
@@ -26858,12 +25870,10 @@ Overlays.prototype._addOverlay = function(overlay) {
     (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.classes)(htmlContainer).add('djs-overlay-' + overlay.type);
   }
 
-  var plane = this._canvas.findPlane(element);
-  var activePlane = this._canvas.getActivePlane();
-  overlay.plane = plane;
-  if (plane !== activePlane) {
-    setVisible(htmlContainer, false);
-  }
+  var elementRoot = this._canvas.findRoot(element);
+  var activeRoot = this._canvas.getRootElement();
+
+  setVisible(htmlContainer, elementRoot === activeRoot);
 
   overlay.htmlContainer = htmlContainer;
 
@@ -26879,14 +25889,14 @@ Overlays.prototype._addOverlay = function(overlay) {
 
 Overlays.prototype._updateOverlayVisibilty = function(overlay, viewbox) {
   var show = overlay.show,
-      plane = overlay.plane,
+      rootElement = this._canvas.findRoot(overlay.element),
       minZoom = show && show.minZoom,
       maxZoom = show && show.maxZoom,
       htmlContainer = overlay.htmlContainer,
-      activePlane = this._canvas.getActivePlane(),
+      activeRootElement = this._canvas.getRootElement(),
       visible = true;
 
-  if (plane !== activePlane) {
+  if (rootElement !== activeRootElement) {
     visible = false;
   } else if (show) {
     if (
@@ -27022,10 +26032,8 @@ Overlays.prototype._init = function() {
   });
 
 
-  eventBus.on('plane.set', function(e) {
-    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(self._overlays, function(el) {
-      setVisible(el.htmlContainer, el.plane === e.plane);
-    });
+  eventBus.on('root.set', function() {
+    self._updateOverlaysVisibilty(self._canvas.viewbox());
   });
 
   // clear overlays with diagram
@@ -27039,8 +26047,14 @@ Overlays.prototype._init = function() {
 
 function createRoot(parentNode) {
   var root = (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.domify)(
-    '<div class="djs-overlay-container" style="position: absolute; width: 0; height: 0;" />'
+    '<div class="djs-overlay-container" />'
   );
+
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.assignStyle)(root, {
+    position: 'absolute',
+    width: 0,
+    height: 0
+  });
 
   parentNode.insertBefore(root, parentNode.firstChild);
 
@@ -27048,9 +26062,15 @@ function createRoot(parentNode) {
 }
 
 function setPosition(el, x, y) {
-  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(el.style, { left: x + 'px', top: y + 'px' });
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.assignStyle)(el, { left: x + 'px', top: y + 'px' });
 }
 
+/**
+ * Set element visible
+ *
+ * @param {DOMElement} el
+ * @param {boolean} [visible=true]
+ */
 function setVisible(el, visible) {
   el.style.display = visible === false ? 'none' : '';
 }
@@ -27098,9 +26118,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ PreviewSupport)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var _util_GraphicsUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/GraphicsUtil */ "../node_modules/diagram-js/lib/util/GraphicsUtil.js");
 
 
@@ -27376,7 +26396,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ Resize),
 /* harmony export */   "getReferencePoint": () => (/* binding */ getReferencePoint)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _ResizeUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ResizeUtil */ "../node_modules/diagram-js/lib/features/resize/ResizeUtil.js");
 /* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
 
@@ -27664,9 +26684,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ResizeHandles)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var _util_Mouse__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/Mouse */ "../node_modules/diagram-js/lib/util/Mouse.js");
 /* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
 /* harmony import */ var _Resize__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Resize */ "../node_modules/diagram-js/lib/features/resize/Resize.js");
@@ -27683,7 +26703,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var HANDLE_OFFSET = -6,
-    HANDLE_SIZE = 4,
+    HANDLE_SIZE = 8,
     HANDLE_HIT_SIZE = 20;
 
 var CLS_RESIZER = 'djs-resizer';
@@ -27803,19 +26823,17 @@ ResizeHandles.prototype.createResizer = function(element, direction) {
 /**
  * Add resizers for a given element.
  *
- * @param {djs.model.Shape} shape
+ * @param {djs.model.Element} element
  */
-ResizeHandles.prototype.addResizer = function(shape) {
+ResizeHandles.prototype.addResizer = function(element) {
   var self = this;
 
-  var resize = this._resize;
-
-  if (!resize.canResize({ shape: shape })) {
+  if (isConnection(element) || !this._resize.canResize({ shape: element })) {
     return;
   }
 
   (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(directions, function(direction) {
-    self.createResizer(shape, direction);
+    self.createResizer(element, direction);
   });
 };
 
@@ -27862,6 +26880,10 @@ function getHandleOffset(direction) {
   return offset;
 }
 
+function isConnection(element) {
+  return !!element.waypoints;
+}
+
 /***/ }),
 
 /***/ "../node_modules/diagram-js/lib/features/resize/ResizePreview.js":
@@ -27875,7 +26897,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ResizePreview)
 /* harmony export */ });
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
 var MARKER_RESIZING = 'djs-resizing',
     MARKER_RESIZE_NOT_OK = 'resize-not-ok';
 
@@ -27979,7 +27001,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "resizeTRBL": () => (/* binding */ resizeTRBL),
 /* harmony export */   "substractTRBL": () => (/* binding */ substractTRBL)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
 /* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
 
@@ -28277,9 +27299,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ RuleProvider)
 /* harmony export */ });
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! inherits */ "../node_modules/inherits/inherits_browser.js");
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(inherits__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
 
 
 
@@ -28293,14 +27314,14 @@ __webpack_require__.r(__webpack_exports__);
  * @param {EventBus} eventBus
  */
 function RuleProvider(eventBus) {
-  _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_1__["default"].call(this, eventBus);
+  _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
 
   this.init();
 }
 
 RuleProvider.$inject = [ 'eventBus' ];
 
-inherits__WEBPACK_IMPORTED_MODULE_0___default()(RuleProvider, _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_1__["default"]);
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(RuleProvider, _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 
 /**
@@ -28463,7 +27484,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Selection)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -28489,7 +27510,7 @@ function Selection(eventBus, canvas) {
     self.deselect(element);
   });
 
-  eventBus.on([ 'diagram.clear', 'plane.set' ], function(e) {
+  eventBus.on([ 'diagram.clear', 'root.set' ], function(e) {
     self.select(null);
   });
 }
@@ -28542,10 +27563,12 @@ Selection.prototype.select = function(elements, add) {
 
   var canvas = this._canvas;
 
-  elements = elements.filter(function(element) {
-    var plane = canvas.findPlane(element);
+  var rootElement = canvas.getRootElement();
 
-    return plane === canvas.getActivePlane();
+  elements = elements.filter(function(element) {
+    var elementRoot = canvas.findRoot(element);
+
+    return rootElement === elementRoot;
   });
 
   // selection may be cleared by passing an empty array or null
@@ -28582,7 +27605,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ SelectionBehavior)
 /* harmony export */ });
 /* harmony import */ var _util_Mouse__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/Mouse */ "../node_modules/diagram-js/lib/util/Mouse.js");
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -28618,11 +27641,10 @@ function SelectionBehavior(eventBus, selection, canvas, elementRegistry) {
   // Select connection targets on connect
   eventBus.on('connect.end', 500, function(event) {
     var context = event.context,
-        canExecute = context.canExecute,
-        hover = context.hover;
+        connection = context.connection;
 
-    if (canExecute && hover) {
-      selection.select(hover);
+    if (connection) {
+      selection.select(connection);
     }
   });
 
@@ -28709,11 +27731,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ SelectionVisuals)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
+
+
+
+
 
 
 var MARKER_HOVER = 'hover',
     MARKER_SELECTED = 'selected';
+
+var SELECTION_OUTLINE_PADDING = 6;
 
 
 /**
@@ -28724,11 +27754,13 @@ var MARKER_HOVER = 'hover',
  *
  * Makes elements selectable, too.
  *
- * @param {EventBus} events
- * @param {SelectionService} selection
  * @param {Canvas} canvas
+ * @param {EventBus} eventBus
  */
-function SelectionVisuals(events, canvas, selection, styles) {
+function SelectionVisuals(canvas, eventBus, selection) {
+  this._canvas = canvas;
+
+  var self = this;
 
   this._multiSelectionBox = null;
 
@@ -28740,15 +27772,15 @@ function SelectionVisuals(events, canvas, selection, styles) {
     canvas.removeMarker(e, cls);
   }
 
-  events.on('element.hover', function(event) {
+  eventBus.on('element.hover', function(event) {
     addMarker(event.element, MARKER_HOVER);
   });
 
-  events.on('element.out', function(event) {
+  eventBus.on('element.out', function(event) {
     removeMarker(event.element, MARKER_HOVER);
   });
 
-  events.on('selection.changed', function(event) {
+  eventBus.on('selection.changed', function(event) {
 
     function deselect(s) {
       removeMarker(s, MARKER_SELECTED);
@@ -28772,15 +27804,62 @@ function SelectionVisuals(events, canvas, selection, styles) {
         select(e);
       }
     });
+
+    self._updateSelectionOutline(newSelection);
+  });
+
+
+  eventBus.on('element.changed', function(event) {
+    if (selection.isSelected(event.element)) {
+      self._updateSelectionOutline(selection.get());
+    }
   });
 }
 
 SelectionVisuals.$inject = [
-  'eventBus',
   'canvas',
-  'selection',
-  'styles'
+  'eventBus',
+  'selection'
 ];
+
+SelectionVisuals.prototype._updateSelectionOutline = function(selection) {
+  var layer = this._canvas.getLayer('selectionOutline');
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.clear)(layer);
+
+  var enabled = selection.length > 1;
+
+  var container = this._canvas.getContainer();
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.classes)(container)[enabled ? 'add' : 'remove']('djs-multi-select');
+
+  if (!enabled) {
+    return;
+  }
+
+  var bBox = addSelectionOutlinePadding((0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getBBox)(selection));
+
+  var rect = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.create)('rect');
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(rect, (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({
+    rx: 3
+  }, bBox));
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.classes)(rect).add('djs-selection-outline');
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.append)(layer, rect);
+};
+
+// helpers //////////
+
+function addSelectionOutlinePadding(bBox) {
+  return {
+    x: bBox.x - SELECTION_OUTLINE_PADDING,
+    y: bBox.y - SELECTION_OUTLINE_PADDING,
+    width: bBox.width + SELECTION_OUTLINE_PADDING * 2,
+    height: bBox.height + SELECTION_OUTLINE_PADDING * 2
+  };
+}
 
 /***/ }),
 
@@ -28836,7 +27915,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _SnapContext__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./SnapContext */ "../node_modules/diagram-js/lib/features/snapping/SnapContext.js");
 /* harmony import */ var _SnapUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SnapUtil */ "../node_modules/diagram-js/lib/features/snapping/SnapUtil.js");
 /* harmony import */ var _keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../keyboard/KeyboardUtil */ "../node_modules/diagram-js/lib/features/keyboard/KeyboardUtil.js");
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -29055,7 +28134,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _SnapUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SnapUtil */ "../node_modules/diagram-js/lib/features/snapping/SnapUtil.js");
 /* harmony import */ var _keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../keyboard/KeyboardUtil */ "../node_modules/diagram-js/lib/features/keyboard/KeyboardUtil.js");
 /* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -29235,7 +28314,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "SnapPoints": () => (/* binding */ SnapPoints),
 /* harmony export */   "default": () => (/* binding */ SnapContext)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _SnapUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SnapUtil */ "../node_modules/diagram-js/lib/features/snapping/SnapUtil.js");
 
 
@@ -29584,9 +28663,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "SNAP_LINE_HIDE_DELAY": () => (/* binding */ SNAP_LINE_HIDE_DELAY),
 /* harmony export */   "default": () => (/* binding */ Snapping)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _SnapUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SnapUtil */ "../node_modules/diagram-js/lib/features/snapping/SnapUtil.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
 
 
 
@@ -29783,7 +28862,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ SpaceTool)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
 /* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
 /* harmony import */ var _SpaceUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SpaceUtil */ "../node_modules/diagram-js/lib/features/space-tool/SpaceUtil.js");
@@ -30048,26 +29127,105 @@ SpaceTool.prototype.calculateAdjustments = function(elements, axis, delta, start
   var movingShapes = [],
       resizingShapes = [];
 
+  var attachers = [],
+      connections = [];
+
+  function moveShape(shape) {
+    if (!movingShapes.includes(shape)) {
+      movingShapes.push(shape);
+    }
+
+    var label = shape.label;
+
+    // move external label if its label target is moving
+    if (label && !movingShapes.includes(label)) {
+      movingShapes.push(label);
+    }
+  }
+
+  function resizeShape(shape) {
+    if (!resizingShapes.includes(shape)) {
+      resizingShapes.push(shape);
+    }
+  }
+
   (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.forEach)(elements, function(element) {
-    if (!element.parent || isConnection(element)) {
+    if (!element.parent || isLabel(element)) {
+      return;
+    }
+
+    // handle connections separately
+    if (isConnection(element)) {
+      connections.push(element);
+
       return;
     }
 
     var shapeStart = element[ axis ],
         shapeEnd = shapeStart + element[ AXIS_TO_DIMENSION[ axis ] ];
 
-    // shape to be moved
-    if ((delta > 0 && shapeStart > start) || (delta < 0 && shapeEnd < start)) {
-      return movingShapes.push(element);
+    // handle attachers separately
+    if (isAttacher(element)
+      && ((delta > 0 && (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__.getMid)(element)[ axis ] > start)
+        || (delta < 0 && (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__.getMid)(element)[ axis ] < start))) {
+      attachers.push(element);
+
+      return;
     }
 
-    // shape to be resized
-    if (shapeStart < start &&
-      shapeEnd > start &&
-      rules.allowed('shape.resize', { shape: element })
-    ) {
+    // move shape if its start is after space tool
+    if ((delta > 0 && shapeStart > start)
+      || (delta < 0 && shapeEnd < start)) {
+      moveShape(element);
 
-      return resizingShapes.push(element);
+      return;
+    }
+
+    // resize shape if it's resizable and its start is before and its end is after space tool
+    if (shapeStart < start
+      && shapeEnd > start
+      && rules.allowed('shape.resize', { shape: element })
+    ) {
+      resizeShape(element);
+
+      return;
+    }
+  });
+
+  // move attacher if its host is moving
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.forEach)(movingShapes, function(shape) {
+    var attachers = shape.attachers;
+
+    if (attachers) {
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.forEach)(attachers, function(attacher) {
+        moveShape(attacher);
+      });
+    }
+  });
+
+  var allShapes = movingShapes.concat(resizingShapes);
+
+  // move attacher if its mid is after space tool and its host is moving or resizing
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.forEach)(attachers, function(attacher) {
+    var host = attacher.host;
+
+    if (includes(allShapes, host)) {
+      moveShape(attacher);
+    }
+  });
+
+  allShapes = movingShapes.concat(resizingShapes);
+
+  // move external label if its label target's (connection) source and target are moving
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.forEach)(connections, function(connection) {
+    var source = connection.source,
+        target = connection.target,
+        label = connection.label;
+
+    if (includes(allShapes, source)
+      && includes(allShapes, target)
+      && label) {
+      moveShape(label);
     }
   });
 
@@ -30091,7 +29249,11 @@ SpaceTool.prototype.toggle = function() {
 SpaceTool.prototype.isActive = function() {
   var context = this._dragging.context();
 
-  return context && /^spaceTool/.test(context.prefix);
+  if (context) {
+    return /^spaceTool/.test(context.prefix);
+  }
+
+  return false;
 };
 
 // helpers //////////
@@ -30157,10 +29319,13 @@ function getSpaceToolConstraints(elements, axis, direction, start, minDimensions
       max;
 
   (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.forEach)(resizingShapes, function(resizingShape) {
+    var attachers = resizingShape.attachers,
+        children = resizingShape.children;
+
     var resizingShapeBBox = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__.asTRBL)(resizingShape);
 
     // find children that are not moving or resizing
-    var nonMovingResizingChildren = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.filter)(resizingShape.children, function(child) {
+    var nonMovingResizingChildren = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.filter)(children, function(child) {
       return !isConnection(child) &&
         !isLabel(child) &&
         !includes(movingShapes, child) &&
@@ -30168,13 +29333,19 @@ function getSpaceToolConstraints(elements, axis, direction, start, minDimensions
     });
 
     // find children that are moving
-    var movingChildren = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.filter)(resizingShape.children, function(child) {
+    var movingChildren = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.filter)(children, function(child) {
       return !isConnection(child) && !isLabel(child) && includes(movingShapes, child);
     });
 
     var minOrMax,
         nonMovingResizingChildrenBBox,
-        movingChildrenBBox;
+        movingChildrenBBox,
+        movingAttachers = [],
+        nonMovingAttachers = [],
+        movingAttachersBBox,
+        movingAttachersConstraint,
+        nonMovingAttachersBBox,
+        nonMovingAttachersConstraint;
 
     if (nonMovingResizingChildren.length) {
       nonMovingResizingChildrenBBox = addPadding((0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__.asTRBL)((0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getBBox)(nonMovingResizingChildren)));
@@ -30212,9 +29383,52 @@ function getSpaceToolConstraints(elements, axis, direction, start, minDimensions
       }
     }
 
+    if (attachers && attachers.length) {
+      attachers.forEach(function(attacher) {
+        if (includes(movingShapes, attacher)) {
+          movingAttachers.push(attacher);
+        } else {
+          nonMovingAttachers.push(attacher);
+        }
+      });
+
+      if (movingAttachers.length) {
+        movingAttachersBBox = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__.asTRBL)((0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getBBox)(movingAttachers.map(_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__.getMid)));
+
+        movingAttachersConstraint = resizingShapeBBox[ DIRECTION_TO_TRBL[ DIRECTION_TO_OPPOSITE[ direction ] ] ]
+              - (movingAttachersBBox[ DIRECTION_TO_TRBL[ DIRECTION_TO_OPPOSITE[ direction ] ] ] - start);
+      }
+
+      if (nonMovingAttachers.length) {
+        nonMovingAttachersBBox = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__.asTRBL)((0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getBBox)(nonMovingAttachers.map(_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__.getMid)));
+
+        nonMovingAttachersConstraint = nonMovingAttachersBBox[ DIRECTION_TO_TRBL[ direction ] ]
+              - (resizingShapeBBox[ DIRECTION_TO_TRBL[ direction ] ] - start);
+      }
+
+      if (direction === 'n') {
+        minOrMax = Math.min(movingAttachersConstraint || Infinity, nonMovingAttachersConstraint || Infinity);
+
+        spaceToolConstraints.bottom = max = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(max) ? Math.min(max, minOrMax) : minOrMax;
+      } else if (direction === 'w') {
+        minOrMax = Math.min(movingAttachersConstraint || Infinity, nonMovingAttachersConstraint || Infinity);
+
+        spaceToolConstraints.right = max = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(max) ? Math.min(max, minOrMax) : minOrMax;
+      } else if (direction === 's') {
+        minOrMax = Math.max(movingAttachersConstraint || -Infinity, nonMovingAttachersConstraint || -Infinity);
+
+        spaceToolConstraints.top = min = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(min) ? Math.max(min, minOrMax) : minOrMax;
+      } else if (direction === 'e') {
+        minOrMax = Math.max(movingAttachersConstraint || -Infinity, nonMovingAttachersConstraint || -Infinity);
+
+        spaceToolConstraints.left = min = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(min) ? Math.max(min, minOrMax) : minOrMax;
+      }
+    }
+
     var resizingShapeMinDimensions = minDimensions && minDimensions[ resizingShape.id ];
 
     if (resizingShapeMinDimensions) {
+
       if (direction === 'n') {
         minOrMax = start +
           resizingShape[ AXIS_TO_DIMENSION [ axis ] ] -
@@ -30250,6 +29464,10 @@ function includes(array, item) {
   return array.indexOf(item) !== -1;
 }
 
+function isAttacher(element) {
+  return !!element.host;
+}
+
 function isConnection(element) {
   return !!element.waypoints;
 }
@@ -30271,8 +29489,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ SpaceToolPreview)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
 /* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
 
 
@@ -30587,7 +29805,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getWaypointsUpdatingConnections": () => (/* binding */ getWaypointsUpdatingConnections),
 /* harmony export */   "resizeBounds": () => (/* binding */ resizeBounds)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 /**
@@ -30749,7 +29967,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  __init__: ['spaceToolPreview'],
+  __init__: [ 'spaceToolPreview' ],
   __depends__: [
     _dragging__WEBPACK_IMPORTED_MODULE_0__["default"],
     _rules__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -30757,8 +29975,8 @@ __webpack_require__.r(__webpack_exports__);
     _preview_support__WEBPACK_IMPORTED_MODULE_3__["default"],
     _mouse__WEBPACK_IMPORTED_MODULE_4__["default"]
   ],
-  spaceTool: ['type', _SpaceTool__WEBPACK_IMPORTED_MODULE_5__["default"] ],
-  spaceToolPreview: ['type', _SpaceToolPreview__WEBPACK_IMPORTED_MODULE_6__["default"] ]
+  spaceTool: [ 'type', _SpaceTool__WEBPACK_IMPORTED_MODULE_5__["default"] ],
+  spaceToolPreview: [ 'type', _SpaceToolPreview__WEBPACK_IMPORTED_MODULE_6__["default"] ]
 });
 
 
@@ -30775,8 +29993,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ToolManager)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
 
 
 
@@ -30932,8 +30150,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Tooltips)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var _util_IdGenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/IdGenerator */ "../node_modules/diagram-js/lib/util/IdGenerator.js");
 
 
@@ -30947,8 +30165,14 @@ var ids = new _util_IdGenerator__WEBPACK_IMPORTED_MODULE_0__["default"]('tt');
 
 function createRoot(parentNode) {
   var root = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.domify)(
-    '<div class="djs-tooltip-container" style="position: absolute; width: 0; height: 0;" />'
+    '<div class="djs-tooltip-container" />'
   );
+
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.assignStyle)(root, {
+    position: 'absolute',
+    width: '0',
+    height: '0'
+  });
 
   parentNode.insertBefore(root, parentNode.firstChild);
 
@@ -30957,7 +30181,7 @@ function createRoot(parentNode) {
 
 
 function setPosition(el, x, y) {
-  (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)(el.style, { left: x + 'px', top: y + 'px' });
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.assignStyle)(el, { left: x + 'px', top: y + 'px' });
 }
 
 function setVisible(el, visible) {
@@ -31221,7 +30445,8 @@ Tooltips.prototype._addTooltip = function(tooltip) {
     html = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.domify)(html);
   }
 
-  htmlContainer = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.domify)('<div data-tooltip-id="' + id + '" class="' + tooltipClass + '" style="position: absolute">');
+  htmlContainer = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.domify)('<div data-tooltip-id="' + id + '" class="' + tooltipClass + '">');
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.assignStyle)(htmlContainer, { position: 'absolute' });
 
   htmlContainer.appendChild(html);
 
@@ -31329,7 +30554,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ TouchFix)
 /* harmony export */ });
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
 
 
 
@@ -31396,8 +30621,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ TouchInteractionEvents)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var hammerjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! hammerjs */ "../node_modules/hammerjs/hammer.js");
 /* harmony import */ var hammerjs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(hammerjs__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _util_Event__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Event */ "../node_modules/diagram-js/lib/util/Event.js");
@@ -31908,7 +31133,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ CroppingConnectionDocking)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
 
 
@@ -32018,6 +31243,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "asBounds": () => (/* binding */ asBounds),
 /* harmony export */   "asTRBL": () => (/* binding */ asTRBL),
 /* harmony export */   "filterRedundantWaypoints": () => (/* binding */ filterRedundantWaypoints),
+/* harmony export */   "getBoundsMid": () => (/* binding */ getBoundsMid),
+/* harmony export */   "getConnectionMid": () => (/* binding */ getConnectionMid),
 /* harmony export */   "getElementLineIntersection": () => (/* binding */ getElementLineIntersection),
 /* harmony export */   "getIntersections": () => (/* binding */ getIntersections),
 /* harmony export */   "getMid": () => (/* binding */ getMid),
@@ -32025,7 +31252,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "roundBounds": () => (/* binding */ roundBounds),
 /* harmony export */   "roundPoint": () => (/* binding */ roundPoint)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _util_Geometry__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../util/Geometry */ "../node_modules/diagram-js/lib/util/Geometry.js");
 /* harmony import */ var path_intersection__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! path-intersection */ "../node_modules/path-intersection/intersect.js");
 /* harmony import */ var path_intersection__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path_intersection__WEBPACK_IMPORTED_MODULE_0__);
@@ -32096,13 +31323,87 @@ function asBounds(trbl) {
  *
  * @return {Point}
  */
-function getMid(bounds) {
+function getBoundsMid(bounds) {
   return roundPoint({
     x: bounds.x + (bounds.width || 0) / 2,
     y: bounds.y + (bounds.height || 0) / 2
   });
 }
 
+
+/**
+ * Get the mid of the given Connection.
+ *
+ * @param {djs.Base.Connection} connection
+ *
+ * @return {Point}
+ */
+function getConnectionMid(connection) {
+  var waypoints = connection.waypoints;
+
+  // calculate total length and length of each segment
+  var parts = waypoints.reduce(function(parts, point, index) {
+
+    var lastPoint = waypoints[index - 1];
+
+    if (lastPoint) {
+      var lastPart = parts[parts.length - 1];
+
+      var startLength = lastPart && lastPart.endLength || 0;
+      var length = distance(lastPoint, point);
+
+      parts.push({
+        start: lastPoint,
+        end: point,
+        startLength: startLength,
+        endLength: startLength + length,
+        length: length
+      });
+    }
+
+    return parts;
+  }, []);
+
+  var totalLength = parts.reduce(function(length, part) {
+    return length + part.length;
+  }, 0);
+
+  // find which segement contains middle point
+  var midLength = totalLength / 2;
+
+  var i = 0;
+  var midSegment = parts[i];
+
+  while (midSegment.endLength < midLength) {
+    midSegment = parts[++i];
+  }
+
+  // calculate relative position on mid segment
+  var segmentProgress = (midLength - midSegment.startLength) / midSegment.length;
+
+  var midPoint = {
+    x: midSegment.start.x + (midSegment.end.x - midSegment.start.x) * segmentProgress,
+    y: midSegment.start.y + (midSegment.end.y - midSegment.start.y) * segmentProgress
+  };
+
+  return midPoint;
+}
+
+
+/**
+ * Get the mid of the given Element.
+ *
+ * @param {djs.Base.Connection} connection
+ *
+ * @return {Point}
+ */
+function getMid(element) {
+  if (isConnection(element)) {
+    return getConnectionMid(element);
+  }
+
+  return getBoundsMid(element);
+}
 
 // orientation utils //////////////////////
 
@@ -32231,6 +31532,15 @@ function filterRedundantWaypoints(waypoints) {
   return waypoints;
 }
 
+// helpers //////////////////////
+
+function distance(a, b) {
+  return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+}
+
+function isConnection(element) {
+  return !!element.waypoints;
+}
 
 /***/ }),
 
@@ -32249,7 +31559,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "tryLayoutStraight": () => (/* binding */ tryLayoutStraight),
 /* harmony export */   "withoutRedundantPoints": () => (/* binding */ withoutRedundantPoints)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 /* harmony import */ var _LayoutUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
 /* harmony import */ var _util_Geometry__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../util/Geometry */ "../node_modules/diagram-js/lib/util/Geometry.js");
 
@@ -33006,21 +32316,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Shape": () => (/* binding */ Shape),
 /* harmony export */   "create": () => (/* binding */ create)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! inherits */ "../node_modules/inherits/inherits_browser.js");
-/* harmony import */ var inherits__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(inherits__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var object_refs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! object-refs */ "../node_modules/object-refs/index.js");
-/* harmony import */ var object_refs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(object_refs__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var object_refs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! object-refs */ "../node_modules/object-refs/index.js");
+/* harmony import */ var object_refs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(object_refs__WEBPACK_IMPORTED_MODULE_0__);
 
 
 
 
 
-var parentRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_1___default())({ name: 'children', enumerable: true, collection: true }, { name: 'parent' }),
-    labelRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_1___default())({ name: 'labels', enumerable: true, collection: true }, { name: 'labelTarget' }),
-    attacherRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_1___default())({ name: 'attachers', collection: true }, { name: 'host' }),
-    outgoingRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_1___default())({ name: 'outgoing', collection: true }, { name: 'source' }),
-    incomingRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_1___default())({ name: 'incoming', collection: true }, { name: 'target' });
+var parentRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_0___default())({ name: 'children', enumerable: true, collection: true }, { name: 'parent' }),
+    labelRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_0___default())({ name: 'labels', enumerable: true, collection: true }, { name: 'labelTarget' }),
+    attacherRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_0___default())({ name: 'attachers', collection: true }, { name: 'host' }),
+    outgoingRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_0___default())({ name: 'outgoing', collection: true }, { name: 'source' }),
+    incomingRefs = new (object_refs__WEBPACK_IMPORTED_MODULE_0___default())({ name: 'incoming', collection: true }, { name: 'target' });
 
 /**
  * @namespace djs.model
@@ -33146,7 +32455,7 @@ function Shape() {
   attacherRefs.bind(this, 'attachers');
 }
 
-inherits__WEBPACK_IMPORTED_MODULE_0___default()(Shape, Base);
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(Shape, Base);
 
 
 /**
@@ -33161,7 +32470,7 @@ function Root() {
   Shape.call(this);
 }
 
-inherits__WEBPACK_IMPORTED_MODULE_0___default()(Root, Shape);
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(Root, Shape);
 
 
 /**
@@ -33184,7 +32493,7 @@ function Label() {
   labelRefs.bind(this, 'labelTarget');
 }
 
-inherits__WEBPACK_IMPORTED_MODULE_0___default()(Label, Shape);
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(Label, Shape);
 
 
 /**
@@ -33215,7 +32524,7 @@ function Connection() {
   incomingRefs.bind(this, 'target');
 }
 
-inherits__WEBPACK_IMPORTED_MODULE_0___default()(Connection, Base);
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(Connection, Base);
 
 
 var types = {
@@ -33263,7 +32572,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ KeyboardMove)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -33430,7 +32739,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_Cursor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Cursor */ "../node_modules/diagram-js/lib/util/Cursor.js");
 /* harmony import */ var _util_ClickTrap__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/ClickTrap */ "../node_modules/diagram-js/lib/util/ClickTrap.js");
 /* harmony import */ var _util_PositionUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/PositionUtil */ "../node_modules/diagram-js/lib/util/PositionUtil.js");
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var _util_Event__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Event */ "../node_modules/diagram-js/lib/util/Event.js");
 
 
@@ -33613,10 +32922,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ ZoomScroll)
 /* harmony export */ });
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
 /* harmony import */ var _ZoomUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ZoomUtil */ "../node_modules/diagram-js/lib/navigation/zoomscroll/ZoomUtil.js");
 /* harmony import */ var _util_Math__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Math */ "../node_modules/diagram-js/lib/util/Math.js");
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 
@@ -34219,7 +33528,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "set": () => (/* binding */ set),
 /* harmony export */   "unset": () => (/* binding */ unset)
 /* harmony export */ });
-/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
 
 
 var CURSOR_CLS_PATTERN = /^djs-cursor-.*$/;
@@ -34269,9 +33578,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "selfAndChildren": () => (/* binding */ selfAndChildren),
 /* harmony export */   "selfAndDirectChildren": () => (/* binding */ selfAndDirectChildren)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
+/**
+ * @typedef { {x:number, y: number, width: number, height: number} } Bounds
+ */
 
 /**
  * Get parent elements.
@@ -34500,13 +33812,15 @@ function getClosure(elements, isTopLevel, closure) {
  * the array or the element primitive.
  *
  * @param {Array<djs.model.Shape>|djs.model.Shape} elements
- * @param {boolean} stopRecursion
+ * @param {boolean} [stopRecursion=false]
+ *
+ * @return {Bounds}
  */
 function getBBox(elements, stopRecursion) {
 
   stopRecursion = !!stopRecursion;
   if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(elements)) {
-    elements = [elements];
+    elements = [ elements ];
   }
 
   var minX,
@@ -34692,7 +34006,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "pointsAlignedVertically": () => (/* binding */ pointsAlignedVertically),
 /* harmony export */   "pointsOnLine": () => (/* binding */ pointsOnLine)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
 
 
 /**
@@ -34954,11 +34268,11 @@ function circlePath(center, r) {
       y = center.y;
 
   return [
-    ['M', x, y],
-    ['m', 0, -r],
-    ['a', r, r, 0, 1, 1, 0, 2 * r],
-    ['a', r, r, 0, 1, 1, 0, -2 * r],
-    ['z']
+    [ 'M', x, y ],
+    [ 'm', 0, -r ],
+    [ 'a', r, r, 0, 1, 1, 0, 2 * r ],
+    [ 'a', r, r, 0, 1, 1, 0, -2 * r ],
+    [ 'z' ]
   ];
 }
 
@@ -35263,7 +34577,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "toSVGPoints": () => (/* binding */ toSVGPoints),
 /* harmony export */   "updateLine": () => (/* binding */ updateLine)
 /* harmony export */ });
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
 
 
 
@@ -35316,7 +34630,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "transform": () => (/* binding */ transform),
 /* harmony export */   "translate": () => (/* binding */ translate)
 /* harmony export */ });
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
 
 
 
@@ -35390,8 +34704,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Text)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+
+
 
 
 
@@ -35578,10 +34895,14 @@ function getHelperSvg() {
     helperSvg = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.create)('svg');
 
     (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(helperSvg, {
-      id: 'helper-svg',
+      id: 'helper-svg'
+    });
+
+    (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.assignStyle)(helperSvg, {
+      visibility: 'hidden',
+      position: 'fixed',
       width: 0,
-      height: 0,
-      style: 'visibility: hidden; position: fixed'
+      height: 0
     });
 
     document.body.appendChild(helperSvg);
@@ -35761,2259 +35082,6 @@ function getLineHeight(style) {
 
 /***/ }),
 
-/***/ "../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js":
-/*!**************************************************************************!*\
-  !*** ../node_modules/diagram-js/node_modules/min-dash/dist/index.esm.js ***!
-  \**************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "assign": () => (/* binding */ assign),
-/* harmony export */   "bind": () => (/* binding */ bind),
-/* harmony export */   "debounce": () => (/* binding */ debounce),
-/* harmony export */   "ensureArray": () => (/* binding */ ensureArray),
-/* harmony export */   "every": () => (/* binding */ every),
-/* harmony export */   "filter": () => (/* binding */ filter),
-/* harmony export */   "find": () => (/* binding */ find),
-/* harmony export */   "findIndex": () => (/* binding */ findIndex),
-/* harmony export */   "flatten": () => (/* binding */ flatten),
-/* harmony export */   "forEach": () => (/* binding */ forEach),
-/* harmony export */   "get": () => (/* binding */ get),
-/* harmony export */   "groupBy": () => (/* binding */ groupBy),
-/* harmony export */   "has": () => (/* binding */ has),
-/* harmony export */   "isArray": () => (/* binding */ isArray),
-/* harmony export */   "isDefined": () => (/* binding */ isDefined),
-/* harmony export */   "isFunction": () => (/* binding */ isFunction),
-/* harmony export */   "isNil": () => (/* binding */ isNil),
-/* harmony export */   "isNumber": () => (/* binding */ isNumber),
-/* harmony export */   "isObject": () => (/* binding */ isObject),
-/* harmony export */   "isString": () => (/* binding */ isString),
-/* harmony export */   "isUndefined": () => (/* binding */ isUndefined),
-/* harmony export */   "keys": () => (/* binding */ keys),
-/* harmony export */   "map": () => (/* binding */ map),
-/* harmony export */   "matchPattern": () => (/* binding */ matchPattern),
-/* harmony export */   "merge": () => (/* binding */ merge),
-/* harmony export */   "omit": () => (/* binding */ omit),
-/* harmony export */   "pick": () => (/* binding */ pick),
-/* harmony export */   "reduce": () => (/* binding */ reduce),
-/* harmony export */   "set": () => (/* binding */ set),
-/* harmony export */   "size": () => (/* binding */ size),
-/* harmony export */   "some": () => (/* binding */ some),
-/* harmony export */   "sortBy": () => (/* binding */ sortBy),
-/* harmony export */   "throttle": () => (/* binding */ throttle),
-/* harmony export */   "unionBy": () => (/* binding */ unionBy),
-/* harmony export */   "uniqueBy": () => (/* binding */ uniqueBy),
-/* harmony export */   "values": () => (/* binding */ values),
-/* harmony export */   "without": () => (/* binding */ without)
-/* harmony export */ });
-/**
- * Flatten array, one level deep.
- *
- * @param {Array<?>} arr
- *
- * @return {Array<?>}
- */
-function flatten(arr) {
-  return Array.prototype.concat.apply([], arr);
-}
-
-var nativeToString = Object.prototype.toString;
-var nativeHasOwnProperty = Object.prototype.hasOwnProperty;
-function isUndefined(obj) {
-  return obj === undefined;
-}
-function isDefined(obj) {
-  return obj !== undefined;
-}
-function isNil(obj) {
-  return obj == null;
-}
-function isArray(obj) {
-  return nativeToString.call(obj) === '[object Array]';
-}
-function isObject(obj) {
-  return nativeToString.call(obj) === '[object Object]';
-}
-function isNumber(obj) {
-  return nativeToString.call(obj) === '[object Number]';
-}
-function isFunction(obj) {
-  var tag = nativeToString.call(obj);
-  return tag === '[object Function]' || tag === '[object AsyncFunction]' || tag === '[object GeneratorFunction]' || tag === '[object AsyncGeneratorFunction]' || tag === '[object Proxy]';
-}
-function isString(obj) {
-  return nativeToString.call(obj) === '[object String]';
-}
-/**
- * Ensure collection is an array.
- *
- * @param {Object} obj
- */
-
-function ensureArray(obj) {
-  if (isArray(obj)) {
-    return;
-  }
-
-  throw new Error('must supply array');
-}
-/**
- * Return true, if target owns a property with the given key.
- *
- * @param {Object} target
- * @param {String} key
- *
- * @return {Boolean}
- */
-
-function has(target, key) {
-  return nativeHasOwnProperty.call(target, key);
-}
-
-/**
- * Find element in collection.
- *
- * @param  {Array|Object} collection
- * @param  {Function|Object} matcher
- *
- * @return {Object}
- */
-
-function find(collection, matcher) {
-  matcher = toMatcher(matcher);
-  var match;
-  forEach(collection, function (val, key) {
-    if (matcher(val, key)) {
-      match = val;
-      return false;
-    }
-  });
-  return match;
-}
-/**
- * Find element index in collection.
- *
- * @param  {Array|Object} collection
- * @param  {Function} matcher
- *
- * @return {Object}
- */
-
-function findIndex(collection, matcher) {
-  matcher = toMatcher(matcher);
-  var idx = isArray(collection) ? -1 : undefined;
-  forEach(collection, function (val, key) {
-    if (matcher(val, key)) {
-      idx = key;
-      return false;
-    }
-  });
-  return idx;
-}
-/**
- * Find element in collection.
- *
- * @param  {Array|Object} collection
- * @param  {Function} matcher
- *
- * @return {Array} result
- */
-
-function filter(collection, matcher) {
-  var result = [];
-  forEach(collection, function (val, key) {
-    if (matcher(val, key)) {
-      result.push(val);
-    }
-  });
-  return result;
-}
-/**
- * Iterate over collection; returning something
- * (non-undefined) will stop iteration.
- *
- * @param  {Array|Object} collection
- * @param  {Function} iterator
- *
- * @return {Object} return result that stopped the iteration
- */
-
-function forEach(collection, iterator) {
-  var val, result;
-
-  if (isUndefined(collection)) {
-    return;
-  }
-
-  var convertKey = isArray(collection) ? toNum : identity;
-
-  for (var key in collection) {
-    if (has(collection, key)) {
-      val = collection[key];
-      result = iterator(val, convertKey(key));
-
-      if (result === false) {
-        return val;
-      }
-    }
-  }
-}
-/**
- * Return collection without element.
- *
- * @param  {Array} arr
- * @param  {Function} matcher
- *
- * @return {Array}
- */
-
-function without(arr, matcher) {
-  if (isUndefined(arr)) {
-    return [];
-  }
-
-  ensureArray(arr);
-  matcher = toMatcher(matcher);
-  return arr.filter(function (el, idx) {
-    return !matcher(el, idx);
-  });
-}
-/**
- * Reduce collection, returning a single result.
- *
- * @param  {Object|Array} collection
- * @param  {Function} iterator
- * @param  {Any} result
- *
- * @return {Any} result returned from last iterator
- */
-
-function reduce(collection, iterator, result) {
-  forEach(collection, function (value, idx) {
-    result = iterator(result, value, idx);
-  });
-  return result;
-}
-/**
- * Return true if every element in the collection
- * matches the criteria.
- *
- * @param  {Object|Array} collection
- * @param  {Function} matcher
- *
- * @return {Boolean}
- */
-
-function every(collection, matcher) {
-  return !!reduce(collection, function (matches, val, key) {
-    return matches && matcher(val, key);
-  }, true);
-}
-/**
- * Return true if some elements in the collection
- * match the criteria.
- *
- * @param  {Object|Array} collection
- * @param  {Function} matcher
- *
- * @return {Boolean}
- */
-
-function some(collection, matcher) {
-  return !!find(collection, matcher);
-}
-/**
- * Transform a collection into another collection
- * by piping each member through the given fn.
- *
- * @param  {Object|Array}   collection
- * @param  {Function} fn
- *
- * @return {Array} transformed collection
- */
-
-function map(collection, fn) {
-  var result = [];
-  forEach(collection, function (val, key) {
-    result.push(fn(val, key));
-  });
-  return result;
-}
-/**
- * Get the collections keys.
- *
- * @param  {Object|Array} collection
- *
- * @return {Array}
- */
-
-function keys(collection) {
-  return collection && Object.keys(collection) || [];
-}
-/**
- * Shorthand for `keys(o).length`.
- *
- * @param  {Object|Array} collection
- *
- * @return {Number}
- */
-
-function size(collection) {
-  return keys(collection).length;
-}
-/**
- * Get the values in the collection.
- *
- * @param  {Object|Array} collection
- *
- * @return {Array}
- */
-
-function values(collection) {
-  return map(collection, function (val) {
-    return val;
-  });
-}
-/**
- * Group collection members by attribute.
- *
- * @param  {Object|Array} collection
- * @param  {Function} extractor
- *
- * @return {Object} map with { attrValue => [ a, b, c ] }
- */
-
-function groupBy(collection, extractor) {
-  var grouped = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  extractor = toExtractor(extractor);
-  forEach(collection, function (val) {
-    var discriminator = extractor(val) || '_';
-    var group = grouped[discriminator];
-
-    if (!group) {
-      group = grouped[discriminator] = [];
-    }
-
-    group.push(val);
-  });
-  return grouped;
-}
-function uniqueBy(extractor) {
-  extractor = toExtractor(extractor);
-  var grouped = {};
-
-  for (var _len = arguments.length, collections = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    collections[_key - 1] = arguments[_key];
-  }
-
-  forEach(collections, function (c) {
-    return groupBy(c, extractor, grouped);
-  });
-  var result = map(grouped, function (val, key) {
-    return val[0];
-  });
-  return result;
-}
-var unionBy = uniqueBy;
-/**
- * Sort collection by criteria.
- *
- * @param  {Object|Array} collection
- * @param  {String|Function} extractor
- *
- * @return {Array}
- */
-
-function sortBy(collection, extractor) {
-  extractor = toExtractor(extractor);
-  var sorted = [];
-  forEach(collection, function (value, key) {
-    var disc = extractor(value, key);
-    var entry = {
-      d: disc,
-      v: value
-    };
-
-    for (var idx = 0; idx < sorted.length; idx++) {
-      var d = sorted[idx].d;
-
-      if (disc < d) {
-        sorted.splice(idx, 0, entry);
-        return;
-      }
-    } // not inserted, append (!)
-
-
-    sorted.push(entry);
-  });
-  return map(sorted, function (e) {
-    return e.v;
-  });
-}
-/**
- * Create an object pattern matcher.
- *
- * @example
- *
- * const matcher = matchPattern({ id: 1 });
- *
- * let element = find(elements, matcher);
- *
- * @param  {Object} pattern
- *
- * @return {Function} matcherFn
- */
-
-function matchPattern(pattern) {
-  return function (el) {
-    return every(pattern, function (val, key) {
-      return el[key] === val;
-    });
-  };
-}
-
-function toExtractor(extractor) {
-  return isFunction(extractor) ? extractor : function (e) {
-    return e[extractor];
-  };
-}
-
-function toMatcher(matcher) {
-  return isFunction(matcher) ? matcher : function (e) {
-    return e === matcher;
-  };
-}
-
-function identity(arg) {
-  return arg;
-}
-
-function toNum(arg) {
-  return Number(arg);
-}
-
-/**
- * Debounce fn, calling it only once if the given time
- * elapsed between calls.
- *
- * Lodash-style the function exposes methods to `#clear`
- * and `#flush` to control internal behavior.
- *
- * @param  {Function} fn
- * @param  {Number} timeout
- *
- * @return {Function} debounced function
- */
-function debounce(fn, timeout) {
-  var timer;
-  var lastArgs;
-  var lastThis;
-  var lastNow;
-
-  function fire(force) {
-    var now = Date.now();
-    var scheduledDiff = force ? 0 : lastNow + timeout - now;
-
-    if (scheduledDiff > 0) {
-      return schedule(scheduledDiff);
-    }
-
-    fn.apply(lastThis, lastArgs);
-    clear();
-  }
-
-  function schedule(timeout) {
-    timer = setTimeout(fire, timeout);
-  }
-
-  function clear() {
-    if (timer) {
-      clearTimeout(timer);
-    }
-
-    timer = lastNow = lastArgs = lastThis = undefined;
-  }
-
-  function flush() {
-    if (timer) {
-      fire(true);
-    }
-
-    clear();
-  }
-
-  function callback() {
-    lastNow = Date.now();
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    lastArgs = args;
-    lastThis = this; // ensure an execution is scheduled
-
-    if (!timer) {
-      schedule(timeout);
-    }
-  }
-
-  callback.flush = flush;
-  callback.cancel = clear;
-  return callback;
-}
-/**
- * Throttle fn, calling at most once
- * in the given interval.
- *
- * @param  {Function} fn
- * @param  {Number} interval
- *
- * @return {Function} throttled function
- */
-
-function throttle(fn, interval) {
-  var throttling = false;
-  return function () {
-    if (throttling) {
-      return;
-    }
-
-    fn.apply(void 0, arguments);
-    throttling = true;
-    setTimeout(function () {
-      throttling = false;
-    }, interval);
-  };
-}
-/**
- * Bind function against target <this>.
- *
- * @param  {Function} fn
- * @param  {Object}   target
- *
- * @return {Function} bound function
- */
-
-function bind(fn, target) {
-  return fn.bind(target);
-}
-
-function _typeof(obj) {
-  "@babel/helpers - typeof";
-
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function (obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function (obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
-
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
-}
-
-/**
- * Convenience wrapper for `Object.assign`.
- *
- * @param {Object} target
- * @param {...Object} others
- *
- * @return {Object} the target
- */
-
-function assign(target) {
-  for (var _len = arguments.length, others = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    others[_key - 1] = arguments[_key];
-  }
-
-  return _extends.apply(void 0, [target].concat(others));
-}
-/**
- * Sets a nested property of a given object to the specified value.
- *
- * This mutates the object and returns it.
- *
- * @param {Object} target The target of the set operation.
- * @param {(string|number)[]} path The path to the nested value.
- * @param {any} value The value to set.
- */
-
-function set(target, path, value) {
-  var currentTarget = target;
-  forEach(path, function (key, idx) {
-    if (typeof key !== 'number' && typeof key !== 'string') {
-      throw new Error('illegal key type: ' + _typeof(key) + '. Key should be of type number or string.');
-    }
-
-    if (key === 'constructor') {
-      throw new Error('illegal key: constructor');
-    }
-
-    if (key === '__proto__') {
-      throw new Error('illegal key: __proto__');
-    }
-
-    var nextKey = path[idx + 1];
-    var nextTarget = currentTarget[key];
-
-    if (isDefined(nextKey) && isNil(nextTarget)) {
-      nextTarget = currentTarget[key] = isNaN(+nextKey) ? {} : [];
-    }
-
-    if (isUndefined(nextKey)) {
-      if (isUndefined(value)) {
-        delete currentTarget[key];
-      } else {
-        currentTarget[key] = value;
-      }
-    } else {
-      currentTarget = nextTarget;
-    }
-  });
-  return target;
-}
-/**
- * Gets a nested property of a given object.
- *
- * @param {Object} target The target of the get operation.
- * @param {(string|number)[]} path The path to the nested value.
- * @param {any} [defaultValue] The value to return if no value exists.
- */
-
-function get(target, path, defaultValue) {
-  var currentTarget = target;
-  forEach(path, function (key) {
-    // accessing nil property yields <undefined>
-    if (isNil(currentTarget)) {
-      currentTarget = undefined;
-      return false;
-    }
-
-    currentTarget = currentTarget[key];
-  });
-  return isUndefined(currentTarget) ? defaultValue : currentTarget;
-}
-/**
- * Pick given properties from the target object.
- *
- * @param {Object} target
- * @param {Array} properties
- *
- * @return {Object} target
- */
-
-function pick(target, properties) {
-  var result = {};
-  var obj = Object(target);
-  forEach(properties, function (prop) {
-    if (prop in obj) {
-      result[prop] = target[prop];
-    }
-  });
-  return result;
-}
-/**
- * Pick all target properties, excluding the given ones.
- *
- * @param {Object} target
- * @param {Array} properties
- *
- * @return {Object} target
- */
-
-function omit(target, properties) {
-  var result = {};
-  var obj = Object(target);
-  forEach(obj, function (prop, key) {
-    if (properties.indexOf(key) === -1) {
-      result[key] = prop;
-    }
-  });
-  return result;
-}
-/**
- * Recursively merge `...sources` into given target.
- *
- * Does support merging objects; does not support merging arrays.
- *
- * @param {Object} target
- * @param {...Object} sources
- *
- * @return {Object} the target
- */
-
-function merge(target) {
-  for (var _len2 = arguments.length, sources = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-    sources[_key2 - 1] = arguments[_key2];
-  }
-
-  if (!sources.length) {
-    return target;
-  }
-
-  forEach(sources, function (source) {
-    // skip non-obj sources, i.e. null
-    if (!source || !isObject(source)) {
-      return;
-    }
-
-    forEach(source, function (sourceVal, key) {
-      if (key === '__proto__') {
-        return;
-      }
-
-      var targetVal = target[key];
-
-      if (isObject(sourceVal)) {
-        if (!isObject(targetVal)) {
-          // override target[key] with object
-          targetVal = {};
-        }
-
-        target[key] = merge(targetVal, sourceVal);
-      } else {
-        target[key] = sourceVal;
-      }
-    });
-  });
-  return target;
-}
-
-
-
-
-/***/ }),
-
-/***/ "../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js":
-/*!*************************************************************************!*\
-  !*** ../node_modules/diagram-js/node_modules/min-dom/dist/index.esm.js ***!
-  \*************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "assignStyle": () => (/* binding */ assign$1),
-/* harmony export */   "attr": () => (/* binding */ attr),
-/* harmony export */   "classes": () => (/* binding */ classes),
-/* harmony export */   "clear": () => (/* binding */ clear),
-/* harmony export */   "closest": () => (/* binding */ closest),
-/* harmony export */   "delegate": () => (/* binding */ delegate),
-/* harmony export */   "domify": () => (/* binding */ domify),
-/* harmony export */   "event": () => (/* binding */ componentEvent),
-/* harmony export */   "matches": () => (/* binding */ matchesSelector),
-/* harmony export */   "query": () => (/* binding */ query),
-/* harmony export */   "queryAll": () => (/* binding */ all),
-/* harmony export */   "remove": () => (/* binding */ remove)
-/* harmony export */ });
-/**
- * Flatten array, one level deep.
- *
- * @param {Array<?>} arr
- *
- * @return {Array<?>}
- */
-
-var nativeToString = Object.prototype.toString;
-var nativeHasOwnProperty = Object.prototype.hasOwnProperty;
-function isUndefined(obj) {
-  return obj === undefined;
-}
-function isArray(obj) {
-  return nativeToString.call(obj) === '[object Array]';
-}
-/**
- * Return true, if target owns a property with the given key.
- *
- * @param {Object} target
- * @param {String} key
- *
- * @return {Boolean}
- */
-
-function has(target, key) {
-  return nativeHasOwnProperty.call(target, key);
-}
-/**
- * Iterate over collection; returning something
- * (non-undefined) will stop iteration.
- *
- * @param  {Array|Object} collection
- * @param  {Function} iterator
- *
- * @return {Object} return result that stopped the iteration
- */
-
-function forEach(collection, iterator) {
-  var val, result;
-
-  if (isUndefined(collection)) {
-    return;
-  }
-
-  var convertKey = isArray(collection) ? toNum : identity;
-
-  for (var key in collection) {
-    if (has(collection, key)) {
-      val = collection[key];
-      result = iterator(val, convertKey(key));
-
-      if (result === false) {
-        return val;
-      }
-    }
-  }
-}
-
-function identity(arg) {
-  return arg;
-}
-
-function toNum(arg) {
-  return Number(arg);
-}
-
-/**
- * Assigns style attributes in a style-src compliant way.
- *
- * @param {Element} element
- * @param {...Object} styleSources
- *
- * @return {Element} the element
- */
-function assign$1(element) {
-  var target = element.style;
-
-  for (var _len = arguments.length, styleSources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    styleSources[_key - 1] = arguments[_key];
-  }
-
-  forEach(styleSources, function (style) {
-    if (!style) {
-      return;
-    }
-
-    forEach(style, function (value, key) {
-      target[key] = value;
-    });
-  });
-
-  return element;
-}
-
-/**
- * Set attribute `name` to `val`, or get attr `name`.
- *
- * @param {Element} el
- * @param {String} name
- * @param {String} [val]
- * @api public
- */
-function attr(el, name, val) {
-  // get
-  if (arguments.length == 2) {
-    return el.getAttribute(name);
-  }
-
-  // remove
-  if (val === null) {
-    return el.removeAttribute(name);
-  }
-
-  // set
-  el.setAttribute(name, val);
-
-  return el;
-}
-
-var indexOf = [].indexOf;
-
-var indexof = function(arr, obj){
-  if (indexOf) return arr.indexOf(obj);
-  for (var i = 0; i < arr.length; ++i) {
-    if (arr[i] === obj) return i;
-  }
-  return -1;
-};
-
-/**
- * Taken from https://github.com/component/classes
- *
- * Without the component bits.
- */
-
-/**
- * Whitespace regexp.
- */
-
-var re = /\s+/;
-
-/**
- * toString reference.
- */
-
-var toString = Object.prototype.toString;
-
-/**
- * Wrap `el` in a `ClassList`.
- *
- * @param {Element} el
- * @return {ClassList}
- * @api public
- */
-
-function classes(el) {
-  return new ClassList(el);
-}
-
-/**
- * Initialize a new ClassList for `el`.
- *
- * @param {Element} el
- * @api private
- */
-
-function ClassList(el) {
-  if (!el || !el.nodeType) {
-    throw new Error('A DOM element reference is required');
-  }
-  this.el = el;
-  this.list = el.classList;
-}
-
-/**
- * Add class `name` if not already present.
- *
- * @param {String} name
- * @return {ClassList}
- * @api public
- */
-
-ClassList.prototype.add = function (name) {
-  // classList
-  if (this.list) {
-    this.list.add(name);
-    return this;
-  }
-
-  // fallback
-  var arr = this.array();
-  var i = indexof(arr, name);
-  if (!~i) arr.push(name);
-  this.el.className = arr.join(' ');
-  return this;
-};
-
-/**
- * Remove class `name` when present, or
- * pass a regular expression to remove
- * any which match.
- *
- * @param {String|RegExp} name
- * @return {ClassList}
- * @api public
- */
-
-ClassList.prototype.remove = function (name) {
-  if ('[object RegExp]' == toString.call(name)) {
-    return this.removeMatching(name);
-  }
-
-  // classList
-  if (this.list) {
-    this.list.remove(name);
-    return this;
-  }
-
-  // fallback
-  var arr = this.array();
-  var i = indexof(arr, name);
-  if (~i) arr.splice(i, 1);
-  this.el.className = arr.join(' ');
-  return this;
-};
-
-/**
- * Remove all classes matching `re`.
- *
- * @param {RegExp} re
- * @return {ClassList}
- * @api private
- */
-
-ClassList.prototype.removeMatching = function (re) {
-  var arr = this.array();
-  for (var i = 0; i < arr.length; i++) {
-    if (re.test(arr[i])) {
-      this.remove(arr[i]);
-    }
-  }
-  return this;
-};
-
-/**
- * Toggle class `name`, can force state via `force`.
- *
- * For browsers that support classList, but do not support `force` yet,
- * the mistake will be detected and corrected.
- *
- * @param {String} name
- * @param {Boolean} force
- * @return {ClassList}
- * @api public
- */
-
-ClassList.prototype.toggle = function (name, force) {
-  // classList
-  if (this.list) {
-    if ('undefined' !== typeof force) {
-      if (force !== this.list.toggle(name, force)) {
-        this.list.toggle(name); // toggle again to correct
-      }
-    } else {
-      this.list.toggle(name);
-    }
-    return this;
-  }
-
-  // fallback
-  if ('undefined' !== typeof force) {
-    if (!force) {
-      this.remove(name);
-    } else {
-      this.add(name);
-    }
-  } else {
-    if (this.has(name)) {
-      this.remove(name);
-    } else {
-      this.add(name);
-    }
-  }
-
-  return this;
-};
-
-/**
- * Return an array of classes.
- *
- * @return {Array}
- * @api public
- */
-
-ClassList.prototype.array = function () {
-  var className = this.el.getAttribute('class') || '';
-  var str = className.replace(/^\s+|\s+$/g, '');
-  var arr = str.split(re);
-  if ('' === arr[0]) arr.shift();
-  return arr;
-};
-
-/**
- * Check if class `name` is present.
- *
- * @param {String} name
- * @return {ClassList}
- * @api public
- */
-
-ClassList.prototype.has = ClassList.prototype.contains = function (name) {
-  return this.list ? this.list.contains(name) : !!~indexof(this.array(), name);
-};
-
-/**
- * Remove all children from the given element.
- */
-function clear(el) {
-
-  var c;
-
-  while (el.childNodes.length) {
-    c = el.childNodes[0];
-    el.removeChild(c);
-  }
-
-  return el;
-}
-
-var proto = typeof Element !== 'undefined' ? Element.prototype : {};
-var vendor = proto.matches
-  || proto.matchesSelector
-  || proto.webkitMatchesSelector
-  || proto.mozMatchesSelector
-  || proto.msMatchesSelector
-  || proto.oMatchesSelector;
-
-var matchesSelector = match;
-
-/**
- * Match `el` to `selector`.
- *
- * @param {Element} el
- * @param {String} selector
- * @return {Boolean}
- * @api public
- */
-
-function match(el, selector) {
-  if (!el || el.nodeType !== 1) return false;
-  if (vendor) return vendor.call(el, selector);
-  var nodes = el.parentNode.querySelectorAll(selector);
-  for (var i = 0; i < nodes.length; i++) {
-    if (nodes[i] == el) return true;
-  }
-  return false;
-}
-
-/**
- * Closest
- *
- * @param {Element} el
- * @param {String} selector
- * @param {Boolean} checkYourSelf (optional)
- */
-function closest (element, selector, checkYourSelf) {
-  var currentElem = checkYourSelf ? element : element.parentNode;
-
-  while (currentElem && currentElem.nodeType !== document.DOCUMENT_NODE && currentElem.nodeType !== document.DOCUMENT_FRAGMENT_NODE) {
-
-    if (matchesSelector(currentElem, selector)) {
-      return currentElem;
-    }
-
-    currentElem = currentElem.parentNode;
-  }
-
-  return matchesSelector(currentElem, selector) ? currentElem : null;
-}
-
-var bind$1 = window.addEventListener ? 'addEventListener' : 'attachEvent',
-    unbind = window.removeEventListener ? 'removeEventListener' : 'detachEvent',
-    prefix = bind$1 !== 'addEventListener' ? 'on' : '';
-
-/**
- * Bind `el` event `type` to `fn`.
- *
- * @param {Element} el
- * @param {String} type
- * @param {Function} fn
- * @param {Boolean} capture
- * @return {Function}
- * @api public
- */
-
-var bind_1 = function(el, type, fn, capture){
-  el[bind$1](prefix + type, fn, capture || false);
-  return fn;
-};
-
-/**
- * Unbind `el` event `type`'s callback `fn`.
- *
- * @param {Element} el
- * @param {String} type
- * @param {Function} fn
- * @param {Boolean} capture
- * @return {Function}
- * @api public
- */
-
-var unbind_1 = function(el, type, fn, capture){
-  el[unbind](prefix + type, fn, capture || false);
-  return fn;
-};
-
-var componentEvent = {
-	bind: bind_1,
-	unbind: unbind_1
-};
-
-/**
- * Module dependencies.
- */
-
-/**
- * Delegate event `type` to `selector`
- * and invoke `fn(e)`. A callback function
- * is returned which may be passed to `.unbind()`.
- *
- * @param {Element} el
- * @param {String} selector
- * @param {String} type
- * @param {Function} fn
- * @param {Boolean} capture
- * @return {Function}
- * @api public
- */
-
-// Some events don't bubble, so we want to bind to the capture phase instead
-// when delegating.
-var forceCaptureEvents = ['focus', 'blur'];
-
-function bind$2(el, selector, type, fn, capture) {
-  if (forceCaptureEvents.indexOf(type) !== -1) {
-    capture = true;
-  }
-
-  return componentEvent.bind(el, type, function (e) {
-    var target = e.target || e.srcElement;
-    e.delegateTarget = closest(target, selector, true, el);
-    if (e.delegateTarget) {
-      fn.call(el, e);
-    }
-  }, capture);
-}
-
-/**
- * Unbind event `type`'s callback `fn`.
- *
- * @param {Element} el
- * @param {String} type
- * @param {Function} fn
- * @param {Boolean} capture
- * @api public
- */
-function unbind$1(el, type, fn, capture) {
-  if (forceCaptureEvents.indexOf(type) !== -1) {
-    capture = true;
-  }
-
-  return componentEvent.unbind(el, type, fn, capture);
-}
-
-var delegate = {
-  bind: bind$2,
-  unbind: unbind$1
-};
-
-/**
- * Expose `parse`.
- */
-
-var domify = parse;
-
-/**
- * Tests for browser support.
- */
-
-var innerHTMLBug = false;
-var bugTestDiv;
-if (typeof document !== 'undefined') {
-  bugTestDiv = document.createElement('div');
-  // Setup
-  bugTestDiv.innerHTML = '  <link/><table></table><a href="/a">a</a><input type="checkbox"/>';
-  // Make sure that link elements get serialized correctly by innerHTML
-  // This requires a wrapper element in IE
-  innerHTMLBug = !bugTestDiv.getElementsByTagName('link').length;
-  bugTestDiv = undefined;
-}
-
-/**
- * Wrap map from jquery.
- */
-
-var map$1 = {
-  legend: [1, '<fieldset>', '</fieldset>'],
-  tr: [2, '<table><tbody>', '</tbody></table>'],
-  col: [2, '<table><tbody></tbody><colgroup>', '</colgroup></table>'],
-  // for script/link/style tags to work in IE6-8, you have to wrap
-  // in a div with a non-whitespace character in front, ha!
-  _default: innerHTMLBug ? [1, 'X<div>', '</div>'] : [0, '', '']
-};
-
-map$1.td =
-map$1.th = [3, '<table><tbody><tr>', '</tr></tbody></table>'];
-
-map$1.option =
-map$1.optgroup = [1, '<select multiple="multiple">', '</select>'];
-
-map$1.thead =
-map$1.tbody =
-map$1.colgroup =
-map$1.caption =
-map$1.tfoot = [1, '<table>', '</table>'];
-
-map$1.polyline =
-map$1.ellipse =
-map$1.polygon =
-map$1.circle =
-map$1.text =
-map$1.line =
-map$1.path =
-map$1.rect =
-map$1.g = [1, '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">','</svg>'];
-
-/**
- * Parse `html` and return a DOM Node instance, which could be a TextNode,
- * HTML DOM Node of some kind (<div> for example), or a DocumentFragment
- * instance, depending on the contents of the `html` string.
- *
- * @param {String} html - HTML string to "domify"
- * @param {Document} doc - The `document` instance to create the Node for
- * @return {DOMNode} the TextNode, DOM Node, or DocumentFragment instance
- * @api private
- */
-
-function parse(html, doc) {
-  if ('string' != typeof html) throw new TypeError('String expected');
-
-  // default to the global `document` object
-  if (!doc) doc = document;
-
-  // tag name
-  var m = /<([\w:]+)/.exec(html);
-  if (!m) return doc.createTextNode(html);
-
-  html = html.replace(/^\s+|\s+$/g, ''); // Remove leading/trailing whitespace
-
-  var tag = m[1];
-
-  // body support
-  if (tag == 'body') {
-    var el = doc.createElement('html');
-    el.innerHTML = html;
-    return el.removeChild(el.lastChild);
-  }
-
-  // wrap map
-  var wrap = map$1[tag] || map$1._default;
-  var depth = wrap[0];
-  var prefix = wrap[1];
-  var suffix = wrap[2];
-  var el = doc.createElement('div');
-  el.innerHTML = prefix + html + suffix;
-  while (depth--) el = el.lastChild;
-
-  // one element
-  if (el.firstChild == el.lastChild) {
-    return el.removeChild(el.firstChild);
-  }
-
-  // several elements
-  var fragment = doc.createDocumentFragment();
-  while (el.firstChild) {
-    fragment.appendChild(el.removeChild(el.firstChild));
-  }
-
-  return fragment;
-}
-
-function query(selector, el) {
-  el = el || document;
-
-  return el.querySelector(selector);
-}
-
-function all(selector, el) {
-  el = el || document;
-
-  return el.querySelectorAll(selector);
-}
-
-function remove(el) {
-  el.parentNode && el.parentNode.removeChild(el);
-}
-
-
-
-
-/***/ }),
-
-/***/ "../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js":
-/*!**************************************************************************!*\
-  !*** ../node_modules/diagram-js/node_modules/tiny-svg/dist/index.esm.js ***!
-  \**************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "append": () => (/* binding */ append),
-/* harmony export */   "appendTo": () => (/* binding */ appendTo),
-/* harmony export */   "attr": () => (/* binding */ attr),
-/* harmony export */   "classes": () => (/* binding */ classes),
-/* harmony export */   "clear": () => (/* binding */ clear),
-/* harmony export */   "clone": () => (/* binding */ clone),
-/* harmony export */   "create": () => (/* binding */ create),
-/* harmony export */   "createMatrix": () => (/* binding */ createMatrix),
-/* harmony export */   "createPoint": () => (/* binding */ createPoint),
-/* harmony export */   "createTransform": () => (/* binding */ createTransform),
-/* harmony export */   "innerSVG": () => (/* binding */ innerSVG),
-/* harmony export */   "off": () => (/* binding */ off),
-/* harmony export */   "on": () => (/* binding */ on),
-/* harmony export */   "prepend": () => (/* binding */ prepend),
-/* harmony export */   "prependTo": () => (/* binding */ prependTo),
-/* harmony export */   "remove": () => (/* binding */ remove),
-/* harmony export */   "replace": () => (/* binding */ replace),
-/* harmony export */   "select": () => (/* binding */ select),
-/* harmony export */   "selectAll": () => (/* binding */ selectAll),
-/* harmony export */   "transform": () => (/* binding */ transform)
-/* harmony export */ });
-function ensureImported(element, target) {
-
-  if (element.ownerDocument !== target.ownerDocument) {
-    try {
-      // may fail on webkit
-      return target.ownerDocument.importNode(element, true);
-    } catch (e) {
-      // ignore
-    }
-  }
-
-  return element;
-}
-
-/**
- * appendTo utility
- */
-
-/**
- * Append a node to a target element and return the appended node.
- *
- * @param  {SVGElement} element
- * @param  {SVGElement} target
- *
- * @return {SVGElement} the appended node
- */
-function appendTo(element, target) {
-  return target.appendChild(ensureImported(element, target));
-}
-
-/**
- * append utility
- */
-
-/**
- * Append a node to an element
- *
- * @param  {SVGElement} element
- * @param  {SVGElement} node
- *
- * @return {SVGElement} the element
- */
-function append(target, node) {
-  appendTo(node, target);
-  return target;
-}
-
-/**
- * attribute accessor utility
- */
-
-var LENGTH_ATTR = 2;
-
-var CSS_PROPERTIES = {
-  'alignment-baseline': 1,
-  'baseline-shift': 1,
-  'clip': 1,
-  'clip-path': 1,
-  'clip-rule': 1,
-  'color': 1,
-  'color-interpolation': 1,
-  'color-interpolation-filters': 1,
-  'color-profile': 1,
-  'color-rendering': 1,
-  'cursor': 1,
-  'direction': 1,
-  'display': 1,
-  'dominant-baseline': 1,
-  'enable-background': 1,
-  'fill': 1,
-  'fill-opacity': 1,
-  'fill-rule': 1,
-  'filter': 1,
-  'flood-color': 1,
-  'flood-opacity': 1,
-  'font': 1,
-  'font-family': 1,
-  'font-size': LENGTH_ATTR,
-  'font-size-adjust': 1,
-  'font-stretch': 1,
-  'font-style': 1,
-  'font-variant': 1,
-  'font-weight': 1,
-  'glyph-orientation-horizontal': 1,
-  'glyph-orientation-vertical': 1,
-  'image-rendering': 1,
-  'kerning': 1,
-  'letter-spacing': 1,
-  'lighting-color': 1,
-  'marker': 1,
-  'marker-end': 1,
-  'marker-mid': 1,
-  'marker-start': 1,
-  'mask': 1,
-  'opacity': 1,
-  'overflow': 1,
-  'pointer-events': 1,
-  'shape-rendering': 1,
-  'stop-color': 1,
-  'stop-opacity': 1,
-  'stroke': 1,
-  'stroke-dasharray': 1,
-  'stroke-dashoffset': 1,
-  'stroke-linecap': 1,
-  'stroke-linejoin': 1,
-  'stroke-miterlimit': 1,
-  'stroke-opacity': 1,
-  'stroke-width': LENGTH_ATTR,
-  'text-anchor': 1,
-  'text-decoration': 1,
-  'text-rendering': 1,
-  'unicode-bidi': 1,
-  'visibility': 1,
-  'word-spacing': 1,
-  'writing-mode': 1
-};
-
-
-function getAttribute(node, name) {
-  if (CSS_PROPERTIES[name]) {
-    return node.style[name];
-  } else {
-    return node.getAttributeNS(null, name);
-  }
-}
-
-function setAttribute(node, name, value) {
-  var hyphenated = name.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-
-  var type = CSS_PROPERTIES[hyphenated];
-
-  if (type) {
-    // append pixel unit, unless present
-    if (type === LENGTH_ATTR && typeof value === 'number') {
-      value = String(value) + 'px';
-    }
-
-    node.style[hyphenated] = value;
-  } else {
-    node.setAttributeNS(null, name, value);
-  }
-}
-
-function setAttributes(node, attrs) {
-
-  var names = Object.keys(attrs), i, name;
-
-  for (i = 0, name; (name = names[i]); i++) {
-    setAttribute(node, name, attrs[name]);
-  }
-}
-
-/**
- * Gets or sets raw attributes on a node.
- *
- * @param  {SVGElement} node
- * @param  {Object} [attrs]
- * @param  {String} [name]
- * @param  {String} [value]
- *
- * @return {String}
- */
-function attr(node, name, value) {
-  if (typeof name === 'string') {
-    if (value !== undefined) {
-      setAttribute(node, name, value);
-    } else {
-      return getAttribute(node, name);
-    }
-  } else {
-    setAttributes(node, name);
-  }
-
-  return node;
-}
-
-/**
- * Clear utility
- */
-function index(arr, obj) {
-  if (arr.indexOf) {
-    return arr.indexOf(obj);
-  }
-
-
-  for (var i = 0; i < arr.length; ++i) {
-    if (arr[i] === obj) {
-      return i;
-    }
-  }
-
-  return -1;
-}
-
-var re = /\s+/;
-
-var toString = Object.prototype.toString;
-
-function defined(o) {
-  return typeof o !== 'undefined';
-}
-
-/**
- * Wrap `el` in a `ClassList`.
- *
- * @param {Element} el
- * @return {ClassList}
- * @api public
- */
-
-function classes(el) {
-  return new ClassList(el);
-}
-
-function ClassList(el) {
-  if (!el || !el.nodeType) {
-    throw new Error('A DOM element reference is required');
-  }
-  this.el = el;
-  this.list = el.classList;
-}
-
-/**
- * Add class `name` if not already present.
- *
- * @param {String} name
- * @return {ClassList}
- * @api public
- */
-
-ClassList.prototype.add = function(name) {
-
-  // classList
-  if (this.list) {
-    this.list.add(name);
-    return this;
-  }
-
-  // fallback
-  var arr = this.array();
-  var i = index(arr, name);
-  if (!~i) {
-    arr.push(name);
-  }
-
-  if (defined(this.el.className.baseVal)) {
-    this.el.className.baseVal = arr.join(' ');
-  } else {
-    this.el.className = arr.join(' ');
-  }
-
-  return this;
-};
-
-/**
- * Remove class `name` when present, or
- * pass a regular expression to remove
- * any which match.
- *
- * @param {String|RegExp} name
- * @return {ClassList}
- * @api public
- */
-
-ClassList.prototype.remove = function(name) {
-  if ('[object RegExp]' === toString.call(name)) {
-    return this.removeMatching(name);
-  }
-
-  // classList
-  if (this.list) {
-    this.list.remove(name);
-    return this;
-  }
-
-  // fallback
-  var arr = this.array();
-  var i = index(arr, name);
-  if (~i) {
-    arr.splice(i, 1);
-  }
-  this.el.className.baseVal = arr.join(' ');
-  return this;
-};
-
-/**
- * Remove all classes matching `re`.
- *
- * @param {RegExp} re
- * @return {ClassList}
- * @api private
- */
-
-ClassList.prototype.removeMatching = function(re) {
-  var arr = this.array();
-  for (var i = 0; i < arr.length; i++) {
-    if (re.test(arr[i])) {
-      this.remove(arr[i]);
-    }
-  }
-  return this;
-};
-
-/**
- * Toggle class `name`, can force state via `force`.
- *
- * For browsers that support classList, but do not support `force` yet,
- * the mistake will be detected and corrected.
- *
- * @param {String} name
- * @param {Boolean} force
- * @return {ClassList}
- * @api public
- */
-
-ClassList.prototype.toggle = function(name, force) {
-  // classList
-  if (this.list) {
-    if (defined(force)) {
-      if (force !== this.list.toggle(name, force)) {
-        this.list.toggle(name); // toggle again to correct
-      }
-    } else {
-      this.list.toggle(name);
-    }
-    return this;
-  }
-
-  // fallback
-  if (defined(force)) {
-    if (!force) {
-      this.remove(name);
-    } else {
-      this.add(name);
-    }
-  } else {
-    if (this.has(name)) {
-      this.remove(name);
-    } else {
-      this.add(name);
-    }
-  }
-
-  return this;
-};
-
-/**
- * Return an array of classes.
- *
- * @return {Array}
- * @api public
- */
-
-ClassList.prototype.array = function() {
-  var className = this.el.getAttribute('class') || '';
-  var str = className.replace(/^\s+|\s+$/g, '');
-  var arr = str.split(re);
-  if ('' === arr[0]) {
-    arr.shift();
-  }
-  return arr;
-};
-
-/**
- * Check if class `name` is present.
- *
- * @param {String} name
- * @return {ClassList}
- * @api public
- */
-
-ClassList.prototype.has =
-ClassList.prototype.contains = function(name) {
-  return (
-    this.list ?
-      this.list.contains(name) :
-      !! ~index(this.array(), name)
-  );
-};
-
-function remove(element) {
-  var parent = element.parentNode;
-
-  if (parent) {
-    parent.removeChild(element);
-  }
-
-  return element;
-}
-
-/**
- * Clear utility
- */
-
-/**
- * Removes all children from the given element
- *
- * @param  {DOMElement} element
- * @return {DOMElement} the element (for chaining)
- */
-function clear(element) {
-  var child;
-
-  while ((child = element.firstChild)) {
-    remove(child);
-  }
-
-  return element;
-}
-
-function clone(element) {
-  return element.cloneNode(true);
-}
-
-var ns = {
-  svg: 'http://www.w3.org/2000/svg'
-};
-
-/**
- * DOM parsing utility
- */
-
-var SVG_START = '<svg xmlns="' + ns.svg + '"';
-
-function parse(svg) {
-
-  var unwrap = false;
-
-  // ensure we import a valid svg document
-  if (svg.substring(0, 4) === '<svg') {
-    if (svg.indexOf(ns.svg) === -1) {
-      svg = SVG_START + svg.substring(4);
-    }
-  } else {
-    // namespace svg
-    svg = SVG_START + '>' + svg + '</svg>';
-    unwrap = true;
-  }
-
-  var parsed = parseDocument(svg);
-
-  if (!unwrap) {
-    return parsed;
-  }
-
-  var fragment = document.createDocumentFragment();
-
-  var parent = parsed.firstChild;
-
-  while (parent.firstChild) {
-    fragment.appendChild(parent.firstChild);
-  }
-
-  return fragment;
-}
-
-function parseDocument(svg) {
-
-  var parser;
-
-  // parse
-  parser = new DOMParser();
-  parser.async = false;
-
-  return parser.parseFromString(svg, 'text/xml');
-}
-
-/**
- * Create utility for SVG elements
- */
-
-
-/**
- * Create a specific type from name or SVG markup.
- *
- * @param {String} name the name or markup of the element
- * @param {Object} [attrs] attributes to set on the element
- *
- * @returns {SVGElement}
- */
-function create(name, attrs) {
-  var element;
-
-  if (name.charAt(0) === '<') {
-    element = parse(name).firstChild;
-    element = document.importNode(element, true);
-  } else {
-    element = document.createElementNS(ns.svg, name);
-  }
-
-  if (attrs) {
-    attr(element, attrs);
-  }
-
-  return element;
-}
-
-/**
- * Events handling utility
- */
-
-function on(node, event, listener, useCapture) {
-  node.addEventListener(event, listener, useCapture);
-}
-
-function off(node, event, listener, useCapture) {
-  node.removeEventListener(event, listener, useCapture);
-}
-
-/**
- * Geometry helpers
- */
-
-// fake node used to instantiate svg geometry elements
-var node = null;
-
-function getNode() {
-  if (node === null) {
-    node = create('svg');
-  }
-
-  return node;
-}
-
-function extend(object, props) {
-  var i, k, keys = Object.keys(props);
-
-  for (i = 0; (k = keys[i]); i++) {
-    object[k] = props[k];
-  }
-
-  return object;
-}
-
-
-function createPoint(x, y) {
-  var point = getNode().createSVGPoint();
-
-  switch (arguments.length) {
-  case 0:
-    return point;
-  case 2:
-    x = {
-      x: x,
-      y: y
-    };
-    break;
-  }
-
-  return extend(point, x);
-}
-
-/**
- * Create matrix via args.
- *
- * @example
- *
- * createMatrix({ a: 1, b: 1 });
- * createMatrix();
- * createMatrix(1, 2, 0, 0, 30, 20);
- *
- * @return {SVGMatrix}
- */
-function createMatrix(a, b, c, d, e, f) {
-  var matrix = getNode().createSVGMatrix();
-
-  switch (arguments.length) {
-  case 0:
-    return matrix;
-  case 1:
-    return extend(matrix, a);
-  case 6:
-    return extend(matrix, {
-      a: a,
-      b: b,
-      c: c,
-      d: d,
-      e: e,
-      f: f
-    });
-  }
-}
-
-function createTransform(matrix) {
-  if (matrix) {
-    return getNode().createSVGTransformFromMatrix(matrix);
-  } else {
-    return getNode().createSVGTransform();
-  }
-}
-
-/**
- * Serialization util
- */
-
-var TEXT_ENTITIES = /([&<>]{1})/g;
-var ATTR_ENTITIES = /([\n\r"]{1})/g;
-
-var ENTITY_REPLACEMENT = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '\''
-};
-
-function escape(str, pattern) {
-
-  function replaceFn(match, entity) {
-    return ENTITY_REPLACEMENT[entity] || entity;
-  }
-
-  return str.replace(pattern, replaceFn);
-}
-
-function serialize(node, output) {
-
-  var i, len, attrMap, attrNode, childNodes;
-
-  switch (node.nodeType) {
-  // TEXT
-  case 3:
-    // replace special XML characters
-    output.push(escape(node.textContent, TEXT_ENTITIES));
-    break;
-
-  // ELEMENT
-  case 1:
-    output.push('<', node.tagName);
-
-    if (node.hasAttributes()) {
-      attrMap = node.attributes;
-      for (i = 0, len = attrMap.length; i < len; ++i) {
-        attrNode = attrMap.item(i);
-        output.push(' ', attrNode.name, '="', escape(attrNode.value, ATTR_ENTITIES), '"');
-      }
-    }
-
-    if (node.hasChildNodes()) {
-      output.push('>');
-      childNodes = node.childNodes;
-      for (i = 0, len = childNodes.length; i < len; ++i) {
-        serialize(childNodes.item(i), output);
-      }
-      output.push('</', node.tagName, '>');
-    } else {
-      output.push('/>');
-    }
-    break;
-
-  // COMMENT
-  case 8:
-    output.push('<!--', escape(node.nodeValue, TEXT_ENTITIES), '-->');
-    break;
-
-  // CDATA
-  case 4:
-    output.push('<![CDATA[', node.nodeValue, ']]>');
-    break;
-
-  default:
-    throw new Error('unable to handle node ' + node.nodeType);
-  }
-
-  return output;
-}
-
-/**
- * innerHTML like functionality for SVG elements.
- * based on innerSVG (https://code.google.com/p/innersvg)
- */
-
-
-function set(element, svg) {
-
-  var parsed = parse(svg);
-
-  // clear element contents
-  clear(element);
-
-  if (!svg) {
-    return;
-  }
-
-  if (!isFragment(parsed)) {
-    // extract <svg> from parsed document
-    parsed = parsed.documentElement;
-  }
-
-  var nodes = slice(parsed.childNodes);
-
-  // import + append each node
-  for (var i = 0; i < nodes.length; i++) {
-    appendTo(nodes[i], element);
-  }
-
-}
-
-function get(element) {
-  var child = element.firstChild,
-      output = [];
-
-  while (child) {
-    serialize(child, output);
-    child = child.nextSibling;
-  }
-
-  return output.join('');
-}
-
-function isFragment(node) {
-  return node.nodeName === '#document-fragment';
-}
-
-function innerSVG(element, svg) {
-
-  if (svg !== undefined) {
-
-    try {
-      set(element, svg);
-    } catch (e) {
-      throw new Error('error parsing SVG: ' + e.message);
-    }
-
-    return element;
-  } else {
-    return get(element);
-  }
-}
-
-
-function slice(arr) {
-  return Array.prototype.slice.call(arr);
-}
-
-/**
- * Selection utilities
- */
-
-function select(node, selector) {
-  return node.querySelector(selector);
-}
-
-function selectAll(node, selector) {
-  var nodes = node.querySelectorAll(selector);
-
-  return [].map.call(nodes, function(element) {
-    return element;
-  });
-}
-
-/**
- * prependTo utility
- */
-
-/**
- * Prepend a node to a target element and return the prepended node.
- *
- * @param  {SVGElement} node
- * @param  {SVGElement} target
- *
- * @return {SVGElement} the prepended node
- */
-function prependTo(node, target) {
-  return target.insertBefore(ensureImported(node, target), target.firstChild || null);
-}
-
-/**
- * prepend utility
- */
-
-/**
- * Prepend a node to a target element
- *
- * @param  {SVGElement} target
- * @param  {SVGElement} node
- *
- * @return {SVGElement} the target element
- */
-function prepend(target, node) {
-  prependTo(node, target);
-  return target;
-}
-
-/**
- * Replace utility
- */
-
-function replace(element, replacement) {
-  element.parentNode.replaceChild(ensureImported(replacement, element), element);
-  return replacement;
-}
-
-/**
- * transform accessor utility
- */
-
-function wrapMatrix(transformList, transform) {
-  if (transform instanceof SVGMatrix) {
-    return transformList.createSVGTransformFromMatrix(transform);
-  }
-
-  return transform;
-}
-
-
-function setTransforms(transformList, transforms) {
-  var i, t;
-
-  transformList.clear();
-
-  for (i = 0; (t = transforms[i]); i++) {
-    transformList.appendItem(wrapMatrix(transformList, t));
-  }
-}
-
-/**
- * Get or set the transforms on the given node.
- *
- * @param {SVGElement} node
- * @param  {SVGTransform|SVGMatrix|Array<SVGTransform|SVGMatrix>} [transforms]
- *
- * @return {SVGTransform} the consolidated transform
- */
-function transform(node, transforms) {
-  var transformList = node.transform.baseVal;
-
-  if (transforms) {
-
-    if (!Array.isArray(transforms)) {
-      transforms = [ transforms ];
-    }
-
-    setTransforms(transformList, transforms);
-  }
-
-  return transformList.consolidate();
-}
-
-
-
-
-/***/ }),
-
 /***/ "../node_modules/didi/dist/index.esm.js":
 /*!**********************************************!*\
   !*** ../node_modules/didi/dist/index.esm.js ***!
@@ -38024,32 +35092,60 @@ function transform(node, transforms) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Injector": () => (/* binding */ Injector),
-/* harmony export */   "Module": () => (/* binding */ Module),
 /* harmony export */   "annotate": () => (/* binding */ annotate),
 /* harmony export */   "parseAnnotations": () => (/* binding */ parseAnnotations)
 /* harmony export */ });
-var CLASS_PATTERN = /^class /;
+const CLASS_PATTERN = /^class[ {]/;
 
+
+/**
+ * @param {function} fn
+ *
+ * @return {boolean}
+ */
 function isClass(fn) {
   return CLASS_PATTERN.test(fn.toString());
 }
 
+/**
+ * @param {any} obj
+ *
+ * @return {boolean}
+ */
 function isArray(obj) {
-  return Object.prototype.toString.call(obj) === '[object Array]';
+  return Array.isArray(obj);
 }
 
+/**
+ * @param {any} obj
+ * @param {string} prop
+ *
+ * @return {boolean}
+ */
 function hasOwnProp(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-function annotate() {
-  var args = Array.prototype.slice.call(arguments);
+/**
+ * @typedef {import('./index').InjectAnnotated } InjectAnnotated
+ */
+
+/**
+ * @template T
+ *
+ * @params {[...string[], T] | ...string[], T} args
+ *
+ * @return {T & InjectAnnotated}
+ */
+function annotate(...args) {
 
   if (args.length === 1 && isArray(args[0])) {
     args = args[0];
   }
 
-  var fn = args.pop();
+  args = [ ...args ];
+
+  const fn = args.pop();
 
   fn.$inject = args;
 
@@ -38070,53 +35166,48 @@ function annotate() {
 // first constructor(...) pattern found which may be the one
 // of a nested class, too.
 
-var CONSTRUCTOR_ARGS = /constructor\s*[^(]*\(\s*([^)]*)\)/m;
-var FN_ARGS = /^(?:async )?(?:function\s*)?[^(]*\(\s*([^)]*)\)/m;
-var FN_ARG = /\/\*([^*]*)\*\//m;
+const CONSTRUCTOR_ARGS = /constructor\s*[^(]*\(\s*([^)]*)\)/m;
+const FN_ARGS = /^(?:async\s+)?(?:function\s*[^(]*)?(?:\(\s*([^)]*)\)|(\w+))/m;
+const FN_ARG = /\/\*([^*]*)\*\//m;
 
+/**
+ * @param {unknown} fn
+ *
+ * @return {string[]}
+ */
 function parseAnnotations(fn) {
 
   if (typeof fn !== 'function') {
-    throw new Error('Cannot annotate "' + fn + '". Expected a function!');
+    throw new Error(`Cannot annotate "${fn}". Expected a function!`);
   }
 
-  var match = fn.toString().match(isClass(fn) ? CONSTRUCTOR_ARGS : FN_ARGS);
+  const match = fn.toString().match(isClass(fn) ? CONSTRUCTOR_ARGS : FN_ARGS);
 
   // may parse class without constructor
   if (!match) {
     return [];
   }
 
-  return match[1] && match[1].split(',').map(function(arg) {
-    match = arg.match(FN_ARG);
-    return match ? match[1].trim() : arg.trim();
+  const args = match[1] || match[2];
+
+  return args && args.split(',').map(arg => {
+    const argMatch = arg.match(FN_ARG);
+    return (argMatch && argMatch[1] || arg).trim();
   }) || [];
 }
 
-function Module() {
-  var providers = [];
+/**
+ * @typedef { import('./index').ModuleDeclaration } ModuleDeclaration
+ * @typedef { import('./index').ModuleDefinition } ModuleDefinition
+ * @typedef { import('./index').InjectorContext } InjectorContext
+ */
 
-  this.factory = function(name, factory) {
-    providers.push([name, 'factory', factory]);
-    return this;
-  };
-
-  this.value = function(name, value) {
-    providers.push([name, 'value', value]);
-    return this;
-  };
-
-  this.type = function(name, type) {
-    providers.push([name, 'type', type]);
-    return this;
-  };
-
-  this.forEach = function(iterator) {
-    providers.forEach(iterator);
-  };
-
-}
-
+/**
+ * Create a new injector with the given modules.
+ *
+ * @param {ModuleDefinition[]} modules
+ * @param {InjectorContext} [parent]
+ */
 function Injector(modules, parent) {
   parent = parent || {
     get: function(name, strict) {
@@ -38125,35 +35216,35 @@ function Injector(modules, parent) {
       if (strict === false) {
         return null;
       } else {
-        throw error('No provider for "' + name + '"!');
+        throw error(`No provider for "${ name }"!`);
       }
     }
   };
 
-  var currentlyResolving = [];
-  var providers = this._providers = Object.create(parent._providers || null);
-  var instances = this._instances = Object.create(null);
+  const currentlyResolving = [];
+  const providers = this._providers = Object.create(parent._providers || null);
+  const instances = this._instances = Object.create(null);
 
-  var self = instances.injector = this;
+  const self = instances.injector = this;
 
-  var error = function(msg) {
-    var stack = currentlyResolving.join(' -> ');
+  const error = function(msg) {
+    const stack = currentlyResolving.join(' -> ');
     currentlyResolving.length = 0;
-    return new Error(stack ? msg + ' (Resolving: ' + stack + ')' : msg);
+    return new Error(stack ? `${ msg } (Resolving: ${ stack })` : msg);
   };
 
   /**
    * Return a named service.
    *
-   * @param {String} name
-   * @param {Boolean} [strict=true] if false, resolve missing services to null
+   * @param {string} name
+   * @param {boolean} [strict=true] if false, resolve missing services to null
    *
-   * @return {Object}
+   * @return {any}
    */
-  var get = function(name, strict) {
+  function get(name, strict) {
     if (!providers[name] && name.indexOf('.') !== -1) {
-      var parts = name.split('.');
-      var pivot = get(parts.shift());
+      const parts = name.split('.');
+      let pivot = get(parts.shift());
 
       while (parts.length) {
         pivot = pivot[parts.shift()];
@@ -38180,9 +35271,9 @@ function Injector(modules, parent) {
     }
 
     return parent.get(name, strict);
-  };
+  }
 
-  var fnDef = function(fn, locals) {
+  function fnDef(fn, locals) {
 
     if (typeof locals === 'undefined') {
       locals = {};
@@ -38192,12 +35283,12 @@ function Injector(modules, parent) {
       if (isArray(fn)) {
         fn = annotate(fn.slice());
       } else {
-        throw new Error('Cannot invoke "' + fn + '". Expected a function!');
+        throw error(`Cannot invoke "${ fn }". Expected a function!`);
       }
     }
 
-    var inject = fn.$inject || parseAnnotations(fn);
-    var dependencies = inject.map(function(dep) {
+    const inject = fn.$inject || parseAnnotations(fn);
+    const dependencies = inject.map(dep => {
       if (hasOwnProp(locals, dep)) {
         return locals[dep];
       } else {
@@ -38209,50 +35300,59 @@ function Injector(modules, parent) {
       fn: fn,
       dependencies: dependencies
     };
-  };
+  }
 
-  var instantiate = function(Type) {
-    var def = fnDef(Type);
-
-    var fn = def.fn,
-        dependencies = def.dependencies;
+  function instantiate(Type) {
+    const {
+      fn,
+      dependencies
+    } = fnDef(Type);
 
     // instantiate var args constructor
-    var Constructor = Function.prototype.bind.apply(fn, [ null ].concat(dependencies));
+    const Constructor = Function.prototype.bind.apply(fn, [ null ].concat(dependencies));
 
     return new Constructor();
-  };
+  }
 
-  var invoke = function(func, context, locals) {
-    var def = fnDef(func, locals);
-
-    var fn = def.fn,
-        dependencies = def.dependencies;
+  function invoke(func, context, locals) {
+    const {
+      fn,
+      dependencies
+    } = fnDef(func, locals);
 
     return fn.apply(context, dependencies);
-  };
+  }
 
+  /**
+   * @param {Injector} childInjector
+   *
+   * @return {Function}
+   */
+  function createPrivateInjectorFactory(childInjector) {
+    return annotate(key => childInjector.get(key));
+  }
 
-  var createPrivateInjectorFactory = function(privateChildInjector) {
-    return annotate(function(key) {
-      return privateChildInjector.get(key);
-    });
-  };
-
-  var createChild = function(modules, forceNewInstances) {
+  /**
+   * @param {ModuleDefinition[]} modules
+   * @param {string[]} [forceNewInstances]
+   *
+   * @return {Injector}
+   */
+  function createChild(modules, forceNewInstances) {
     if (forceNewInstances && forceNewInstances.length) {
-      var fromParentModule = Object.create(null);
-      var matchedScopes = Object.create(null);
+      const fromParentModule = Object.create(null);
+      const matchedScopes = Object.create(null);
 
-      var privateInjectorsCache = [];
-      var privateChildInjectors = [];
-      var privateChildFactories = [];
+      const privateInjectorsCache = [];
+      const privateChildInjectors = [];
+      const privateChildFactories = [];
 
-      var provider;
-      var cacheIdx;
-      var privateChildInjector;
-      var privateChildInjectorFactory;
-      for (var name in providers) {
+      let provider;
+      let cacheIdx;
+      let privateChildInjector;
+      let privateChildInjectorFactory;
+
+      for (let name in providers) {
         provider = providers[name];
 
         if (forceNewInstances.indexOf(name) !== -1) {
@@ -38264,28 +35364,28 @@ function Injector(modules, parent) {
               privateInjectorsCache.push(provider[3]);
               privateChildInjectors.push(privateChildInjector);
               privateChildFactories.push(privateChildInjectorFactory);
-              fromParentModule[name] = [privateChildInjectorFactory, name, 'private', privateChildInjector];
+              fromParentModule[name] = [ privateChildInjectorFactory, name, 'private', privateChildInjector ];
             } else {
-              fromParentModule[name] = [privateChildFactories[cacheIdx], name, 'private', privateChildInjectors[cacheIdx]];
+              fromParentModule[name] = [ privateChildFactories[cacheIdx], name, 'private', privateChildInjectors[cacheIdx] ];
             }
           } else {
-            fromParentModule[name] = [provider[2], provider[1]];
+            fromParentModule[name] = [ provider[2], provider[1] ];
           }
           matchedScopes[name] = true;
         }
 
         if ((provider[2] === 'factory' || provider[2] === 'type') && provider[1].$scope) {
           /* jshint -W083 */
-          forceNewInstances.forEach(function(scope) {
+          forceNewInstances.forEach(scope => {
             if (provider[1].$scope.indexOf(scope) !== -1) {
-              fromParentModule[name] = [provider[2], provider[1]];
+              fromParentModule[name] = [ provider[2], provider[1] ];
               matchedScopes[scope] = true;
             }
           });
         }
       }
 
-      forceNewInstances.forEach(function(scope) {
+      forceNewInstances.forEach(scope => {
         if (!matchedScopes[scope]) {
           throw new Error('No provider for "' + scope + '". Cannot use provider from the parent!');
         }
@@ -38295,9 +35395,9 @@ function Injector(modules, parent) {
     }
 
     return new Injector(modules, self);
-  };
+  }
 
-  var factoryMap = {
+  const factoryMap = {
     factory: invoke,
     type: instantiate,
     value: function(value) {
@@ -38305,62 +35405,158 @@ function Injector(modules, parent) {
     }
   };
 
-  modules.forEach(function(module) {
+  /**
+   * @param {ModuleDefinition} moduleDefinition
+   * @param {Injector} injector
+   */
+  function createInitializer(moduleDefinition, injector) {
 
-    function arrayUnwrap(type, value) {
-      if (type !== 'value' && isArray(value)) {
-        value = annotate(value.slice());
-      }
+    const initializers = moduleDefinition.__init__ || [];
 
-      return value;
-    }
+    return function() {
+      initializers.forEach(initializer => {
 
-    // TODO(vojta): handle wrong inputs (modules)
-    if (module instanceof Module) {
-      module.forEach(function(provider) {
-        var name = provider[0];
-        var type = provider[1];
-        var value = provider[2];
-
-        providers[name] = [factoryMap[type], arrayUnwrap(type, value), type];
+        // eagerly resolve component (fn or string)
+        if (typeof initializer === 'string') {
+          injector.get(initializer);
+        } else {
+          injector.invoke(initializer);
+        }
       });
-    } else if (typeof module === 'object') {
-      if (module.__exports__) {
-        var clonedModule = Object.keys(module).reduce(function(m, key) {
-          if (key.substring(0, 2) !== '__') {
-            m[key] = module[key];
-          }
-          return m;
-        }, Object.create(null));
+    };
+  }
 
-        var privateInjector = new Injector((module.__modules__ || []).concat([clonedModule]), self);
-        var getFromPrivateInjector = annotate(function(key) {
-          return privateInjector.get(key);
-        });
-        module.__exports__.forEach(function(key) {
-          providers[key] = [getFromPrivateInjector, key, 'private', privateInjector];
-        });
-      } else {
-        Object.keys(module).forEach(function(name) {
-          if (module[name][2] === 'private') {
-            providers[name] = module[name];
-            return;
-          }
+  /**
+   * @param {ModuleDefinition} moduleDefinition
+   */
+  function loadModule(moduleDefinition) {
 
-          var type = module[name][0];
-          var value = module[name][1];
+    const moduleExports = moduleDefinition.__exports__;
 
-          providers[name] = [factoryMap[type], arrayUnwrap(type, value), type];
-        });
-      }
+    // private module
+    if (moduleExports) {
+      const nestedModules = moduleDefinition.__modules__;
+
+      const clonedModule = Object.keys(moduleDefinition).reduce((clonedModule, key) => {
+
+        if (key !== '__exports__' && key !== '__modules__' && key !== '__init__' && key !== '__depends__') {
+          clonedModule[key] = moduleDefinition[key];
+        }
+
+        return clonedModule;
+      }, Object.create(null));
+
+      const childModules = (nestedModules || []).concat(clonedModule);
+
+      const privateInjector = createChild(childModules);
+      const getFromPrivateInjector = annotate(function(key) {
+        return privateInjector.get(key);
+      });
+
+      moduleExports.forEach(function(key) {
+        providers[key] = [ getFromPrivateInjector, key, 'private', privateInjector ];
+      });
+
+      // ensure child injector initializes
+      const initializers = (moduleDefinition.__init__ || []).slice();
+
+      initializers.unshift(function() {
+        privateInjector.init();
+      });
+
+      moduleDefinition = Object.assign({}, moduleDefinition, {
+        __init__: initializers
+      });
+
+      return createInitializer(moduleDefinition, privateInjector);
     }
-  });
+
+    // normal module
+    Object.keys(moduleDefinition).forEach(function(key) {
+
+      if (key === '__init__' || key === '__depends__') {
+        return;
+      }
+
+      if (moduleDefinition[key][2] === 'private') {
+        providers[key] = moduleDefinition[key];
+        return;
+      }
+
+      const type = moduleDefinition[key][0];
+      const value = moduleDefinition[key][1];
+
+      providers[key] = [ factoryMap[type], arrayUnwrap(type, value), type ];
+    });
+
+    return createInitializer(moduleDefinition, self);
+  }
+
+  /**
+   * @param {ModuleDefinition[]} moduleDefinitions
+   * @param {ModuleDefinition} moduleDefinition
+   *
+   * @return {ModuleDefinition[]}
+   */
+  function resolveDependencies(moduleDefinitions, moduleDefinition) {
+
+    if (moduleDefinitions.indexOf(moduleDefinition) !== -1) {
+      return moduleDefinitions;
+    }
+
+    moduleDefinitions = (moduleDefinition.__depends__ || []).reduce(resolveDependencies, moduleDefinitions);
+
+    if (moduleDefinitions.indexOf(moduleDefinition) !== -1) {
+      return moduleDefinitions;
+    }
+
+    return moduleDefinitions.concat(moduleDefinition);
+  }
+
+  /**
+   * @param {ModuleDefinition[]} moduleDefinitions
+   *
+   * @return { () => void } initializerFn
+   */
+  function bootstrap(moduleDefinitions) {
+
+    const initializers = moduleDefinitions
+      .reduce(resolveDependencies, [])
+      .map(loadModule);
+
+    let initialized = false;
+
+    return function() {
+
+      if (initialized) {
+        return;
+      }
+
+      initialized = true;
+
+      initializers.forEach(initializer => initializer());
+    };
+  }
 
   // public API
   this.get = get;
   this.invoke = invoke;
   this.instantiate = instantiate;
   this.createChild = createChild;
+
+  // setup
+  this.init = bootstrap(modules);
+}
+
+
+// helpers ///////////////
+
+function arrayUnwrap(type, value) {
+  if (type !== 'value' && isArray(value)) {
+    value = annotate(value.slice());
+  }
+
+  return value;
 }
 
 
@@ -47652,6 +44848,23 @@ Ids.prototype.clear = function () {
 
 /***/ }),
 
+/***/ "../node_modules/inherits-browser/dist/index.es.js":
+/*!*********************************************************!*\
+  !*** ../node_modules/inherits-browser/dist/index.es.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ e)
+/* harmony export */ });
+function e(e,t){t&&(e.super_=t,e.prototype=Object.create(t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}))}
+//# sourceMappingURL=index.es.js.map
+
+
+/***/ }),
+
 /***/ "../node_modules/inherits/inherits_browser.js":
 /*!****************************************************!*\
   !*** ../node_modules/inherits/inherits_browser.js ***!
@@ -51590,7 +48803,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _starter_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_starter_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "/**\n * color definitions\n */\n.djs-container {\n  --color-grey-225-10-15: hsl(225, 10%, 15%);\n  --color-grey-225-10-35: hsl(225, 10%, 35%);\n  --color-grey-225-10-55: hsl(225, 10%, 55%);\n  --color-grey-225-10-75: hsl(225, 10%, 75%);\n  --color-grey-225-10-80: hsl(225, 10%, 80%);\n  --color-grey-225-10-85: hsl(225, 10%, 85%);\n  --color-grey-225-10-90: hsl(225, 10%, 90%);\n  --color-grey-225-10-95: hsl(225, 10%, 95%); \n  --color-grey-225-10-97: hsl(225, 10%, 97%);\n\n  --color-blue-205-100-45: hsl(205, 100%, 45%);\n  --color-blue-205-100-45-opacity-30: hsla(205, 100%, 45%, 30%);\n  --color-blue-205-100-50: hsl(205, 100%, 50%);\n  --color-blue-205-100-95: hsl(205, 100%, 95%);\n\n  --color-green-150-86-44: hsl(150, 86%, 44%);\n\n  --color-red-360-100-40: hsl(360, 100%, 40%);\n  --color-red-360-100-45: hsl(360, 100%, 45%);\n  --color-red-360-100-92: hsl(360, 100%, 92%);\n  --color-red-360-100-97: hsl(360, 100%, 97%);\n\n  --color-white: hsl(0, 0%, 100%);\n  --color-black: hsl(0, 0%, 0%); \n  --color-black-opacity-05: hsla(0, 0%, 0%, 5%); \n  --color-black-opacity-10: hsla(0, 0%, 0%, 10%);\n\n  --bendpoint-fill-color: var(--color-blue-205-100-45-opacity-30);\n  --bendpoint-stroke-color: var(--color-blue-205-100-50);\n\n  --context-pad-entry-background-color: var(--color-white);\n  --context-pad-entry-hover-background-color: var(--color-grey-225-10-95);\n\n  --element-dragger-color: var(--color-blue-205-100-50);\n  --element-hover-outline-fill-color: var(--color-blue-205-100-45);\n  --element-selected-outline-stroke-color: var(--color-blue-205-100-50);\n\n  --lasso-fill-color: var(--color-black-opacity-05);\n  --lasso-stroke-color: var(--color-black);\n\n  --palette-entry-color: var(--color-grey-225-10-15);\n  --palette-entry-hover-color: var(--color-blue-205-100-45);\n  --palette-entry-selected-color: var(--color-blue-205-100-50);\n  --palette-separator-color: var(--color-grey-225-10-75);\n  --palette-toggle-hover-background-color: var(--color-grey-225-10-55);\n  --palette-background-color: var(--color-grey-225-10-97);\n  --palette-border-color: var(--color-grey-225-10-75);\n\n  --popup-body-background-color: var(--color-white);\n  --popup-header-entry-selected-color: var(--color-blue-205-100-50);\n  --popup-header-entry-selected-background-color: var(--color-black-opacity-10);\n  --popup-header-separator-color: var(--color-grey-225-10-75);\n  --popup-background-color: var(--color-grey-225-10-97);\n  --popup-border-color: var(--color-grey-225-10-75);\n\n  --resizer-fill-color: var(--color-blue-205-100-45-opacity-30);\n  --resizer-stroke-color: var(--color-blue-205-100-50);\n\n  --search-container-background-color: var(--color-grey-225-10-97);\n  --search-container-border-color: var(--color-blue-205-100-50);\n  --search-container-box-shadow-color: var(--color-blue-205-100-95);\n  --search-container-box-shadow-inset-color: var(--color-grey-225-10-80);\n  --search-input-border-color: var(--color-grey-225-10-75);\n  --search-result-border-color: var(--color-grey-225-10-75);\n  --search-result-highlight-color: var(--color-black);\n  --search-result-selected-color: var(--color-blue-205-100-45-opacity-30);\n\n  --shape-attach-allowed-stroke-color: var(--color-blue-205-100-50);\n  --shape-connect-allowed-fill-color: var(--color-grey-225-10-97);\n  --shape-drop-allowed-fill-color: var(--color-grey-225-10-97);\n  --shape-drop-not-allowed-fill-color: var(--color-red-360-100-97);\n  --shape-resize-preview-stroke-color: var(--color-blue-205-100-50);\n\n  --snap-line-stroke-color: var(--color-blue-205-100-45-opacity-30);\n\n  --space-tool-crosshair-stroke-color: var(--color-black);\n\n  --tooltip-error-background-color: var(--color-red-360-100-97);\n  --tooltip-error-border-color: var(--color-red-360-100-45);\n  --tooltip-error-color: var(--color-red-360-100-45);\n}\n\n/**\n * outline styles\n */\n\n.djs-outline {\n  fill: none;\n  visibility: hidden;\n}\n\n.djs-element.hover .djs-outline,\n.djs-element.selected .djs-outline {\n  visibility: visible;\n  shape-rendering: geometricPrecision;\n  stroke-dasharray: 3,3;\n}\n\n.djs-element.selected .djs-outline {\n  stroke: var(--element-selected-outline-stroke-color);\n  stroke-width: 1px;\n}\n\n.djs-element.hover .djs-outline {\n  stroke: var(--element-hover-outline-fill-color);\n  stroke-width: 1px;\n}\n\n.djs-shape.connect-ok .djs-visual > :nth-child(1) {\n  fill: var(--shape-connect-allowed-fill-color) !important;\n}\n\n.djs-shape.connect-not-ok .djs-visual > :nth-child(1),\n.djs-shape.drop-not-ok .djs-visual > :nth-child(1) {\n  fill: var(--shape-drop-not-allowed-fill-color) !important;\n}\n\n.djs-shape.new-parent .djs-visual > :nth-child(1) {\n  fill: var(--shape-drop-allowed-fill-color) !important;\n}\n\nsvg.drop-not-ok {\n  background: var(--shape-drop-not-allowed-fill-color) !important;\n}\n\nsvg.new-parent {\n  background: var(--shape-drop-allowed-fill-color) !important;\n}\n\n.djs-connection.connect-ok .djs-visual > :nth-child(1),\n.djs-connection.drop-ok .djs-visual > :nth-child(1) {\n  stroke: var(--shape-drop-allowed-fill-color) !important;\n}\n\n.djs-connection.connect-not-ok .djs-visual > :nth-child(1),\n.djs-connection.drop-not-ok .djs-visual > :nth-child(1) {\n  stroke: var(--shape-drop-not-allowed-fill-color) !important;\n}\n\n.drop-not-ok,\n.connect-not-ok {\n  cursor: not-allowed;\n}\n\n.djs-element.attach-ok .djs-visual > :nth-child(1) {\n  stroke-width: 5px !important;\n  stroke: var(--shape-attach-allowed-stroke-color) !important;\n}\n\n.djs-frame.connect-not-ok .djs-visual > :nth-child(1),\n.djs-frame.drop-not-ok .djs-visual > :nth-child(1) {\n  stroke-width: 3px !important;\n  stroke: var(--shape-drop-not-allowed-fill-color) !important;\n  fill: none !important;\n}\n\n/**\n* Selection box style\n*\n*/\n.djs-lasso-overlay {\n  fill: var(--lasso-fill-color);\n\n  stroke-dasharray: 5 1 3 1;\n  stroke: var(--lasso-stroke-color);\n\n  shape-rendering: geometricPrecision;\n  pointer-events: none;\n}\n\n/**\n * Resize styles\n */\n.djs-resize-overlay {\n  fill: none;\n\n  stroke-dasharray: 5 1 3 1;\n  stroke: var(--shape-resize-preview-stroke-color);\n\n  pointer-events: none;\n}\n\n.djs-resizer-hit {\n  fill: none;\n  pointer-events: all;\n}\n\n.djs-resizer-visual {\n  fill: var(--resizer-fill-color);\n  stroke-width: 1px;\n  stroke-opacity: 0.5;\n  stroke: var(--resizer-stroke-color);\n  shape-rendering: geometricprecision;\n}\n\n.djs-resizer:hover .djs-resizer-visual {\n  stroke: var(--resizer-stroke-color);\n  stroke-opacity: 1;\n}\n\n.djs-cursor-resize-ns,\n.djs-resizer-n,\n.djs-resizer-s {\n  cursor: ns-resize;\n}\n\n.djs-cursor-resize-ew,\n.djs-resizer-e,\n.djs-resizer-w {\n  cursor: ew-resize;\n}\n\n.djs-cursor-resize-nwse,\n.djs-resizer-nw,\n.djs-resizer-se {\n  cursor: nwse-resize;\n}\n\n.djs-cursor-resize-nesw,\n.djs-resizer-ne,\n.djs-resizer-sw {\n  cursor: nesw-resize;\n}\n\n.djs-shape.djs-resizing > .djs-outline {\n  visibility: hidden !important;\n}\n\n.djs-shape.djs-resizing > .djs-resizer {\n  visibility: hidden;\n}\n\n.djs-dragger > .djs-resizer {\n  visibility: hidden;\n}\n\n/**\n * drag styles\n */\n.djs-dragger * {\n  fill: none !important;\n  stroke: var(--element-dragger-color) !important;\n}\n\n.djs-dragger tspan,\n.djs-dragger text {\n  fill: var(--element-dragger-color) !important;\n  stroke: none !important;\n}\n\nmarker.djs-dragger circle,\nmarker.djs-dragger path,\nmarker.djs-dragger polygon,\nmarker.djs-dragger polyline,\nmarker.djs-dragger rect {\n  fill: var(--element-dragger-color) !important;\n  stroke: none !important;\n}\n\nmarker.djs-dragger text,\nmarker.djs-dragger tspan {\n  fill: none !important;\n  stroke: var(--element-dragger-color) !important;\n}\n\n.djs-dragging {\n  opacity: 0.3;\n}\n\n.djs-dragging,\n.djs-dragging > * {\n  pointer-events: none !important;\n}\n\n.djs-dragging .djs-context-pad,\n.djs-dragging .djs-outline {\n  display: none !important;\n}\n\n/**\n * no pointer events for visual\n */\n.djs-visual,\n.djs-outline {\n  pointer-events: none;\n}\n\n.djs-element.attach-ok .djs-hit {\n  stroke-width: 60px !important;\n}\n\n/**\n * all pointer events for hit shape\n */\n.djs-element > .djs-hit-all {\n  pointer-events: all;\n}\n\n.djs-element > .djs-hit-stroke,\n.djs-element > .djs-hit-click-stroke {\n  pointer-events: stroke;\n}\n\n/**\n * all pointer events for hit shape\n */\n.djs-drag-active .djs-element > .djs-hit-click-stroke {\n  pointer-events: all;\n}\n\n/**\n * shape / connection basic styles\n */\n.djs-connection .djs-visual {\n  stroke-width: 2px;\n  fill: none;\n}\n\n.djs-cursor-grab {\n  cursor: -webkit-grab;\n  cursor: -moz-grab;\n  cursor: grab;\n}\n\n.djs-cursor-grabbing {\n  cursor: -webkit-grabbing;\n  cursor: -moz-grabbing;\n  cursor: grabbing;\n}\n\n.djs-cursor-crosshair {\n  cursor: crosshair;\n}\n\n.djs-cursor-move {\n  cursor: move;\n}\n\n.djs-cursor-resize-ns {\n  cursor: ns-resize;\n}\n\n.djs-cursor-resize-ew {\n  cursor: ew-resize;\n}\n\n\n/**\n * snapping\n */\n.djs-snap-line {\n  stroke: var(--snap-line-stroke-color);\n  stroke-linecap: round;\n  stroke-width: 2px;\n  pointer-events: none;\n}\n\n/**\n * snapping\n */\n.djs-crosshair {\n  stroke: var(--space-tool-crosshair-stroke-color);\n  stroke-linecap: round;\n  stroke-width: 1px;\n  pointer-events: none;\n  shape-rendering: crispEdges;\n  stroke-dasharray: 5, 5;\n}\n\n/**\n * palette\n */\n\n.djs-palette {\n  position: absolute;\n  left: 20px;\n  top: 20px;\n\n  box-sizing: border-box;\n  width: 48px;\n}\n\n.djs-palette .separator {\n  margin: 0 5px;\n  padding-top: 5px;\n\n  border: none;\n  border-bottom: solid 1px var(--palette-separator-color);\n\n  clear: both;\n}\n\n.djs-palette .entry:before {\n  vertical-align: text-bottom;\n}\n\n.djs-palette .djs-palette-toggle {\n  cursor: pointer;\n}\n\n.djs-palette .entry,\n.djs-palette .djs-palette-toggle {\n  color: var(--palette-entry-color);\n  font-size: 30px;\n\n  text-align: center;\n}\n\n.djs-palette .entry {\n  float: left;\n}\n\n.djs-palette .entry img {\n  max-width: 100%;\n}\n\n.djs-palette .djs-palette-entries:after {\n  content: '';\n  display: table;\n  clear: both;\n}\n\n.djs-palette .djs-palette-toggle:hover {\n  background: var(--palette-toggle-hover-background-color);\n}\n\n.djs-palette .entry:hover {\n  color: var(--palette-entry-hover-color);\n}\n\n.djs-palette .highlighted-entry {\n  color: var(--palette-entry-selected-color) !important;\n}\n\n.djs-palette .entry,\n.djs-palette .djs-palette-toggle {\n  width: 46px;\n  height: 46px;\n  line-height: 46px;\n  cursor: default;\n}\n\n/**\n * Palette open / two-column layout is controlled via\n * classes on the palette. Events to hook into palette\n * changed life-cycle are available in addition.\n */\n.djs-palette.two-column.open {\n  width: 94px;\n}\n\n.djs-palette:not(.open) .djs-palette-entries {\n  display: none;\n}\n\n.djs-palette:not(.open) {\n  overflow: hidden;\n}\n\n.djs-palette.open .djs-palette-toggle {\n  display: none;\n}\n\n/**\n * context-pad\n */\n.djs-overlay-context-pad {\n  width: 72px;\n  z-index: 100;\n}\n\n.djs-context-pad {\n  position: absolute;\n  display: none;\n  pointer-events: none;\n  line-height: 1;\n}\n\n.djs-context-pad .entry {\n  width: 22px;\n  height: 22px;\n  text-align: center;\n  display: inline-block;\n  font-size: 22px;\n  margin: 0 2px 2px 0;\n\n  border-radius: 3px;\n\n  cursor: default;\n\n  background-color: var(--context-pad-entry-background-color);\n  box-shadow: 0 0 2px 1px var(--context-pad-entry-background-color);\n  pointer-events: all;\n  vertical-align: middle;\n}\n\n.djs-context-pad .entry:hover {\n  background: var(--context-pad-entry-hover-background-color);\n}\n\n.djs-context-pad.open {\n  display: block;\n}\n\n/**\n * popup styles\n */\n.djs-popup .entry {\n  line-height: 20px;\n  white-space: nowrap;\n  cursor: default;\n}\n\n/* larger font for prefixed icons */\n.djs-popup .entry:before {\n  vertical-align: middle;\n  font-size: 20px;\n}\n\n.djs-popup .entry > span {\n  vertical-align: middle;\n  font-size: 14px;\n}\n\n.djs-popup .entry:hover,\n.djs-popup .entry.active:hover {\n  background: var(--popup-header-entry-selected-background-color);\n}\n\n.djs-popup .entry.disabled {\n  background: inherit;\n}\n\n.djs-popup .djs-popup-header .entry {\n  display: inline-block;\n  padding: 2px 3px 2px 3px;\n\n  border: solid 1px transparent;\n  border-radius: 3px;\n}\n\n.djs-popup .djs-popup-header .entry.active {\n  color: var(--popup-header-entry-selected-color);\n  border: solid 1px var(--popup-header-entry-selected-color);\n  background-color: var(--popup-header-entry-selected-background-color);\n}\n\n.djs-popup-body .entry {\n  padding: 4px 10px 4px 5px;\n}\n\n.djs-popup-body .entry > span {\n  margin-left: 5px;\n}\n\n.djs-popup-body {\n  background-color: var(--popup-body-background-color);\n}\n\n.djs-popup-header {\n  border-bottom: 1px solid var(--popup-header-separator-color);\n}\n\n.djs-popup-header .entry {\n  margin: 1px;\n  margin-left: 3px;\n}\n\n.djs-popup-header .entry:last-child {\n  margin-right: 3px;\n}\n\n/**\n * popup / palette styles\n */\n.djs-palette {\n  background: var(--palette-background-color);\n  border: solid 1px var(--palette-border-color);\n  border-radius: 2px;\n}\n\n.djs-popup {\n  background: var(--popup-background-color);\n  border: solid 1px var(--popup-border-color);\n  border-radius: 2px;\n}\n\n/**\n * touch\n */\n\n.djs-shape,\n.djs-connection {\n  touch-action: none;\n}\n\n.djs-segment-dragger,\n.djs-bendpoint {\n  display: none;\n}\n\n/**\n * bendpoints\n */\n.djs-segment-dragger .djs-visual {\n  display: none;\n\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-width: 1px;\n  stroke-opacity: 1;\n}\n\n.djs-segment-dragger:hover .djs-visual {\n  display: block;\n}\n\n.djs-bendpoint .djs-visual {\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-width: 1px;\n  stroke-opacity: 0.5;\n}\n\n.djs-segment-dragger:hover,\n.djs-bendpoints.hover .djs-segment-dragger,\n.djs-bendpoints.selected .djs-segment-dragger,\n.djs-bendpoint:hover,\n.djs-bendpoints.hover .djs-bendpoint,\n.djs-bendpoints.selected .djs-bendpoint {\n  display: block;\n}\n\n.djs-drag-active .djs-bendpoints * {\n  display: none;\n}\n\n.djs-bendpoints:not(.hover) .floating {\n  display: none;\n}\n\n.djs-segment-dragger:hover .djs-visual,\n.djs-segment-dragger.djs-dragging .djs-visual,\n.djs-bendpoint:hover .djs-visual,\n.djs-bendpoint.floating .djs-visual {\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-opacity: 1;\n}\n\n.djs-bendpoint.floating .djs-hit {\n  pointer-events: none;\n}\n\n.djs-segment-dragger .djs-hit,\n.djs-bendpoint .djs-hit {\n  fill: none;\n  pointer-events: all;\n}\n\n.djs-segment-dragger.horizontal .djs-hit {\n  cursor: ns-resize;\n}\n\n.djs-segment-dragger.vertical .djs-hit {\n  cursor: ew-resize;\n}\n\n.djs-segment-dragger.djs-dragging .djs-hit {\n  pointer-events: none;\n}\n\n.djs-updating,\n.djs-updating > * {\n  pointer-events: none !important;\n}\n\n.djs-updating .djs-context-pad,\n.djs-updating .djs-outline,\n.djs-updating .djs-bendpoint,\n.connect-ok .djs-bendpoint,\n.connect-not-ok .djs-bendpoint,\n.drop-ok .djs-bendpoint,\n.drop-not-ok .djs-bendpoint {\n  display: none !important;\n}\n\n.djs-segment-dragger.djs-dragging,\n.djs-bendpoint.djs-dragging {\n  display: block;\n  opacity: 1.0;\n}\n\n\n/**\n * tooltips\n */\n.djs-tooltip-error {\n  width: 160px;\n  padding: 6px;\n\n  background: var(--tooltip-error-background-color);\n  border: solid 1px var(--tooltip-error-border-color);\n  border-radius: 2px;\n  color: var(--tooltip-error-color);\n  font-size: 12px;\n  line-height: 16px;\n\n  opacity: 0.75;\n}\n\n.djs-tooltip-error:hover {\n  opacity: 1;\n}\n\n\n/**\n * search pad\n */\n.djs-search-container {\n  position: absolute;\n  top: 20px;\n  left: 0;\n  right: 0;\n  margin-left: auto;\n  margin-right: auto;\n\n  width: 25%;\n  min-width: 300px;\n  max-width: 400px;\n  z-index: 10;\n\n  font-size: 1.05em;\n  opacity: 0.9;\n  background: var(--search-container-background-color);\n  border: solid 1px var(--search-container-border-color);\n  border-radius: 2px;\n  box-shadow: 0 0 0 2px var(--search-container-box-shadow-color), 0 0 0 1px var(--search-container-box-shadow-inset-color) inset;\n}\n\n.djs-search-container:not(.open) {\n  display: none;\n}\n\n.djs-search-input input {\n  font-size: 1.05em;\n  width: 100%;\n  padding: 6px 10px;\n  border: 1px solid var(--search-input-border-color);\n  box-sizing: border-box;\n}\n\n.djs-search-input input:focus {\n  outline: none;\n  border-color: var(--search-input-border-color);\n}\n\n.djs-search-results {\n  position: relative;\n  overflow-y: auto;\n  max-height: 200px;\n}\n\n.djs-search-results:hover {\n  cursor: pointer;\n}\n\n.djs-search-result {\n  width: 100%;\n  padding: 6px 10px;\n  background: white;\n  border-bottom: solid 1px var(--search-result-border-color);\n  border-radius: 1px;\n}\n\n.djs-search-highlight {\n  color: var(--search-result-highlight-color);\n}\n\n.djs-search-result-primary {\n  margin: 0 0 10px;\n}\n\n.djs-search-result-secondary {\n  font-family: monospace;\n  margin: 0;\n}\n\n.djs-search-result:hover {\n  background: var(--search-result-selected-color);\n}\n\n.djs-search-result-selected {\n  background: var(--search-result-selected-color);\n}\n\n.djs-search-result-selected:hover {\n  background: var(--search-result-selected-color);\n}\n\n.djs-search-overlay {\n  background: var(--search-result-selected-color);\n}\n\n/**\n * hidden styles\n */\n.djs-element-hidden,\n.djs-element-hidden .djs-hit,\n.djs-element-hidden .djs-outline,\n.djs-label-hidden .djs-label {\n  display: none !important;\n}\n", "",{"version":3,"sources":["webpack://./../node_modules/diagram-js/assets/diagram-js.css"],"names":[],"mappings":"AAAA;;EAEE;AACF;EACE,0CAA0C;EAC1C,0CAA0C;EAC1C,0CAA0C;EAC1C,0CAA0C;EAC1C,0CAA0C;EAC1C,0CAA0C;EAC1C,0CAA0C;EAC1C,0CAA0C;EAC1C,0CAA0C;;EAE1C,4CAA4C;EAC5C,6DAA6D;EAC7D,4CAA4C;EAC5C,4CAA4C;;EAE5C,2CAA2C;;EAE3C,2CAA2C;EAC3C,2CAA2C;EAC3C,2CAA2C;EAC3C,2CAA2C;;EAE3C,+BAA+B;EAC/B,6BAA6B;EAC7B,6CAA6C;EAC7C,8CAA8C;;EAE9C,+DAA+D;EAC/D,sDAAsD;;EAEtD,wDAAwD;EACxD,uEAAuE;;EAEvE,qDAAqD;EACrD,gEAAgE;EAChE,qEAAqE;;EAErE,iDAAiD;EACjD,wCAAwC;;EAExC,kDAAkD;EAClD,yDAAyD;EACzD,4DAA4D;EAC5D,sDAAsD;EACtD,oEAAoE;EACpE,uDAAuD;EACvD,mDAAmD;;EAEnD,iDAAiD;EACjD,iEAAiE;EACjE,6EAA6E;EAC7E,2DAA2D;EAC3D,qDAAqD;EACrD,iDAAiD;;EAEjD,6DAA6D;EAC7D,oDAAoD;;EAEpD,gEAAgE;EAChE,6DAA6D;EAC7D,iEAAiE;EACjE,sEAAsE;EACtE,wDAAwD;EACxD,yDAAyD;EACzD,mDAAmD;EACnD,uEAAuE;;EAEvE,iEAAiE;EACjE,+DAA+D;EAC/D,4DAA4D;EAC5D,gEAAgE;EAChE,iEAAiE;;EAEjE,iEAAiE;;EAEjE,uDAAuD;;EAEvD,6DAA6D;EAC7D,yDAAyD;EACzD,kDAAkD;AACpD;;AAEA;;EAEE;;AAEF;EACE,UAAU;EACV,kBAAkB;AACpB;;AAEA;;EAEE,mBAAmB;EACnB,mCAAmC;EACnC,qBAAqB;AACvB;;AAEA;EACE,oDAAoD;EACpD,iBAAiB;AACnB;;AAEA;EACE,+CAA+C;EAC/C,iBAAiB;AACnB;;AAEA;EACE,wDAAwD;AAC1D;;AAEA;;EAEE,yDAAyD;AAC3D;;AAEA;EACE,qDAAqD;AACvD;;AAEA;EACE,+DAA+D;AACjE;;AAEA;EACE,2DAA2D;AAC7D;;AAEA;;EAEE,uDAAuD;AACzD;;AAEA;;EAEE,2DAA2D;AAC7D;;AAEA;;EAEE,mBAAmB;AACrB;;AAEA;EACE,4BAA4B;EAC5B,2DAA2D;AAC7D;;AAEA;;EAEE,4BAA4B;EAC5B,2DAA2D;EAC3D,qBAAqB;AACvB;;AAEA;;;CAGC;AACD;EACE,6BAA6B;;EAE7B,yBAAyB;EACzB,iCAAiC;;EAEjC,mCAAmC;EACnC,oBAAoB;AACtB;;AAEA;;EAEE;AACF;EACE,UAAU;;EAEV,yBAAyB;EACzB,gDAAgD;;EAEhD,oBAAoB;AACtB;;AAEA;EACE,UAAU;EACV,mBAAmB;AACrB;;AAEA;EACE,+BAA+B;EAC/B,iBAAiB;EACjB,mBAAmB;EACnB,mCAAmC;EACnC,mCAAmC;AACrC;;AAEA;EACE,mCAAmC;EACnC,iBAAiB;AACnB;;AAEA;;;EAGE,iBAAiB;AACnB;;AAEA;;;EAGE,iBAAiB;AACnB;;AAEA;;;EAGE,mBAAmB;AACrB;;AAEA;;;EAGE,mBAAmB;AACrB;;AAEA;EACE,6BAA6B;AAC/B;;AAEA;EACE,kBAAkB;AACpB;;AAEA;EACE,kBAAkB;AACpB;;AAEA;;EAEE;AACF;EACE,qBAAqB;EACrB,+CAA+C;AACjD;;AAEA;;EAEE,6CAA6C;EAC7C,uBAAuB;AACzB;;AAEA;;;;;EAKE,6CAA6C;EAC7C,uBAAuB;AACzB;;AAEA;;EAEE,qBAAqB;EACrB,+CAA+C;AACjD;;AAEA;EACE,YAAY;AACd;;AAEA;;EAEE,+BAA+B;AACjC;;AAEA;;EAEE,wBAAwB;AAC1B;;AAEA;;EAEE;AACF;;EAEE,oBAAoB;AACtB;;AAEA;EACE,6BAA6B;AAC/B;;AAEA;;EAEE;AACF;EACE,mBAAmB;AACrB;;AAEA;;EAEE,sBAAsB;AACxB;;AAEA;;EAEE;AACF;EACE,mBAAmB;AACrB;;AAEA;;EAEE;AACF;EACE,iBAAiB;EACjB,UAAU;AACZ;;AAEA;EACE,oBAAoB;EACpB,iBAAiB;EACjB,YAAY;AACd;;AAEA;EACE,wBAAwB;EACxB,qBAAqB;EACrB,gBAAgB;AAClB;;AAEA;EACE,iBAAiB;AACnB;;AAEA;EACE,YAAY;AACd;;AAEA;EACE,iBAAiB;AACnB;;AAEA;EACE,iBAAiB;AACnB;;;AAGA;;EAEE;AACF;EACE,qCAAqC;EACrC,qBAAqB;EACrB,iBAAiB;EACjB,oBAAoB;AACtB;;AAEA;;EAEE;AACF;EACE,gDAAgD;EAChD,qBAAqB;EACrB,iBAAiB;EACjB,oBAAoB;EACpB,2BAA2B;EAC3B,sBAAsB;AACxB;;AAEA;;EAEE;;AAEF;EACE,kBAAkB;EAClB,UAAU;EACV,SAAS;;EAET,sBAAsB;EACtB,WAAW;AACb;;AAEA;EACE,aAAa;EACb,gBAAgB;;EAEhB,YAAY;EACZ,uDAAuD;;EAEvD,WAAW;AACb;;AAEA;EACE,2BAA2B;AAC7B;;AAEA;EACE,eAAe;AACjB;;AAEA;;EAEE,iCAAiC;EACjC,eAAe;;EAEf,kBAAkB;AACpB;;AAEA;EACE,WAAW;AACb;;AAEA;EACE,eAAe;AACjB;;AAEA;EACE,WAAW;EACX,cAAc;EACd,WAAW;AACb;;AAEA;EACE,wDAAwD;AAC1D;;AAEA;EACE,uCAAuC;AACzC;;AAEA;EACE,qDAAqD;AACvD;;AAEA;;EAEE,WAAW;EACX,YAAY;EACZ,iBAAiB;EACjB,eAAe;AACjB;;AAEA;;;;EAIE;AACF;EACE,WAAW;AACb;;AAEA;EACE,aAAa;AACf;;AAEA;EACE,gBAAgB;AAClB;;AAEA;EACE,aAAa;AACf;;AAEA;;EAEE;AACF;EACE,WAAW;EACX,YAAY;AACd;;AAEA;EACE,kBAAkB;EAClB,aAAa;EACb,oBAAoB;EACpB,cAAc;AAChB;;AAEA;EACE,WAAW;EACX,YAAY;EACZ,kBAAkB;EAClB,qBAAqB;EACrB,eAAe;EACf,mBAAmB;;EAEnB,kBAAkB;;EAElB,eAAe;;EAEf,2DAA2D;EAC3D,iEAAiE;EACjE,mBAAmB;EACnB,sBAAsB;AACxB;;AAEA;EACE,2DAA2D;AAC7D;;AAEA;EACE,cAAc;AAChB;;AAEA;;EAEE;AACF;EACE,iBAAiB;EACjB,mBAAmB;EACnB,eAAe;AACjB;;AAEA,mCAAmC;AACnC;EACE,sBAAsB;EACtB,eAAe;AACjB;;AAEA;EACE,sBAAsB;EACtB,eAAe;AACjB;;AAEA;;EAEE,+DAA+D;AACjE;;AAEA;EACE,mBAAmB;AACrB;;AAEA;EACE,qBAAqB;EACrB,wBAAwB;;EAExB,6BAA6B;EAC7B,kBAAkB;AACpB;;AAEA;EACE,+CAA+C;EAC/C,0DAA0D;EAC1D,qEAAqE;AACvE;;AAEA;EACE,yBAAyB;AAC3B;;AAEA;EACE,gBAAgB;AAClB;;AAEA;EACE,oDAAoD;AACtD;;AAEA;EACE,4DAA4D;AAC9D;;AAEA;EACE,WAAW;EACX,gBAAgB;AAClB;;AAEA;EACE,iBAAiB;AACnB;;AAEA;;EAEE;AACF;EACE,2CAA2C;EAC3C,6CAA6C;EAC7C,kBAAkB;AACpB;;AAEA;EACE,yCAAyC;EACzC,2CAA2C;EAC3C,kBAAkB;AACpB;;AAEA;;EAEE;;AAEF;;EAEE,kBAAkB;AACpB;;AAEA;;EAEE,aAAa;AACf;;AAEA;;EAEE;AACF;EACE,aAAa;;EAEb,iCAAiC;EACjC,qCAAqC;EACrC,iBAAiB;EACjB,iBAAiB;AACnB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,iCAAiC;EACjC,qCAAqC;EACrC,iBAAiB;EACjB,mBAAmB;AACrB;;AAEA;;;;;;EAME,cAAc;AAChB;;AAEA;EACE,aAAa;AACf;;AAEA;EACE,aAAa;AACf;;AAEA;;;;EAIE,iCAAiC;EACjC,qCAAqC;EACrC,iBAAiB;AACnB;;AAEA;EACE,oBAAoB;AACtB;;AAEA;;EAEE,UAAU;EACV,mBAAmB;AACrB;;AAEA;EACE,iBAAiB;AACnB;;AAEA;EACE,iBAAiB;AACnB;;AAEA;EACE,oBAAoB;AACtB;;AAEA;;EAEE,+BAA+B;AACjC;;AAEA;;;;;;;EAOE,wBAAwB;AAC1B;;AAEA;;EAEE,cAAc;EACd,YAAY;AACd;;;AAGA;;EAEE;AACF;EACE,YAAY;EACZ,YAAY;;EAEZ,iDAAiD;EACjD,mDAAmD;EACnD,kBAAkB;EAClB,iCAAiC;EACjC,eAAe;EACf,iBAAiB;;EAEjB,aAAa;AACf;;AAEA;EACE,UAAU;AACZ;;;AAGA;;EAEE;AACF;EACE,kBAAkB;EAClB,SAAS;EACT,OAAO;EACP,QAAQ;EACR,iBAAiB;EACjB,kBAAkB;;EAElB,UAAU;EACV,gBAAgB;EAChB,gBAAgB;EAChB,WAAW;;EAEX,iBAAiB;EACjB,YAAY;EACZ,oDAAoD;EACpD,sDAAsD;EACtD,kBAAkB;EAClB,8HAA8H;AAChI;;AAEA;EACE,aAAa;AACf;;AAEA;EACE,iBAAiB;EACjB,WAAW;EACX,iBAAiB;EACjB,kDAAkD;EAClD,sBAAsB;AACxB;;AAEA;EACE,aAAa;EACb,8CAA8C;AAChD;;AAEA;EACE,kBAAkB;EAClB,gBAAgB;EAChB,iBAAiB;AACnB;;AAEA;EACE,eAAe;AACjB;;AAEA;EACE,WAAW;EACX,iBAAiB;EACjB,iBAAiB;EACjB,0DAA0D;EAC1D,kBAAkB;AACpB;;AAEA;EACE,2CAA2C;AAC7C;;AAEA;EACE,gBAAgB;AAClB;;AAEA;EACE,sBAAsB;EACtB,SAAS;AACX;;AAEA;EACE,+CAA+C;AACjD;;AAEA;EACE,+CAA+C;AACjD;;AAEA;EACE,+CAA+C;AACjD;;AAEA;EACE,+CAA+C;AACjD;;AAEA;;EAEE;AACF;;;;EAIE,wBAAwB;AAC1B","sourcesContent":["/**\n * color definitions\n */\n.djs-container {\n  --color-grey-225-10-15: hsl(225, 10%, 15%);\n  --color-grey-225-10-35: hsl(225, 10%, 35%);\n  --color-grey-225-10-55: hsl(225, 10%, 55%);\n  --color-grey-225-10-75: hsl(225, 10%, 75%);\n  --color-grey-225-10-80: hsl(225, 10%, 80%);\n  --color-grey-225-10-85: hsl(225, 10%, 85%);\n  --color-grey-225-10-90: hsl(225, 10%, 90%);\n  --color-grey-225-10-95: hsl(225, 10%, 95%); \n  --color-grey-225-10-97: hsl(225, 10%, 97%);\n\n  --color-blue-205-100-45: hsl(205, 100%, 45%);\n  --color-blue-205-100-45-opacity-30: hsla(205, 100%, 45%, 30%);\n  --color-blue-205-100-50: hsl(205, 100%, 50%);\n  --color-blue-205-100-95: hsl(205, 100%, 95%);\n\n  --color-green-150-86-44: hsl(150, 86%, 44%);\n\n  --color-red-360-100-40: hsl(360, 100%, 40%);\n  --color-red-360-100-45: hsl(360, 100%, 45%);\n  --color-red-360-100-92: hsl(360, 100%, 92%);\n  --color-red-360-100-97: hsl(360, 100%, 97%);\n\n  --color-white: hsl(0, 0%, 100%);\n  --color-black: hsl(0, 0%, 0%); \n  --color-black-opacity-05: hsla(0, 0%, 0%, 5%); \n  --color-black-opacity-10: hsla(0, 0%, 0%, 10%);\n\n  --bendpoint-fill-color: var(--color-blue-205-100-45-opacity-30);\n  --bendpoint-stroke-color: var(--color-blue-205-100-50);\n\n  --context-pad-entry-background-color: var(--color-white);\n  --context-pad-entry-hover-background-color: var(--color-grey-225-10-95);\n\n  --element-dragger-color: var(--color-blue-205-100-50);\n  --element-hover-outline-fill-color: var(--color-blue-205-100-45);\n  --element-selected-outline-stroke-color: var(--color-blue-205-100-50);\n\n  --lasso-fill-color: var(--color-black-opacity-05);\n  --lasso-stroke-color: var(--color-black);\n\n  --palette-entry-color: var(--color-grey-225-10-15);\n  --palette-entry-hover-color: var(--color-blue-205-100-45);\n  --palette-entry-selected-color: var(--color-blue-205-100-50);\n  --palette-separator-color: var(--color-grey-225-10-75);\n  --palette-toggle-hover-background-color: var(--color-grey-225-10-55);\n  --palette-background-color: var(--color-grey-225-10-97);\n  --palette-border-color: var(--color-grey-225-10-75);\n\n  --popup-body-background-color: var(--color-white);\n  --popup-header-entry-selected-color: var(--color-blue-205-100-50);\n  --popup-header-entry-selected-background-color: var(--color-black-opacity-10);\n  --popup-header-separator-color: var(--color-grey-225-10-75);\n  --popup-background-color: var(--color-grey-225-10-97);\n  --popup-border-color: var(--color-grey-225-10-75);\n\n  --resizer-fill-color: var(--color-blue-205-100-45-opacity-30);\n  --resizer-stroke-color: var(--color-blue-205-100-50);\n\n  --search-container-background-color: var(--color-grey-225-10-97);\n  --search-container-border-color: var(--color-blue-205-100-50);\n  --search-container-box-shadow-color: var(--color-blue-205-100-95);\n  --search-container-box-shadow-inset-color: var(--color-grey-225-10-80);\n  --search-input-border-color: var(--color-grey-225-10-75);\n  --search-result-border-color: var(--color-grey-225-10-75);\n  --search-result-highlight-color: var(--color-black);\n  --search-result-selected-color: var(--color-blue-205-100-45-opacity-30);\n\n  --shape-attach-allowed-stroke-color: var(--color-blue-205-100-50);\n  --shape-connect-allowed-fill-color: var(--color-grey-225-10-97);\n  --shape-drop-allowed-fill-color: var(--color-grey-225-10-97);\n  --shape-drop-not-allowed-fill-color: var(--color-red-360-100-97);\n  --shape-resize-preview-stroke-color: var(--color-blue-205-100-50);\n\n  --snap-line-stroke-color: var(--color-blue-205-100-45-opacity-30);\n\n  --space-tool-crosshair-stroke-color: var(--color-black);\n\n  --tooltip-error-background-color: var(--color-red-360-100-97);\n  --tooltip-error-border-color: var(--color-red-360-100-45);\n  --tooltip-error-color: var(--color-red-360-100-45);\n}\n\n/**\n * outline styles\n */\n\n.djs-outline {\n  fill: none;\n  visibility: hidden;\n}\n\n.djs-element.hover .djs-outline,\n.djs-element.selected .djs-outline {\n  visibility: visible;\n  shape-rendering: geometricPrecision;\n  stroke-dasharray: 3,3;\n}\n\n.djs-element.selected .djs-outline {\n  stroke: var(--element-selected-outline-stroke-color);\n  stroke-width: 1px;\n}\n\n.djs-element.hover .djs-outline {\n  stroke: var(--element-hover-outline-fill-color);\n  stroke-width: 1px;\n}\n\n.djs-shape.connect-ok .djs-visual > :nth-child(1) {\n  fill: var(--shape-connect-allowed-fill-color) !important;\n}\n\n.djs-shape.connect-not-ok .djs-visual > :nth-child(1),\n.djs-shape.drop-not-ok .djs-visual > :nth-child(1) {\n  fill: var(--shape-drop-not-allowed-fill-color) !important;\n}\n\n.djs-shape.new-parent .djs-visual > :nth-child(1) {\n  fill: var(--shape-drop-allowed-fill-color) !important;\n}\n\nsvg.drop-not-ok {\n  background: var(--shape-drop-not-allowed-fill-color) !important;\n}\n\nsvg.new-parent {\n  background: var(--shape-drop-allowed-fill-color) !important;\n}\n\n.djs-connection.connect-ok .djs-visual > :nth-child(1),\n.djs-connection.drop-ok .djs-visual > :nth-child(1) {\n  stroke: var(--shape-drop-allowed-fill-color) !important;\n}\n\n.djs-connection.connect-not-ok .djs-visual > :nth-child(1),\n.djs-connection.drop-not-ok .djs-visual > :nth-child(1) {\n  stroke: var(--shape-drop-not-allowed-fill-color) !important;\n}\n\n.drop-not-ok,\n.connect-not-ok {\n  cursor: not-allowed;\n}\n\n.djs-element.attach-ok .djs-visual > :nth-child(1) {\n  stroke-width: 5px !important;\n  stroke: var(--shape-attach-allowed-stroke-color) !important;\n}\n\n.djs-frame.connect-not-ok .djs-visual > :nth-child(1),\n.djs-frame.drop-not-ok .djs-visual > :nth-child(1) {\n  stroke-width: 3px !important;\n  stroke: var(--shape-drop-not-allowed-fill-color) !important;\n  fill: none !important;\n}\n\n/**\n* Selection box style\n*\n*/\n.djs-lasso-overlay {\n  fill: var(--lasso-fill-color);\n\n  stroke-dasharray: 5 1 3 1;\n  stroke: var(--lasso-stroke-color);\n\n  shape-rendering: geometricPrecision;\n  pointer-events: none;\n}\n\n/**\n * Resize styles\n */\n.djs-resize-overlay {\n  fill: none;\n\n  stroke-dasharray: 5 1 3 1;\n  stroke: var(--shape-resize-preview-stroke-color);\n\n  pointer-events: none;\n}\n\n.djs-resizer-hit {\n  fill: none;\n  pointer-events: all;\n}\n\n.djs-resizer-visual {\n  fill: var(--resizer-fill-color);\n  stroke-width: 1px;\n  stroke-opacity: 0.5;\n  stroke: var(--resizer-stroke-color);\n  shape-rendering: geometricprecision;\n}\n\n.djs-resizer:hover .djs-resizer-visual {\n  stroke: var(--resizer-stroke-color);\n  stroke-opacity: 1;\n}\n\n.djs-cursor-resize-ns,\n.djs-resizer-n,\n.djs-resizer-s {\n  cursor: ns-resize;\n}\n\n.djs-cursor-resize-ew,\n.djs-resizer-e,\n.djs-resizer-w {\n  cursor: ew-resize;\n}\n\n.djs-cursor-resize-nwse,\n.djs-resizer-nw,\n.djs-resizer-se {\n  cursor: nwse-resize;\n}\n\n.djs-cursor-resize-nesw,\n.djs-resizer-ne,\n.djs-resizer-sw {\n  cursor: nesw-resize;\n}\n\n.djs-shape.djs-resizing > .djs-outline {\n  visibility: hidden !important;\n}\n\n.djs-shape.djs-resizing > .djs-resizer {\n  visibility: hidden;\n}\n\n.djs-dragger > .djs-resizer {\n  visibility: hidden;\n}\n\n/**\n * drag styles\n */\n.djs-dragger * {\n  fill: none !important;\n  stroke: var(--element-dragger-color) !important;\n}\n\n.djs-dragger tspan,\n.djs-dragger text {\n  fill: var(--element-dragger-color) !important;\n  stroke: none !important;\n}\n\nmarker.djs-dragger circle,\nmarker.djs-dragger path,\nmarker.djs-dragger polygon,\nmarker.djs-dragger polyline,\nmarker.djs-dragger rect {\n  fill: var(--element-dragger-color) !important;\n  stroke: none !important;\n}\n\nmarker.djs-dragger text,\nmarker.djs-dragger tspan {\n  fill: none !important;\n  stroke: var(--element-dragger-color) !important;\n}\n\n.djs-dragging {\n  opacity: 0.3;\n}\n\n.djs-dragging,\n.djs-dragging > * {\n  pointer-events: none !important;\n}\n\n.djs-dragging .djs-context-pad,\n.djs-dragging .djs-outline {\n  display: none !important;\n}\n\n/**\n * no pointer events for visual\n */\n.djs-visual,\n.djs-outline {\n  pointer-events: none;\n}\n\n.djs-element.attach-ok .djs-hit {\n  stroke-width: 60px !important;\n}\n\n/**\n * all pointer events for hit shape\n */\n.djs-element > .djs-hit-all {\n  pointer-events: all;\n}\n\n.djs-element > .djs-hit-stroke,\n.djs-element > .djs-hit-click-stroke {\n  pointer-events: stroke;\n}\n\n/**\n * all pointer events for hit shape\n */\n.djs-drag-active .djs-element > .djs-hit-click-stroke {\n  pointer-events: all;\n}\n\n/**\n * shape / connection basic styles\n */\n.djs-connection .djs-visual {\n  stroke-width: 2px;\n  fill: none;\n}\n\n.djs-cursor-grab {\n  cursor: -webkit-grab;\n  cursor: -moz-grab;\n  cursor: grab;\n}\n\n.djs-cursor-grabbing {\n  cursor: -webkit-grabbing;\n  cursor: -moz-grabbing;\n  cursor: grabbing;\n}\n\n.djs-cursor-crosshair {\n  cursor: crosshair;\n}\n\n.djs-cursor-move {\n  cursor: move;\n}\n\n.djs-cursor-resize-ns {\n  cursor: ns-resize;\n}\n\n.djs-cursor-resize-ew {\n  cursor: ew-resize;\n}\n\n\n/**\n * snapping\n */\n.djs-snap-line {\n  stroke: var(--snap-line-stroke-color);\n  stroke-linecap: round;\n  stroke-width: 2px;\n  pointer-events: none;\n}\n\n/**\n * snapping\n */\n.djs-crosshair {\n  stroke: var(--space-tool-crosshair-stroke-color);\n  stroke-linecap: round;\n  stroke-width: 1px;\n  pointer-events: none;\n  shape-rendering: crispEdges;\n  stroke-dasharray: 5, 5;\n}\n\n/**\n * palette\n */\n\n.djs-palette {\n  position: absolute;\n  left: 20px;\n  top: 20px;\n\n  box-sizing: border-box;\n  width: 48px;\n}\n\n.djs-palette .separator {\n  margin: 0 5px;\n  padding-top: 5px;\n\n  border: none;\n  border-bottom: solid 1px var(--palette-separator-color);\n\n  clear: both;\n}\n\n.djs-palette .entry:before {\n  vertical-align: text-bottom;\n}\n\n.djs-palette .djs-palette-toggle {\n  cursor: pointer;\n}\n\n.djs-palette .entry,\n.djs-palette .djs-palette-toggle {\n  color: var(--palette-entry-color);\n  font-size: 30px;\n\n  text-align: center;\n}\n\n.djs-palette .entry {\n  float: left;\n}\n\n.djs-palette .entry img {\n  max-width: 100%;\n}\n\n.djs-palette .djs-palette-entries:after {\n  content: '';\n  display: table;\n  clear: both;\n}\n\n.djs-palette .djs-palette-toggle:hover {\n  background: var(--palette-toggle-hover-background-color);\n}\n\n.djs-palette .entry:hover {\n  color: var(--palette-entry-hover-color);\n}\n\n.djs-palette .highlighted-entry {\n  color: var(--palette-entry-selected-color) !important;\n}\n\n.djs-palette .entry,\n.djs-palette .djs-palette-toggle {\n  width: 46px;\n  height: 46px;\n  line-height: 46px;\n  cursor: default;\n}\n\n/**\n * Palette open / two-column layout is controlled via\n * classes on the palette. Events to hook into palette\n * changed life-cycle are available in addition.\n */\n.djs-palette.two-column.open {\n  width: 94px;\n}\n\n.djs-palette:not(.open) .djs-palette-entries {\n  display: none;\n}\n\n.djs-palette:not(.open) {\n  overflow: hidden;\n}\n\n.djs-palette.open .djs-palette-toggle {\n  display: none;\n}\n\n/**\n * context-pad\n */\n.djs-overlay-context-pad {\n  width: 72px;\n  z-index: 100;\n}\n\n.djs-context-pad {\n  position: absolute;\n  display: none;\n  pointer-events: none;\n  line-height: 1;\n}\n\n.djs-context-pad .entry {\n  width: 22px;\n  height: 22px;\n  text-align: center;\n  display: inline-block;\n  font-size: 22px;\n  margin: 0 2px 2px 0;\n\n  border-radius: 3px;\n\n  cursor: default;\n\n  background-color: var(--context-pad-entry-background-color);\n  box-shadow: 0 0 2px 1px var(--context-pad-entry-background-color);\n  pointer-events: all;\n  vertical-align: middle;\n}\n\n.djs-context-pad .entry:hover {\n  background: var(--context-pad-entry-hover-background-color);\n}\n\n.djs-context-pad.open {\n  display: block;\n}\n\n/**\n * popup styles\n */\n.djs-popup .entry {\n  line-height: 20px;\n  white-space: nowrap;\n  cursor: default;\n}\n\n/* larger font for prefixed icons */\n.djs-popup .entry:before {\n  vertical-align: middle;\n  font-size: 20px;\n}\n\n.djs-popup .entry > span {\n  vertical-align: middle;\n  font-size: 14px;\n}\n\n.djs-popup .entry:hover,\n.djs-popup .entry.active:hover {\n  background: var(--popup-header-entry-selected-background-color);\n}\n\n.djs-popup .entry.disabled {\n  background: inherit;\n}\n\n.djs-popup .djs-popup-header .entry {\n  display: inline-block;\n  padding: 2px 3px 2px 3px;\n\n  border: solid 1px transparent;\n  border-radius: 3px;\n}\n\n.djs-popup .djs-popup-header .entry.active {\n  color: var(--popup-header-entry-selected-color);\n  border: solid 1px var(--popup-header-entry-selected-color);\n  background-color: var(--popup-header-entry-selected-background-color);\n}\n\n.djs-popup-body .entry {\n  padding: 4px 10px 4px 5px;\n}\n\n.djs-popup-body .entry > span {\n  margin-left: 5px;\n}\n\n.djs-popup-body {\n  background-color: var(--popup-body-background-color);\n}\n\n.djs-popup-header {\n  border-bottom: 1px solid var(--popup-header-separator-color);\n}\n\n.djs-popup-header .entry {\n  margin: 1px;\n  margin-left: 3px;\n}\n\n.djs-popup-header .entry:last-child {\n  margin-right: 3px;\n}\n\n/**\n * popup / palette styles\n */\n.djs-palette {\n  background: var(--palette-background-color);\n  border: solid 1px var(--palette-border-color);\n  border-radius: 2px;\n}\n\n.djs-popup {\n  background: var(--popup-background-color);\n  border: solid 1px var(--popup-border-color);\n  border-radius: 2px;\n}\n\n/**\n * touch\n */\n\n.djs-shape,\n.djs-connection {\n  touch-action: none;\n}\n\n.djs-segment-dragger,\n.djs-bendpoint {\n  display: none;\n}\n\n/**\n * bendpoints\n */\n.djs-segment-dragger .djs-visual {\n  display: none;\n\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-width: 1px;\n  stroke-opacity: 1;\n}\n\n.djs-segment-dragger:hover .djs-visual {\n  display: block;\n}\n\n.djs-bendpoint .djs-visual {\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-width: 1px;\n  stroke-opacity: 0.5;\n}\n\n.djs-segment-dragger:hover,\n.djs-bendpoints.hover .djs-segment-dragger,\n.djs-bendpoints.selected .djs-segment-dragger,\n.djs-bendpoint:hover,\n.djs-bendpoints.hover .djs-bendpoint,\n.djs-bendpoints.selected .djs-bendpoint {\n  display: block;\n}\n\n.djs-drag-active .djs-bendpoints * {\n  display: none;\n}\n\n.djs-bendpoints:not(.hover) .floating {\n  display: none;\n}\n\n.djs-segment-dragger:hover .djs-visual,\n.djs-segment-dragger.djs-dragging .djs-visual,\n.djs-bendpoint:hover .djs-visual,\n.djs-bendpoint.floating .djs-visual {\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-opacity: 1;\n}\n\n.djs-bendpoint.floating .djs-hit {\n  pointer-events: none;\n}\n\n.djs-segment-dragger .djs-hit,\n.djs-bendpoint .djs-hit {\n  fill: none;\n  pointer-events: all;\n}\n\n.djs-segment-dragger.horizontal .djs-hit {\n  cursor: ns-resize;\n}\n\n.djs-segment-dragger.vertical .djs-hit {\n  cursor: ew-resize;\n}\n\n.djs-segment-dragger.djs-dragging .djs-hit {\n  pointer-events: none;\n}\n\n.djs-updating,\n.djs-updating > * {\n  pointer-events: none !important;\n}\n\n.djs-updating .djs-context-pad,\n.djs-updating .djs-outline,\n.djs-updating .djs-bendpoint,\n.connect-ok .djs-bendpoint,\n.connect-not-ok .djs-bendpoint,\n.drop-ok .djs-bendpoint,\n.drop-not-ok .djs-bendpoint {\n  display: none !important;\n}\n\n.djs-segment-dragger.djs-dragging,\n.djs-bendpoint.djs-dragging {\n  display: block;\n  opacity: 1.0;\n}\n\n\n/**\n * tooltips\n */\n.djs-tooltip-error {\n  width: 160px;\n  padding: 6px;\n\n  background: var(--tooltip-error-background-color);\n  border: solid 1px var(--tooltip-error-border-color);\n  border-radius: 2px;\n  color: var(--tooltip-error-color);\n  font-size: 12px;\n  line-height: 16px;\n\n  opacity: 0.75;\n}\n\n.djs-tooltip-error:hover {\n  opacity: 1;\n}\n\n\n/**\n * search pad\n */\n.djs-search-container {\n  position: absolute;\n  top: 20px;\n  left: 0;\n  right: 0;\n  margin-left: auto;\n  margin-right: auto;\n\n  width: 25%;\n  min-width: 300px;\n  max-width: 400px;\n  z-index: 10;\n\n  font-size: 1.05em;\n  opacity: 0.9;\n  background: var(--search-container-background-color);\n  border: solid 1px var(--search-container-border-color);\n  border-radius: 2px;\n  box-shadow: 0 0 0 2px var(--search-container-box-shadow-color), 0 0 0 1px var(--search-container-box-shadow-inset-color) inset;\n}\n\n.djs-search-container:not(.open) {\n  display: none;\n}\n\n.djs-search-input input {\n  font-size: 1.05em;\n  width: 100%;\n  padding: 6px 10px;\n  border: 1px solid var(--search-input-border-color);\n  box-sizing: border-box;\n}\n\n.djs-search-input input:focus {\n  outline: none;\n  border-color: var(--search-input-border-color);\n}\n\n.djs-search-results {\n  position: relative;\n  overflow-y: auto;\n  max-height: 200px;\n}\n\n.djs-search-results:hover {\n  cursor: pointer;\n}\n\n.djs-search-result {\n  width: 100%;\n  padding: 6px 10px;\n  background: white;\n  border-bottom: solid 1px var(--search-result-border-color);\n  border-radius: 1px;\n}\n\n.djs-search-highlight {\n  color: var(--search-result-highlight-color);\n}\n\n.djs-search-result-primary {\n  margin: 0 0 10px;\n}\n\n.djs-search-result-secondary {\n  font-family: monospace;\n  margin: 0;\n}\n\n.djs-search-result:hover {\n  background: var(--search-result-selected-color);\n}\n\n.djs-search-result-selected {\n  background: var(--search-result-selected-color);\n}\n\n.djs-search-result-selected:hover {\n  background: var(--search-result-selected-color);\n}\n\n.djs-search-overlay {\n  background: var(--search-result-selected-color);\n}\n\n/**\n * hidden styles\n */\n.djs-element-hidden,\n.djs-element-hidden .djs-hit,\n.djs-element-hidden .djs-outline,\n.djs-label-hidden .djs-label {\n  display: none !important;\n}\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "/**\n * color definitions\n */\n.djs-parent {\n  --color-grey-225-10-15: hsl(225, 10%, 15%);\n  --color-grey-225-10-35: hsl(225, 10%, 35%);\n  --color-grey-225-10-55: hsl(225, 10%, 55%);\n  --color-grey-225-10-75: hsl(225, 10%, 75%);\n  --color-grey-225-10-80: hsl(225, 10%, 80%);\n  --color-grey-225-10-85: hsl(225, 10%, 85%);\n  --color-grey-225-10-90: hsl(225, 10%, 90%);\n  --color-grey-225-10-95: hsl(225, 10%, 95%);\n  --color-grey-225-10-97: hsl(225, 10%, 97%);\n\n  --color-blue-205-100-45: hsl(205, 100%, 45%);\n  --color-blue-205-100-45-opacity-30: hsla(205, 100%, 45%, 30%);\n  --color-blue-205-100-50: hsl(205, 100%, 50%);\n  --color-blue-205-100-50-opacity-15: hsla(205, 100%, 50%, 15%);\n  --color-blue-205-100-70: hsl(205, 100%, 75%);\n  --color-blue-205-100-95: hsl(205, 100%, 95%);\n\n  --color-green-150-86-44: hsl(150, 86%, 44%);\n\n  --color-red-360-100-40: hsl(360, 100%, 40%);\n  --color-red-360-100-45: hsl(360, 100%, 45%);\n  --color-red-360-100-92: hsl(360, 100%, 92%);\n  --color-red-360-100-97: hsl(360, 100%, 97%);\n\n  --color-white: hsl(0, 0%, 100%);\n  --color-black: hsl(0, 0%, 0%);\n  --color-black-opacity-10: hsla(0, 0%, 0%, 10%);\n\n  --canvas-fill-color: var(--color-white);\n\n  --bendpoint-fill-color: var(--color-blue-205-100-45);\n  --bendpoint-stroke-color: var(--canvas-fill-color);\n\n  --context-pad-entry-background-color: var(--color-white);\n  --context-pad-entry-hover-background-color: var(--color-grey-225-10-95);\n\n  --element-dragger-color: var(--color-blue-205-100-50);\n  --element-hover-outline-fill-color: var(--color-blue-205-100-45);\n  --element-selected-outline-stroke-color: var(--color-blue-205-100-50);\n  --element-selected-outline-secondary-stroke-color: var(--color-blue-205-100-70);\n\n  --lasso-fill-color: var(--color-blue-205-100-50-opacity-15);\n  --lasso-stroke-color: var(--element-selected-outline-stroke-color);\n\n  --palette-entry-color: var(--color-grey-225-10-15);\n  --palette-entry-hover-color: var(--color-blue-205-100-45);\n  --palette-entry-selected-color: var(--color-blue-205-100-50);\n  --palette-separator-color: var(--color-grey-225-10-75);\n  --palette-toggle-hover-background-color: var(--color-grey-225-10-55);\n  --palette-background-color: var(--color-grey-225-10-97);\n  --palette-border-color: var(--color-grey-225-10-75);\n\n  --popup-header-entry-selected-color: var(--color-blue-205-100-50);\n  --popup-header-separator-color: var(--color-grey-225-10-75);\n  --popup-background-color: var(--color-white);\n  --popup-border-color: var(--color-grey-225-10-75);\n  --popup-shadow-color: var(--color-grey-225-10-80);\n  --popup-description-color: var(--color-grey-225-10-55);\n  --popup-no-results-color: var(--color-grey-225-10-55);\n  --popup-entry-title-color: var(--color-grey-225-10-55);\n  --popup-entry-hover-color:  var(--color-grey-225-10-95);\n  --popup-search-border-color: var(--color-grey-225-10-75);\n  --popup-search-focus-border-color: var(--color-blue-205-100-50);\n  --popup-search-focus-background-color: var(--color-blue-205-100-95);\n\n  --resizer-fill-color: var(--color-blue-205-100-45);\n  --resizer-stroke-color: var(--canvas-fill-color);\n\n  --search-container-background-color: var(--color-grey-225-10-97);\n  --search-container-border-color: var(--color-blue-205-100-50);\n  --search-container-box-shadow-color: var(--color-blue-205-100-95);\n  --search-container-box-shadow-inset-color: var(--color-grey-225-10-80);\n  --search-input-border-color: var(--color-grey-225-10-75);\n  --search-result-border-color: var(--color-grey-225-10-75);\n  --search-result-highlight-color: var(--color-black);\n  --search-result-selected-color: var(--color-blue-205-100-45-opacity-30);\n\n  --shape-attach-allowed-stroke-color: var(--color-blue-205-100-50);\n  --shape-connect-allowed-fill-color: var(--color-grey-225-10-97);\n  --shape-drop-allowed-fill-color: var(--color-grey-225-10-97);\n  --shape-drop-not-allowed-fill-color: var(--color-red-360-100-97);\n  --shape-resize-preview-stroke-color: var(--color-blue-205-100-50);\n\n  --snap-line-stroke-color: var(--color-blue-205-100-45-opacity-30);\n\n  --space-tool-crosshair-stroke-color: var(--color-black);\n\n  --tooltip-error-background-color: var(--color-red-360-100-97);\n  --tooltip-error-border-color: var(--color-red-360-100-45);\n  --tooltip-error-color: var(--color-red-360-100-45);\n}\n\n/**\n * outline styles\n */\n\n.djs-outline,\n.djs-selection-outline {\n  fill: none;\n  shape-rendering: geometricPrecision;\n  stroke-width: 2px;\n}\n\n.djs-outline {\n  visibility: hidden;\n}\n\n.djs-selection-outline {\n  stroke: var(--element-selected-outline-stroke-color);\n}\n\n.djs-element.selected .djs-outline {\n  visibility: visible;\n\n  stroke: var(--element-selected-outline-stroke-color);\n}\n\n.djs-multi-select .djs-element.selected .djs-outline {\n  stroke: var(--element-selected-outline-secondary-stroke-color);\n}\n\n.djs-shape.connect-ok .djs-visual > :nth-child(1) {\n  fill: var(--shape-connect-allowed-fill-color) !important;\n}\n\n.djs-shape.connect-not-ok .djs-visual > :nth-child(1),\n.djs-shape.drop-not-ok .djs-visual > :nth-child(1) {\n  fill: var(--shape-drop-not-allowed-fill-color) !important;\n}\n\n.djs-shape.new-parent .djs-visual > :nth-child(1) {\n  fill: var(--shape-drop-allowed-fill-color) !important;\n}\n\nsvg.drop-not-ok {\n  background: var(--shape-drop-not-allowed-fill-color) !important;\n}\n\nsvg.new-parent {\n  background: var(--shape-drop-allowed-fill-color) !important;\n}\n\n\n/* Override move cursor during drop and connect */\n.drop-not-ok,\n.connect-not-ok,\n.drop-not-ok *,\n.connect-not-ok * {\n  cursor: not-allowed !important;\n}\n\n.drop-ok,\n.connect-ok,\n.drop-ok *,\n.connect-ok * {\n  cursor: default !important;\n}\n\n.djs-element.attach-ok .djs-visual > :nth-child(1) {\n  stroke-width: 5px !important;\n  stroke: var(--shape-attach-allowed-stroke-color) !important;\n}\n\n.djs-frame.connect-not-ok .djs-visual > :nth-child(1),\n.djs-frame.drop-not-ok .djs-visual > :nth-child(1) {\n  stroke-width: 3px !important;\n  stroke: var(--shape-drop-not-allowed-fill-color) !important;\n  fill: none !important;\n}\n\n/**\n* Selection box style\n*\n*/\n.djs-lasso-overlay {\n  fill: var(--lasso-fill-color);\n  stroke: var(--lasso-stroke-color);\n  stroke-width: 2px;\n  shape-rendering: geometricPrecision;\n  pointer-events: none;\n}\n\n/**\n * Resize styles\n */\n.djs-resize-overlay {\n  fill: none;\n\n  stroke-dasharray: 5 1 3 1;\n  stroke: var(--shape-resize-preview-stroke-color);\n\n  pointer-events: none;\n}\n\n.djs-resizer-hit {\n  fill: none;\n  pointer-events: all;\n}\n\n.djs-resizer-visual {\n  fill: var(--resizer-fill-color);\n  stroke-width: 1px;\n  stroke: var(--resizer-stroke-color);\n  shape-rendering: geometricPrecision;\n}\n\n.djs-resizer:hover .djs-resizer-visual {\n  stroke: var(--resizer-stroke-color);\n  stroke-opacity: 1;\n}\n\n.djs-cursor-resize-ns,\n.djs-resizer-n,\n.djs-resizer-s {\n  cursor: ns-resize;\n}\n\n.djs-cursor-resize-ew,\n.djs-resizer-e,\n.djs-resizer-w {\n  cursor: ew-resize;\n}\n\n.djs-cursor-resize-nwse,\n.djs-resizer-nw,\n.djs-resizer-se {\n  cursor: nwse-resize;\n}\n\n.djs-cursor-resize-nesw,\n.djs-resizer-ne,\n.djs-resizer-sw {\n  cursor: nesw-resize;\n}\n\n.djs-shape.djs-resizing > .djs-outline {\n  visibility: hidden !important;\n}\n\n.djs-shape.djs-resizing > .djs-resizer {\n  visibility: hidden;\n}\n\n.djs-dragger > .djs-resizer {\n  visibility: hidden;\n}\n\n/**\n * drag styles\n */\n.djs-dragger * {\n  fill: none !important;\n  stroke: var(--element-dragger-color) !important;\n}\n\n.djs-dragger tspan,\n.djs-dragger text {\n  fill: var(--element-dragger-color) !important;\n  stroke: none !important;\n}\n\nmarker.djs-dragger circle,\nmarker.djs-dragger path,\nmarker.djs-dragger polygon,\nmarker.djs-dragger polyline,\nmarker.djs-dragger rect {\n  fill: var(--element-dragger-color) !important;\n  stroke: none !important;\n}\n\nmarker.djs-dragger text,\nmarker.djs-dragger tspan {\n  fill: none !important;\n  stroke: var(--element-dragger-color) !important;\n}\n\n.djs-dragging {\n  opacity: 0.3;\n}\n\n.djs-dragging,\n.djs-dragging > * {\n  pointer-events: none !important;\n}\n\n.djs-dragging .djs-context-pad,\n.djs-dragging .djs-outline {\n  display: none !important;\n}\n\n/**\n * no pointer events for visual\n */\n.djs-visual,\n.djs-outline {\n  pointer-events: none;\n}\n\n.djs-element.attach-ok .djs-hit {\n  stroke-width: 60px !important;\n}\n\n/**\n * all pointer events for hit shape\n */\n.djs-element > .djs-hit-all,\n.djs-element > .djs-hit-no-move {\n  pointer-events: all;\n}\n\n.djs-element > .djs-hit-stroke,\n.djs-element > .djs-hit-click-stroke {\n  pointer-events: stroke;\n}\n\n/**\n * shape / connection basic styles\n */\n.djs-connection .djs-visual {\n  stroke-width: 2px;\n  fill: none;\n}\n\n.djs-cursor-grab {\n  cursor: -webkit-grab;\n  cursor: -moz-grab;\n  cursor: grab;\n}\n\n.djs-cursor-grabbing {\n  cursor: -webkit-grabbing;\n  cursor: -moz-grabbing;\n  cursor: grabbing;\n}\n\n.djs-cursor-crosshair {\n  cursor: crosshair;\n}\n\n.djs-cursor-move {\n  cursor: move;\n}\n\n.djs-cursor-resize-ns {\n  cursor: ns-resize;\n}\n\n.djs-cursor-resize-ew {\n  cursor: ew-resize;\n}\n\n\n/**\n * snapping\n */\n.djs-snap-line {\n  stroke: var(--snap-line-stroke-color);\n  stroke-linecap: round;\n  stroke-width: 2px;\n  pointer-events: none;\n}\n\n/**\n * snapping\n */\n.djs-crosshair {\n  stroke: var(--space-tool-crosshair-stroke-color);\n  stroke-linecap: round;\n  stroke-width: 1px;\n  pointer-events: none;\n  shape-rendering: geometricPrecision;\n  stroke-dasharray: 5, 5;\n}\n\n/**\n * palette\n */\n\n.djs-palette {\n  position: absolute;\n  left: 20px;\n  top: 20px;\n\n  box-sizing: border-box;\n  width: 48px;\n}\n\n.djs-palette .separator {\n  margin: 5px;\n  padding-top: 5px;\n\n  border: none;\n  border-bottom: solid 1px var(--palette-separator-color);\n\n  clear: both;\n}\n\n.djs-palette .entry:before {\n  vertical-align: initial;\n}\n\n.djs-palette .djs-palette-toggle {\n  cursor: pointer;\n}\n\n.djs-palette .entry,\n.djs-palette .djs-palette-toggle {\n  color: var(--palette-entry-color);\n  font-size: 30px;\n\n  text-align: center;\n}\n\n.djs-palette .entry {\n  float: left;\n}\n\n.djs-palette .entry img {\n  max-width: 100%;\n}\n\n.djs-palette .djs-palette-entries:after {\n  content: '';\n  display: table;\n  clear: both;\n}\n\n.djs-palette .djs-palette-toggle:hover {\n  background: var(--palette-toggle-hover-background-color);\n}\n\n.djs-palette .entry:hover {\n  color: var(--palette-entry-hover-color);\n}\n\n.djs-palette .highlighted-entry {\n  color: var(--palette-entry-selected-color) !important;\n}\n\n.djs-palette .entry,\n.djs-palette .djs-palette-toggle {\n  width: 46px;\n  height: 46px;\n  line-height: 46px;\n  cursor: default;\n}\n\n/**\n * Palette open / two-column layout is controlled via\n * classes on the palette. Events to hook into palette\n * changed life-cycle are available in addition.\n */\n.djs-palette.two-column.open {\n  width: 94px;\n}\n\n.djs-palette:not(.open) .djs-palette-entries {\n  display: none;\n}\n\n.djs-palette:not(.open) {\n  overflow: hidden;\n}\n\n.djs-palette.open .djs-palette-toggle {\n  display: none;\n}\n\n/**\n * context-pad\n */\n.djs-overlay-context-pad {\n  width: 72px;\n  z-index: 100;\n}\n\n.djs-context-pad {\n  position: absolute;\n  display: none;\n  pointer-events: none;\n  line-height: 1;\n}\n\n.djs-context-pad .entry {\n  width: 22px;\n  height: 22px;\n  text-align: center;\n  display: inline-block;\n  font-size: 22px;\n  margin: 0 2px 2px 0;\n\n  border-radius: 3px;\n\n  cursor: default;\n\n  background-color: var(--context-pad-entry-background-color);\n  box-shadow: 0 0 2px 1px var(--context-pad-entry-background-color);\n  pointer-events: all;\n  vertical-align: middle;\n}\n\n.djs-context-pad .entry:hover {\n  background: var(--context-pad-entry-hover-background-color);\n}\n\n.djs-context-pad.open {\n  display: block;\n}\n\n/**\n * popup styles\n */\n.djs-popup-backdrop {\n  position: fixed;\n  width: 100vw;\n  height: 100vh;\n  top: 0;\n  left: 0;\n  z-index: 200;\n  line-height: 1;\n  font-family: \"IBM Plex Sans\", sans-serif;\n  border: solid 1px var(--popup-border-color);\n  border-radius: 2px;\n}\n\n.djs-popup {\n  width: min-content;\n  background: var(--popup-background-color);\n  overflow: hidden;\n  position: absolute;\n\n  box-shadow: 0px 2px 10px var(--popup-shadow-color);\n  min-width: 120px;\n  outline: none;\n}\n\n.djs-popup-search input {\n  width: 100%;\n  box-sizing: border-box;\n  font-size: 14px;\n  padding: 3px 6px;\n  border-radius: 2px;\n  border: solid 1px var(--popup-search-border-color);\n  line-height: 21px;\n}\n\n.djs-popup-search input:focus {\n  background-color: var(--popup-search-focus-background-color);\n  border: solid 1px var(--popup-search-focus-border-color);\n  outline: none;\n}\n\n.djs-popup-header {\n  display: flex;\n  align-items: stretch;\n  line-height: 20px;\n  margin: 10px 12px 10px 12px;\n}\n\n.djs-popup-header .entry {\n  font-size: 19.5px;\n  border-radius: 2px;\n}\n\n.djs-popup-header .entry.active {\n  color: var(--popup-header-entry-selected-color);\n}\n\n.djs-popup-header .entry.disabled {\n  color: inherit;\n}\n\n.djs-popup-search {\n  margin: 10px 12px;\n}\n\n.djs-popup-title {\n  font-size: 14px;\n  font-weight: 500;\n  flex: 1;\n  margin: 0;\n  width: max-content;\n}\n\n.djs-popup-search {\n  position: relative;\n  width: auto;\n}\n\n.djs-popup-search-icon {\n  position: absolute;\n  left: 8px;\n  top: 7px;\n}\n\n.djs-popup-search input {\n  padding-left: 25px;\n}\n\n.djs-popup-results {\n  margin: 7px 3px 7px 12px;\n  list-style: none;\n  max-height: 280px;\n  overflow: overlay;\n  padding-right: 9px;\n}\n\n.djs-popup-group {\n  margin: 0;\n  padding: 0;\n  width: 100%;\n}\n\n.djs-popup-body .entry,\n.djs-popup-body .entry-header {\n  padding: 5px 7px;\n  cursor: default;\n  border-radius: 4px;\n  font-size: 14px;\n}\n\n.djs-popup-body .entry-header {\n  font-weight: 500;\n  color: var(--popup-entry-title-color);\n  padding-left: 0;\n}\n\n.djs-popup-entry-icon {\n  width: 16px;\n  margin-right: 0.5rem;\n  margin-bottom: -0.2rem;\n}\n\n.djs-popup-body .entry-header:not(:first-child) {\n  margin-top: 8px;\n  margin-bottom: 2px;\n}\n\n.djs-popup-body .entry {\n  display: flex;\n  flex-direction: row;\n  align-items: stretch;\n  height: min-content;\n}\n\n.djs-popup .entry.selected {\n  background-color: var(--popup-entry-hover-color);\n}\n\n.djs-popup-body .entry:not(:first-child) {\n  margin-top: 2px;\n}\n\n.djs-popup-entry-content {\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  overflow: hidden;\n}\n\n.djs-popup-entry-description {\n  color: var(--popup-description-color);\n}\n\n.djs-popup-entry-name,\n.djs-popup-entry-description {\n  line-height: 1.4em;\n  display: block;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.djs-popup-entry-name {\n  display: flex;\n}\n\n.entry-content {\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  overflow: hidden;\n}\n\n.djs-popup-entry-name[class^=\"bpmn-icon-\"]:before,\n.djs-popup-entry-name[class*=\" bpmn-icon-\"]:before,\n.djs-popup-entry-icon {\n  display: inline-block;\n  font-size: 1.4em;\n  vertical-align: middle;\n  margin-right: 0.5rem;\n}\n\n.djs-popup-body {\n  flex-direction: column;\n  width: auto;\n}\n\n.djs-popup *::-webkit-scrollbar {\n  width: 6px;\n}\n\n.djs-popup *::-webkit-scrollbar-thumb {\n  border-radius: 3px;\n  background-color: rgba(0, 0, 0, 0.2);\n}\n\n.djs-popup *::-webkit-scrollbar-track {\n  box-shadow: none;\n  background: transparent1;\n  margin: 0;\n  padding: 5px;\n}\n\n.djs-popup-no-results {\n  font-size: 14px;\n  padding: 0 12px 12px 12px;\n  color: var(--popup-no-results-color);\n}\n\n.djs-popup-entry-docs {\n  flex: 0;\n  flex-direction: row;\n  align-items: center;\n  padding-left: 5px;\n  display: none;\n}\n\n.djs-popup-body .entry:hover .djs-popup-entry-docs {\n  display: flex;\n}\n\n.djs-popup-entry-docs svg {\n  vertical-align: middle;\n  margin: auto 2px auto 5px;\n}\n\n/**\n *  palette styles\n */\n.djs-palette {\n  background: var(--palette-background-color);\n  border: solid 1px var(--palette-border-color);\n  border-radius: 2px;\n}\n\n/**\n * touch\n */\n\n.djs-shape,\n.djs-connection {\n  touch-action: none;\n}\n\n.djs-segment-dragger,\n.djs-bendpoint {\n  display: none;\n}\n\n/**\n * bendpoints\n */\n.djs-segment-dragger .djs-visual {\n  display: none;\n\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-width: 1px;\n  stroke-opacity: 1;\n}\n\n.djs-segment-dragger:hover .djs-visual {\n  display: block;\n}\n\n.djs-bendpoint .djs-visual {\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-width: 1px;\n}\n\n.djs-segment-dragger:hover,\n.djs-bendpoints.hover .djs-segment-dragger,\n.djs-bendpoints.selected .djs-segment-dragger,\n.djs-bendpoint:hover,\n.djs-bendpoints.hover .djs-bendpoint,\n.djs-bendpoints.selected .djs-bendpoint {\n  display: block;\n}\n\n.djs-drag-active .djs-bendpoints * {\n  display: none;\n}\n\n.djs-bendpoints:not(.hover) .floating {\n  display: none;\n}\n\n.djs-segment-dragger:hover .djs-visual,\n.djs-segment-dragger.djs-dragging .djs-visual,\n.djs-bendpoint:hover .djs-visual,\n.djs-bendpoint.floating .djs-visual {\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-opacity: 1;\n}\n\n.djs-bendpoint.floating .djs-hit {\n  pointer-events: none;\n}\n\n.djs-segment-dragger .djs-hit,\n.djs-bendpoint .djs-hit {\n  fill: none;\n  pointer-events: all;\n}\n\n.djs-segment-dragger.horizontal .djs-hit {\n  cursor: ns-resize;\n}\n\n.djs-segment-dragger.vertical .djs-hit {\n  cursor: ew-resize;\n}\n\n.djs-segment-dragger.djs-dragging .djs-hit {\n  pointer-events: none;\n}\n\n.djs-updating,\n.djs-updating > * {\n  pointer-events: none !important;\n}\n\n.djs-updating .djs-context-pad,\n.djs-updating .djs-outline,\n.djs-updating .djs-bendpoint,\n.djs-multi-select .djs-bendpoint,\n.djs-multi-select .djs-segment-dragger,\n.connect-ok .djs-bendpoint,\n.connect-not-ok .djs-bendpoint,\n.drop-ok .djs-bendpoint,\n.drop-not-ok .djs-bendpoint {\n  display: none !important;\n}\n\n.djs-segment-dragger.djs-dragging,\n.djs-bendpoint.djs-dragging {\n  display: block;\n  opacity: 1.0;\n}\n\n\n/**\n * tooltips\n */\n.djs-tooltip-error {\n  width: 160px;\n  padding: 6px;\n\n  background: var(--tooltip-error-background-color);\n  border: solid 1px var(--tooltip-error-border-color);\n  border-radius: 2px;\n  color: var(--tooltip-error-color);\n  font-size: 12px;\n  line-height: 16px;\n\n  opacity: 0.75;\n}\n\n.djs-tooltip-error:hover {\n  opacity: 1;\n}\n\n\n/**\n * search pad\n */\n.djs-search-container {\n  position: absolute;\n  top: 20px;\n  left: 0;\n  right: 0;\n  margin-left: auto;\n  margin-right: auto;\n\n  width: 25%;\n  min-width: 300px;\n  max-width: 400px;\n  z-index: 10;\n\n  font-size: 1.05em;\n  opacity: 0.9;\n  background: var(--search-container-background-color);\n  border: solid 1px var(--search-container-border-color);\n  border-radius: 2px;\n  box-shadow: 0 0 0 2px var(--search-container-box-shadow-color), 0 0 0 1px var(--search-container-box-shadow-inset-color) inset;\n}\n\n.djs-search-container:not(.open) {\n  display: none;\n}\n\n.djs-search-input input {\n  font-size: 1.05em;\n  width: 100%;\n  padding: 6px 10px;\n  border: 1px solid var(--search-input-border-color);\n  box-sizing: border-box;\n}\n\n.djs-search-input input:focus {\n  outline: none;\n  border-color: var(--search-input-border-color);\n}\n\n.djs-search-results {\n  position: relative;\n  overflow-y: auto;\n  max-height: 200px;\n}\n\n.djs-search-results:hover {\n  cursor: pointer;\n}\n\n.djs-search-result {\n  width: 100%;\n  padding: 6px 10px;\n  background: white;\n  border-bottom: solid 1px var(--search-result-border-color);\n  border-radius: 1px;\n}\n\n.djs-search-highlight {\n  color: var(--search-result-highlight-color);\n}\n\n.djs-search-result-primary {\n  margin: 0 0 10px;\n}\n\n.djs-search-result-secondary {\n  font-family: monospace;\n  margin: 0;\n}\n\n.djs-search-result:hover {\n  background: var(--search-result-selected-color);\n}\n\n.djs-search-result-selected {\n  background: var(--search-result-selected-color);\n}\n\n.djs-search-result-selected:hover {\n  background: var(--search-result-selected-color);\n}\n\n.djs-search-overlay {\n  background: var(--search-result-selected-color);\n}\n\n/**\n * hidden styles\n */\n.djs-element-hidden,\n.djs-element-hidden .djs-hit,\n.djs-element-hidden .djs-outline,\n.djs-label-hidden .djs-label {\n  display: none !important;\n}\n\n.djs-element .djs-hit-stroke,\n.djs-element .djs-hit-click-stroke,\n.djs-element .djs-hit-all {\n  cursor: move;\n}", "",{"version":3,"sources":["webpack://./../node_modules/diagram-js/assets/diagram-js.css"],"names":[],"mappings":"AAAA;;EAEE;AACF;EACE,0CAA0C;EAC1C,0CAA0C;EAC1C,0CAA0C;EAC1C,0CAA0C;EAC1C,0CAA0C;EAC1C,0CAA0C;EAC1C,0CAA0C;EAC1C,0CAA0C;EAC1C,0CAA0C;;EAE1C,4CAA4C;EAC5C,6DAA6D;EAC7D,4CAA4C;EAC5C,6DAA6D;EAC7D,4CAA4C;EAC5C,4CAA4C;;EAE5C,2CAA2C;;EAE3C,2CAA2C;EAC3C,2CAA2C;EAC3C,2CAA2C;EAC3C,2CAA2C;;EAE3C,+BAA+B;EAC/B,6BAA6B;EAC7B,8CAA8C;;EAE9C,uCAAuC;;EAEvC,oDAAoD;EACpD,kDAAkD;;EAElD,wDAAwD;EACxD,uEAAuE;;EAEvE,qDAAqD;EACrD,gEAAgE;EAChE,qEAAqE;EACrE,+EAA+E;;EAE/E,2DAA2D;EAC3D,kEAAkE;;EAElE,kDAAkD;EAClD,yDAAyD;EACzD,4DAA4D;EAC5D,sDAAsD;EACtD,oEAAoE;EACpE,uDAAuD;EACvD,mDAAmD;;EAEnD,iEAAiE;EACjE,2DAA2D;EAC3D,4CAA4C;EAC5C,iDAAiD;EACjD,iDAAiD;EACjD,sDAAsD;EACtD,qDAAqD;EACrD,sDAAsD;EACtD,uDAAuD;EACvD,wDAAwD;EACxD,+DAA+D;EAC/D,mEAAmE;;EAEnE,kDAAkD;EAClD,gDAAgD;;EAEhD,gEAAgE;EAChE,6DAA6D;EAC7D,iEAAiE;EACjE,sEAAsE;EACtE,wDAAwD;EACxD,yDAAyD;EACzD,mDAAmD;EACnD,uEAAuE;;EAEvE,iEAAiE;EACjE,+DAA+D;EAC/D,4DAA4D;EAC5D,gEAAgE;EAChE,iEAAiE;;EAEjE,iEAAiE;;EAEjE,uDAAuD;;EAEvD,6DAA6D;EAC7D,yDAAyD;EACzD,kDAAkD;AACpD;;AAEA;;EAEE;;AAEF;;EAEE,UAAU;EACV,mCAAmC;EACnC,iBAAiB;AACnB;;AAEA;EACE,kBAAkB;AACpB;;AAEA;EACE,oDAAoD;AACtD;;AAEA;EACE,mBAAmB;;EAEnB,oDAAoD;AACtD;;AAEA;EACE,8DAA8D;AAChE;;AAEA;EACE,wDAAwD;AAC1D;;AAEA;;EAEE,yDAAyD;AAC3D;;AAEA;EACE,qDAAqD;AACvD;;AAEA;EACE,+DAA+D;AACjE;;AAEA;EACE,2DAA2D;AAC7D;;;AAGA,iDAAiD;AACjD;;;;EAIE,8BAA8B;AAChC;;AAEA;;;;EAIE,0BAA0B;AAC5B;;AAEA;EACE,4BAA4B;EAC5B,2DAA2D;AAC7D;;AAEA;;EAEE,4BAA4B;EAC5B,2DAA2D;EAC3D,qBAAqB;AACvB;;AAEA;;;CAGC;AACD;EACE,6BAA6B;EAC7B,iCAAiC;EACjC,iBAAiB;EACjB,mCAAmC;EACnC,oBAAoB;AACtB;;AAEA;;EAEE;AACF;EACE,UAAU;;EAEV,yBAAyB;EACzB,gDAAgD;;EAEhD,oBAAoB;AACtB;;AAEA;EACE,UAAU;EACV,mBAAmB;AACrB;;AAEA;EACE,+BAA+B;EAC/B,iBAAiB;EACjB,mCAAmC;EACnC,mCAAmC;AACrC;;AAEA;EACE,mCAAmC;EACnC,iBAAiB;AACnB;;AAEA;;;EAGE,iBAAiB;AACnB;;AAEA;;;EAGE,iBAAiB;AACnB;;AAEA;;;EAGE,mBAAmB;AACrB;;AAEA;;;EAGE,mBAAmB;AACrB;;AAEA;EACE,6BAA6B;AAC/B;;AAEA;EACE,kBAAkB;AACpB;;AAEA;EACE,kBAAkB;AACpB;;AAEA;;EAEE;AACF;EACE,qBAAqB;EACrB,+CAA+C;AACjD;;AAEA;;EAEE,6CAA6C;EAC7C,uBAAuB;AACzB;;AAEA;;;;;EAKE,6CAA6C;EAC7C,uBAAuB;AACzB;;AAEA;;EAEE,qBAAqB;EACrB,+CAA+C;AACjD;;AAEA;EACE,YAAY;AACd;;AAEA;;EAEE,+BAA+B;AACjC;;AAEA;;EAEE,wBAAwB;AAC1B;;AAEA;;EAEE;AACF;;EAEE,oBAAoB;AACtB;;AAEA;EACE,6BAA6B;AAC/B;;AAEA;;EAEE;AACF;;EAEE,mBAAmB;AACrB;;AAEA;;EAEE,sBAAsB;AACxB;;AAEA;;EAEE;AACF;EACE,iBAAiB;EACjB,UAAU;AACZ;;AAEA;EACE,oBAAoB;EACpB,iBAAiB;EACjB,YAAY;AACd;;AAEA;EACE,wBAAwB;EACxB,qBAAqB;EACrB,gBAAgB;AAClB;;AAEA;EACE,iBAAiB;AACnB;;AAEA;EACE,YAAY;AACd;;AAEA;EACE,iBAAiB;AACnB;;AAEA;EACE,iBAAiB;AACnB;;;AAGA;;EAEE;AACF;EACE,qCAAqC;EACrC,qBAAqB;EACrB,iBAAiB;EACjB,oBAAoB;AACtB;;AAEA;;EAEE;AACF;EACE,gDAAgD;EAChD,qBAAqB;EACrB,iBAAiB;EACjB,oBAAoB;EACpB,mCAAmC;EACnC,sBAAsB;AACxB;;AAEA;;EAEE;;AAEF;EACE,kBAAkB;EAClB,UAAU;EACV,SAAS;;EAET,sBAAsB;EACtB,WAAW;AACb;;AAEA;EACE,WAAW;EACX,gBAAgB;;EAEhB,YAAY;EACZ,uDAAuD;;EAEvD,WAAW;AACb;;AAEA;EACE,uBAAuB;AACzB;;AAEA;EACE,eAAe;AACjB;;AAEA;;EAEE,iCAAiC;EACjC,eAAe;;EAEf,kBAAkB;AACpB;;AAEA;EACE,WAAW;AACb;;AAEA;EACE,eAAe;AACjB;;AAEA;EACE,WAAW;EACX,cAAc;EACd,WAAW;AACb;;AAEA;EACE,wDAAwD;AAC1D;;AAEA;EACE,uCAAuC;AACzC;;AAEA;EACE,qDAAqD;AACvD;;AAEA;;EAEE,WAAW;EACX,YAAY;EACZ,iBAAiB;EACjB,eAAe;AACjB;;AAEA;;;;EAIE;AACF;EACE,WAAW;AACb;;AAEA;EACE,aAAa;AACf;;AAEA;EACE,gBAAgB;AAClB;;AAEA;EACE,aAAa;AACf;;AAEA;;EAEE;AACF;EACE,WAAW;EACX,YAAY;AACd;;AAEA;EACE,kBAAkB;EAClB,aAAa;EACb,oBAAoB;EACpB,cAAc;AAChB;;AAEA;EACE,WAAW;EACX,YAAY;EACZ,kBAAkB;EAClB,qBAAqB;EACrB,eAAe;EACf,mBAAmB;;EAEnB,kBAAkB;;EAElB,eAAe;;EAEf,2DAA2D;EAC3D,iEAAiE;EACjE,mBAAmB;EACnB,sBAAsB;AACxB;;AAEA;EACE,2DAA2D;AAC7D;;AAEA;EACE,cAAc;AAChB;;AAEA;;EAEE;AACF;EACE,eAAe;EACf,YAAY;EACZ,aAAa;EACb,MAAM;EACN,OAAO;EACP,YAAY;EACZ,cAAc;EACd,wCAAwC;EACxC,2CAA2C;EAC3C,kBAAkB;AACpB;;AAEA;EACE,kBAAkB;EAClB,yCAAyC;EACzC,gBAAgB;EAChB,kBAAkB;;EAElB,kDAAkD;EAClD,gBAAgB;EAChB,aAAa;AACf;;AAEA;EACE,WAAW;EACX,sBAAsB;EACtB,eAAe;EACf,gBAAgB;EAChB,kBAAkB;EAClB,kDAAkD;EAClD,iBAAiB;AACnB;;AAEA;EACE,4DAA4D;EAC5D,wDAAwD;EACxD,aAAa;AACf;;AAEA;EACE,aAAa;EACb,oBAAoB;EACpB,iBAAiB;EACjB,2BAA2B;AAC7B;;AAEA;EACE,iBAAiB;EACjB,kBAAkB;AACpB;;AAEA;EACE,+CAA+C;AACjD;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,iBAAiB;AACnB;;AAEA;EACE,eAAe;EACf,gBAAgB;EAChB,OAAO;EACP,SAAS;EACT,kBAAkB;AACpB;;AAEA;EACE,kBAAkB;EAClB,WAAW;AACb;;AAEA;EACE,kBAAkB;EAClB,SAAS;EACT,QAAQ;AACV;;AAEA;EACE,kBAAkB;AACpB;;AAEA;EACE,wBAAwB;EACxB,gBAAgB;EAChB,iBAAiB;EACjB,iBAAiB;EACjB,kBAAkB;AACpB;;AAEA;EACE,SAAS;EACT,UAAU;EACV,WAAW;AACb;;AAEA;;EAEE,gBAAgB;EAChB,eAAe;EACf,kBAAkB;EAClB,eAAe;AACjB;;AAEA;EACE,gBAAgB;EAChB,qCAAqC;EACrC,eAAe;AACjB;;AAEA;EACE,WAAW;EACX,oBAAoB;EACpB,sBAAsB;AACxB;;AAEA;EACE,eAAe;EACf,kBAAkB;AACpB;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,oBAAoB;EACpB,mBAAmB;AACrB;;AAEA;EACE,gDAAgD;AAClD;;AAEA;EACE,eAAe;AACjB;;AAEA;EACE,aAAa;EACb,sBAAsB;EACtB,OAAO;EACP,gBAAgB;AAClB;;AAEA;EACE,qCAAqC;AACvC;;AAEA;;EAEE,kBAAkB;EAClB,cAAc;EACd,gBAAgB;EAChB,uBAAuB;EACvB,mBAAmB;AACrB;;AAEA;EACE,aAAa;AACf;;AAEA;EACE,aAAa;EACb,sBAAsB;EACtB,OAAO;EACP,gBAAgB;AAClB;;AAEA;;;EAGE,qBAAqB;EACrB,gBAAgB;EAChB,sBAAsB;EACtB,oBAAoB;AACtB;;AAEA;EACE,sBAAsB;EACtB,WAAW;AACb;;AAEA;EACE,UAAU;AACZ;;AAEA;EACE,kBAAkB;EAClB,oCAAoC;AACtC;;AAEA;EACE,gBAAgB;EAChB,wBAAwB;EACxB,SAAS;EACT,YAAY;AACd;;AAEA;EACE,eAAe;EACf,yBAAyB;EACzB,oCAAoC;AACtC;;AAEA;EACE,OAAO;EACP,mBAAmB;EACnB,mBAAmB;EACnB,iBAAiB;EACjB,aAAa;AACf;;AAEA;EACE,aAAa;AACf;;AAEA;EACE,sBAAsB;EACtB,yBAAyB;AAC3B;;AAEA;;EAEE;AACF;EACE,2CAA2C;EAC3C,6CAA6C;EAC7C,kBAAkB;AACpB;;AAEA;;EAEE;;AAEF;;EAEE,kBAAkB;AACpB;;AAEA;;EAEE,aAAa;AACf;;AAEA;;EAEE;AACF;EACE,aAAa;;EAEb,iCAAiC;EACjC,qCAAqC;EACrC,iBAAiB;EACjB,iBAAiB;AACnB;;AAEA;EACE,cAAc;AAChB;;AAEA;EACE,iCAAiC;EACjC,qCAAqC;EACrC,iBAAiB;AACnB;;AAEA;;;;;;EAME,cAAc;AAChB;;AAEA;EACE,aAAa;AACf;;AAEA;EACE,aAAa;AACf;;AAEA;;;;EAIE,iCAAiC;EACjC,qCAAqC;EACrC,iBAAiB;AACnB;;AAEA;EACE,oBAAoB;AACtB;;AAEA;;EAEE,UAAU;EACV,mBAAmB;AACrB;;AAEA;EACE,iBAAiB;AACnB;;AAEA;EACE,iBAAiB;AACnB;;AAEA;EACE,oBAAoB;AACtB;;AAEA;;EAEE,+BAA+B;AACjC;;AAEA;;;;;;;;;EASE,wBAAwB;AAC1B;;AAEA;;EAEE,cAAc;EACd,YAAY;AACd;;;AAGA;;EAEE;AACF;EACE,YAAY;EACZ,YAAY;;EAEZ,iDAAiD;EACjD,mDAAmD;EACnD,kBAAkB;EAClB,iCAAiC;EACjC,eAAe;EACf,iBAAiB;;EAEjB,aAAa;AACf;;AAEA;EACE,UAAU;AACZ;;;AAGA;;EAEE;AACF;EACE,kBAAkB;EAClB,SAAS;EACT,OAAO;EACP,QAAQ;EACR,iBAAiB;EACjB,kBAAkB;;EAElB,UAAU;EACV,gBAAgB;EAChB,gBAAgB;EAChB,WAAW;;EAEX,iBAAiB;EACjB,YAAY;EACZ,oDAAoD;EACpD,sDAAsD;EACtD,kBAAkB;EAClB,8HAA8H;AAChI;;AAEA;EACE,aAAa;AACf;;AAEA;EACE,iBAAiB;EACjB,WAAW;EACX,iBAAiB;EACjB,kDAAkD;EAClD,sBAAsB;AACxB;;AAEA;EACE,aAAa;EACb,8CAA8C;AAChD;;AAEA;EACE,kBAAkB;EAClB,gBAAgB;EAChB,iBAAiB;AACnB;;AAEA;EACE,eAAe;AACjB;;AAEA;EACE,WAAW;EACX,iBAAiB;EACjB,iBAAiB;EACjB,0DAA0D;EAC1D,kBAAkB;AACpB;;AAEA;EACE,2CAA2C;AAC7C;;AAEA;EACE,gBAAgB;AAClB;;AAEA;EACE,sBAAsB;EACtB,SAAS;AACX;;AAEA;EACE,+CAA+C;AACjD;;AAEA;EACE,+CAA+C;AACjD;;AAEA;EACE,+CAA+C;AACjD;;AAEA;EACE,+CAA+C;AACjD;;AAEA;;EAEE;AACF;;;;EAIE,wBAAwB;AAC1B;;AAEA;;;EAGE,YAAY;AACd","sourcesContent":["/**\n * color definitions\n */\n.djs-parent {\n  --color-grey-225-10-15: hsl(225, 10%, 15%);\n  --color-grey-225-10-35: hsl(225, 10%, 35%);\n  --color-grey-225-10-55: hsl(225, 10%, 55%);\n  --color-grey-225-10-75: hsl(225, 10%, 75%);\n  --color-grey-225-10-80: hsl(225, 10%, 80%);\n  --color-grey-225-10-85: hsl(225, 10%, 85%);\n  --color-grey-225-10-90: hsl(225, 10%, 90%);\n  --color-grey-225-10-95: hsl(225, 10%, 95%);\n  --color-grey-225-10-97: hsl(225, 10%, 97%);\n\n  --color-blue-205-100-45: hsl(205, 100%, 45%);\n  --color-blue-205-100-45-opacity-30: hsla(205, 100%, 45%, 30%);\n  --color-blue-205-100-50: hsl(205, 100%, 50%);\n  --color-blue-205-100-50-opacity-15: hsla(205, 100%, 50%, 15%);\n  --color-blue-205-100-70: hsl(205, 100%, 75%);\n  --color-blue-205-100-95: hsl(205, 100%, 95%);\n\n  --color-green-150-86-44: hsl(150, 86%, 44%);\n\n  --color-red-360-100-40: hsl(360, 100%, 40%);\n  --color-red-360-100-45: hsl(360, 100%, 45%);\n  --color-red-360-100-92: hsl(360, 100%, 92%);\n  --color-red-360-100-97: hsl(360, 100%, 97%);\n\n  --color-white: hsl(0, 0%, 100%);\n  --color-black: hsl(0, 0%, 0%);\n  --color-black-opacity-10: hsla(0, 0%, 0%, 10%);\n\n  --canvas-fill-color: var(--color-white);\n\n  --bendpoint-fill-color: var(--color-blue-205-100-45);\n  --bendpoint-stroke-color: var(--canvas-fill-color);\n\n  --context-pad-entry-background-color: var(--color-white);\n  --context-pad-entry-hover-background-color: var(--color-grey-225-10-95);\n\n  --element-dragger-color: var(--color-blue-205-100-50);\n  --element-hover-outline-fill-color: var(--color-blue-205-100-45);\n  --element-selected-outline-stroke-color: var(--color-blue-205-100-50);\n  --element-selected-outline-secondary-stroke-color: var(--color-blue-205-100-70);\n\n  --lasso-fill-color: var(--color-blue-205-100-50-opacity-15);\n  --lasso-stroke-color: var(--element-selected-outline-stroke-color);\n\n  --palette-entry-color: var(--color-grey-225-10-15);\n  --palette-entry-hover-color: var(--color-blue-205-100-45);\n  --palette-entry-selected-color: var(--color-blue-205-100-50);\n  --palette-separator-color: var(--color-grey-225-10-75);\n  --palette-toggle-hover-background-color: var(--color-grey-225-10-55);\n  --palette-background-color: var(--color-grey-225-10-97);\n  --palette-border-color: var(--color-grey-225-10-75);\n\n  --popup-header-entry-selected-color: var(--color-blue-205-100-50);\n  --popup-header-separator-color: var(--color-grey-225-10-75);\n  --popup-background-color: var(--color-white);\n  --popup-border-color: var(--color-grey-225-10-75);\n  --popup-shadow-color: var(--color-grey-225-10-80);\n  --popup-description-color: var(--color-grey-225-10-55);\n  --popup-no-results-color: var(--color-grey-225-10-55);\n  --popup-entry-title-color: var(--color-grey-225-10-55);\n  --popup-entry-hover-color:  var(--color-grey-225-10-95);\n  --popup-search-border-color: var(--color-grey-225-10-75);\n  --popup-search-focus-border-color: var(--color-blue-205-100-50);\n  --popup-search-focus-background-color: var(--color-blue-205-100-95);\n\n  --resizer-fill-color: var(--color-blue-205-100-45);\n  --resizer-stroke-color: var(--canvas-fill-color);\n\n  --search-container-background-color: var(--color-grey-225-10-97);\n  --search-container-border-color: var(--color-blue-205-100-50);\n  --search-container-box-shadow-color: var(--color-blue-205-100-95);\n  --search-container-box-shadow-inset-color: var(--color-grey-225-10-80);\n  --search-input-border-color: var(--color-grey-225-10-75);\n  --search-result-border-color: var(--color-grey-225-10-75);\n  --search-result-highlight-color: var(--color-black);\n  --search-result-selected-color: var(--color-blue-205-100-45-opacity-30);\n\n  --shape-attach-allowed-stroke-color: var(--color-blue-205-100-50);\n  --shape-connect-allowed-fill-color: var(--color-grey-225-10-97);\n  --shape-drop-allowed-fill-color: var(--color-grey-225-10-97);\n  --shape-drop-not-allowed-fill-color: var(--color-red-360-100-97);\n  --shape-resize-preview-stroke-color: var(--color-blue-205-100-50);\n\n  --snap-line-stroke-color: var(--color-blue-205-100-45-opacity-30);\n\n  --space-tool-crosshair-stroke-color: var(--color-black);\n\n  --tooltip-error-background-color: var(--color-red-360-100-97);\n  --tooltip-error-border-color: var(--color-red-360-100-45);\n  --tooltip-error-color: var(--color-red-360-100-45);\n}\n\n/**\n * outline styles\n */\n\n.djs-outline,\n.djs-selection-outline {\n  fill: none;\n  shape-rendering: geometricPrecision;\n  stroke-width: 2px;\n}\n\n.djs-outline {\n  visibility: hidden;\n}\n\n.djs-selection-outline {\n  stroke: var(--element-selected-outline-stroke-color);\n}\n\n.djs-element.selected .djs-outline {\n  visibility: visible;\n\n  stroke: var(--element-selected-outline-stroke-color);\n}\n\n.djs-multi-select .djs-element.selected .djs-outline {\n  stroke: var(--element-selected-outline-secondary-stroke-color);\n}\n\n.djs-shape.connect-ok .djs-visual > :nth-child(1) {\n  fill: var(--shape-connect-allowed-fill-color) !important;\n}\n\n.djs-shape.connect-not-ok .djs-visual > :nth-child(1),\n.djs-shape.drop-not-ok .djs-visual > :nth-child(1) {\n  fill: var(--shape-drop-not-allowed-fill-color) !important;\n}\n\n.djs-shape.new-parent .djs-visual > :nth-child(1) {\n  fill: var(--shape-drop-allowed-fill-color) !important;\n}\n\nsvg.drop-not-ok {\n  background: var(--shape-drop-not-allowed-fill-color) !important;\n}\n\nsvg.new-parent {\n  background: var(--shape-drop-allowed-fill-color) !important;\n}\n\n\n/* Override move cursor during drop and connect */\n.drop-not-ok,\n.connect-not-ok,\n.drop-not-ok *,\n.connect-not-ok * {\n  cursor: not-allowed !important;\n}\n\n.drop-ok,\n.connect-ok,\n.drop-ok *,\n.connect-ok * {\n  cursor: default !important;\n}\n\n.djs-element.attach-ok .djs-visual > :nth-child(1) {\n  stroke-width: 5px !important;\n  stroke: var(--shape-attach-allowed-stroke-color) !important;\n}\n\n.djs-frame.connect-not-ok .djs-visual > :nth-child(1),\n.djs-frame.drop-not-ok .djs-visual > :nth-child(1) {\n  stroke-width: 3px !important;\n  stroke: var(--shape-drop-not-allowed-fill-color) !important;\n  fill: none !important;\n}\n\n/**\n* Selection box style\n*\n*/\n.djs-lasso-overlay {\n  fill: var(--lasso-fill-color);\n  stroke: var(--lasso-stroke-color);\n  stroke-width: 2px;\n  shape-rendering: geometricPrecision;\n  pointer-events: none;\n}\n\n/**\n * Resize styles\n */\n.djs-resize-overlay {\n  fill: none;\n\n  stroke-dasharray: 5 1 3 1;\n  stroke: var(--shape-resize-preview-stroke-color);\n\n  pointer-events: none;\n}\n\n.djs-resizer-hit {\n  fill: none;\n  pointer-events: all;\n}\n\n.djs-resizer-visual {\n  fill: var(--resizer-fill-color);\n  stroke-width: 1px;\n  stroke: var(--resizer-stroke-color);\n  shape-rendering: geometricPrecision;\n}\n\n.djs-resizer:hover .djs-resizer-visual {\n  stroke: var(--resizer-stroke-color);\n  stroke-opacity: 1;\n}\n\n.djs-cursor-resize-ns,\n.djs-resizer-n,\n.djs-resizer-s {\n  cursor: ns-resize;\n}\n\n.djs-cursor-resize-ew,\n.djs-resizer-e,\n.djs-resizer-w {\n  cursor: ew-resize;\n}\n\n.djs-cursor-resize-nwse,\n.djs-resizer-nw,\n.djs-resizer-se {\n  cursor: nwse-resize;\n}\n\n.djs-cursor-resize-nesw,\n.djs-resizer-ne,\n.djs-resizer-sw {\n  cursor: nesw-resize;\n}\n\n.djs-shape.djs-resizing > .djs-outline {\n  visibility: hidden !important;\n}\n\n.djs-shape.djs-resizing > .djs-resizer {\n  visibility: hidden;\n}\n\n.djs-dragger > .djs-resizer {\n  visibility: hidden;\n}\n\n/**\n * drag styles\n */\n.djs-dragger * {\n  fill: none !important;\n  stroke: var(--element-dragger-color) !important;\n}\n\n.djs-dragger tspan,\n.djs-dragger text {\n  fill: var(--element-dragger-color) !important;\n  stroke: none !important;\n}\n\nmarker.djs-dragger circle,\nmarker.djs-dragger path,\nmarker.djs-dragger polygon,\nmarker.djs-dragger polyline,\nmarker.djs-dragger rect {\n  fill: var(--element-dragger-color) !important;\n  stroke: none !important;\n}\n\nmarker.djs-dragger text,\nmarker.djs-dragger tspan {\n  fill: none !important;\n  stroke: var(--element-dragger-color) !important;\n}\n\n.djs-dragging {\n  opacity: 0.3;\n}\n\n.djs-dragging,\n.djs-dragging > * {\n  pointer-events: none !important;\n}\n\n.djs-dragging .djs-context-pad,\n.djs-dragging .djs-outline {\n  display: none !important;\n}\n\n/**\n * no pointer events for visual\n */\n.djs-visual,\n.djs-outline {\n  pointer-events: none;\n}\n\n.djs-element.attach-ok .djs-hit {\n  stroke-width: 60px !important;\n}\n\n/**\n * all pointer events for hit shape\n */\n.djs-element > .djs-hit-all,\n.djs-element > .djs-hit-no-move {\n  pointer-events: all;\n}\n\n.djs-element > .djs-hit-stroke,\n.djs-element > .djs-hit-click-stroke {\n  pointer-events: stroke;\n}\n\n/**\n * shape / connection basic styles\n */\n.djs-connection .djs-visual {\n  stroke-width: 2px;\n  fill: none;\n}\n\n.djs-cursor-grab {\n  cursor: -webkit-grab;\n  cursor: -moz-grab;\n  cursor: grab;\n}\n\n.djs-cursor-grabbing {\n  cursor: -webkit-grabbing;\n  cursor: -moz-grabbing;\n  cursor: grabbing;\n}\n\n.djs-cursor-crosshair {\n  cursor: crosshair;\n}\n\n.djs-cursor-move {\n  cursor: move;\n}\n\n.djs-cursor-resize-ns {\n  cursor: ns-resize;\n}\n\n.djs-cursor-resize-ew {\n  cursor: ew-resize;\n}\n\n\n/**\n * snapping\n */\n.djs-snap-line {\n  stroke: var(--snap-line-stroke-color);\n  stroke-linecap: round;\n  stroke-width: 2px;\n  pointer-events: none;\n}\n\n/**\n * snapping\n */\n.djs-crosshair {\n  stroke: var(--space-tool-crosshair-stroke-color);\n  stroke-linecap: round;\n  stroke-width: 1px;\n  pointer-events: none;\n  shape-rendering: geometricPrecision;\n  stroke-dasharray: 5, 5;\n}\n\n/**\n * palette\n */\n\n.djs-palette {\n  position: absolute;\n  left: 20px;\n  top: 20px;\n\n  box-sizing: border-box;\n  width: 48px;\n}\n\n.djs-palette .separator {\n  margin: 5px;\n  padding-top: 5px;\n\n  border: none;\n  border-bottom: solid 1px var(--palette-separator-color);\n\n  clear: both;\n}\n\n.djs-palette .entry:before {\n  vertical-align: initial;\n}\n\n.djs-palette .djs-palette-toggle {\n  cursor: pointer;\n}\n\n.djs-palette .entry,\n.djs-palette .djs-palette-toggle {\n  color: var(--palette-entry-color);\n  font-size: 30px;\n\n  text-align: center;\n}\n\n.djs-palette .entry {\n  float: left;\n}\n\n.djs-palette .entry img {\n  max-width: 100%;\n}\n\n.djs-palette .djs-palette-entries:after {\n  content: '';\n  display: table;\n  clear: both;\n}\n\n.djs-palette .djs-palette-toggle:hover {\n  background: var(--palette-toggle-hover-background-color);\n}\n\n.djs-palette .entry:hover {\n  color: var(--palette-entry-hover-color);\n}\n\n.djs-palette .highlighted-entry {\n  color: var(--palette-entry-selected-color) !important;\n}\n\n.djs-palette .entry,\n.djs-palette .djs-palette-toggle {\n  width: 46px;\n  height: 46px;\n  line-height: 46px;\n  cursor: default;\n}\n\n/**\n * Palette open / two-column layout is controlled via\n * classes on the palette. Events to hook into palette\n * changed life-cycle are available in addition.\n */\n.djs-palette.two-column.open {\n  width: 94px;\n}\n\n.djs-palette:not(.open) .djs-palette-entries {\n  display: none;\n}\n\n.djs-palette:not(.open) {\n  overflow: hidden;\n}\n\n.djs-palette.open .djs-palette-toggle {\n  display: none;\n}\n\n/**\n * context-pad\n */\n.djs-overlay-context-pad {\n  width: 72px;\n  z-index: 100;\n}\n\n.djs-context-pad {\n  position: absolute;\n  display: none;\n  pointer-events: none;\n  line-height: 1;\n}\n\n.djs-context-pad .entry {\n  width: 22px;\n  height: 22px;\n  text-align: center;\n  display: inline-block;\n  font-size: 22px;\n  margin: 0 2px 2px 0;\n\n  border-radius: 3px;\n\n  cursor: default;\n\n  background-color: var(--context-pad-entry-background-color);\n  box-shadow: 0 0 2px 1px var(--context-pad-entry-background-color);\n  pointer-events: all;\n  vertical-align: middle;\n}\n\n.djs-context-pad .entry:hover {\n  background: var(--context-pad-entry-hover-background-color);\n}\n\n.djs-context-pad.open {\n  display: block;\n}\n\n/**\n * popup styles\n */\n.djs-popup-backdrop {\n  position: fixed;\n  width: 100vw;\n  height: 100vh;\n  top: 0;\n  left: 0;\n  z-index: 200;\n  line-height: 1;\n  font-family: \"IBM Plex Sans\", sans-serif;\n  border: solid 1px var(--popup-border-color);\n  border-radius: 2px;\n}\n\n.djs-popup {\n  width: min-content;\n  background: var(--popup-background-color);\n  overflow: hidden;\n  position: absolute;\n\n  box-shadow: 0px 2px 10px var(--popup-shadow-color);\n  min-width: 120px;\n  outline: none;\n}\n\n.djs-popup-search input {\n  width: 100%;\n  box-sizing: border-box;\n  font-size: 14px;\n  padding: 3px 6px;\n  border-radius: 2px;\n  border: solid 1px var(--popup-search-border-color);\n  line-height: 21px;\n}\n\n.djs-popup-search input:focus {\n  background-color: var(--popup-search-focus-background-color);\n  border: solid 1px var(--popup-search-focus-border-color);\n  outline: none;\n}\n\n.djs-popup-header {\n  display: flex;\n  align-items: stretch;\n  line-height: 20px;\n  margin: 10px 12px 10px 12px;\n}\n\n.djs-popup-header .entry {\n  font-size: 19.5px;\n  border-radius: 2px;\n}\n\n.djs-popup-header .entry.active {\n  color: var(--popup-header-entry-selected-color);\n}\n\n.djs-popup-header .entry.disabled {\n  color: inherit;\n}\n\n.djs-popup-search {\n  margin: 10px 12px;\n}\n\n.djs-popup-title {\n  font-size: 14px;\n  font-weight: 500;\n  flex: 1;\n  margin: 0;\n  width: max-content;\n}\n\n.djs-popup-search {\n  position: relative;\n  width: auto;\n}\n\n.djs-popup-search-icon {\n  position: absolute;\n  left: 8px;\n  top: 7px;\n}\n\n.djs-popup-search input {\n  padding-left: 25px;\n}\n\n.djs-popup-results {\n  margin: 7px 3px 7px 12px;\n  list-style: none;\n  max-height: 280px;\n  overflow: overlay;\n  padding-right: 9px;\n}\n\n.djs-popup-group {\n  margin: 0;\n  padding: 0;\n  width: 100%;\n}\n\n.djs-popup-body .entry,\n.djs-popup-body .entry-header {\n  padding: 5px 7px;\n  cursor: default;\n  border-radius: 4px;\n  font-size: 14px;\n}\n\n.djs-popup-body .entry-header {\n  font-weight: 500;\n  color: var(--popup-entry-title-color);\n  padding-left: 0;\n}\n\n.djs-popup-entry-icon {\n  width: 16px;\n  margin-right: 0.5rem;\n  margin-bottom: -0.2rem;\n}\n\n.djs-popup-body .entry-header:not(:first-child) {\n  margin-top: 8px;\n  margin-bottom: 2px;\n}\n\n.djs-popup-body .entry {\n  display: flex;\n  flex-direction: row;\n  align-items: stretch;\n  height: min-content;\n}\n\n.djs-popup .entry.selected {\n  background-color: var(--popup-entry-hover-color);\n}\n\n.djs-popup-body .entry:not(:first-child) {\n  margin-top: 2px;\n}\n\n.djs-popup-entry-content {\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  overflow: hidden;\n}\n\n.djs-popup-entry-description {\n  color: var(--popup-description-color);\n}\n\n.djs-popup-entry-name,\n.djs-popup-entry-description {\n  line-height: 1.4em;\n  display: block;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.djs-popup-entry-name {\n  display: flex;\n}\n\n.entry-content {\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  overflow: hidden;\n}\n\n.djs-popup-entry-name[class^=\"bpmn-icon-\"]:before,\n.djs-popup-entry-name[class*=\" bpmn-icon-\"]:before,\n.djs-popup-entry-icon {\n  display: inline-block;\n  font-size: 1.4em;\n  vertical-align: middle;\n  margin-right: 0.5rem;\n}\n\n.djs-popup-body {\n  flex-direction: column;\n  width: auto;\n}\n\n.djs-popup *::-webkit-scrollbar {\n  width: 6px;\n}\n\n.djs-popup *::-webkit-scrollbar-thumb {\n  border-radius: 3px;\n  background-color: rgba(0, 0, 0, 0.2);\n}\n\n.djs-popup *::-webkit-scrollbar-track {\n  box-shadow: none;\n  background: transparent1;\n  margin: 0;\n  padding: 5px;\n}\n\n.djs-popup-no-results {\n  font-size: 14px;\n  padding: 0 12px 12px 12px;\n  color: var(--popup-no-results-color);\n}\n\n.djs-popup-entry-docs {\n  flex: 0;\n  flex-direction: row;\n  align-items: center;\n  padding-left: 5px;\n  display: none;\n}\n\n.djs-popup-body .entry:hover .djs-popup-entry-docs {\n  display: flex;\n}\n\n.djs-popup-entry-docs svg {\n  vertical-align: middle;\n  margin: auto 2px auto 5px;\n}\n\n/**\n *  palette styles\n */\n.djs-palette {\n  background: var(--palette-background-color);\n  border: solid 1px var(--palette-border-color);\n  border-radius: 2px;\n}\n\n/**\n * touch\n */\n\n.djs-shape,\n.djs-connection {\n  touch-action: none;\n}\n\n.djs-segment-dragger,\n.djs-bendpoint {\n  display: none;\n}\n\n/**\n * bendpoints\n */\n.djs-segment-dragger .djs-visual {\n  display: none;\n\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-width: 1px;\n  stroke-opacity: 1;\n}\n\n.djs-segment-dragger:hover .djs-visual {\n  display: block;\n}\n\n.djs-bendpoint .djs-visual {\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-width: 1px;\n}\n\n.djs-segment-dragger:hover,\n.djs-bendpoints.hover .djs-segment-dragger,\n.djs-bendpoints.selected .djs-segment-dragger,\n.djs-bendpoint:hover,\n.djs-bendpoints.hover .djs-bendpoint,\n.djs-bendpoints.selected .djs-bendpoint {\n  display: block;\n}\n\n.djs-drag-active .djs-bendpoints * {\n  display: none;\n}\n\n.djs-bendpoints:not(.hover) .floating {\n  display: none;\n}\n\n.djs-segment-dragger:hover .djs-visual,\n.djs-segment-dragger.djs-dragging .djs-visual,\n.djs-bendpoint:hover .djs-visual,\n.djs-bendpoint.floating .djs-visual {\n  fill: var(--bendpoint-fill-color);\n  stroke: var(--bendpoint-stroke-color);\n  stroke-opacity: 1;\n}\n\n.djs-bendpoint.floating .djs-hit {\n  pointer-events: none;\n}\n\n.djs-segment-dragger .djs-hit,\n.djs-bendpoint .djs-hit {\n  fill: none;\n  pointer-events: all;\n}\n\n.djs-segment-dragger.horizontal .djs-hit {\n  cursor: ns-resize;\n}\n\n.djs-segment-dragger.vertical .djs-hit {\n  cursor: ew-resize;\n}\n\n.djs-segment-dragger.djs-dragging .djs-hit {\n  pointer-events: none;\n}\n\n.djs-updating,\n.djs-updating > * {\n  pointer-events: none !important;\n}\n\n.djs-updating .djs-context-pad,\n.djs-updating .djs-outline,\n.djs-updating .djs-bendpoint,\n.djs-multi-select .djs-bendpoint,\n.djs-multi-select .djs-segment-dragger,\n.connect-ok .djs-bendpoint,\n.connect-not-ok .djs-bendpoint,\n.drop-ok .djs-bendpoint,\n.drop-not-ok .djs-bendpoint {\n  display: none !important;\n}\n\n.djs-segment-dragger.djs-dragging,\n.djs-bendpoint.djs-dragging {\n  display: block;\n  opacity: 1.0;\n}\n\n\n/**\n * tooltips\n */\n.djs-tooltip-error {\n  width: 160px;\n  padding: 6px;\n\n  background: var(--tooltip-error-background-color);\n  border: solid 1px var(--tooltip-error-border-color);\n  border-radius: 2px;\n  color: var(--tooltip-error-color);\n  font-size: 12px;\n  line-height: 16px;\n\n  opacity: 0.75;\n}\n\n.djs-tooltip-error:hover {\n  opacity: 1;\n}\n\n\n/**\n * search pad\n */\n.djs-search-container {\n  position: absolute;\n  top: 20px;\n  left: 0;\n  right: 0;\n  margin-left: auto;\n  margin-right: auto;\n\n  width: 25%;\n  min-width: 300px;\n  max-width: 400px;\n  z-index: 10;\n\n  font-size: 1.05em;\n  opacity: 0.9;\n  background: var(--search-container-background-color);\n  border: solid 1px var(--search-container-border-color);\n  border-radius: 2px;\n  box-shadow: 0 0 0 2px var(--search-container-box-shadow-color), 0 0 0 1px var(--search-container-box-shadow-inset-color) inset;\n}\n\n.djs-search-container:not(.open) {\n  display: none;\n}\n\n.djs-search-input input {\n  font-size: 1.05em;\n  width: 100%;\n  padding: 6px 10px;\n  border: 1px solid var(--search-input-border-color);\n  box-sizing: border-box;\n}\n\n.djs-search-input input:focus {\n  outline: none;\n  border-color: var(--search-input-border-color);\n}\n\n.djs-search-results {\n  position: relative;\n  overflow-y: auto;\n  max-height: 200px;\n}\n\n.djs-search-results:hover {\n  cursor: pointer;\n}\n\n.djs-search-result {\n  width: 100%;\n  padding: 6px 10px;\n  background: white;\n  border-bottom: solid 1px var(--search-result-border-color);\n  border-radius: 1px;\n}\n\n.djs-search-highlight {\n  color: var(--search-result-highlight-color);\n}\n\n.djs-search-result-primary {\n  margin: 0 0 10px;\n}\n\n.djs-search-result-secondary {\n  font-family: monospace;\n  margin: 0;\n}\n\n.djs-search-result:hover {\n  background: var(--search-result-selected-color);\n}\n\n.djs-search-result-selected {\n  background: var(--search-result-selected-color);\n}\n\n.djs-search-result-selected:hover {\n  background: var(--search-result-selected-color);\n}\n\n.djs-search-overlay {\n  background: var(--search-result-selected-color);\n}\n\n/**\n * hidden styles\n */\n.djs-element-hidden,\n.djs-element-hidden .djs-hit,\n.djs-element-hidden .djs-outline,\n.djs-label-hidden .djs-label {\n  display: none !important;\n}\n\n.djs-element .djs-hit-stroke,\n.djs-element .djs-hit-click-stroke,\n.djs-element .djs-hit-all {\n  cursor: move;\n}"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -51935,7 +49148,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
- * jQuery JavaScript Library v3.6.0
+ * jQuery JavaScript Library v3.6.1
  * https://jquery.com/
  *
  * Includes Sizzle.js
@@ -51945,7 +49158,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2021-03-02T17:08Z
+ * Date: 2022-08-26T17:52Z
  */
 ( function( global, factory ) {
 
@@ -51959,7 +49172,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 		// (such as Node.js), expose a factory as module.exports.
 		// This accentuates the need for the creation of a real `window`.
 		// e.g. var jQuery = require("jquery")(window);
-		// See ticket #14549 for more info.
+		// See ticket trac-14549 for more info.
 		module.exports = global.document ?
 			factory( global, true ) :
 			function( w ) {
@@ -52087,7 +49300,7 @@ function toType( obj ) {
 
 
 var
-	version = "3.6.0",
+	version = "3.6.1",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -55065,8 +52278,8 @@ jQuery.fn.extend( {
 var rootjQuery,
 
 	// A simple way to check for HTML strings
-	// Prioritize #id over <tag> to avoid XSS via location.hash (#9521)
-	// Strict HTML recognition (#11290: must start with <)
+	// Prioritize #id over <tag> to avoid XSS via location.hash (trac-9521)
+	// Strict HTML recognition (trac-11290: must start with <)
 	// Shortcut simple #id case for speed
 	rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]+))$/,
 
@@ -56023,7 +53236,7 @@ jQuery.extend( {
 	isReady: false,
 
 	// A counter to track how many items to wait for before
-	// the ready event fires. See #6781
+	// the ready event fires. See trac-6781
 	readyWait: 1,
 
 	// Handle when the DOM is ready
@@ -56151,7 +53364,7 @@ function fcamelCase( _all, letter ) {
 
 // Convert dashed to camelCase; used by the css and data modules
 // Support: IE <=9 - 11, Edge 12 - 15
-// Microsoft forgot to hump their vendor prefix (#9572)
+// Microsoft forgot to hump their vendor prefix (trac-9572)
 function camelCase( string ) {
 	return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
 }
@@ -56187,7 +53400,7 @@ Data.prototype = {
 			value = {};
 
 			// We can accept data for non-element nodes in modern browsers,
-			// but we should not, see #8335.
+			// but we should not, see trac-8335.
 			// Always return an empty object.
 			if ( acceptData( owner ) ) {
 
@@ -56426,7 +53639,7 @@ jQuery.fn.extend( {
 					while ( i-- ) {
 
 						// Support: IE 11 only
-						// The attrs elements can be null (#14894)
+						// The attrs elements can be null (trac-14894)
 						if ( attrs[ i ] ) {
 							name = attrs[ i ].name;
 							if ( name.indexOf( "data-" ) === 0 ) {
@@ -56849,9 +54062,9 @@ var rscriptType = ( /^$|^module$|\/(?:java|ecma)script/i );
 		input = document.createElement( "input" );
 
 	// Support: Android 4.0 - 4.3 only
-	// Check state lost if the name is set (#11217)
+	// Check state lost if the name is set (trac-11217)
 	// Support: Windows Web Apps (WWA)
-	// `name` and `type` must use .setAttribute for WWA (#14901)
+	// `name` and `type` must use .setAttribute for WWA (trac-14901)
 	input.setAttribute( "type", "radio" );
 	input.setAttribute( "checked", "checked" );
 	input.setAttribute( "name", "t" );
@@ -56875,7 +54088,7 @@ var rscriptType = ( /^$|^module$|\/(?:java|ecma)script/i );
 } )();
 
 
-// We have to close these tags to support XHTML (#13200)
+// We have to close these tags to support XHTML (trac-13200)
 var wrapMap = {
 
 	// XHTML parsers do not magically insert elements in the
@@ -56901,7 +54114,7 @@ if ( !support.option ) {
 function getAll( context, tag ) {
 
 	// Support: IE <=9 - 11 only
-	// Use typeof to avoid zero-argument method invocation on host objects (#15151)
+	// Use typeof to avoid zero-argument method invocation on host objects (trac-15151)
 	var ret;
 
 	if ( typeof context.getElementsByTagName !== "undefined" ) {
@@ -56984,7 +54197,7 @@ function buildFragment( elems, context, scripts, selection, ignored ) {
 				// Remember the top-level container
 				tmp = fragment.firstChild;
 
-				// Ensure the created nodes are orphaned (#12392)
+				// Ensure the created nodes are orphaned (trac-12392)
 				tmp.textContent = "";
 			}
 		}
@@ -57405,15 +54618,15 @@ jQuery.event = {
 
 			for ( ; cur !== this; cur = cur.parentNode || this ) {
 
-				// Don't check non-elements (#13208)
-				// Don't process clicks on disabled elements (#6911, #8165, #11382, #11764)
+				// Don't check non-elements (trac-13208)
+				// Don't process clicks on disabled elements (trac-6911, trac-8165, trac-11382, trac-11764)
 				if ( cur.nodeType === 1 && !( event.type === "click" && cur.disabled === true ) ) {
 					matchedHandlers = [];
 					matchedSelectors = {};
 					for ( i = 0; i < delegateCount; i++ ) {
 						handleObj = handlers[ i ];
 
-						// Don't conflict with Object.prototype properties (#13203)
+						// Don't conflict with Object.prototype properties (trac-13203)
 						sel = handleObj.selector + " ";
 
 						if ( matchedSelectors[ sel ] === undefined ) {
@@ -57667,7 +54880,7 @@ jQuery.Event = function( src, props ) {
 
 		// Create target properties
 		// Support: Safari <=6 - 7 only
-		// Target should not be a text node (#504, #13143)
+		// Target should not be a text node (trac-504, trac-13143)
 		this.target = ( src.target && src.target.nodeType === 3 ) ?
 			src.target.parentNode :
 			src.target;
@@ -57790,10 +55003,10 @@ jQuery.each( { focus: "focusin", blur: "focusout" }, function( type, delegateTyp
 			return true;
 		},
 
-		// Suppress native focus or blur as it's already being fired
-		// in leverageNative.
-		_default: function() {
-			return true;
+		// Suppress native focus or blur if we're currently inside
+		// a leveraged native-event stack
+		_default: function( event ) {
+			return dataPriv.get( event.target, type );
 		},
 
 		delegateType: delegateType
@@ -57892,7 +55105,8 @@ var
 
 	// checked="checked" or checked
 	rchecked = /checked\s*(?:[^=]|=\s*.checked.)/i,
-	rcleanScript = /^\s*<!(?:\[CDATA\[|--)|(?:\]\]|--)>\s*$/g;
+
+	rcleanScript = /^\s*<!\[CDATA\[|\]\]>\s*$/g;
 
 // Prefer a tbody over its parent table for containing new rows
 function manipulationTarget( elem, content ) {
@@ -58006,7 +55220,7 @@ function domManip( collection, args, callback, ignored ) {
 
 			// Use the original fragment for the last item
 			// instead of the first because it can end up
-			// being emptied incorrectly in certain situations (#8070).
+			// being emptied incorrectly in certain situations (trac-8070).
 			for ( ; i < l; i++ ) {
 				node = fragment;
 
@@ -58047,6 +55261,12 @@ function domManip( collection, args, callback, ignored ) {
 								}, doc );
 							}
 						} else {
+
+							// Unwrap a CDATA section containing script contents. This shouldn't be
+							// needed as in XML documents they're already not visible when
+							// inspecting element contents and in HTML documents they have no
+							// meaning but we're preserving that logic for backwards compatibility.
+							// This will be removed completely in 4.0. See gh-4904.
 							DOMEval( node.textContent.replace( rcleanScript, "" ), node, doc );
 						}
 					}
@@ -58329,9 +55549,12 @@ jQuery.each( {
 } );
 var rnumnonpx = new RegExp( "^(" + pnum + ")(?!px)[a-z%]+$", "i" );
 
+var rcustomProp = /^--/;
+
+
 var getStyles = function( elem ) {
 
-		// Support: IE <=11 only, Firefox <=30 (#15098, #14150)
+		// Support: IE <=11 only, Firefox <=30 (trac-15098, trac-14150)
 		// IE throws on elements created in popups
 		// FF meanwhile throws on frame elements through "defaultView.getComputedStyle"
 		var view = elem.ownerDocument.defaultView;
@@ -58365,6 +55588,15 @@ var swap = function( elem, options, callback ) {
 
 
 var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
+
+var whitespace = "[\\x20\\t\\r\\n\\f]";
+
+
+var rtrimCSS = new RegExp(
+	"^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$",
+	"g"
+);
+
 
 
 
@@ -58431,7 +55663,7 @@ var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
 	}
 
 	// Support: IE <=9 - 11 only
-	// Style of cloned element affects source element cloned (#8908)
+	// Style of cloned element affects source element cloned (trac-8908)
 	div.style.backgroundClip = "content-box";
 	div.cloneNode( true ).style.backgroundClip = "";
 	support.clearCloneStyle = div.style.backgroundClip === "content-box";
@@ -58511,6 +55743,7 @@ var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
 
 function curCSS( elem, name, computed ) {
 	var width, minWidth, maxWidth, ret,
+		isCustomProp = rcustomProp.test( name ),
 
 		// Support: Firefox 51+
 		// Retrieving style before computed somehow
@@ -58521,10 +55754,21 @@ function curCSS( elem, name, computed ) {
 	computed = computed || getStyles( elem );
 
 	// getPropertyValue is needed for:
-	//   .css('filter') (IE 9 only, #12537)
-	//   .css('--customProperty) (#3144)
+	//   .css('filter') (IE 9 only, trac-12537)
+	//   .css('--customProperty) (gh-3144)
 	if ( computed ) {
 		ret = computed.getPropertyValue( name ) || computed[ name ];
+
+		// trim whitespace for custom property (issue gh-4926)
+		if ( isCustomProp ) {
+
+			// rtrim treats U+000D CARRIAGE RETURN and U+000C FORM FEED
+			// as whitespace while CSS does not, but this is not a problem
+			// because CSS preprocessing replaces them with U+000A LINE FEED
+			// (which *is* CSS whitespace)
+			// https://www.w3.org/TR/css-syntax-3/#input-preprocessing
+			ret = ret.replace( rtrimCSS, "$1" );
+		}
 
 		if ( ret === "" && !isAttached( elem ) ) {
 			ret = jQuery.style( elem, name );
@@ -58621,7 +55865,6 @@ var
 	// except "table", "table-cell", or "table-caption"
 	// See here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
 	rdisplayswap = /^(none|table(?!-c[ea]).+)/,
-	rcustomProp = /^--/,
 	cssShow = { position: "absolute", visibility: "hidden", display: "block" },
 	cssNormalTransform = {
 		letterSpacing: "0",
@@ -58857,15 +56100,15 @@ jQuery.extend( {
 		if ( value !== undefined ) {
 			type = typeof value;
 
-			// Convert "+=" or "-=" to relative numbers (#7345)
+			// Convert "+=" or "-=" to relative numbers (trac-7345)
 			if ( type === "string" && ( ret = rcssNum.exec( value ) ) && ret[ 1 ] ) {
 				value = adjustCSS( elem, name, ret );
 
-				// Fixes bug #9237
+				// Fixes bug trac-9237
 				type = "number";
 			}
 
-			// Make sure that null and NaN values aren't set (#7116)
+			// Make sure that null and NaN values aren't set (trac-7116)
 			if ( value == null || value !== value ) {
 				return;
 			}
@@ -59489,7 +56732,7 @@ function Animation( elem, properties, options ) {
 				remaining = Math.max( 0, animation.startTime + animation.duration - currentTime ),
 
 				// Support: Android 2.3 only
-				// Archaic crash bug won't allow us to use `1 - ( 0.5 || 0 )` (#12497)
+				// Archaic crash bug won't allow us to use `1 - ( 0.5 || 0 )` (trac-12497)
 				temp = remaining / animation.duration || 0,
 				percent = 1 - temp,
 				index = 0,
@@ -59879,7 +57122,6 @@ jQuery.fx.speeds = {
 
 
 // Based off of the plugin by Clint Helfers, with permission.
-// https://web.archive.org/web/20100324014747/http://blindsignals.com/index.php/2009/07/jquery-delay/
 jQuery.fn.delay = function( time, type ) {
 	time = jQuery.fx ? jQuery.fx.speeds[ time ] || time : time;
 	type = type || "fx";
@@ -60104,8 +57346,7 @@ jQuery.extend( {
 				// Support: IE <=9 - 11 only
 				// elem.tabIndex doesn't always return the
 				// correct value when it hasn't been explicitly set
-				// https://web.archive.org/web/20141116233347/http://fluidproject.org/blog/2008/01/09/getting-setting-and-removing-tabindex-values-with-javascript/
-				// Use proper attribute retrieval(#12072)
+				// Use proper attribute retrieval (trac-12072)
 				var tabindex = jQuery.find.attr( elem, "tabindex" );
 
 				if ( tabindex ) {
@@ -60209,8 +57450,7 @@ function classesToArray( value ) {
 
 jQuery.fn.extend( {
 	addClass: function( value ) {
-		var classes, elem, cur, curValue, clazz, j, finalValue,
-			i = 0;
+		var classNames, cur, curValue, className, i, finalValue;
 
 		if ( isFunction( value ) ) {
 			return this.each( function( j ) {
@@ -60218,36 +57458,35 @@ jQuery.fn.extend( {
 			} );
 		}
 
-		classes = classesToArray( value );
+		classNames = classesToArray( value );
 
-		if ( classes.length ) {
-			while ( ( elem = this[ i++ ] ) ) {
-				curValue = getClass( elem );
-				cur = elem.nodeType === 1 && ( " " + stripAndCollapse( curValue ) + " " );
+		if ( classNames.length ) {
+			return this.each( function() {
+				curValue = getClass( this );
+				cur = this.nodeType === 1 && ( " " + stripAndCollapse( curValue ) + " " );
 
 				if ( cur ) {
-					j = 0;
-					while ( ( clazz = classes[ j++ ] ) ) {
-						if ( cur.indexOf( " " + clazz + " " ) < 0 ) {
-							cur += clazz + " ";
+					for ( i = 0; i < classNames.length; i++ ) {
+						className = classNames[ i ];
+						if ( cur.indexOf( " " + className + " " ) < 0 ) {
+							cur += className + " ";
 						}
 					}
 
 					// Only assign if different to avoid unneeded rendering.
 					finalValue = stripAndCollapse( cur );
 					if ( curValue !== finalValue ) {
-						elem.setAttribute( "class", finalValue );
+						this.setAttribute( "class", finalValue );
 					}
 				}
-			}
+			} );
 		}
 
 		return this;
 	},
 
 	removeClass: function( value ) {
-		var classes, elem, cur, curValue, clazz, j, finalValue,
-			i = 0;
+		var classNames, cur, curValue, className, i, finalValue;
 
 		if ( isFunction( value ) ) {
 			return this.each( function( j ) {
@@ -60259,44 +57498,41 @@ jQuery.fn.extend( {
 			return this.attr( "class", "" );
 		}
 
-		classes = classesToArray( value );
+		classNames = classesToArray( value );
 
-		if ( classes.length ) {
-			while ( ( elem = this[ i++ ] ) ) {
-				curValue = getClass( elem );
+		if ( classNames.length ) {
+			return this.each( function() {
+				curValue = getClass( this );
 
 				// This expression is here for better compressibility (see addClass)
-				cur = elem.nodeType === 1 && ( " " + stripAndCollapse( curValue ) + " " );
+				cur = this.nodeType === 1 && ( " " + stripAndCollapse( curValue ) + " " );
 
 				if ( cur ) {
-					j = 0;
-					while ( ( clazz = classes[ j++ ] ) ) {
+					for ( i = 0; i < classNames.length; i++ ) {
+						className = classNames[ i ];
 
 						// Remove *all* instances
-						while ( cur.indexOf( " " + clazz + " " ) > -1 ) {
-							cur = cur.replace( " " + clazz + " ", " " );
+						while ( cur.indexOf( " " + className + " " ) > -1 ) {
+							cur = cur.replace( " " + className + " ", " " );
 						}
 					}
 
 					// Only assign if different to avoid unneeded rendering.
 					finalValue = stripAndCollapse( cur );
 					if ( curValue !== finalValue ) {
-						elem.setAttribute( "class", finalValue );
+						this.setAttribute( "class", finalValue );
 					}
 				}
-			}
+			} );
 		}
 
 		return this;
 	},
 
 	toggleClass: function( value, stateVal ) {
-		var type = typeof value,
+		var classNames, className, i, self,
+			type = typeof value,
 			isValidValue = type === "string" || Array.isArray( value );
-
-		if ( typeof stateVal === "boolean" && isValidValue ) {
-			return stateVal ? this.addClass( value ) : this.removeClass( value );
-		}
 
 		if ( isFunction( value ) ) {
 			return this.each( function( i ) {
@@ -60307,17 +57543,20 @@ jQuery.fn.extend( {
 			} );
 		}
 
-		return this.each( function() {
-			var className, i, self, classNames;
+		if ( typeof stateVal === "boolean" && isValidValue ) {
+			return stateVal ? this.addClass( value ) : this.removeClass( value );
+		}
 
+		classNames = classesToArray( value );
+
+		return this.each( function() {
 			if ( isValidValue ) {
 
 				// Toggle individual class names
-				i = 0;
 				self = jQuery( this );
-				classNames = classesToArray( value );
 
-				while ( ( className = classNames[ i++ ] ) ) {
+				for ( i = 0; i < classNames.length; i++ ) {
+					className = classNames[ i ];
 
 					// Check each className given, space separated list
 					if ( self.hasClass( className ) ) {
@@ -60451,7 +57690,7 @@ jQuery.extend( {
 					val :
 
 					// Support: IE <=10 - 11 only
-					// option.text throws exceptions (#14686, #14858)
+					// option.text throws exceptions (trac-14686, trac-14858)
 					// Strip and collapse whitespace
 					// https://html.spec.whatwg.org/#strip-and-collapse-whitespace
 					stripAndCollapse( jQuery.text( elem ) );
@@ -60478,7 +57717,7 @@ jQuery.extend( {
 					option = options[ i ];
 
 					// Support: IE <=9 only
-					// IE8-9 doesn't update selected after form reset (#2551)
+					// IE8-9 doesn't update selected after form reset (trac-2551)
 					if ( ( option.selected || i === index ) &&
 
 							// Don't return options that are disabled or in a disabled optgroup
@@ -60621,8 +57860,8 @@ jQuery.extend( jQuery.event, {
 			return;
 		}
 
-		// Determine event propagation path in advance, per W3C events spec (#9951)
-		// Bubble up to document, then to window; watch for a global ownerDocument var (#9724)
+		// Determine event propagation path in advance, per W3C events spec (trac-9951)
+		// Bubble up to document, then to window; watch for a global ownerDocument var (trac-9724)
 		if ( !onlyHandlers && !special.noBubble && !isWindow( elem ) ) {
 
 			bubbleType = special.delegateType || type;
@@ -60674,7 +57913,7 @@ jQuery.extend( jQuery.event, {
 				acceptData( elem ) ) {
 
 				// Call a native DOM method on the target with the same name as the event.
-				// Don't do default actions on window, that's where global variables be (#6170)
+				// Don't do default actions on window, that's where global variables be (trac-6170)
 				if ( ontype && isFunction( elem[ type ] ) && !isWindow( elem ) ) {
 
 					// Don't re-trigger an onFOO event when we call its FOO() method
@@ -60948,7 +58187,7 @@ var
 	rantiCache = /([?&])_=[^&]*/,
 	rheaders = /^(.*?):[ \t]*([^\r\n]*)$/mg,
 
-	// #7653, #8125, #8152: local protocol detection
+	// trac-7653, trac-8125, trac-8152: local protocol detection
 	rlocalProtocol = /^(?:about|app|app-storage|.+-extension|file|res|widget):$/,
 	rnoContent = /^(?:GET|HEAD)$/,
 	rprotocol = /^\/\//,
@@ -60971,7 +58210,7 @@ var
 	 */
 	transports = {},
 
-	// Avoid comment-prolog char sequence (#10098); must appease lint and evade compression
+	// Avoid comment-prolog char sequence (trac-10098); must appease lint and evade compression
 	allTypes = "*/".concat( "*" ),
 
 	// Anchor tag for parsing the document origin
@@ -61042,7 +58281,7 @@ function inspectPrefiltersOrTransports( structure, options, originalOptions, jqX
 
 // A special extend for ajax options
 // that takes "flat" options (not to be deep extended)
-// Fixes #9887
+// Fixes trac-9887
 function ajaxExtend( target, src ) {
 	var key, deep,
 		flatOptions = jQuery.ajaxSettings.flatOptions || {};
@@ -61453,12 +58692,12 @@ jQuery.extend( {
 		deferred.promise( jqXHR );
 
 		// Add protocol if not provided (prefilters might expect it)
-		// Handle falsy url in the settings object (#10093: consistency with old signature)
+		// Handle falsy url in the settings object (trac-10093: consistency with old signature)
 		// We also use the url parameter if available
 		s.url = ( ( url || s.url || location.href ) + "" )
 			.replace( rprotocol, location.protocol + "//" );
 
-		// Alias method option to type as per ticket #12004
+		// Alias method option to type as per ticket trac-12004
 		s.type = options.method || options.type || s.method || s.type;
 
 		// Extract dataTypes list
@@ -61501,7 +58740,7 @@ jQuery.extend( {
 		}
 
 		// We can fire global events as of now if asked to
-		// Don't fire events if jQuery.event is undefined in an AMD-usage scenario (#15118)
+		// Don't fire events if jQuery.event is undefined in an AMD-usage scenario (trac-15118)
 		fireGlobals = jQuery.event && s.global;
 
 		// Watch for a new set of requests
@@ -61530,7 +58769,7 @@ jQuery.extend( {
 			if ( s.data && ( s.processData || typeof s.data === "string" ) ) {
 				cacheURL += ( rquery.test( cacheURL ) ? "&" : "?" ) + s.data;
 
-				// #9682: remove data so that it's not used in an eventual retry
+				// trac-9682: remove data so that it's not used in an eventual retry
 				delete s.data;
 			}
 
@@ -61803,7 +59042,7 @@ jQuery._evalUrl = function( url, options, doc ) {
 	return jQuery.ajax( {
 		url: url,
 
-		// Make this explicit, since user can override this through ajaxSetup (#11264)
+		// Make this explicit, since user can override this through ajaxSetup (trac-11264)
 		type: "GET",
 		dataType: "script",
 		cache: true,
@@ -61912,7 +59151,7 @@ var xhrSuccessStatus = {
 		0: 200,
 
 		// Support: IE <=9 only
-		// #1450: sometimes IE returns 1223 when it should be 204
+		// trac-1450: sometimes IE returns 1223 when it should be 204
 		1223: 204
 	},
 	xhrSupported = jQuery.ajaxSettings.xhr();
@@ -61984,7 +59223,7 @@ jQuery.ajaxTransport( function( options ) {
 								} else {
 									complete(
 
-										// File: protocol always yields status 0; see #8605, #14207
+										// File: protocol always yields status 0; see trac-8605, trac-14207
 										xhr.status,
 										xhr.statusText
 									);
@@ -62045,7 +59284,7 @@ jQuery.ajaxTransport( function( options ) {
 					xhr.send( options.hasContent && options.data || null );
 				} catch ( e ) {
 
-					// #14683: Only rethrow if this hasn't been notified as an error yet
+					// trac-14683: Only rethrow if this hasn't been notified as an error yet
 					if ( callback ) {
 						throw e;
 					}
@@ -62689,7 +59928,9 @@ jQuery.each(
 
 // Support: Android <=4.0 only
 // Make sure we trim BOM and NBSP
-var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
+// Require that the "whitespace run" starts from a non-whitespace
+// to avoid O(N^2) behavior when the engine would try matching "\s+$" at each space position.
+var rtrim = /^[\s\uFEFF\xA0]+|([^\s\uFEFF\xA0])[\s\uFEFF\xA0]+$/g;
 
 // Bind a function to a context, optionally partially applying any
 // arguments.
@@ -62756,7 +59997,7 @@ jQuery.isNumeric = function( obj ) {
 jQuery.trim = function( text ) {
 	return text == null ?
 		"" :
-		( text + "" ).replace( rtrim, "" );
+		( text + "" ).replace( rtrim, "$1" );
 };
 
 
@@ -62805,8 +60046,8 @@ jQuery.noConflict = function( deep ) {
 };
 
 // Expose jQuery and $ identifiers, even in AMD
-// (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
-// and CommonJS for browser emulators (#13566)
+// (trac-7102#comment:10, https://github.com/jquery/jquery/pull/557)
+// and CommonJS for browser emulators (trac-13566)
 if ( typeof noGlobal === "undefined" ) {
 	window.jQuery = window.$ = jQuery;
 }
@@ -62833,20 +60074,45 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _starter_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../starter/node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
 /* harmony import */ var _starter_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_starter_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _starter_node_modules_css_loader_dist_cjs_js_odm_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../starter/node_modules/css-loader/dist/cjs.js!./odm.css */ "./node_modules/css-loader/dist/cjs.js!../assets/odm.css");
+/* harmony import */ var _starter_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !../starter/node_modules/style-loader/dist/runtime/styleDomAPI.js */ "./node_modules/style-loader/dist/runtime/styleDomAPI.js");
+/* harmony import */ var _starter_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_starter_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _starter_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../starter/node_modules/style-loader/dist/runtime/insertBySelector.js */ "./node_modules/style-loader/dist/runtime/insertBySelector.js");
+/* harmony import */ var _starter_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_starter_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _starter_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../starter/node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js */ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js");
+/* harmony import */ var _starter_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_starter_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _starter_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! !../starter/node_modules/style-loader/dist/runtime/insertStyleElement.js */ "./node_modules/style-loader/dist/runtime/insertStyleElement.js");
+/* harmony import */ var _starter_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_starter_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _starter_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! !../starter/node_modules/style-loader/dist/runtime/styleTagTransform.js */ "./node_modules/style-loader/dist/runtime/styleTagTransform.js");
+/* harmony import */ var _starter_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_starter_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _starter_node_modules_css_loader_dist_cjs_js_odm_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! !!../starter/node_modules/css-loader/dist/cjs.js!./odm.css */ "./node_modules/css-loader/dist/cjs.js!../assets/odm.css");
 
-            
+      
+      
+      
+      
+      
+      
+      
+      
+      
 
 var options = {};
 
-options.insert = "head";
-options.singleton = false;
+options.styleTagTransform = (_starter_node_modules_style_loader_dist_runtime_styleTagTransform_js__WEBPACK_IMPORTED_MODULE_5___default());
+options.setAttributes = (_starter_node_modules_style_loader_dist_runtime_setAttributesWithoutAttributes_js__WEBPACK_IMPORTED_MODULE_3___default());
 
-var update = _starter_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_starter_node_modules_css_loader_dist_cjs_js_odm_css__WEBPACK_IMPORTED_MODULE_1__["default"], options);
+      options.insert = _starter_node_modules_style_loader_dist_runtime_insertBySelector_js__WEBPACK_IMPORTED_MODULE_2___default().bind(null, "head");
+    
+options.domAPI = (_starter_node_modules_style_loader_dist_runtime_styleDomAPI_js__WEBPACK_IMPORTED_MODULE_1___default());
+options.insertStyleElement = (_starter_node_modules_style_loader_dist_runtime_insertStyleElement_js__WEBPACK_IMPORTED_MODULE_4___default());
+
+var update = _starter_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_starter_node_modules_css_loader_dist_cjs_js_odm_css__WEBPACK_IMPORTED_MODULE_6__["default"], options);
 
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_starter_node_modules_css_loader_dist_cjs_js_odm_css__WEBPACK_IMPORTED_MODULE_1__["default"].locals || {});
+
+       /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_starter_node_modules_css_loader_dist_cjs_js_odm_css__WEBPACK_IMPORTED_MODULE_6__["default"] && _starter_node_modules_css_loader_dist_cjs_js_odm_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals ? _starter_node_modules_css_loader_dist_cjs_js_odm_css__WEBPACK_IMPORTED_MODULE_6__["default"].locals : undefined);
+
 
 /***/ }),
 
@@ -62854,58 +60120,18 @@ var update = _starter_node_modules_style_loader_dist_runtime_injectStylesIntoSty
 /*!****************************************************************************!*\
   !*** ./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js ***!
   \****************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ ((module) => {
 
 "use strict";
 
 
-var isOldIE = function isOldIE() {
-  var memo;
-  return function memorize() {
-    if (typeof memo === 'undefined') {
-      // Test for IE <= 9 as proposed by Browserhacks
-      // @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
-      // Tests for existence of standard globals is to allow style-loader
-      // to operate correctly into non-standard environments
-      // @see https://github.com/webpack-contrib/style-loader/issues/177
-      memo = Boolean(window && document && document.all && !window.atob);
-    }
-
-    return memo;
-  };
-}();
-
-var getTarget = function getTarget() {
-  var memo = {};
-  return function memorize(target) {
-    if (typeof memo[target] === 'undefined') {
-      var styleTarget = document.querySelector(target); // Special case to return head of iframe instead of iframe itself
-
-      if (window.HTMLIFrameElement && styleTarget instanceof window.HTMLIFrameElement) {
-        try {
-          // This will throw an exception if access to iframe is blocked
-          // due to cross-origin restrictions
-          styleTarget = styleTarget.contentDocument.head;
-        } catch (e) {
-          // istanbul ignore next
-          styleTarget = null;
-        }
-      }
-
-      memo[target] = styleTarget;
-    }
-
-    return memo[target];
-  };
-}();
-
-var stylesInDom = [];
+var stylesInDOM = [];
 
 function getIndexByIdentifier(identifier) {
   var result = -1;
 
-  for (var i = 0; i < stylesInDom.length; i++) {
-    if (stylesInDom[i].identifier === identifier) {
+  for (var i = 0; i < stylesInDOM.length; i++) {
+    if (stylesInDOM[i].identifier === identifier) {
       result = i;
       break;
     }
@@ -62924,20 +60150,24 @@ function modulesToDom(list, options) {
     var count = idCountMap[id] || 0;
     var identifier = "".concat(id, " ").concat(count);
     idCountMap[id] = count + 1;
-    var index = getIndexByIdentifier(identifier);
+    var indexByIdentifier = getIndexByIdentifier(identifier);
     var obj = {
       css: item[1],
       media: item[2],
-      sourceMap: item[3]
+      sourceMap: item[3],
+      supports: item[4],
+      layer: item[5]
     };
 
-    if (index !== -1) {
-      stylesInDom[index].references++;
-      stylesInDom[index].updater(obj);
+    if (indexByIdentifier !== -1) {
+      stylesInDOM[indexByIdentifier].references++;
+      stylesInDOM[indexByIdentifier].updater(obj);
     } else {
-      stylesInDom.push({
+      var updater = addElementStyle(obj, options);
+      options.byIndex = i;
+      stylesInDOM.splice(i, 0, {
         identifier: identifier,
-        updater: addStyle(obj, options),
+        updater: updater,
         references: 1
       });
     }
@@ -62948,165 +60178,36 @@ function modulesToDom(list, options) {
   return identifiers;
 }
 
-function insertStyleElement(options) {
-  var style = document.createElement('style');
-  var attributes = options.attributes || {};
+function addElementStyle(obj, options) {
+  var api = options.domAPI(options);
+  api.update(obj);
 
-  if (typeof attributes.nonce === 'undefined') {
-    var nonce =  true ? __webpack_require__.nc : 0;
-
-    if (nonce) {
-      attributes.nonce = nonce;
-    }
-  }
-
-  Object.keys(attributes).forEach(function (key) {
-    style.setAttribute(key, attributes[key]);
-  });
-
-  if (typeof options.insert === 'function') {
-    options.insert(style);
-  } else {
-    var target = getTarget(options.insert || 'head');
-
-    if (!target) {
-      throw new Error("Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.");
-    }
-
-    target.appendChild(style);
-  }
-
-  return style;
-}
-
-function removeStyleElement(style) {
-  // istanbul ignore if
-  if (style.parentNode === null) {
-    return false;
-  }
-
-  style.parentNode.removeChild(style);
-}
-/* istanbul ignore next  */
-
-
-var replaceText = function replaceText() {
-  var textStore = [];
-  return function replace(index, replacement) {
-    textStore[index] = replacement;
-    return textStore.filter(Boolean).join('\n');
-  };
-}();
-
-function applyToSingletonTag(style, index, remove, obj) {
-  var css = remove ? '' : obj.media ? "@media ".concat(obj.media, " {").concat(obj.css, "}") : obj.css; // For old IE
-
-  /* istanbul ignore if  */
-
-  if (style.styleSheet) {
-    style.styleSheet.cssText = replaceText(index, css);
-  } else {
-    var cssNode = document.createTextNode(css);
-    var childNodes = style.childNodes;
-
-    if (childNodes[index]) {
-      style.removeChild(childNodes[index]);
-    }
-
-    if (childNodes.length) {
-      style.insertBefore(cssNode, childNodes[index]);
-    } else {
-      style.appendChild(cssNode);
-    }
-  }
-}
-
-function applyToTag(style, options, obj) {
-  var css = obj.css;
-  var media = obj.media;
-  var sourceMap = obj.sourceMap;
-
-  if (media) {
-    style.setAttribute('media', media);
-  } else {
-    style.removeAttribute('media');
-  }
-
-  if (sourceMap && typeof btoa !== 'undefined') {
-    css += "\n/*# sourceMappingURL=data:application/json;base64,".concat(btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))), " */");
-  } // For old IE
-
-  /* istanbul ignore if  */
-
-
-  if (style.styleSheet) {
-    style.styleSheet.cssText = css;
-  } else {
-    while (style.firstChild) {
-      style.removeChild(style.firstChild);
-    }
-
-    style.appendChild(document.createTextNode(css));
-  }
-}
-
-var singleton = null;
-var singletonCounter = 0;
-
-function addStyle(obj, options) {
-  var style;
-  var update;
-  var remove;
-
-  if (options.singleton) {
-    var styleIndex = singletonCounter++;
-    style = singleton || (singleton = insertStyleElement(options));
-    update = applyToSingletonTag.bind(null, style, styleIndex, false);
-    remove = applyToSingletonTag.bind(null, style, styleIndex, true);
-  } else {
-    style = insertStyleElement(options);
-    update = applyToTag.bind(null, style, options);
-
-    remove = function remove() {
-      removeStyleElement(style);
-    };
-  }
-
-  update(obj);
-  return function updateStyle(newObj) {
+  var updater = function updater(newObj) {
     if (newObj) {
-      if (newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap) {
+      if (newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap && newObj.supports === obj.supports && newObj.layer === obj.layer) {
         return;
       }
 
-      update(obj = newObj);
+      api.update(obj = newObj);
     } else {
-      remove();
+      api.remove();
     }
   };
+
+  return updater;
 }
 
 module.exports = function (list, options) {
-  options = options || {}; // Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-  // tags it will allow on a page
-
-  if (!options.singleton && typeof options.singleton !== 'boolean') {
-    options.singleton = isOldIE();
-  }
-
+  options = options || {};
   list = list || [];
   var lastIdentifiers = modulesToDom(list, options);
   return function update(newList) {
     newList = newList || [];
 
-    if (Object.prototype.toString.call(newList) !== '[object Array]') {
-      return;
-    }
-
     for (var i = 0; i < lastIdentifiers.length; i++) {
       var identifier = lastIdentifiers[i];
       var index = getIndexByIdentifier(identifier);
-      stylesInDom[index].references--;
+      stylesInDOM[index].references--;
     }
 
     var newLastIdentifiers = modulesToDom(newList, options);
@@ -63116,16 +60217,214 @@ module.exports = function (list, options) {
 
       var _index = getIndexByIdentifier(_identifier);
 
-      if (stylesInDom[_index].references === 0) {
-        stylesInDom[_index].updater();
+      if (stylesInDOM[_index].references === 0) {
+        stylesInDOM[_index].updater();
 
-        stylesInDom.splice(_index, 1);
+        stylesInDOM.splice(_index, 1);
       }
     }
 
     lastIdentifiers = newLastIdentifiers;
   };
 };
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/dist/runtime/insertBySelector.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/style-loader/dist/runtime/insertBySelector.js ***!
+  \********************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+var memo = {};
+/* istanbul ignore next  */
+
+function getTarget(target) {
+  if (typeof memo[target] === "undefined") {
+    var styleTarget = document.querySelector(target); // Special case to return head of iframe instead of iframe itself
+
+    if (window.HTMLIFrameElement && styleTarget instanceof window.HTMLIFrameElement) {
+      try {
+        // This will throw an exception if access to iframe is blocked
+        // due to cross-origin restrictions
+        styleTarget = styleTarget.contentDocument.head;
+      } catch (e) {
+        // istanbul ignore next
+        styleTarget = null;
+      }
+    }
+
+    memo[target] = styleTarget;
+  }
+
+  return memo[target];
+}
+/* istanbul ignore next  */
+
+
+function insertBySelector(insert, style) {
+  var target = getTarget(insert);
+
+  if (!target) {
+    throw new Error("Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.");
+  }
+
+  target.appendChild(style);
+}
+
+module.exports = insertBySelector;
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/dist/runtime/insertStyleElement.js":
+/*!**********************************************************************!*\
+  !*** ./node_modules/style-loader/dist/runtime/insertStyleElement.js ***!
+  \**********************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+/* istanbul ignore next  */
+function insertStyleElement(options) {
+  var element = document.createElement("style");
+  options.setAttributes(element, options.attributes);
+  options.insert(element, options.options);
+  return element;
+}
+
+module.exports = insertStyleElement;
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js":
+/*!**********************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/runtime/setAttributesWithoutAttributes.js ***!
+  \**********************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+
+/* istanbul ignore next  */
+function setAttributesWithoutAttributes(styleElement) {
+  var nonce =  true ? __webpack_require__.nc : 0;
+
+  if (nonce) {
+    styleElement.setAttribute("nonce", nonce);
+  }
+}
+
+module.exports = setAttributesWithoutAttributes;
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/dist/runtime/styleDomAPI.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/style-loader/dist/runtime/styleDomAPI.js ***!
+  \***************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+/* istanbul ignore next  */
+function apply(styleElement, options, obj) {
+  var css = "";
+
+  if (obj.supports) {
+    css += "@supports (".concat(obj.supports, ") {");
+  }
+
+  if (obj.media) {
+    css += "@media ".concat(obj.media, " {");
+  }
+
+  var needLayer = typeof obj.layer !== "undefined";
+
+  if (needLayer) {
+    css += "@layer".concat(obj.layer.length > 0 ? " ".concat(obj.layer) : "", " {");
+  }
+
+  css += obj.css;
+
+  if (needLayer) {
+    css += "}";
+  }
+
+  if (obj.media) {
+    css += "}";
+  }
+
+  if (obj.supports) {
+    css += "}";
+  }
+
+  var sourceMap = obj.sourceMap;
+
+  if (sourceMap && typeof btoa !== "undefined") {
+    css += "\n/*# sourceMappingURL=data:application/json;base64,".concat(btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))), " */");
+  } // For old IE
+
+  /* istanbul ignore if  */
+
+
+  options.styleTagTransform(css, styleElement, options.options);
+}
+
+function removeStyleElement(styleElement) {
+  // istanbul ignore if
+  if (styleElement.parentNode === null) {
+    return false;
+  }
+
+  styleElement.parentNode.removeChild(styleElement);
+}
+/* istanbul ignore next  */
+
+
+function domAPI(options) {
+  var styleElement = options.insertStyleElement(options);
+  return {
+    update: function update(obj) {
+      apply(styleElement, options, obj);
+    },
+    remove: function remove() {
+      removeStyleElement(styleElement);
+    }
+  };
+}
+
+module.exports = domAPI;
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/dist/runtime/styleTagTransform.js":
+/*!*********************************************************************!*\
+  !*** ./node_modules/style-loader/dist/runtime/styleTagTransform.js ***!
+  \*********************************************************************/
+/***/ ((module) => {
+
+"use strict";
+
+
+/* istanbul ignore next  */
+function styleTagTransform(css, styleElement) {
+  if (styleElement.styleSheet) {
+    styleElement.styleSheet.cssText = css;
+  } else {
+    while (styleElement.firstChild) {
+      styleElement.removeChild(styleElement.firstChild);
+    }
+
+    styleElement.appendChild(document.createTextNode(css));
+  }
+}
+
+module.exports = styleTagTransform;
 
 /***/ }),
 

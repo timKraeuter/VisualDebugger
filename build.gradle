@@ -1,13 +1,13 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '1.9.0'
+    id 'org.jetbrains.intellij' version '1.10.0'
     id "org.sonarqube" version "3.2.0"
     id 'jacoco'
     id ("net.ltgt.errorprone") version "3.0.1"
 }
 
 group 'no.hvl.tk'
-version '1.9.1'
+version '1.9.2'
 
 repositories {
     mavenCentral()
