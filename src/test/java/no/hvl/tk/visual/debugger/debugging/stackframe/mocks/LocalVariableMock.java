@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class LocalVariableMock implements LocalVariable {
 
-    private String name;
-    private String typeName;
+    private final String name;
+    private final String typeName;
 
     public LocalVariableMock(String name, String typeName) {
         this.name = name;

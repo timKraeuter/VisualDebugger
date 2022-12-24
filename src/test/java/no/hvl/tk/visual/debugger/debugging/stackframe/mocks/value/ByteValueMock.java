@@ -5,17 +5,7 @@ import com.sun.jdi.Type;
 import com.sun.jdi.VirtualMachine;
 import org.jetbrains.annotations.NotNull;
 
-public class ByteValueMock implements ByteValue {
-    private final byte value;
-
-    public ByteValueMock(byte value) {
-        this.value = value;
-    }
-
-    @Override
-    public byte value() {
-        return value;
-    }
+public record ByteValueMock(byte value) implements ByteValue {
 
     @Override
     public byte byteValue() {

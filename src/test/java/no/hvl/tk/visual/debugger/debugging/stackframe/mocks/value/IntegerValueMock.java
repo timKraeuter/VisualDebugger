@@ -6,18 +6,8 @@ import com.sun.jdi.VirtualMachine;
 import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.TypeMock;
 import org.jetbrains.annotations.NotNull;
 
-public class IntegerValueMock implements IntegerValue {
+public record IntegerValueMock(int value) implements IntegerValue {
     public static final String TYPE_NAME = "java.lang.Integer";
-    private final int value;
-
-    public IntegerValueMock(final int value) {
-        this.value = value;
-    }
-
-    @Override
-    public int value() {
-        return this.value;
-    }
 
     @Override
     public Type type() {

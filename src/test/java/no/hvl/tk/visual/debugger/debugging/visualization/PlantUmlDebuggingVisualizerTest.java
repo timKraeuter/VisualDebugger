@@ -17,9 +17,11 @@ class PlantUmlDebuggingVisualizerTest {
     void toPlantUMLStringEmptyDiagramTest() {
         final ObjectDiagram diagram = new ObjectDiagram();
         final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(diagram);
-        assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("@startuml\n" +
-                "!pragma layout smetana\n" +
-                "@enduml\n"));
+        assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("""
+                                                                                               @startuml
+                                                                                               !pragma layout smetana
+                                                                                               @enduml
+                                                                                               """));
     }
 
     @Test
@@ -30,14 +32,16 @@ class PlantUmlDebuggingVisualizerTest {
         diagram.addPrimitiveRootValue(new ODPrimitiveRootValue("byte", "Byte", "1"));
         final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(diagram);
 
-        assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("@startuml\n" +
-                "!pragma layout smetana\n" +
-                "object \"PrimitiveVariables\" as primitiveVariables {\n" +
-                "byte=1\n" +
-                "double=1.2\n" +
-                "int=1\n" +
-                "}\n" +
-                "@enduml\n"));
+        assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("""
+                                                                                               @startuml
+                                                                                               !pragma layout smetana
+                                                                                               object "PrimitiveVariables" as primitiveVariables {
+                                                                                               byte=1
+                                                                                               double=1.2
+                                                                                               int=1
+                                                                                               }
+                                                                                               @enduml
+                                                                                               """));
     }
 
     @Test
@@ -50,13 +54,15 @@ class PlantUmlDebuggingVisualizerTest {
 
         final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(diagram);
 
-        assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("@startuml\n" +
-                "!pragma layout smetana\n" +
-                "object \"foldingWallTable:Product\" as 1 {\n" +
-                "name=\"folding wall table\"\n" +
-                "price=25\n" +
-                "}\n" +
-                "@enduml\n"));
+        assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("""
+                                                                                               @startuml
+                                                                                               !pragma layout smetana
+                                                                                               object "foldingWallTable:Product" as 1 {
+                                                                                               name="folding wall table"
+                                                                                               price=25
+                                                                                               }
+                                                                                               @enduml
+                                                                                               """));
     }
 
     @NotNull
@@ -80,13 +86,15 @@ class PlantUmlDebuggingVisualizerTest {
 
         final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(diagram);
 
-        assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("@startuml\n" +
-                "!pragma layout smetana\n" +
-                "object \"1:Person\" as 1\n" +
-                "object \"2:Person\" as 2\n" +
-                "1 --> 2 : friends\n" +
-                "2 --> 1 : friends\n" +
-                "@enduml\n"));
+        assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("""
+                                                                                               @startuml
+                                                                                               !pragma layout smetana
+                                                                                               object "1:Person" as 1
+                                                                                               object "2:Person" as 2
+                                                                                               1 --> 2 : friends
+                                                                                               2 --> 1 : friends
+                                                                                               @enduml
+                                                                                               """));
     }
 
     @Test
@@ -131,18 +139,20 @@ class PlantUmlDebuggingVisualizerTest {
 
         final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(diagram);
 
-        assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("@startuml\n" +
-                "!pragma layout smetana\n" +
-                "map \"hashMap:HashMap\" as 1 {\n" +
-                "key1 => value2\n" +
-                "key3 => value4\n" +
-                "key5 => value6\n" +
-                "}\n" +
-                "map \"otherMap:SomeOtherMap\" as 5 {\n" +
-                "key7 => value8\n" +
-                "key9 => value10\n" +
-                "}\n" +
-                "@enduml\n"));
+        assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("""
+                                                                                               @startuml
+                                                                                               !pragma layout smetana
+                                                                                               map "hashMap:HashMap" as 1 {
+                                                                                               key1 => value2
+                                                                                               key3 => value4
+                                                                                               key5 => value6
+                                                                                               }
+                                                                                               map "otherMap:SomeOtherMap" as 5 {
+                                                                                               key7 => value8
+                                                                                               key9 => value10
+                                                                                               }
+                                                                                               @enduml
+                                                                                               """));
     }
 
     @Test
@@ -174,14 +184,16 @@ class PlantUmlDebuggingVisualizerTest {
 
         final String plantUMLString = PlantUmlDebuggingVisualizer.toPlantUMLString(diagram);
 
-        assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("@startuml\n" +
-                "!pragma layout smetana\n" +
-                "map \"hashMap:HashMap\" as 1 {\n" +
-                "key1 => value2\n" +
-                "key3 => null\n" +
-                "null => value4\n" +
-                "}\n" +
-                "@enduml\n"));
+        assertThat(PlantUmlDebuggingVisualizerTest.normalizeString(plantUMLString), is("""
+                                                                                               @startuml
+                                                                                               !pragma layout smetana
+                                                                                               map "hashMap:HashMap" as 1 {
+                                                                                               key1 => value2
+                                                                                               key3 => null
+                                                                                               null => value4
+                                                                                               }
+                                                                                               @enduml
+                                                                                               """));
     }
 
     private void addKeyValueToNode(final ODObject hashMapNode1) {

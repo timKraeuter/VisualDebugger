@@ -5,17 +5,7 @@ import com.sun.jdi.Type;
 import com.sun.jdi.VirtualMachine;
 import org.jetbrains.annotations.NotNull;
 
-public class CharValueMock implements CharValue {
-    private final char value;
-
-    public CharValueMock(char value) {
-        this.value = value;
-    }
-
-    @Override
-    public char value() {
-        return value;
-    }
+public record CharValueMock(char value) implements CharValue {
 
     // Below is irrelevant
 

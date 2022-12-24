@@ -5,17 +5,7 @@ import com.sun.jdi.Type;
 import com.sun.jdi.VirtualMachine;
 import org.jetbrains.annotations.NotNull;
 
-public class DoubleValueMock implements DoubleValue {
-    private final double value;
-
-    public DoubleValueMock(double value) {
-        this.value = value;
-    }
-
-    @Override
-    public double value() {
-        return value;
-    }
+public record DoubleValueMock(double value) implements DoubleValue {
 
     // Below is irrelevant
 

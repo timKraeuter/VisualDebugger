@@ -5,17 +5,7 @@ import com.sun.jdi.Type;
 import com.sun.jdi.VirtualMachine;
 import org.jetbrains.annotations.NotNull;
 
-public class LongValueMock implements LongValue {
-    private final long value;
-
-    public LongValueMock(long value) {
-        this.value = value;
-    }
-
-    @Override
-    public long value() {
-        return value;
-    }
+public record LongValueMock(long value) implements LongValue {
 
     // Below is irrelevant
 

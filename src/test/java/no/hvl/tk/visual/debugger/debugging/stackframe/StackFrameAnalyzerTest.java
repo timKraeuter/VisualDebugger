@@ -419,7 +419,7 @@ class StackFrameAnalyzerTest {
                                                                       mapVarName);
         // 4 links to the 4 map entries
         assertThat(mapObject.getLinks().size(), is(4));
-        List<ODObject> mapEntries = mapObject.getLinks().stream().map(ODLink::getTo).collect(Collectors.toList());
+        List<ODObject> mapEntries = mapObject.getLinks().stream().map(ODLink::getTo).toList();
         // Check one entry
         ODObject firstEntry = mapEntries.get(0);
         assertThat(firstEntry.getAttributeValues().size(), is(1));

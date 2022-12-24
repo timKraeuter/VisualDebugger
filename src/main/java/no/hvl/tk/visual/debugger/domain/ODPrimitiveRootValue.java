@@ -48,8 +48,7 @@ public class ODPrimitiveRootValue implements Comparable<ODPrimitiveRootValue> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ODPrimitiveRootValue)) return false;
-        ODPrimitiveRootValue that = (ODPrimitiveRootValue) o;
+        if (!(o instanceof ODPrimitiveRootValue that)) return false;
         return Objects.equal(variableName, that.variableName) && Objects.equal(type, that.type) && Objects.equal(value, that.value);
     }
 

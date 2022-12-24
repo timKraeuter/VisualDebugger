@@ -99,10 +99,9 @@ public class ODObject implements Comparable<ODObject> {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ODObject)) {
+        if (!(o instanceof final ODObject odObject)) {
             return false;
         }
-        final var odObject = (ODObject) o;
         return this.id == odObject.id;
     }
 

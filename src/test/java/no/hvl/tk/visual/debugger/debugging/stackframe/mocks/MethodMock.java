@@ -5,17 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class MethodMock implements Method {
-    private final String name;
-
-    public MethodMock(final String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String name() {
-        return this.name;
-    }
+public record MethodMock(String name) implements Method {
 
     // Below is irrelevant
 

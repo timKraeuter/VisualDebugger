@@ -12,13 +12,9 @@ public enum DebuggingVisualizerOption {
 
     @Override
     public String toString() {
-        switch (this) {
-            case WEB_UI:
-                return "Browser visualizer";
-            case EMBEDDED:
-                return "Embedded visualizer (no interaction)";
-            default:
-                return "Uncovered visualizer option!";
-        }
+        return switch (this) {
+            case WEB_UI -> "Browser visualizer";
+            case EMBEDDED -> "Embedded visualizer (no interaction)";
+        };
     }
 }

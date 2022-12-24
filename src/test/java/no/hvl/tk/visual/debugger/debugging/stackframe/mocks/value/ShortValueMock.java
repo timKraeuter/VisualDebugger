@@ -5,17 +5,7 @@ import com.sun.jdi.Type;
 import com.sun.jdi.VirtualMachine;
 import org.jetbrains.annotations.NotNull;
 
-public class ShortValueMock implements ShortValue {
-    private final short value;
-
-    public ShortValueMock(short value) {
-        this.value = value;
-    }
-
-    @Override
-    public short value() {
-        return value;
-    }
+public record ShortValueMock(short value) implements ShortValue {
 
     @Override
     public short shortValue() {

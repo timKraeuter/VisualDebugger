@@ -5,17 +5,7 @@ import com.sun.jdi.Type;
 import com.sun.jdi.VirtualMachine;
 import org.jetbrains.annotations.NotNull;
 
-public class FloatValueMock implements FloatValue {
-    private final float value;
-
-    public FloatValueMock(float value) {
-        this.value = value;
-    }
-
-    @Override
-    public float value() {
-        return value;
-    }
+public record FloatValueMock(float value) implements FloatValue {
 
     // Below is irrelevant
 

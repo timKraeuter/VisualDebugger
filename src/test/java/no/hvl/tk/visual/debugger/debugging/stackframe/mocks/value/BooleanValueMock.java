@@ -4,17 +4,7 @@ import com.sun.jdi.BooleanValue;
 import com.sun.jdi.Type;
 import com.sun.jdi.VirtualMachine;
 
-public class BooleanValueMock implements BooleanValue {
-    private final boolean value;
-
-    public BooleanValueMock(boolean value) {
-        this.value = value;
-    }
-
-    @Override
-    public boolean value() {
-        return value;
-    }
+public record BooleanValueMock(boolean value) implements BooleanValue {
 
     @Override
     public boolean booleanValue() {

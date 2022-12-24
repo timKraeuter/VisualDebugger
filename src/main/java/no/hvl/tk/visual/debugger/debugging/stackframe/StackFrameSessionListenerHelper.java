@@ -48,8 +48,8 @@ public class StackFrameSessionListenerHelper {
     }
 
     static boolean implementsInterface(ObjectReference obj, String iface) {
-        if (obj.referenceType() instanceof ClassType) {
-            Queue<InterfaceType> queue = new ArrayDeque<>(((ClassType) obj.referenceType()).interfaces());
+        if (obj.referenceType() instanceof ClassType classType) {
+            Queue<InterfaceType> queue = new ArrayDeque<>(classType.interfaces());
             while (!queue.isEmpty()) {
                 InterfaceType t = queue.poll();
                 if (t.name().equals(iface)) {

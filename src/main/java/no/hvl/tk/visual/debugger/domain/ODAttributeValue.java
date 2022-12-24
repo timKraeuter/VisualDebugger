@@ -45,10 +45,9 @@ public class ODAttributeValue {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ODAttributeValue)) {
+        if (!(o instanceof final ODAttributeValue that)) {
             return false;
         }
-        final ODAttributeValue that = (ODAttributeValue) o;
         return Objects.equal(this.name, that.name) && Objects.equal(this.type, that.type) && Objects.equal(this.value, that.value);
     }
 

@@ -11,8 +11,8 @@ import java.util.Map;
 
 public class StackFrameMock implements StackFrame {
 
-    private ObjectReference thisObj;
-    private Map<LocalVariable, Value> localVars = new HashMap<>();
+    private final ObjectReference thisObj;
+    private final Map<LocalVariable, Value> localVars = new HashMap<>();
 
     public StackFrameMock(ObjectReference thisObj) {
         this.thisObj = thisObj;
