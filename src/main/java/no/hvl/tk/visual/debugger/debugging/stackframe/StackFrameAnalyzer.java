@@ -8,7 +8,6 @@ import no.hvl.tk.visual.debugger.domain.PrimitiveTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionListenerHelper.*;
 
@@ -121,11 +120,11 @@ public class StackFrameAnalyzer {
                               remainingDepthToBeExplored);
             return;
         }
-        if (objectReference instanceof ArrayReference && !this.seenObjectIds.contains(objectReference.uniqueID())) {
+        if (objectReference instanceof ArrayReference arrayReference && !this.seenObjectIds.contains(objectReference.uniqueID())) {
             this.seenObjectIds.add(objectReference.uniqueID());
             this.convertArray(
                     odObject.getVariableName(),
-                    (ArrayReference) objectReference,
+                    arrayReference,
                     objectType,
                     parentIfExists,
                     linkTypeIfExists,
@@ -188,7 +187,7 @@ public class StackFrameAnalyzer {
     private List<Field> getNonStaticFields(final ObjectReference objectReference) {
         return objectReference.referenceType().allFields().stream()
                               .filter(field -> !field.isStatic())
-                              .collect(Collectors.toList());
+                              .toList();
     }
 
     private void convertArray(
@@ -388,48 +387,48 @@ public class StackFrameAnalyzer {
             final String linkTypeIfExists,
             final boolean loadingObjectsPhase,
             int remainingDepthToBeExplored) {
-        if (variableValue instanceof BooleanValue) {
-            final String value = String.valueOf(((BooleanValue) variableValue).value());
+        if (variableValue instanceof BooleanValue booleanValue) {
+            final String value = String.valueOf(booleanValue.value());
             this.addVariableToDiagram(variableName, variableType, value, parentIfExists);
             return;
         }
-        if (variableValue instanceof ByteValue) {
-            final String value = String.valueOf(((ByteValue) variableValue).value());
+        if (variableValue instanceof ByteValue byteValue) {
+            final String value = String.valueOf(byteValue.value());
             this.addVariableToDiagram(variableName, variableType, value, parentIfExists);
             return;
         }
-        if (variableValue instanceof ShortValue) {
-            final String value = String.valueOf(((ShortValue) variableValue).value());
+        if (variableValue instanceof ShortValue shortValue) {
+            final String value = String.valueOf(shortValue.value());
             this.addVariableToDiagram(variableName, variableType, value, parentIfExists);
             return;
         }
-        if (variableValue instanceof IntegerValue) {
-            final String value = Integer.toString(((IntegerValue) variableValue).value());
+        if (variableValue instanceof IntegerValue integerValue) {
+            final String value = Integer.toString(integerValue.value());
             this.addVariableToDiagram(variableName, variableType, value, parentIfExists);
             return;
         }
-        if (variableValue instanceof LongValue) {
-            final String value = Long.toString(((LongValue) variableValue).value());
+        if (variableValue instanceof LongValue longValue) {
+            final String value = Long.toString(longValue.value());
             this.addVariableToDiagram(variableName, variableType, value, parentIfExists);
             return;
         }
-        if (variableValue instanceof FloatValue) {
-            final String value = Float.toString(((FloatValue) variableValue).value());
+        if (variableValue instanceof FloatValue floatValue) {
+            final String value = Float.toString(floatValue.value());
             this.addVariableToDiagram(variableName, variableType, value, parentIfExists);
             return;
         }
-        if (variableValue instanceof DoubleValue) {
-            final String value = Double.toString(((DoubleValue) variableValue).value());
+        if (variableValue instanceof DoubleValue doubleValue) {
+            final String value = Double.toString(doubleValue.value());
             this.addVariableToDiagram(variableName, variableType, value, parentIfExists);
             return;
         }
-        if (variableValue instanceof CharValue) {
-            final String value = Character.toString(((CharValue) variableValue).value());
+        if (variableValue instanceof CharValue charValue) {
+            final String value = Character.toString(charValue.value());
             this.addVariableToDiagram(variableName, variableType, String.format("'%s'", value), parentIfExists);
             return;
         }
-        if (variableValue instanceof StringReference) {
-            final String value = ((StringReference) variableValue).value();
+        if (variableValue instanceof StringReference stringReference) {
+            final String value = stringReference.value();
             this.addVariableToDiagram(variableName, variableType, String.format("\"%s\"", value), parentIfExists);
             return;
         }
