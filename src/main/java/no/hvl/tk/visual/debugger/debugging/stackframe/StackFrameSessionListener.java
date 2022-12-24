@@ -31,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class StackFrameSessionListener implements XDebugSessionListener {
 
@@ -154,15 +153,12 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     public DebuggingInfoVisualizer getOrCreateDebuggingInfoVisualizer() {
         if (this.debuggingVisualizer == null) {
             switch (PluginSettingsState.getInstance().getVisualizerOption()) {
-                case WEB_UI:
-                    this.debuggingVisualizer = new WebSocketDebuggingVisualizer(this.userInterface);
-                    break;
-                case EMBEDDED:
-                    this.debuggingVisualizer = new PlantUmlDebuggingVisualizer(this.userInterface);
-                    break;
-                default:
+                case WEB_UI -> this.debuggingVisualizer = new WebSocketDebuggingVisualizer(this.userInterface);
+                case EMBEDDED -> this.debuggingVisualizer = new PlantUmlDebuggingVisualizer(this.userInterface);
+                default -> {
                     LOGGER.warn("Unrecognized debugging visualizer chosen. Defaulting to web visualizer!");
                     this.debuggingVisualizer = new WebSocketDebuggingVisualizer(this.userInterface);
+                }
             }
         }
         return this.debuggingVisualizer;
@@ -198,8 +194,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     @NotNull
     private java.util.List<String> getGivenStackFrames() {
         try {
-            return this.thread.frames().stream().map(stackFrame -> stackFrame.location().declaringType().name()).collect(
-                    Collectors.toList());
+            return this.thread.frames().stream().map(stackFrame -> stackFrame.location().declaringType().name()).toList();
         }
         catch (IncompatibleThreadStateException e) {
             LOGGER.error(e);

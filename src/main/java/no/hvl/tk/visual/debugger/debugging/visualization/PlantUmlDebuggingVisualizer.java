@@ -19,7 +19,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     private static final Logger LOGGER = Logger.getInstance(PlantUmlDebuggingVisualizer.class);
@@ -86,7 +85,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         final List<ODObject> sortedObjects = objectDiagram.getObjects()
                                                           .stream()
                                                           .sorted()
-                                                          .collect(Collectors.toList());
+                                                          .toList();
 
         final Set<ODLink> mapLinks = new HashSet<>();
         // Add objects with attributes and collect links. They have to be added after objects.
