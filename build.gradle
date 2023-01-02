@@ -82,7 +82,7 @@ sonarqube {
     }
 }
 
-tasks.compileJava {
+tasks.compileTestJava {
     // Ignore scenarios test. Not working correctly yet.
-    options.errorprone.excludedPaths = ".*/DebuggingScenariosTest.java"
+    options.errorprone.excludedPaths = ".*/manueltests/.*"
 }
