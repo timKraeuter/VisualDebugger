@@ -83,6 +83,6 @@ sonarqube {
 }
 
 tasks.compileTestJava {
-    // Ignore scenarios test. Not working correctly yet.
+    // Ignore manuel tests.
     options.errorprone.excludedPaths = ".*/manueltests/.*"
 }
