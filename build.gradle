@@ -42,25 +42,29 @@ dependencies {
     errorprone("com.google.errorprone:error_prone_core:2.16")
 }
 
-// See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     version = '2022.3'
     plugins = ['java']
 }
+
 patchPluginXml {
     changeNotes = """Updated to IntelliJ 2022.3"""
 }
+
 test {
     useJUnitPlatform()
     jacoco {
         includeNoLocationClasses = true
         excludes = ["jdk.internal.*"]
     }
-    finalizedBy jacocoTestReport
 }
 
 tasks.runIde {
     jvmArgs("--add-exports", "java.base/jdk.internal.vm=ALL-UNNAMED")
+}
+
+tasks.named('sonarqube').configure {
+    dependsOn jacocoTestReport
 }
 
 jacocoTestReport {
