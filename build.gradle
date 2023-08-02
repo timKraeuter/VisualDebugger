@@ -71,10 +71,15 @@ tasks.named('sonar').configure {
 }
 
 jacocoTestReport {
+    classDirectories.setFrom(instrumentCode)
     reports {
         xml.required = true
         xml.destination file("${buildDir}/reports/jacoco.xml")
     }
+}
+
+jacocoTestCoverageVerification {
+    classDirectories.setFrom(instrumentCode)
 }
 
 sonar {
