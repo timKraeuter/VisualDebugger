@@ -1,13 +1,13 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '1.11.0'
+    id 'org.jetbrains.intellij' version '1.13.0'
     id "org.sonarqube" version "3.2.0"
     id 'jacoco'
     id ("net.ltgt.errorprone") version "3.0.1"
 }
 
 group 'no.hvl.tk'
-version '1.9.4'
+version '1.9.5'
 
 repositories {
     mavenCentral()
@@ -30,7 +30,7 @@ dependencies {
 
     // XML-marshalling not part of jdk (from 11) anymore.
     // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
-    implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1 '
+    implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
     // https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-core
     implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '3.0.1'
 
@@ -43,12 +43,12 @@ dependencies {
 }
 
 intellij {
-    version = '2023.1'
+    version = '2023.2'
     plugins = ['java']
 }
 
 patchPluginXml {
-    changeNotes = """Updated to IntelliJ 2023.1"""
+    changeNotes = """Updated to IntelliJ 2023.2"""
 }
 
 test {
