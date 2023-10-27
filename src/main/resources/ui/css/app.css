@@ -1,5 +1,7 @@
-html, body, #canvas {
-  font-family: 'IBM Plex Sans', sans-serif;
+html,
+body,
+#canvas {
+  font-family: "IBM Plex Sans", sans-serif;
   height: 100%;
   padding: 0;
   margin: 0;
@@ -15,14 +17,14 @@ html, body, #canvas {
 }
 
 .bottom-buttons a.active {
-  opacity: 1.0;
+  opacity: 1;
   box-shadow: 0px 2px 2px 0 rgba(0, 0, 0, 0.1);
 }
 
 /* screen interaction helpers & modal */
 
-#io-dialog-main{
-  display:none; /*default*/
+#io-dialog-main {
+  display: none; /*default*/
 }
 
 #help-dialog-main{
@@ -31,16 +33,16 @@ html, body, #canvas {
 
 #io-editing-tools-buttons {
   display: block;
-  position:fixed;
-  top:0px;
-  right: 80px;
+  position: fixed;
+  top: 0px;
+  right: 0px;
   list-style: none;
   padding: 5px;
   margin: 0;
 }
 
 #io-editing-tools-buttons button:hover {
-    color: #333333;
+  color: #333333;
 }
 
 .icon-keyboard {
@@ -51,7 +53,7 @@ html, body, #canvas {
 }
 
 .icon-keyboard::before {
-  content: '\f11c';
+  content: "\e802";
   display: inline-block;
   line-height: 1.2em;
 }
@@ -64,7 +66,7 @@ html, body, #canvas {
 }
 
 .icon-resize-full::before {
-  content: '\f31e';
+  content: "\e801";
   display: inline-block;
 }
 
@@ -76,11 +78,11 @@ html, body, #canvas {
 }
 
 .icon-question::before {
-  content: '\f059';
+  content: '\e803';
   display: inline-block;
 }
 
 .keybindings-dialog .binding {
-	padding: 5px 10px;
-	font-family: monospace;
+  padding: 5px 10px;
+  font-family: monospace;
 }
