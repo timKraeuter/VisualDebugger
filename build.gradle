@@ -74,7 +74,6 @@ jacocoTestReport {
     classDirectories.setFrom(instrumentCode)
     reports {
         xml.required = true
-        xml.destination file("${buildDir}/reports/jacoco.xml")
     }
 }
 
