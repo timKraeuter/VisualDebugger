@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.9.6'
+version '1.9.7'
 
 repositories {
     mavenCentral()
@@ -51,7 +51,7 @@ intellij {
 }
 
 patchPluginXml {
-    changeNotes = """Updated to IntelliJ 2023.2"""
+    changeNotes = """Fix movement of canvas during debugging."""
 }
 
 test {
