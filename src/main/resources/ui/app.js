@@ -1,6 +1,103 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "../lib/BaseModeler.js":
+/*!*****************************!*\
+  !*** ../lib/BaseModeler.js ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ BaseModeler)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var ids__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ids */ "../node_modules/ids/dist/index.esm.js");
+/* harmony import */ var _BaseViewer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BaseViewer */ "../lib/BaseViewer.js");
+
+
+
+
+
+
+/**
+ * A base modeler for od boards.
+ *
+ * Have a look at {@link Modeler} for a bundle that includes actual features.
+ *
+ * @param {Object} [options] configuration options to pass to the viewer
+ * @param {DOMElement} [options.container] the container to render the viewer in, defaults to body.
+ * @param {String|Number} [options.width] the width of the viewer
+ * @param {String|Number} [options.height] the height of the viewer
+ * @param {Object} [options.moddleExtensions] extension packages to provide
+ * @param {Array<didi.Module>} [options.modules] a list of modules to override the default modules
+ * @param {Array<didi.Module>} [options.additionalModules] a list of modules to use with the default modules
+ */
+function BaseModeler(options) {
+  _BaseViewer__WEBPACK_IMPORTED_MODULE_1__["default"].call(this, options);
+
+  // hook ID collection into the modeler
+  this.on(
+    "import.parse.complete",
+    function (event) {
+      if (!event.error) {
+        this._collectIds(event.definitions, event.context);
+      }
+    },
+    this,
+  );
+
+  this.on(
+    "diagram.destroy",
+    function () {
+      this.get("moddle").ids.clear();
+    },
+    this,
+  );
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_2__["default"])(BaseModeler, _BaseViewer__WEBPACK_IMPORTED_MODULE_1__["default"]);
+
+/**
+ * Create a moddle instance, attaching ids to it.
+ *
+ * @param {Object} options
+ */
+BaseModeler.prototype._createModdle = function (options) {
+  var moddle = _BaseViewer__WEBPACK_IMPORTED_MODULE_1__["default"].prototype._createModdle.call(this, options);
+
+  // attach ids to moddle to be able to track
+  // and validated ids in the XML document
+  // tree
+  moddle.ids = new ids__WEBPACK_IMPORTED_MODULE_0__["default"]([32, 36, 1]);
+
+  return moddle;
+};
+
+/**
+ * Collect ids processed during parsing of the
+ * definitions object.
+ *
+ * @param {ModdleElement} definitions
+ * @param {Context} context
+ */
+BaseModeler.prototype._collectIds = function (definitions, context) {
+  var moddle = definitions.$model,
+    ids = moddle.ids,
+    id;
+
+  // remove references from previous import
+  ids.clear();
+
+  for (id in context.elementsById) {
+    ids.claim(id, context.elementsById[id]);
+  }
+};
+
+
+/***/ }),
+
 /***/ "../lib/BaseViewer.js":
 /*!****************************!*\
   !*** ../lib/BaseViewer.js ***!
@@ -770,6 +867,260 @@ function addProjectLogo(container) {
 
 /***/ }),
 
+/***/ "../lib/Modeler.js":
+/*!*************************!*\
+  !*** ../lib/Modeler.js ***!
+  \*************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Modeler)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _BaseModeler__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BaseModeler */ "../lib/BaseModeler.js");
+/* harmony import */ var _Viewer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Viewer */ "../lib/Viewer.js");
+/* harmony import */ var _NavigatedViewer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./NavigatedViewer */ "../lib/NavigatedViewer.js");
+/* harmony import */ var diagram_js_lib_navigation_keyboard_move__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/navigation/keyboard-move */ "../node_modules/diagram-js/lib/navigation/keyboard-move/index.js");
+/* harmony import */ var diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! diagram-js/lib/navigation/movecanvas */ "../node_modules/diagram-js/lib/navigation/movecanvas/index.js");
+/* harmony import */ var diagram_js_lib_navigation_touch__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! diagram-js/lib/navigation/touch */ "../node_modules/diagram-js/lib/navigation/touch/index.js");
+/* harmony import */ var diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll */ "../node_modules/diagram-js/lib/navigation/zoomscroll/index.js");
+/* harmony import */ var diagram_js_lib_features_align_elements__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! diagram-js/lib/features/align-elements */ "../node_modules/diagram-js/lib/features/align-elements/index.js");
+/* harmony import */ var diagram_js_lib_features_auto_scroll__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! diagram-js/lib/features/auto-scroll */ "../node_modules/diagram-js/lib/features/auto-scroll/index.js");
+/* harmony import */ var diagram_js_lib_features_bendpoints__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! diagram-js/lib/features/bendpoints */ "../node_modules/diagram-js/lib/features/bendpoints/index.js");
+/* harmony import */ var diagram_js_lib_features_connect__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! diagram-js/lib/features/connect */ "../node_modules/diagram-js/lib/features/connect/index.js");
+/* harmony import */ var diagram_js_lib_features_connection_preview__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! diagram-js/lib/features/connection-preview */ "../node_modules/diagram-js/lib/features/connection-preview/index.js");
+/* harmony import */ var _features_context_pad__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./features/context-pad */ "../lib/features/context-pad/index.js");
+/* harmony import */ var _features_copy_paste__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./features/copy-paste */ "../lib/features/copy-paste/index.js");
+/* harmony import */ var diagram_js_lib_features_create__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! diagram-js/lib/features/create */ "../node_modules/diagram-js/lib/features/create/index.js");
+/* harmony import */ var _features_editor_actions__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./features/editor-actions */ "../lib/features/editor-actions/index.js");
+/* harmony import */ var _features_grid_snapping__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./features/grid-snapping */ "../lib/features/grid-snapping/index.js");
+/* harmony import */ var _features_keyboard__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./features/keyboard */ "../lib/features/keyboard/index.js");
+/* harmony import */ var _features_auto_place__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./features/auto-place */ "../lib/features/auto-place/index.js");
+/* harmony import */ var diagram_js_lib_features_keyboard_move_selection__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! diagram-js/lib/features/keyboard-move-selection */ "../node_modules/diagram-js/lib/features/keyboard-move-selection/index.js");
+/* harmony import */ var _features_label_editing__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./features/label-editing */ "../lib/features/label-editing/index.js");
+/* harmony import */ var _features_modeling__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./features/modeling */ "../lib/features/modeling/index.js");
+/* harmony import */ var diagram_js_lib_features_move__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! diagram-js/lib/features/move */ "../node_modules/diagram-js/lib/features/move/index.js");
+/* harmony import */ var _features_palette__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./features/palette */ "../lib/features/palette/index.js");
+/* harmony import */ var diagram_js_lib_features_resize__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! diagram-js/lib/features/resize */ "../node_modules/diagram-js/lib/features/resize/index.js");
+/* harmony import */ var _features_snapping__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./features/snapping */ "../lib/features/snapping/index.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const initialDiagram = `<?xml version="1.0" encoding="UTF-8"?>
+<od:definitions xmlns:od="http://tk/schema/od" xmlns:odDi="http://tk/schema/odDi">
+    <od:odBoard id="Board_debug" />
+    <odDi:odRootBoard id="RootBoard_debug">
+        <odDi:odPlane id="Plane_debug" boardElement="Board_debug" />
+    </odDi:odRootBoard>
+</od:definitions>`;
+
+function Modeler(options) {
+  _BaseModeler__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, options);
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(Modeler, _BaseModeler__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+Modeler.Viewer = _Viewer__WEBPACK_IMPORTED_MODULE_2__["default"];
+Modeler.NavigatedViewer = _NavigatedViewer__WEBPACK_IMPORTED_MODULE_3__["default"];
+
+/**
+ * The createDiagram result.
+ *
+ * @typedef {Object} CreateDiagramResult
+ *
+ * @property {Array<string>} warnings
+ */
+
+/**
+ * The createDiagram error.
+ *
+ * @typedef {Error} CreateDiagramError
+ *
+ * @property {Array<string>} warnings
+ */
+
+/**
+ * Create a new diagram to start modeling.
+ *
+ * @returns {Promise<CreateDiagramResult, CreateDiagramError>}
+ *
+ */
+Modeler.prototype.createDiagram = function () {
+  return this.importXML(initialDiagram);
+};
+
+Modeler.prototype._interactionModules = [
+  // non-modeling components
+  diagram_js_lib_navigation_keyboard_move__WEBPACK_IMPORTED_MODULE_4__["default"],
+  diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_5__["default"],
+  diagram_js_lib_navigation_touch__WEBPACK_IMPORTED_MODULE_6__["default"],
+  diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_7__["default"],
+];
+
+Modeler.prototype._modelingModules = [
+  // modeling components
+  _features_auto_place__WEBPACK_IMPORTED_MODULE_8__["default"],
+  diagram_js_lib_features_align_elements__WEBPACK_IMPORTED_MODULE_9__["default"],
+  diagram_js_lib_features_auto_scroll__WEBPACK_IMPORTED_MODULE_10__["default"],
+  diagram_js_lib_features_bendpoints__WEBPACK_IMPORTED_MODULE_11__["default"],
+  diagram_js_lib_features_connect__WEBPACK_IMPORTED_MODULE_12__["default"],
+  diagram_js_lib_features_connection_preview__WEBPACK_IMPORTED_MODULE_13__["default"],
+  _features_context_pad__WEBPACK_IMPORTED_MODULE_14__["default"],
+  _features_copy_paste__WEBPACK_IMPORTED_MODULE_15__["default"],
+  diagram_js_lib_features_create__WEBPACK_IMPORTED_MODULE_16__["default"],
+  _features_editor_actions__WEBPACK_IMPORTED_MODULE_17__["default"],
+  _features_grid_snapping__WEBPACK_IMPORTED_MODULE_18__["default"],
+  _features_keyboard__WEBPACK_IMPORTED_MODULE_19__["default"],
+  diagram_js_lib_features_keyboard_move_selection__WEBPACK_IMPORTED_MODULE_20__["default"],
+  _features_label_editing__WEBPACK_IMPORTED_MODULE_21__["default"],
+  _features_modeling__WEBPACK_IMPORTED_MODULE_22__["default"],
+  diagram_js_lib_features_move__WEBPACK_IMPORTED_MODULE_23__["default"],
+  _features_palette__WEBPACK_IMPORTED_MODULE_24__["default"],
+  diagram_js_lib_features_resize__WEBPACK_IMPORTED_MODULE_25__["default"],
+  _features_snapping__WEBPACK_IMPORTED_MODULE_26__["default"],
+];
+
+// modules the modeler is composed of
+//
+// - viewer modules
+// - interaction modules
+// - modeling modules
+
+Modeler.prototype._modules = [].concat(
+  _Viewer__WEBPACK_IMPORTED_MODULE_2__["default"].prototype._modules,
+  Modeler.prototype._interactionModules,
+  Modeler.prototype._modelingModules,
+);
+
+
+/***/ }),
+
+/***/ "../lib/NavigatedViewer.js":
+/*!*********************************!*\
+  !*** ../lib/NavigatedViewer.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ NavigatedViewer)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _Viewer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Viewer */ "../lib/Viewer.js");
+/* harmony import */ var diagram_js_lib_navigation_keyboard_move__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! diagram-js/lib/navigation/keyboard-move */ "../node_modules/diagram-js/lib/navigation/keyboard-move/index.js");
+/* harmony import */ var diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! diagram-js/lib/navigation/movecanvas */ "../node_modules/diagram-js/lib/navigation/movecanvas/index.js");
+/* harmony import */ var diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/navigation/zoomscroll */ "../node_modules/diagram-js/lib/navigation/zoomscroll/index.js");
+
+
+
+
+
+
+
+
+/**
+ * A viewer that includes mouse navigation facilities
+ *
+ * @param {Object} options
+ */
+function NavigatedViewer(options) {
+  _Viewer__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, options);
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(NavigatedViewer, _Viewer__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+NavigatedViewer.prototype._navigationModules = [
+  diagram_js_lib_navigation_keyboard_move__WEBPACK_IMPORTED_MODULE_2__["default"],
+  diagram_js_lib_navigation_movecanvas__WEBPACK_IMPORTED_MODULE_3__["default"],
+  diagram_js_lib_navigation_zoomscroll__WEBPACK_IMPORTED_MODULE_4__["default"],
+];
+
+NavigatedViewer.prototype._modules = [].concat(
+  _Viewer__WEBPACK_IMPORTED_MODULE_0__["default"].prototype._modules,
+  NavigatedViewer.prototype._navigationModules,
+);
+
+
+/***/ }),
+
+/***/ "../lib/Viewer.js":
+/*!************************!*\
+  !*** ../lib/Viewer.js ***!
+  \************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Viewer)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./core */ "../lib/core/index.js");
+/* harmony import */ var diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! diagram-js/lib/i18n/translate */ "../node_modules/diagram-js/lib/i18n/translate/index.js");
+/* harmony import */ var diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/features/selection */ "../node_modules/diagram-js/lib/features/selection/index.js");
+/* harmony import */ var diagram_js_lib_features_overlays__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! diagram-js/lib/features/overlays */ "../node_modules/diagram-js/lib/features/overlays/index.js");
+/* harmony import */ var _BaseViewer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BaseViewer */ "../lib/BaseViewer.js");
+
+
+
+
+
+
+
+
+
+function Viewer(options) {
+  _BaseViewer__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, options);
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(Viewer, _BaseViewer__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+// modules the viewer is composed of
+Viewer.prototype._modules = [
+  _core__WEBPACK_IMPORTED_MODULE_2__["default"],
+  diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_3__["default"],
+  diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_4__["default"],
+  diagram_js_lib_features_overlays__WEBPACK_IMPORTED_MODULE_5__["default"],
+];
+
+// default moddle extensions the viewer is composed of
+Viewer.prototype._moddleExtensions = {};
+
+
+/***/ }),
+
 /***/ "../lib/core/index.js":
 /*!****************************!*\
   !*** ../lib/core/index.js ***!
@@ -1420,6 +1771,1975 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "../lib/features/auto-place/ODAutoPlace.js":
+/*!*************************************************!*\
+  !*** ../lib/features/auto-place/ODAutoPlace.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ AutoPlace)
+/* harmony export */ });
+/* harmony import */ var _ODAutoPlaceUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ODAutoPlaceUtil */ "../lib/features/auto-place/ODAutoPlaceUtil.js");
+
+
+/**
+ * BPMN auto-place behavior.
+ *
+ * @param {EventBus} eventBus
+ */
+function AutoPlace(eventBus) {
+  eventBus.on("autoPlace", function (context) {
+    var shape = context.shape,
+      source = context.source;
+
+    return (0,_ODAutoPlaceUtil__WEBPACK_IMPORTED_MODULE_0__.getNewShapePosition)(source, shape);
+  });
+}
+
+AutoPlace.$inject = ["eventBus"];
+
+
+/***/ }),
+
+/***/ "../lib/features/auto-place/ODAutoPlaceUtil.js":
+/*!*****************************************************!*\
+  !*** ../lib/features/auto-place/ODAutoPlaceUtil.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getFlowNodePosition: () => (/* binding */ getFlowNodePosition),
+/* harmony export */   getNewShapePosition: () => (/* binding */ getNewShapePosition)
+/* harmony export */ });
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/ModelUtil */ "../lib/util/ModelUtil.js");
+/* harmony import */ var diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! diagram-js/lib/layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var diagram_js_lib_features_auto_place_AutoPlaceUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! diagram-js/lib/features/auto-place/AutoPlaceUtil */ "../node_modules/diagram-js/lib/features/auto-place/AutoPlaceUtil.js");
+
+
+
+
+
+
+/**
+ * Find the new position for the target element to
+ * connect to source.
+ *
+ * @param  {djs.model.Shape} source
+ * @param  {djs.model.Shape} element
+ *
+ * @return {Point}
+ */
+function getNewShapePosition(source, element) {
+  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(element, "od:Object")) {
+    return getFlowNodePosition(source, element);
+  }
+}
+
+/**
+ * Always try to place element right of source;
+ * compute actual distance from previous nodes in flow.
+ */
+function getFlowNodePosition(source, element) {
+  var sourceTrbl = (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(source);
+  var sourceMid = (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getMid)(source);
+
+  var horizontalDistance = (0,diagram_js_lib_features_auto_place_AutoPlaceUtil__WEBPACK_IMPORTED_MODULE_2__.getConnectedDistance)(source, {
+    filter: function (connection) {
+      return (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(connection, "od:Link");
+    },
+  });
+
+  var margin = 30,
+    minDistance = 80,
+    orientation = "left";
+
+  var position = {
+    x: sourceTrbl.right + horizontalDistance + element.width / 2,
+    y: sourceMid.y + getVerticalDistance(orientation, minDistance),
+  };
+
+  var nextPositionDirection = {
+    y: {
+      margin: margin,
+      minDistance: minDistance,
+    },
+  };
+
+  return (0,diagram_js_lib_features_auto_place_AutoPlaceUtil__WEBPACK_IMPORTED_MODULE_2__.findFreePosition)(
+    source,
+    element,
+    position,
+    (0,diagram_js_lib_features_auto_place_AutoPlaceUtil__WEBPACK_IMPORTED_MODULE_2__.generateGetNextPosition)(nextPositionDirection),
+  );
+}
+
+function getVerticalDistance(orientation, minDistance) {
+  if (orientation.indexOf("top") != -1) {
+    return -1 * minDistance;
+  } else if (orientation.indexOf("bottom") != -1) {
+    return minDistance;
+  } else {
+    return 0;
+  }
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/auto-place/index.js":
+/*!*******************************************!*\
+  !*** ../lib/features/auto-place/index.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var diagram_js_lib_features_auto_place__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/auto-place */ "../node_modules/diagram-js/lib/features/auto-place/index.js");
+/* harmony import */ var _ODAutoPlace__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ODAutoPlace */ "../lib/features/auto-place/ODAutoPlace.js");
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [diagram_js_lib_features_auto_place__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  __init__: ["odAutoPlace"],
+  odAutoPlace: ["type", _ODAutoPlace__WEBPACK_IMPORTED_MODULE_1__["default"]],
+});
+
+
+/***/ }),
+
+/***/ "../lib/features/context-pad/ContextPadProvider.js":
+/*!*********************************************************!*\
+  !*** ../lib/features/context-pad/ContextPadProvider.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ContextPadProvider)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var diagram_js_lib_util_Mouse__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/util/Mouse */ "../node_modules/diagram-js/lib/util/Mouse.js");
+
+
+
+
+/**
+ * A provider for od elements context pad.
+ */
+function ContextPadProvider(
+  config,
+  injector,
+  eventBus,
+  connect,
+  create,
+  elementFactory,
+  contextPad,
+  modeling,
+  rules,
+  translate,
+) {
+  config = config || {};
+
+  contextPad.registerProvider(this);
+
+  this._connect = connect;
+  this._create = create;
+  this._elementFactory = elementFactory;
+  this._contextPad = contextPad;
+
+  this._modeling = modeling;
+
+  this._rules = rules;
+  this._translate = translate;
+
+  if (config.autoPlace !== false) {
+    this._autoPlace = injector.get("autoPlace", false);
+  }
+
+  eventBus.on("create.end", 250, function (event) {
+    let context = event.context,
+      shape = context.shape;
+
+    if (!(0,diagram_js_lib_util_Mouse__WEBPACK_IMPORTED_MODULE_0__.hasPrimaryModifier)(event) || !contextPad.isOpen(shape)) {
+      return;
+    }
+
+    let entries = contextPad.getEntries(shape);
+
+    if (entries.replace) {
+      entries.replace.action.click(event, shape);
+    }
+  });
+}
+
+ContextPadProvider.$inject = [
+  "config.contextPad",
+  "injector",
+  "eventBus",
+  "connect",
+  "create",
+  "elementFactory",
+  "contextPad",
+  "modeling",
+  "rules",
+  "translate",
+];
+
+ContextPadProvider.prototype.getContextPadEntries = function (element) {
+  const {
+    _rules: rules,
+    _modeling: modeling,
+    _translate: translate,
+    _connect: connect,
+    _elementFactory: elementFactory,
+    _autoPlace: autoPlace,
+    _create: create,
+  } = this;
+
+  let actions = {};
+
+  if (element.type === "label") {
+    return actions;
+  }
+
+  createDeleteEntry(actions);
+  if (element.type === "od:Object") {
+    createLinkObjectsEntry(actions);
+    createLinkNewObjectEntry(actions);
+  }
+
+  return actions;
+
+  function removeElement() {
+    modeling.removeElements([element]);
+  }
+
+  function createDeleteEntry(actions) {
+    // delete element entry, only show if allowed by rules
+    let deleteAllowed = rules.allowed("elements.delete", {
+      elements: [element],
+    });
+
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isArray)(deleteAllowed)) {
+      // was the element returned as a deletion candidate?
+      deleteAllowed = deleteAllowed[0] === element;
+    }
+
+    if (deleteAllowed) {
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(actions, {
+        delete: {
+          group: "edit",
+          className: "bpmn-icon-trash",
+          title: translate("Remove"),
+          action: {
+            click: removeElement,
+          },
+        },
+      });
+    }
+  }
+
+  function startConnect(event, element) {
+    connect.start(event, element);
+  }
+
+  function createLinkObjectsEntry(actions) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(actions, {
+      connect: {
+        group: "connect",
+        className: "bpmn-icon-connection",
+        title: "Link object to other objects",
+        action: {
+          click: startConnect,
+          dragstart: startConnect,
+        },
+      },
+    });
+  }
+
+  function createLinkNewObjectEntry(actions) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(actions, {
+      "append.append-task": appendAction(
+        "od:Object",
+        "od-icon-object",
+        translate("Link with new object"),
+      ),
+    });
+  }
+
+  /**
+   * Create an append action
+   *
+   * @param {string} type
+   * @param {string} className
+   * @param {string} [title]
+   * @param {Object} [options]
+   *
+   * @return {Object} descriptor
+   */
+  function appendAction(type, className, title, options) {
+    if (typeof title !== "string") {
+      options = title;
+      title = translate("Append {type}", { type: type.replace(/^bpmn:/, "") });
+    }
+
+    function appendStart(event, element) {
+      var shape = elementFactory.createShape((0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)({ type: type }, options));
+      create.start(event, shape, {
+        source: element,
+      });
+    }
+
+    var append = autoPlace
+      ? function (event, element) {
+          var shape = elementFactory.createShape(
+            (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)({ type: type }, options),
+          );
+
+          autoPlace.append(element, shape);
+        }
+      : appendStart;
+
+    return {
+      group: "model",
+      className: className,
+      title: title,
+      action: {
+        dragstart: appendStart,
+        click: append,
+      },
+    };
+  }
+};
+
+
+/***/ }),
+
+/***/ "../lib/features/context-pad/index.js":
+/*!********************************************!*\
+  !*** ../lib/features/context-pad/index.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var diagram_js_direct_editing__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js-direct-editing */ "../node_modules/diagram-js-direct-editing/index.js");
+/* harmony import */ var diagram_js_lib_features_context_pad__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! diagram-js/lib/features/context-pad */ "../node_modules/diagram-js/lib/features/context-pad/index.js");
+/* harmony import */ var diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! diagram-js/lib/features/selection */ "../node_modules/diagram-js/lib/features/selection/index.js");
+/* harmony import */ var diagram_js_lib_features_connect__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! diagram-js/lib/features/connect */ "../node_modules/diagram-js/lib/features/connect/index.js");
+/* harmony import */ var diagram_js_lib_features_create__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/features/create */ "../node_modules/diagram-js/lib/features/create/index.js");
+/* harmony import */ var _ContextPadProvider__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./ContextPadProvider */ "../lib/features/context-pad/ContextPadProvider.js");
+
+
+
+
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    diagram_js_direct_editing__WEBPACK_IMPORTED_MODULE_0__["default"],
+    diagram_js_lib_features_context_pad__WEBPACK_IMPORTED_MODULE_1__["default"],
+    diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_2__["default"],
+    diagram_js_lib_features_connect__WEBPACK_IMPORTED_MODULE_3__["default"],
+    diagram_js_lib_features_create__WEBPACK_IMPORTED_MODULE_4__["default"],
+  ],
+  __init__: ["contextPadProvider"],
+  contextPadProvider: ["type", _ContextPadProvider__WEBPACK_IMPORTED_MODULE_5__["default"]],
+});
+
+
+/***/ }),
+
+/***/ "../lib/features/copy-paste/ModdleCopy.js":
+/*!************************************************!*\
+  !*** ../lib/features/copy-paste/ModdleCopy.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ModdleCopy),
+/* harmony export */   getPropertyNames: () => (/* binding */ getPropertyNames)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+var DISALLOWED_PROPERTIES = ["boardElements"];
+
+/**
+ * @typedef {Function} <moddleCopy.canCopyProperties> listener
+ *
+ * @param {Object} context
+ * @param {Array<string>} context.propertyNames
+ * @param {ModdleElement} context.sourceElement
+ * @param {ModdleElement} context.targetElement
+ *
+ * @returns {Array<string>|boolean} - Return properties to be copied or false to disallow
+ * copying.
+ */
+
+/**
+ * @typedef {Function} <moddleCopy.canCopyProperty> listener
+ *
+ * @param {Object} context
+ * @param {ModdleElement} context.parent
+ * @param {*} context.property
+ * @param {string} context.propertyName
+ *
+ * @returns {*|boolean} - Return copied property or false to disallow
+ * copying.
+ */
+
+/**
+ * @typedef {Function} <moddleCopy.canSetCopiedProperty> listener
+ *
+ * @param {Object} context
+ * @param {ModdleElement} context.parent
+ * @param {*} context.property
+ * @param {string} context.propertyName
+ *
+ * @returns {boolean} - Return false to disallow
+ * setting copied property.
+ */
+
+/**
+ * Utility for copying model properties from source element to target element.
+ *
+ * @param {EventBus} eventBus
+ * @param {ODFactory} odFactory
+ * @param {PostitModdle} moddle
+ */
+function ModdleCopy(eventBus, odFactory, moddle) {
+  this._odFactory = odFactory;
+  this._eventBus = eventBus;
+  this._moddle = moddle;
+
+  // copy extension elements last
+  eventBus.on("moddleCopy.canCopyProperties", function (context) {
+    var propertyNames = context.propertyNames;
+
+    if (!propertyNames || !propertyNames.length) {
+      return;
+    }
+
+    return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.sortBy)(propertyNames, function (propertyName) {
+      return propertyName === "extensionElements";
+    });
+  });
+
+  // default check whether property can be copied
+  eventBus.on("moddleCopy.canCopyProperty", function (context) {
+    var parent = context.parent,
+      parentDescriptor = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isObject)(parent) && parent.$descriptor,
+      propertyName = context.propertyName;
+
+    if (propertyName && DISALLOWED_PROPERTIES.indexOf(propertyName) !== -1) {
+      // disallow copying property
+      return false;
+    }
+
+    if (
+      propertyName &&
+      parentDescriptor &&
+      !(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.find)(parentDescriptor.properties, (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.matchPattern)({ name: propertyName }))
+    ) {
+      // disallow copying property
+      return false;
+    }
+  });
+}
+
+ModdleCopy.$inject = ["eventBus", "odFactory", "moddle"];
+
+/**
+ * Copy model properties of source element to target element.
+ *
+ * @param {ModdleElement} sourceElement
+ * @param {ModdleElement} targetElement
+ * @param {Array<string>} [propertyNames]
+ *
+ * @param {ModdleElement}
+ */
+ModdleCopy.prototype.copyElement = function (
+  sourceElement,
+  targetElement,
+  propertyNames,
+) {
+  var self = this;
+
+  if (propertyNames && !(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(propertyNames)) {
+    propertyNames = [propertyNames];
+  }
+
+  propertyNames = propertyNames || getPropertyNames(sourceElement.$descriptor);
+
+  var canCopyProperties = this._eventBus.fire("moddleCopy.canCopyProperties", {
+    propertyNames: propertyNames,
+    sourceElement: sourceElement,
+    targetElement: targetElement,
+  });
+
+  if (canCopyProperties === false) {
+    return targetElement;
+  }
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(canCopyProperties)) {
+    propertyNames = canCopyProperties;
+  }
+
+  // copy properties
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(propertyNames, function (propertyName) {
+    var sourceProperty;
+
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.has)(sourceElement, propertyName)) {
+      sourceProperty = sourceElement.get(propertyName);
+    }
+
+    var copiedProperty = self.copyProperty(
+      sourceProperty,
+      targetElement,
+      propertyName,
+    );
+
+    var canSetProperty = self._eventBus.fire(
+      "moddleCopy.canSetCopiedProperty",
+      {
+        parent: targetElement,
+        property: copiedProperty,
+        propertyName: propertyName,
+      },
+    );
+
+    if (canSetProperty === false) {
+      return;
+    }
+
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isDefined)(copiedProperty)) {
+      targetElement.set(propertyName, copiedProperty);
+    }
+  });
+
+  return targetElement;
+};
+
+/**
+ * Copy model property.
+ *
+ * @param {*} property
+ * @param {ModdleElement} parent
+ * @param {string} propertyName
+ *
+ * @returns {*}
+ */
+ModdleCopy.prototype.copyProperty = function (property, parent, propertyName) {
+  var self = this;
+
+  // allow others to copy property
+  var copiedProperty = this._eventBus.fire("moddleCopy.canCopyProperty", {
+    parent: parent,
+    property: property,
+    propertyName: propertyName,
+  });
+
+  // return if copying is NOT allowed
+  if (copiedProperty === false) {
+    return;
+  }
+
+  if (copiedProperty) {
+    if (
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isObject)(copiedProperty) &&
+      copiedProperty.$type &&
+      !copiedProperty.$parent
+    ) {
+      copiedProperty.$parent = parent;
+    }
+
+    return copiedProperty;
+  }
+
+  var propertyDescriptor = this._moddle.getPropertyDescriptor(
+    parent,
+    propertyName,
+  );
+
+  // do NOT copy Ids and references
+  if (propertyDescriptor.isId || propertyDescriptor.isReference) {
+    return;
+  }
+
+  // copy arrays
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(property)) {
+    return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.reduce)(
+      property,
+      function (childProperties, childProperty) {
+        // recursion
+        copiedProperty = self.copyProperty(childProperty, parent, propertyName);
+
+        // copying might NOT be allowed
+        if (copiedProperty) {
+          copiedProperty.$parent = parent;
+
+          return childProperties.concat(copiedProperty);
+        }
+
+        return childProperties;
+      },
+      [],
+    );
+  }
+
+  // copy model elements
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isObject)(property) && property.$type) {
+    if (this._moddle.getElementDescriptor(property).isGeneric) {
+      return;
+    }
+
+    copiedProperty = self._odFactory.create(property.$type);
+
+    copiedProperty.$parent = parent;
+
+    // recursion
+    copiedProperty = self.copyElement(property, copiedProperty);
+
+    return copiedProperty;
+  }
+
+  // copy primitive properties
+  return property;
+};
+
+// helpers //////////
+
+function getPropertyNames(descriptor, keepDefaultProperties) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.reduce)(
+    descriptor.properties,
+    function (properties, property) {
+      if (keepDefaultProperties && property.default) {
+        return properties;
+      }
+
+      return properties.concat(property.name);
+    },
+    [],
+  );
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/copy-paste/ODCopyPaste.js":
+/*!*************************************************!*\
+  !*** ../lib/features/copy-paste/ODCopyPaste.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ODCopyPaste)
+/* harmony export */ });
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/ModelUtil */ "../lib/util/ModelUtil.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+
+
+function copyProperties(source, target, properties) {
+  if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(properties)) {
+    properties = [properties];
+  }
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(properties, function (property) {
+    if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isUndefined)(source[property])) {
+      target[property] = source[property];
+    }
+  });
+}
+
+function removeProperties(element, properties) {
+  if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(properties)) {
+    properties = [properties];
+  }
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(properties, function (property) {
+    if (element[property]) {
+      delete element[property];
+    }
+  });
+}
+
+var LOW_PRIORITY = 750;
+
+function ODCopyPaste(odFactory, eventBus, moddleCopy) {
+  eventBus.on("copyPaste.copyElement", LOW_PRIORITY, function (context) {
+    var descriptor = context.descriptor,
+      element = context.element;
+
+    var businessObject = (descriptor.oldBusinessObject =
+      (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element));
+
+    descriptor.type = element.type;
+
+    copyProperties(businessObject, descriptor, "name");
+
+    descriptor.di = {};
+
+    // fill and stroke will be set to DI
+    copyProperties(businessObject.di, descriptor.di, ["fill", "stroke"]);
+
+    if (isLabel(descriptor)) {
+      return descriptor;
+    }
+  });
+
+  var references;
+
+  function resolveReferences(descriptor, cache) {
+    var businessObject = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(descriptor);
+
+    // default sequence flows
+    if (descriptor.default) {
+      // relationship cannot be resolved immediately
+      references[descriptor.default] = {
+        element: businessObject,
+        property: "default",
+      };
+    }
+
+    references = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.omit)(
+      references,
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.reduce)(
+        references,
+        function (array, reference, key) {
+          var element = reference.element,
+            property = reference.property;
+
+          if (key === descriptor.id) {
+            element[property] = businessObject;
+
+            array.push(descriptor.id);
+          }
+
+          return array;
+        },
+        [],
+      ),
+    );
+  }
+
+  eventBus.on("copyPaste.pasteElements", function () {
+    references = {};
+  });
+
+  eventBus.on("copyPaste.pasteElement", function (context) {
+    var cache = context.cache,
+      descriptor = context.descriptor,
+      oldBusinessObject = descriptor.oldBusinessObject,
+      newBusinessObject;
+
+    // do NOT copy business object if external label
+    if (isLabel(descriptor)) {
+      descriptor.businessObject = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(
+        cache[descriptor.labelTarget],
+      );
+
+      return;
+    }
+
+    newBusinessObject = odFactory.create(oldBusinessObject.$type);
+
+    descriptor.businessObject = moddleCopy.copyElement(
+      oldBusinessObject,
+      newBusinessObject,
+    );
+
+    // resolve references e.g. default sequence flow
+    resolveReferences(descriptor, cache);
+
+    copyProperties(descriptor, newBusinessObject, ["color", "name"]);
+
+    removeProperties(descriptor, "oldBusinessObject");
+  });
+}
+
+ODCopyPaste.$inject = ["odFactory", "eventBus", "moddleCopy"];
+
+// helpers //////////
+
+function isLabel(element) {
+  return !!element.labelTarget;
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/copy-paste/index.js":
+/*!*******************************************!*\
+  !*** ../lib/features/copy-paste/index.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var diagram_js_lib_features_copy_paste__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/copy-paste */ "../node_modules/diagram-js/lib/features/copy-paste/index.js");
+/* harmony import */ var _ODCopyPaste__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ODCopyPaste */ "../lib/features/copy-paste/ODCopyPaste.js");
+/* harmony import */ var _ModdleCopy__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ModdleCopy */ "../lib/features/copy-paste/ModdleCopy.js");
+
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [diagram_js_lib_features_copy_paste__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  __init__: ["odCopyPaste", "moddleCopy"],
+  odCopyPaste: ["type", _ODCopyPaste__WEBPACK_IMPORTED_MODULE_1__["default"]],
+  moddleCopy: ["type", _ModdleCopy__WEBPACK_IMPORTED_MODULE_2__["default"]],
+});
+
+
+/***/ }),
+
+/***/ "../lib/features/di-ordering/ODDiOrdering.js":
+/*!***************************************************!*\
+  !*** ../lib/features/di-ordering/ODDiOrdering.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ODDiOrdering)
+/* harmony export */ });
+/* harmony import */ var _draw_ODRendererUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../draw/ODRendererUtil */ "../lib/draw/ODRendererUtil.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/ModelUtil */ "../lib/util/ModelUtil.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var diagram_js_lib_util_Elements__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! diagram-js/lib/util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
+
+
+
+
+
+
+
+var HIGH_PRIORITY = 2000;
+
+function ODDiOrdering(eventBus, canvas) {
+  eventBus.on("saveXML.start", HIGH_PRIORITY, orderDi);
+
+  function orderDi() {
+    var root = canvas.getRootElement(),
+      rootDi = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getBusinessObject)(root).di,
+      elements,
+      diElements;
+
+    elements = (0,diagram_js_lib_util_Elements__WEBPACK_IMPORTED_MODULE_1__.selfAndAllChildren)([root], false);
+
+    // only odDi:Shape can be direct children of odDi:Plane
+    elements = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.filter)(elements, function (element) {
+      return element !== root && !element.labelTarget;
+    });
+
+    diElements = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.map)(elements, _draw_ODRendererUtil__WEBPACK_IMPORTED_MODULE_3__.getDi);
+
+    rootDi.set("planeElement", diElements);
+  }
+}
+
+ODDiOrdering.$inject = ["eventBus", "canvas"];
+
+
+/***/ }),
+
+/***/ "../lib/features/di-ordering/index.js":
+/*!********************************************!*\
+  !*** ../lib/features/di-ordering/index.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ODDiOrdering__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ODDiOrdering */ "../lib/features/di-ordering/ODDiOrdering.js");
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: ["odDiOrdering"],
+  odDiOrdering: ["type", _ODDiOrdering__WEBPACK_IMPORTED_MODULE_0__["default"]],
+});
+
+
+/***/ }),
+
+/***/ "../lib/features/editor-actions/ODEditorActions.js":
+/*!*********************************************************!*\
+  !*** ../lib/features/editor-actions/ODEditorActions.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ODEditorActions)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var diagram_js_lib_features_editor_actions_EditorActions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/editor-actions/EditorActions */ "../node_modules/diagram-js/lib/features/editor-actions/EditorActions.js");
+/* harmony import */ var diagram_js_lib_util_Elements__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! diagram-js/lib/util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
+
+
+
+
+
+
+/**
+ * Registers and executes ODM specific editor actions.
+ *
+ * @param {Injector} injector
+ */
+function ODEditorActions(injector) {
+  injector.invoke(diagram_js_lib_features_editor_actions_EditorActions__WEBPACK_IMPORTED_MODULE_0__["default"], this);
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(ODEditorActions, diagram_js_lib_features_editor_actions_EditorActions__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+ODEditorActions.$inject = ["injector"];
+
+/**
+ * Register default actions.
+ *
+ * @param {Injector} injector
+ */
+ODEditorActions.prototype._registerDefaultActions = function (injector) {
+  // (0) invoke super method
+
+  diagram_js_lib_features_editor_actions_EditorActions__WEBPACK_IMPORTED_MODULE_0__["default"].prototype._registerDefaultActions.call(this, injector);
+
+  // (1) retrieve optional components to integrate with
+
+  var canvas = injector.get("canvas", false);
+  var elementRegistry = injector.get("elementRegistry", false);
+  var selection = injector.get("selection", false);
+  var spaceTool = injector.get("spaceTool", false);
+  var lassoTool = injector.get("lassoTool", false);
+  var handTool = injector.get("handTool", false);
+  var globalConnect = injector.get("globalConnect", false);
+  var distributeElements = injector.get("distributeElements", false);
+  var alignElements = injector.get("alignElements", false);
+  var directEditing = injector.get("directEditing", false);
+  var searchPad = injector.get("searchPad", false);
+  var modeling = injector.get("modeling", false);
+
+  // (2) check components and register actions
+
+  if (canvas && elementRegistry && selection) {
+    this._registerAction("selectElements", function () {
+      // select all elements except for the invisible
+      // root element
+      var rootElement = canvas.getRootElement();
+
+      var elements = elementRegistry.filter(function (element) {
+        return element !== rootElement;
+      });
+
+      selection.select(elements);
+
+      return elements;
+    });
+  }
+
+  if (spaceTool) {
+    this._registerAction("spaceTool", function () {
+      spaceTool.toggle();
+    });
+  }
+
+  if (lassoTool) {
+    this._registerAction("lassoTool", function () {
+      lassoTool.toggle();
+    });
+  }
+
+  if (handTool) {
+    this._registerAction("handTool", function () {
+      handTool.toggle();
+    });
+  }
+
+  if (globalConnect) {
+    this._registerAction("globalConnectTool", function () {
+      globalConnect.toggle();
+    });
+  }
+
+  if (selection && distributeElements) {
+    this._registerAction("distributeElements", function (opts) {
+      var currentSelection = selection.get(),
+        type = opts.type;
+
+      if (currentSelection.length) {
+        distributeElements.trigger(currentSelection, type);
+      }
+    });
+  }
+
+  if (selection && alignElements) {
+    this._registerAction("alignElements", function (opts) {
+      var currentSelection = selection.get(),
+        type = opts.type;
+
+      if (currentSelection.length) {
+        alignElements.trigger(currentSelection, type);
+      }
+    });
+  }
+
+  if (selection && directEditing) {
+    this._registerAction("directEditing", function () {
+      var currentSelection = selection.get();
+
+      if (currentSelection.length) {
+        directEditing.activate(currentSelection[0]);
+      }
+    });
+  }
+
+  if (searchPad) {
+    this._registerAction("find", function () {
+      searchPad.toggle();
+    });
+  }
+
+  if (canvas && modeling) {
+    this._registerAction("moveToOrigin", function () {
+      var rootElement = canvas.getRootElement(),
+        boundingBox;
+
+      var elements = elementRegistry.filter(function (element) {
+        return element !== rootElement;
+      });
+
+      boundingBox = (0,diagram_js_lib_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getBBox)(elements);
+
+      modeling.moveElements(
+        elements,
+        { x: -boundingBox.x, y: -boundingBox.y },
+        rootElement,
+      );
+    });
+  }
+};
+
+
+/***/ }),
+
+/***/ "../lib/features/editor-actions/index.js":
+/*!***********************************************!*\
+  !*** ../lib/features/editor-actions/index.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var diagram_js_lib_features_editor_actions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/editor-actions */ "../node_modules/diagram-js/lib/features/editor-actions/index.js");
+/* harmony import */ var _ODEditorActions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ODEditorActions */ "../lib/features/editor-actions/ODEditorActions.js");
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [diagram_js_lib_features_editor_actions__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  editorActions: ["type", _ODEditorActions__WEBPACK_IMPORTED_MODULE_1__["default"]],
+});
+
+
+/***/ }),
+
+/***/ "../lib/features/grid-snapping/BpmnGridSnapping.js":
+/*!*********************************************************!*\
+  !*** ../lib/features/grid-snapping/BpmnGridSnapping.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ BpmnGridSnapping)
+/* harmony export */ });
+function BpmnGridSnapping(eventBus) {
+  eventBus.on(["create.init", "shape.move.init"], function (event) {
+    var context = event.context;
+
+    if (!context.gridSnappingContext) {
+      context.gridSnappingContext = {};
+    }
+
+    context.gridSnappingContext.snapLocation = "top-left";
+  });
+}
+
+BpmnGridSnapping.$inject = ["eventBus"];
+
+
+/***/ }),
+
+/***/ "../lib/features/grid-snapping/behavior/AutoPlaceBehavior.js":
+/*!*******************************************************************!*\
+  !*** ../lib/features/grid-snapping/behavior/AutoPlaceBehavior.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ AutoPlaceBehavior)
+/* harmony export */ });
+/* harmony import */ var _auto_place_ODAutoPlaceUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../auto-place/ODAutoPlaceUtil */ "../lib/features/auto-place/ODAutoPlaceUtil.js");
+/* harmony import */ var diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+
+
+
+
+var HIGH_PRIORITY = 2000;
+
+function AutoPlaceBehavior(eventBus, gridSnapping) {
+  eventBus.on("autoPlace", HIGH_PRIORITY, function (context) {
+    var source = context.source,
+      sourceMid = (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__.getMid)(source),
+      shape = context.shape;
+
+    var position = (0,_auto_place_ODAutoPlaceUtil__WEBPACK_IMPORTED_MODULE_1__.getNewShapePosition)(source, shape);
+
+    ["x", "y"].forEach(function (axis) {
+      var options = {};
+
+      // do not snap if x/y equal
+      if (position[axis] === sourceMid[axis]) {
+        return;
+      }
+
+      if (position[axis] > sourceMid[axis]) {
+        options.min = position[axis];
+      } else {
+        options.max = position[axis];
+      }
+
+      position[axis] = gridSnapping.snapValue(position[axis], options);
+    });
+
+    // must be returned to be considered by auto place
+    return position;
+  });
+}
+
+AutoPlaceBehavior.$inject = ["eventBus", "gridSnapping"];
+
+
+/***/ }),
+
+/***/ "../lib/features/grid-snapping/behavior/LayoutConnectionBehavior.js":
+/*!**************************************************************************!*\
+  !*** ../lib/features/grid-snapping/behavior/LayoutConnectionBehavior.js ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ LayoutConnectionBehavior)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+/* harmony import */ var diagram_js_lib_util_Geometry__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! diagram-js/lib/util/Geometry */ "../node_modules/diagram-js/lib/util/Geometry.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+
+
+
+
+
+
+var HIGH_PRIORITY = 3000;
+
+/**
+ * Snaps connections with Manhattan layout.
+ */
+function LayoutConnectionBehavior(
+  eventBus,
+  gridSnapping,
+  modeling,
+) {
+  diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
+
+  this._gridSnapping = gridSnapping;
+
+  var self = this;
+
+  this.postExecuted(
+    ["connection.create", "connection.layout"],
+    HIGH_PRIORITY,
+    function (event) {
+      var context = event.context,
+        connection = context.connection,
+        hints = context.hints || {},
+        waypoints = connection.waypoints;
+
+      if (
+        hints.connectionStart ||
+        hints.connectionEnd ||
+        hints.createElementsBehavior === false
+      ) {
+        return;
+      }
+
+      if (!hasMiddleSegments(waypoints)) {
+        return;
+      }
+
+      modeling.updateWaypoints(connection, self.snapMiddleSegments(waypoints));
+    },
+  );
+}
+
+LayoutConnectionBehavior.$inject = ["eventBus", "gridSnapping", "modeling"];
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(LayoutConnectionBehavior, diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/**
+ * Snap middle segments of a given connection.
+ *
+ * @param {Array<Point>} waypoints
+ *
+ * @returns {Array<Point>}
+ */
+LayoutConnectionBehavior.prototype.snapMiddleSegments = function (waypoints) {
+  var gridSnapping = this._gridSnapping,
+    snapped;
+
+  waypoints = waypoints.slice();
+
+  for (var i = 1; i < waypoints.length - 2; i++) {
+    snapped = snapSegment(gridSnapping, waypoints[i], waypoints[i + 1]);
+
+    waypoints[i] = snapped[0];
+    waypoints[i + 1] = snapped[1];
+  }
+
+  return waypoints;
+};
+
+// helpers //////////
+
+/**
+ * Check whether a connection has a middle segments.
+ *
+ * @param {Array} waypoints
+ *
+ * @returns {boolean}
+ */
+function hasMiddleSegments(waypoints) {
+  return waypoints.length > 3;
+}
+
+/**
+ * Check whether an alignment is horizontal.
+ *
+ * @param {string} aligned
+ *
+ * @returns {boolean}
+ */
+function horizontallyAligned(aligned) {
+  return aligned === "h";
+}
+
+/**
+ * Check whether an alignment is vertical.
+ *
+ * @param {string} aligned
+ *
+ * @returns {boolean}
+ */
+function verticallyAligned(aligned) {
+  return aligned === "v";
+}
+
+/**
+ * Get middle segments from a given connection.
+ *
+ * @param {Array} waypoints
+ *
+ * @returns {Array}
+ */
+function snapSegment(gridSnapping, segmentStart, segmentEnd) {
+  var aligned = (0,diagram_js_lib_util_Geometry__WEBPACK_IMPORTED_MODULE_2__.pointsAligned)(segmentStart, segmentEnd);
+
+  var snapped = {};
+
+  if (horizontallyAligned(aligned)) {
+    // snap horizontally
+    snapped.y = gridSnapping.snapValue(segmentStart.y);
+  }
+
+  if (verticallyAligned(aligned)) {
+    // snap vertically
+    snapped.x = gridSnapping.snapValue(segmentStart.x);
+  }
+
+  if ("x" in snapped || "y" in snapped) {
+    segmentStart = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)({}, segmentStart, snapped);
+    segmentEnd = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)({}, segmentEnd, snapped);
+  }
+
+  return [segmentStart, segmentEnd];
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/grid-snapping/behavior/index.js":
+/*!*******************************************************!*\
+  !*** ../lib/features/grid-snapping/behavior/index.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _AutoPlaceBehavior__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AutoPlaceBehavior */ "../lib/features/grid-snapping/behavior/AutoPlaceBehavior.js");
+/* harmony import */ var _LayoutConnectionBehavior__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LayoutConnectionBehavior */ "../lib/features/grid-snapping/behavior/LayoutConnectionBehavior.js");
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [
+    "gridSnappingAutoPlaceBehavior",
+    "gridSnappingLayoutConnectionBehavior",
+  ],
+  gridSnappingAutoPlaceBehavior: ["type", _AutoPlaceBehavior__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  gridSnappingLayoutConnectionBehavior: ["type", _LayoutConnectionBehavior__WEBPACK_IMPORTED_MODULE_1__["default"]],
+});
+
+
+/***/ }),
+
+/***/ "../lib/features/grid-snapping/index.js":
+/*!**********************************************!*\
+  !*** ../lib/features/grid-snapping/index.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _BpmnGridSnapping__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./BpmnGridSnapping */ "../lib/features/grid-snapping/BpmnGridSnapping.js");
+/* harmony import */ var diagram_js_lib_features_grid_snapping__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/grid-snapping */ "../node_modules/diagram-js/lib/features/grid-snapping/index.js");
+/* harmony import */ var _behavior__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./behavior */ "../lib/features/grid-snapping/behavior/index.js");
+
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [diagram_js_lib_features_grid_snapping__WEBPACK_IMPORTED_MODULE_0__["default"], _behavior__WEBPACK_IMPORTED_MODULE_1__["default"]],
+  __init__: ["bpmnGridSnapping"],
+  bpmnGridSnapping: ["type", _BpmnGridSnapping__WEBPACK_IMPORTED_MODULE_2__["default"]],
+});
+
+
+/***/ }),
+
+/***/ "../lib/features/keyboard/ODKeyboardBindings.js":
+/*!******************************************************!*\
+  !*** ../lib/features/keyboard/ODKeyboardBindings.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ODKeyboardBindings)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var diagram_js_lib_features_keyboard_KeyboardBindings__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/keyboard/KeyboardBindings */ "../node_modules/diagram-js/lib/features/keyboard/KeyboardBindings.js");
+
+
+
+
+/**
+ * OD specific keyboard bindings.
+ *
+ * @param {Injector} injector
+ */
+function ODKeyboardBindings(injector) {
+  injector.invoke(diagram_js_lib_features_keyboard_KeyboardBindings__WEBPACK_IMPORTED_MODULE_0__["default"], this);
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(ODKeyboardBindings, diagram_js_lib_features_keyboard_KeyboardBindings__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+ODKeyboardBindings.$inject = ["injector"];
+
+/**
+ * Register available keyboard bindings.
+ *
+ * @param {Keyboard} keyboard
+ * @param {EditorActions} editorActions
+ */
+ODKeyboardBindings.prototype.registerBindings = function (
+  keyboard,
+  editorActions,
+) {
+  // inherit default bindings
+  diagram_js_lib_features_keyboard_KeyboardBindings__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.registerBindings.call(
+    this,
+    keyboard,
+    editorActions,
+  );
+
+  /**
+   * Add keyboard binding if respective editor action
+   * is registered.
+   *
+   * @param {String} action name
+   * @param {Function} fn that implements the key binding
+   */
+  function addListener(action, fn) {
+    if (editorActions.isRegistered(action)) {
+      keyboard.addListener(fn);
+    }
+  }
+
+  // select all elements
+  // CTRL + A
+  addListener("selectElements", function (context) {
+    var event = context.keyEvent;
+
+    if (keyboard.isKey(["a", "A"], event) && keyboard.isCmd(event)) {
+      editorActions.trigger("selectElements");
+
+      return true;
+    }
+  });
+
+  // search labels
+  // CTRL + F
+  addListener("find", function (context) {
+    var event = context.keyEvent;
+
+    if (keyboard.isKey(["f", "F"], event) && keyboard.isCmd(event)) {
+      editorActions.trigger("find");
+
+      return true;
+    }
+  });
+
+  // activate space tool
+  // S
+  addListener("spaceTool", function (context) {
+    var event = context.keyEvent;
+
+    if (keyboard.hasModifier(event)) {
+      return;
+    }
+
+    if (keyboard.isKey(["s", "S"], event)) {
+      editorActions.trigger("spaceTool");
+
+      return true;
+    }
+  });
+
+  // activate lasso tool
+  // L
+  addListener("lassoTool", function (context) {
+    var event = context.keyEvent;
+
+    if (keyboard.hasModifier(event)) {
+      return;
+    }
+
+    if (keyboard.isKey(["l", "L"], event)) {
+      editorActions.trigger("lassoTool");
+
+      return true;
+    }
+  });
+
+  // activate hand tool
+  // H
+  addListener("handTool", function (context) {
+    var event = context.keyEvent;
+
+    if (keyboard.hasModifier(event)) {
+      return;
+    }
+
+    if (keyboard.isKey(["h", "H"], event)) {
+      editorActions.trigger("handTool");
+
+      return true;
+    }
+  });
+
+  // activate direct editing
+  // E
+  addListener("directEditing", function (context) {
+    var event = context.keyEvent;
+
+    if (keyboard.hasModifier(event)) {
+      return;
+    }
+
+    if (keyboard.isKey(["e", "E"], event)) {
+      editorActions.trigger("directEditing");
+
+      return true;
+    }
+  });
+};
+
+
+/***/ }),
+
+/***/ "../lib/features/keyboard/index.js":
+/*!*****************************************!*\
+  !*** ../lib/features/keyboard/index.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var diagram_js_lib_features_keyboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/keyboard */ "../node_modules/diagram-js/lib/features/keyboard/index.js");
+/* harmony import */ var _ODKeyboardBindings__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ODKeyboardBindings */ "../lib/features/keyboard/ODKeyboardBindings.js");
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [diagram_js_lib_features_keyboard__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  __init__: ["keyboardBindings"],
+  keyboardBindings: ["type", _ODKeyboardBindings__WEBPACK_IMPORTED_MODULE_1__["default"]],
+});
+
+
+/***/ }),
+
+/***/ "../lib/features/label-editing/LabelEditingPreview.js":
+/*!************************************************************!*\
+  !*** ../lib/features/label-editing/LabelEditingPreview.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ LabelEditingPreview)
+/* harmony export */ });
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+
+
+var MARKER_HIDDEN = "djs-element-hidden";
+
+function LabelEditingPreview(eventBus, canvas) {
+  var element, gfx;
+
+  eventBus.on("directEditing.activate", function (context) {
+    var activeProvider = context.active;
+
+    element = activeProvider.element.label || activeProvider.element;
+
+    if (element.labelTarget) {
+      canvas.addMarker(element, MARKER_HIDDEN);
+    }
+  });
+
+  eventBus.on(
+    ["directEditing.complete", "directEditing.cancel"],
+    function (context) {
+      var activeProvider = context.active;
+
+      if (activeProvider) {
+        canvas.removeMarker(
+          activeProvider.element.label || activeProvider.element,
+          MARKER_HIDDEN,
+        );
+      }
+
+      element = undefined;
+
+      if (gfx) {
+        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.remove)(gfx);
+
+        gfx = undefined;
+      }
+    },
+  );
+}
+
+LabelEditingPreview.$inject = ["eventBus", "canvas"];
+
+
+/***/ }),
+
+/***/ "../lib/features/label-editing/LabelEditingProvider.js":
+/*!*************************************************************!*\
+  !*** ../lib/features/label-editing/LabelEditingProvider.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ LabelEditingProvider)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _LabelUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./LabelUtil */ "../lib/features/label-editing/LabelUtil.js");
+/* harmony import */ var _modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modeling/util/ModelingUtil */ "../lib/features/modeling/util/ModelingUtil.js");
+/* harmony import */ var _util_LabelUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/LabelUtil */ "../lib/util/LabelUtil.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/ModelUtil */ "../lib/util/ModelUtil.js");
+
+
+
+
+
+
+
+
+
+function LabelEditingProvider(
+  eventBus,
+  odFactory,
+  canvas,
+  directEditing,
+  modeling,
+  resizeHandles,
+  textRenderer,
+) {
+  this._odFactory = odFactory;
+  this._canvas = canvas;
+  this._modeling = modeling;
+  this._textRenderer = textRenderer;
+
+  directEditing.registerProvider(this);
+
+  function decideIfTitelOrAttributesClicked(event) {
+    const zoom = canvas.zoom();
+    const titel_attribute_divider_y_coordinate =
+      (event.element.y + 30 - canvas._cachedViewbox.y) * zoom;
+    const click_y_coordinate = event.originalEvent.offsetY;
+    if (
+      (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.is)(event.element, "od:Object") &&
+      click_y_coordinate >= titel_attribute_divider_y_coordinate
+    ) {
+      event.element.businessObject.labelAttribute = "attributeValues";
+    } else {
+      event.element.businessObject.labelAttribute = "name";
+    }
+  }
+
+  // listen to dblclick on non-root elements
+  eventBus.on("element.dblclick", function (event) {
+    decideIfTitelOrAttributesClicked(event);
+    activateDirectEdit(event.element, true);
+  });
+
+  // complete on followup canvas operation
+  eventBus.on(
+    [
+      "autoPlace.start",
+      "canvas.viewbox.changing",
+      "drag.init",
+      "element.mousedown",
+      "popupMenu.open",
+    ],
+    function (event) {
+      if (directEditing.isActive()) {
+        directEditing.complete();
+      }
+    },
+  );
+
+  // cancel on command stack changes
+  eventBus.on(["commandStack.changed"], function (e) {
+    if (directEditing.isActive()) {
+      directEditing.cancel();
+    }
+  });
+
+  eventBus.on("directEditing.activate", function (event) {
+    resizeHandles.removeResizers();
+  });
+
+  eventBus.on("create.end", 500, function (event) {
+    var context = event.context,
+      element = context.shape,
+      canExecute = event.context.canExecute,
+      isTouch = event.isTouch;
+
+    // TODO(nikku): we need to find a way to support the
+    // direct editing on mobile devices; right now this will
+    // break for desworkflowediting on mobile devices
+    // as it breaks the user interaction workflow
+
+    // TODO(nre): we should temporarily focus the edited element
+    // here and release the focused viewport after the direct edit
+    // operation is finished
+    if (isTouch) {
+      return;
+    }
+
+    if (!canExecute) {
+      return;
+    }
+
+    if (context.hints && context.hints.createElementsBehavior === false) {
+      return;
+    }
+
+    activateDirectEdit(element, false);
+  });
+
+  eventBus.on("autoPlace.end", 500, function (event) {
+    activateDirectEdit(event.shape, false);
+  });
+
+  function activateDirectEdit(element, force) {
+    if (force || (0,_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_1__.isAny)(element, ["od:TextBox", "od:Object"])) {
+      directEditing.activate(element);
+    }
+  }
+}
+
+LabelEditingProvider.$inject = [
+  "eventBus",
+  "odFactory",
+  "canvas",
+  "directEditing",
+  "modeling",
+  "resizeHandles",
+  "textRenderer",
+];
+
+/**
+ * Activate direct editing for objects and text annotations.
+ *
+ * @param  {djs.model.Base} element
+ *
+ * @return {Object} an object with properties bounds (position and size), text and options
+ */
+LabelEditingProvider.prototype.activate = function (element) {
+  // text
+  var text = (0,_LabelUtil__WEBPACK_IMPORTED_MODULE_2__.getLabel)(element);
+
+  if (text === undefined) {
+    return;
+  }
+
+  var context = {
+    text: text,
+  };
+
+  // bounds
+  var bounds = this.getEditingBBox(element);
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)(context, bounds);
+
+  var options = {};
+
+  // text boxes
+  if ((0,_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_1__.isAny)(element, ["od:TextBox"])) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)(options, {
+      centerVertically: true,
+    });
+  }
+
+  // external labels
+  if ((0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_4__.isLabelExternal)(element)) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)(options, {
+      autoResize: true,
+    });
+  }
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)(context, {
+    options: options,
+  });
+
+  return context;
+};
+
+/**
+ * Get the editing bounding box based on the element's size and position
+ *
+ * @param  {djs.model.Base} element
+ *
+ * @return {Object} an object containing information about position
+ *                  and size (fixed or minimum and/or maximum)
+ */
+LabelEditingProvider.prototype.getEditingBBox = function (element) {
+  var canvas = this._canvas;
+
+  var target = element.label || element;
+
+  var bbox = canvas.getAbsoluteBBox(target);
+
+  var mid = {
+    x: bbox.x + bbox.width / 2,
+    y: bbox.y + bbox.height / 2,
+  };
+
+  // default position
+  var bounds = { x: bbox.x, y: bbox.y };
+
+  var zoom = canvas.zoom();
+
+  var defaultStyle = this._textRenderer.getDefaultStyle(),
+    externalStyle = this._textRenderer.getExternalStyle();
+
+  // take zoom into account
+  var externalFontSize = externalStyle.fontSize * zoom,
+    externalLineHeight = externalStyle.lineHeight,
+    defaultFontSize = defaultStyle.fontSize * zoom,
+    defaultLineHeight = defaultStyle.lineHeight;
+
+  var style = {
+    fontFamily: this._textRenderer.getDefaultStyle().fontFamily,
+    fontWeight: this._textRenderer.getDefaultStyle().fontWeight,
+  };
+
+  if ((0,_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_1__.isAny)(element, ["od:TextBox", "od:Object"])) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)(bounds, {
+      width: bbox.width,
+      height: bbox.height,
+    });
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)(style, {
+      fontSize: defaultFontSize + "px",
+      lineHeight: defaultLineHeight,
+      paddingTop: 7 * zoom + "px",
+      paddingBottom: 7 * zoom + "px",
+      paddingLeft: 5 * zoom + "px",
+      paddingRight: 5 * zoom + "px",
+    });
+
+    if ((0,_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_1__.isAny)(element, ["od:Object"])) {
+      // Editing attributes should be different.
+      if (element.businessObject.labelAttribute === "attributeValues") {
+        (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)(bounds, {
+          y: bbox.y + 30 * zoom,
+          height: bbox.height - 30 * zoom,
+        });
+      } else {
+        (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)(bounds, {
+          height: 30 * zoom,
+        });
+      }
+    }
+  }
+
+  var width = 90 * zoom,
+    paddingTop = 7 * zoom,
+    paddingBottom = 4 * zoom;
+
+  // external labels for events, data elements, gateways, groups and connections
+  if (target.labelTarget) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)(bounds, {
+      width: width,
+      height: bbox.height + paddingTop + paddingBottom,
+      x: mid.x - width / 2,
+      y: bbox.y - paddingTop,
+    });
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)(style, {
+      fontSize: externalFontSize + "px",
+      lineHeight: externalLineHeight,
+      paddingTop: paddingTop + "px",
+      paddingBottom: paddingBottom + "px",
+    });
+  }
+
+  // external label not yet created
+  if (
+    (0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_4__.isLabelExternal)(target) &&
+    !(0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_4__.hasExternalLabel)(target) &&
+    !(0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_4__.isLabel)(target)
+  ) {
+    var externalLabelMid = (0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_4__.getExternalLabelMid)(element);
+
+    var absoluteBBox = canvas.getAbsoluteBBox({
+      x: externalLabelMid.x,
+      y: externalLabelMid.y,
+      width: 0,
+      height: 0,
+    });
+
+    var height = externalFontSize + paddingTop + paddingBottom;
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)(bounds, {
+      width: width,
+      height: height,
+      x: absoluteBBox.x - width / 2,
+      y: absoluteBBox.y - height / 2,
+    });
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)(style, {
+      fontSize: externalFontSize + "px",
+      lineHeight: externalLineHeight,
+      paddingTop: paddingTop + "px",
+      paddingBottom: paddingBottom + "px",
+    });
+  }
+
+  return { bounds: bounds, style: style };
+};
+
+LabelEditingProvider.prototype.update = function (element, newLabel) {
+  if (isEmptyText(newLabel)) {
+    newLabel = null;
+  }
+
+  this._modeling.updateLabel(element, newLabel);
+};
+
+// helpers //////////////////////
+
+function isEmptyText(label) {
+  return !label || !label.trim();
+}
+
+
+/***/ }),
+
 /***/ "../lib/features/label-editing/LabelUtil.js":
 /*!**************************************************!*\
   !*** ../lib/features/label-editing/LabelUtil.js ***!
@@ -1463,6 +3783,3242 @@ function setLabel(element, text) {
 
   return element;
 }
+
+
+/***/ }),
+
+/***/ "../lib/features/label-editing/cmd/UpdateLabelHandler.js":
+/*!***************************************************************!*\
+  !*** ../lib/features/label-editing/cmd/UpdateLabelHandler.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ UpdateLabelHandler)
+/* harmony export */ });
+/* harmony import */ var _LabelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../LabelUtil */ "../lib/features/label-editing/LabelUtil.js");
+/* harmony import */ var _util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../util/LabelUtil */ "../lib/util/LabelUtil.js");
+
+
+
+
+var NULL_DIMENSIONS = {
+  width: 0,
+  height: 0,
+};
+
+/**
+ * A handler that updates the text of a postit element.
+ */
+function UpdateLabelHandler(modeling, textRenderer) {
+  /**
+   * Set the label and return the changed elements.
+   *
+   * Element parameter can be label itself or connection (i.e. sequence flow).
+   *
+   * @param {djs.model.Base} element
+   * @param {String} text
+   */
+  function setText(element, text) {
+    // external label if present
+    var label = element.label || element;
+
+    var labelTarget = element.labelTarget || element;
+
+    (0,_LabelUtil__WEBPACK_IMPORTED_MODULE_0__.setLabel)(label, text, labelTarget !== label);
+
+    return [label, labelTarget];
+  }
+
+  function preExecute(ctx) {
+    var element = ctx.element,
+      businessObject = element.businessObject,
+      newLabel = ctx.newLabel;
+
+    if (
+      !(0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__.isLabel)(element) &&
+      (0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__.isLabelExternal)(element) &&
+      !(0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__.hasExternalLabel)(element) &&
+      !isEmptyText(newLabel)
+    ) {
+      // create label
+      var paddingTop = 7;
+
+      var labelCenter = (0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__.getExternalLabelMid)(element);
+
+      labelCenter = {
+        x: labelCenter.x,
+        y: labelCenter.y + paddingTop,
+      };
+
+      modeling.createLabel(element, labelCenter, {
+        id: businessObject.id + "_label",
+        businessObject: businessObject,
+      });
+    }
+  }
+
+  function execute(ctx) {
+    ctx.oldLabel = (0,_LabelUtil__WEBPACK_IMPORTED_MODULE_0__.getLabel)(ctx.element);
+    return setText(ctx.element, ctx.newLabel);
+  }
+
+  function revert(ctx) {
+    return setText(ctx.element, ctx.oldLabel);
+  }
+
+  function postExecute(ctx) {
+    var element = ctx.element,
+      label = element.label || element,
+      newLabel = ctx.newLabel,
+      newBounds = ctx.newBounds,
+      hints = ctx.hints || {};
+
+    // ignore internal labels for elements
+    if (!(0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__.isLabel)(label)) {
+      return;
+    }
+
+    if ((0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__.isLabel)(label) && isEmptyText(newLabel)) {
+      if (hints.removeShape !== false) {
+        modeling.removeShape(label, { unsetLabel: false });
+      }
+
+      return;
+    }
+
+    var text = (0,_LabelUtil__WEBPACK_IMPORTED_MODULE_0__.getLabel)(label);
+
+    // resize element based on label _or_ pre-defined bounds
+    if (typeof newBounds === "undefined") {
+      newBounds = textRenderer.getExternalLabelBounds(label, text);
+    }
+
+    // setting newBounds to false or _null_ will
+    // disable the postExecute resize operation
+    if (newBounds) {
+      modeling.resizeShape(label, newBounds, NULL_DIMENSIONS);
+    }
+  }
+
+  // API
+
+  this.preExecute = preExecute;
+  this.execute = execute;
+  this.revert = revert;
+  this.postExecute = postExecute;
+}
+
+UpdateLabelHandler.$inject = ["modeling", "textRenderer"];
+
+// helpers ///////////////////////
+
+function isEmptyText(label) {
+  return !label || !label.trim();
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/label-editing/index.js":
+/*!**********************************************!*\
+  !*** ../lib/features/label-editing/index.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var diagram_js_lib_features_change_support__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! diagram-js/lib/features/change-support */ "../node_modules/diagram-js/lib/features/change-support/index.js");
+/* harmony import */ var diagram_js_lib_features_resize__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! diagram-js/lib/features/resize */ "../node_modules/diagram-js/lib/features/resize/index.js");
+/* harmony import */ var diagram_js_direct_editing__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js-direct-editing */ "../node_modules/diagram-js-direct-editing/index.js");
+/* harmony import */ var _LabelEditingProvider__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./LabelEditingProvider */ "../lib/features/label-editing/LabelEditingProvider.js");
+/* harmony import */ var _LabelEditingPreview__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./LabelEditingPreview */ "../lib/features/label-editing/LabelEditingPreview.js");
+
+
+
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [diagram_js_lib_features_change_support__WEBPACK_IMPORTED_MODULE_1__["default"], diagram_js_lib_features_resize__WEBPACK_IMPORTED_MODULE_2__["default"], diagram_js_direct_editing__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  __init__: ["labelEditingProvider", "labelEditingPreview"],
+  labelEditingProvider: ["type", _LabelEditingProvider__WEBPACK_IMPORTED_MODULE_3__["default"]],
+  labelEditingPreview: ["type", _LabelEditingPreview__WEBPACK_IMPORTED_MODULE_4__["default"]],
+});
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/ElementFactory.js":
+/*!**************************************************!*\
+  !*** ../lib/features/modeling/ElementFactory.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ElementFactory)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/ModelUtil */ "../lib/util/ModelUtil.js");
+/* harmony import */ var diagram_js_lib_core_ElementFactory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/core/ElementFactory */ "../node_modules/diagram-js/lib/core/ElementFactory.js");
+/* harmony import */ var _util_LabelUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/LabelUtil */ "../lib/util/LabelUtil.js");
+
+
+
+
+
+
+
+
+
+
+/**
+ * A od-aware factory for diagram-js shapes
+ */
+function ElementFactory(odFactory, moddle, translate) {
+  diagram_js_lib_core_ElementFactory__WEBPACK_IMPORTED_MODULE_0__["default"].call(this);
+
+  this._odFactory = odFactory;
+  this._moddle = moddle;
+  this._translate = translate;
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(ElementFactory, diagram_js_lib_core_ElementFactory__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+ElementFactory.$inject = ["odFactory", "moddle", "translate"];
+
+ElementFactory.prototype.baseCreate = diagram_js_lib_core_ElementFactory__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.create;
+
+ElementFactory.prototype.create = function (elementType, attrs) {
+  // no special magic for labels,
+  // we assume their businessObjects have already been created
+  // and wired via attrs
+  if (elementType === "label") {
+    return this.baseCreate(
+      elementType,
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)({ type: "label" }, _util_LabelUtil__WEBPACK_IMPORTED_MODULE_3__.DEFAULT_LABEL_SIZE, attrs),
+    );
+  }
+
+  return this.createOdElement(elementType, attrs);
+};
+
+ElementFactory.prototype.createOdElement = function (elementType, attrs) {
+  var size,
+    translate = this._translate;
+
+  attrs = attrs || {};
+
+  var businessObject = attrs.businessObject;
+
+  if (!businessObject) {
+    if (!attrs.type) {
+      throw new Error(translate("no shape type specified"));
+    }
+
+    businessObject = this._odFactory.create(attrs.type);
+  }
+
+  if (!businessObject.di) {
+    if (elementType === "root") {
+      businessObject.di = this._odFactory.createDiPlane(businessObject, [], {
+        id: businessObject.id + "_di",
+      });
+    } else if (elementType === "connection") {
+      businessObject.di = this._odFactory.createDiEdge(businessObject, [], {
+        id: businessObject.id + "_di",
+      });
+    } else {
+      businessObject.di = this._odFactory.createDiShape(
+        businessObject,
+        {},
+        {
+          id: businessObject.id + "_di",
+        },
+      );
+    }
+  }
+
+  if (attrs.di) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)(businessObject.di, attrs.di);
+
+    delete attrs.di;
+  }
+
+  applyAttributes(businessObject, attrs, [
+    "processRef",
+    "isInterrupting",
+    "associationDirection",
+    "isForCompensation",
+  ]);
+
+  size = this._getDefaultSize(businessObject);
+
+  attrs = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)(
+    {
+      businessObject: businessObject,
+      id: businessObject.id,
+    },
+    size,
+    attrs,
+  );
+
+  return this.baseCreate(elementType, attrs);
+};
+
+ElementFactory.prototype._getDefaultSize = function (semantic) {
+  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_4__.is)(semantic, "od:Object")) {
+    return { width: 150, height: 90 };
+  }
+  return { width: 100, height: 80 };
+};
+
+// helpers //////////////////////
+
+/**
+ * Apply attributes from a map to the given element,
+ * remove attribute from the map on application.
+ *
+ * @param {Base} element
+ * @param {Object} attrs (in/out map of attributes)
+ * @param {Array<String>} attributeNames name of attributes to apply
+ */
+function applyAttributes(element, attrs, attributeNames) {
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(attributeNames, function (property) {
+    if (attrs[property] !== undefined) {
+      applyAttribute(element, attrs, property);
+    }
+  });
+}
+
+/**
+ * Apply named property to element and drain it from the attrs
+ * collection.
+ *
+ * @param {Base} element
+ * @param {Object} attrs (in/out map of attributes)
+ * @param {String} attributeName to apply
+ */
+function applyAttribute(element, attrs, attributeName) {
+  element[attributeName] = attrs[attributeName];
+
+  delete attrs[attributeName];
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/Modeling.js":
+/*!********************************************!*\
+  !*** ../lib/features/modeling/Modeling.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Modeling)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var diagram_js_lib_features_modeling_Modeling__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/modeling/Modeling */ "../node_modules/diagram-js/lib/features/modeling/Modeling.js");
+/* harmony import */ var _cmd_UpdatePropertiesHandler__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./cmd/UpdatePropertiesHandler */ "../lib/features/modeling/cmd/UpdatePropertiesHandler.js");
+/* harmony import */ var _cmd_UpdateCanvasRootHandler__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./cmd/UpdateCanvasRootHandler */ "../lib/features/modeling/cmd/UpdateCanvasRootHandler.js");
+/* harmony import */ var _cmd_IdClaimHandler__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./cmd/IdClaimHandler */ "../lib/features/modeling/cmd/IdClaimHandler.js");
+/* harmony import */ var _label_editing_cmd_UpdateLabelHandler__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../label-editing/cmd/UpdateLabelHandler */ "../lib/features/label-editing/cmd/UpdateLabelHandler.js");
+
+
+
+
+
+
+
+
+
+
+/**
+ * OD modeling features activator
+ *
+ * @param {EventBus} eventBus
+ * @param {ElementFactory} elementFactory
+ * @param {CommandStack} commandStack
+ * @param {ODRules} odRules
+ */
+function Modeling(
+  eventBus,
+  elementFactory,
+  commandStack,
+  odRules,
+) {
+  diagram_js_lib_features_modeling_Modeling__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus, elementFactory, commandStack);
+
+  this._odRules = odRules;
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(Modeling, diagram_js_lib_features_modeling_Modeling__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+Modeling.$inject = ["eventBus", "elementFactory", "commandStack", "odRules"];
+
+Modeling.prototype.getHandlers = function () {
+  var handlers = diagram_js_lib_features_modeling_Modeling__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.getHandlers.call(this);
+
+  handlers["element.updateProperties"] = _cmd_UpdatePropertiesHandler__WEBPACK_IMPORTED_MODULE_2__["default"];
+  handlers["canvas.updateRoot"] = _cmd_UpdateCanvasRootHandler__WEBPACK_IMPORTED_MODULE_3__["default"];
+  handlers["id.updateClaim"] = _cmd_IdClaimHandler__WEBPACK_IMPORTED_MODULE_4__["default"];
+  handlers["element.updateLabel"] = _label_editing_cmd_UpdateLabelHandler__WEBPACK_IMPORTED_MODULE_5__["default"];
+
+  return handlers;
+};
+
+Modeling.prototype.updateLabel = function (
+  element,
+  newLabel,
+  newBounds,
+  hints,
+) {
+  this._commandStack.execute("element.updateLabel", {
+    element: element,
+    newLabel: newLabel,
+    newBounds: newBounds,
+    hints: hints || {},
+  });
+};
+
+Modeling.prototype.updateProperties = function (element, properties) {
+  this._commandStack.execute("element.updateProperties", {
+    element: element,
+    properties: properties,
+  });
+};
+
+Modeling.prototype.claimId = function (id, moddleElement) {
+  this._commandStack.execute("id.updateClaim", {
+    id: id,
+    element: moddleElement,
+    claiming: true,
+  });
+};
+
+Modeling.prototype.unclaimId = function (id, moddleElement) {
+  this._commandStack.execute("id.updateClaim", {
+    id: id,
+    element: moddleElement,
+  });
+};
+
+Modeling.prototype.connect = function (source, target, attrs, hints) {
+  var odRules = this._odRules;
+
+  if (!attrs) {
+    attrs = odRules.canConnect(source, target);
+  }
+
+  if (!attrs) {
+    return;
+  }
+
+  return this.createConnection(source, target, attrs, source.parent, hints);
+};
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/ODFactory.js":
+/*!*********************************************!*\
+  !*** ../lib/features/modeling/ODFactory.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ODFactory)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _util_ModelingUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/ModelingUtil */ "../lib/features/modeling/util/ModelingUtil.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/ModelUtil */ "../lib/util/ModelUtil.js");
+
+
+
+
+
+
+function ODFactory(moddle) {
+  this._model = moddle;
+}
+
+ODFactory.$inject = ["moddle"];
+
+ODFactory.prototype._needsId = function (element) {
+  return (0,_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_0__.isAny)(element, ["od:BoardElement"]);
+};
+
+ODFactory.prototype._ensureId = function (element) {
+  // generate semantic ids for elements
+  // od:Object -> Object_ID
+  var prefix;
+
+  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, "od:Object")) {
+    prefix = "Object";
+  } else {
+    prefix = (element.$type || "").replace(/^[^:]*:/g, "");
+  }
+
+  prefix += "_";
+
+  if (!element.id && this._needsId(element)) {
+    element.id = this._model.ids.nextPrefixed(prefix, element);
+  }
+};
+
+ODFactory.prototype.create = function (type, attrs) {
+  var element = this._model.create(type, attrs || {});
+  if (type === "od:Object") {
+    element.attributeValues = "";
+  }
+
+  this._ensureId(element);
+
+  return element;
+};
+
+ODFactory.prototype.createDiLabel = function () {
+  return this.create("odDi:OdLabel", {
+    bounds: this.createDiBounds(),
+  });
+};
+
+ODFactory.prototype.createDiShape = function (semantic, bounds, attrs) {
+  return this.create(
+    "odDi:OdShape",
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)(
+      {
+        boardElement: semantic,
+        bounds: this.createDiBounds(bounds),
+      },
+      attrs,
+    ),
+  );
+};
+
+ODFactory.prototype.createDiBounds = function (bounds) {
+  return this.create("dc:Bounds", bounds);
+};
+
+ODFactory.prototype.createDiEdge = function (semantic, waypoints, attrs) {
+  return this.create(
+    "odDi:Link",
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)(
+      {
+        boardElement: semantic,
+      },
+      attrs,
+    ),
+  );
+};
+
+ODFactory.prototype.createDiPlane = function (semantic) {
+  return this.create("odDi:OdPlane", {
+    boardElement: semantic,
+  });
+};
+
+ODFactory.prototype.createDiWaypoints = function (waypoints) {
+  var self = this;
+
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.map)(waypoints, function (pos) {
+    return self.createDiWaypoint(pos);
+  });
+};
+
+ODFactory.prototype.createDiWaypoint = function (point) {
+  return this.create("dc:Point", (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.pick)(point, ["x", "y"]));
+};
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/ODLayouter.js":
+/*!**********************************************!*\
+  !*** ../lib/features/modeling/ODLayouter.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ODLayouter)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var diagram_js_lib_layout_BaseLayouter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! diagram-js/lib/layout/BaseLayouter */ "../node_modules/diagram-js/lib/layout/BaseLayouter.js");
+/* harmony import */ var diagram_js_lib_layout_ManhattanLayout__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/layout/ManhattanLayout */ "../node_modules/diagram-js/lib/layout/ManhattanLayout.js");
+/* harmony import */ var diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! diagram-js/lib/layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/ModelUtil */ "../lib/util/ModelUtil.js");
+
+
+
+
+
+
+
+
+
+
+
+
+function ODLayouter() {}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_0__["default"])(ODLayouter, diagram_js_lib_layout_BaseLayouter__WEBPACK_IMPORTED_MODULE_1__["default"]);
+
+ODLayouter.prototype.layoutConnection = function (connection, hints) {
+  if (!hints) {
+    hints = {};
+  }
+
+  var source = hints.source || connection.source,
+    target = hints.target || connection.target,
+    waypoints = hints.waypoints || connection.waypoints,
+    connectionStart = hints.connectionStart,
+    connectionEnd = hints.connectionEnd;
+
+  var manhattanOptions, updatedWaypoints;
+
+  if (!connectionStart) {
+    connectionStart = getConnectionDocking(waypoints && waypoints[0], source);
+  }
+
+  if (!connectionEnd) {
+    connectionEnd = getConnectionDocking(
+      waypoints && waypoints[waypoints.length - 1],
+      target,
+    );
+  }
+
+  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__.is)(connection, "od:Link")) {
+    // layout all connection between flow elements h:h, except for
+    if (source === target) {
+      manhattanOptions = {
+        preferredLayouts: getLoopPreferredLayout(source, connection),
+      };
+    } else {
+      manhattanOptions = {
+        preferredLayouts: ["h:h"],
+      };
+    }
+  }
+
+  if (manhattanOptions) {
+    manhattanOptions = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)(manhattanOptions, hints);
+
+    updatedWaypoints = (0,diagram_js_lib_layout_ManhattanLayout__WEBPACK_IMPORTED_MODULE_4__.withoutRedundantPoints)(
+      (0,diagram_js_lib_layout_ManhattanLayout__WEBPACK_IMPORTED_MODULE_4__.repairConnection)(
+        source,
+        target,
+        connectionStart,
+        connectionEnd,
+        waypoints,
+        manhattanOptions,
+      ),
+    );
+  }
+
+  return updatedWaypoints || [connectionStart, connectionEnd];
+};
+
+// helpers //////////
+
+function getConnectionDocking(point, shape) {
+  return point ? point.original || point : (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__.getMid)(shape);
+}
+
+function getLoopPreferredLayout(source, connection) {
+  var waypoints = connection.waypoints;
+
+  var orientation =
+    waypoints && waypoints.length && (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__.getOrientation)(waypoints[0], source);
+
+  if (orientation === "top") {
+    return ["t:r"];
+  } else if (orientation === "right") {
+    return ["r:b"];
+  } else if (orientation === "left") {
+    return ["l:t"];
+  }
+
+  return ["b:l"];
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/ODUpdater.js":
+/*!*********************************************!*\
+  !*** ../lib/features/modeling/ODUpdater.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ODUpdater)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var diagram_js_lib_util_Collections__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! diagram-js/lib/util/Collections */ "../node_modules/diagram-js/lib/util/Collections.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/ModelUtil */ "../lib/util/ModelUtil.js");
+/* harmony import */ var _util_LabelUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/LabelUtil */ "../lib/util/LabelUtil.js");
+/* harmony import */ var diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * A handler responsible for updating the underlying OD XML + DI
+ * once changes on the diagram happen
+ */
+function ODUpdater(
+  eventBus,
+  odFactory,
+  connectionDocking,
+  translate,
+) {
+  diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
+
+  this._odFactory = odFactory;
+  this._translate = translate;
+
+  var self = this;
+
+  // connection cropping //////////////////////
+
+  // crop connection ends during create/update
+  function cropConnection(e) {
+    var context = e.context,
+      hints = context.hints || {},
+      connection;
+
+    if (!context.cropped && hints.createElementsBehavior !== false) {
+      connection = context.connection;
+      connection.waypoints = connectionDocking.getCroppedWaypoints(connection);
+      context.cropped = true;
+    }
+  }
+
+  this.executed(["connection.layout", "connection.create"], cropConnection);
+
+  this.reverted(["connection.layout"], function (e) {
+    delete e.context.cropped;
+  });
+
+  // OD + DI update //////////////////////
+
+  // update parent
+  function updateParent(e) {
+    var context = e.context;
+
+    self.updateParent(context.shape || context.connection, context.oldParent);
+  }
+
+  function reverseUpdateParent(e) {
+    var context = e.context;
+
+    var element = context.shape || context.connection,
+      // oldParent is the (old) new parent, because we are undoing
+      oldParent = context.parent || context.newParent;
+
+    self.updateParent(element, oldParent);
+  }
+
+  this.executed(
+    [
+      "shape.move",
+      "shape.create",
+      "shape.delete",
+      "connection.create",
+      "connection.move",
+      "connection.delete",
+    ],
+    ifOd(updateParent),
+  );
+
+  this.reverted(
+    [
+      "shape.move",
+      "shape.create",
+      "shape.delete",
+      "connection.create",
+      "connection.move",
+      "connection.delete",
+    ],
+    ifOd(reverseUpdateParent),
+  );
+
+  /*
+   * ## Updating Parent
+   *
+   * When morphing a root element
+   * make sure that both the *semantic* and *di* parent of each element
+   * is updated.
+   *
+   */
+  function updateRoot(event) {
+    var context = event.context,
+      oldRoot = context.oldRoot,
+      children = oldRoot.children;
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(children, function (child) {
+      if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__.is)(child, "od:BoardElement")) {
+        self.updateParent(child);
+      }
+    });
+  }
+
+  this.executed(["canvas.updateRoot"], updateRoot);
+  this.reverted(["canvas.updateRoot"], updateRoot);
+
+  // update bounds
+  function updateBounds(e) {
+    var shape = e.context.shape;
+
+    if (!(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__.is)(shape, "od:BoardElement")) {
+      return;
+    }
+
+    self.updateBounds(shape);
+  }
+
+  this.executed(
+    ["shape.move", "shape.create", "shape.resize"],
+    ifOd(function (event) {
+      // exclude labels because they're handled separately during shape.changed
+      if (event.context.shape.type === "label") {
+        return;
+      }
+
+      updateBounds(event);
+    }),
+  );
+
+  this.reverted(
+    ["shape.move", "shape.create", "shape.resize"],
+    ifOd(function (event) {
+      // exclude labels because they're handled separately during shape.changed
+      if (event.context.shape.type === "label") {
+        return;
+      }
+
+      updateBounds(event);
+    }),
+  );
+
+  // Handle labels separately. This is necessary, because the label bounds have to be updated
+  // every time its shape changes, not only on move, create and resize.
+  eventBus.on("shape.changed", function (event) {
+    if (event.element.type === "label") {
+      updateBounds({ context: { shape: event.element } });
+    }
+  });
+
+  // attach / detach connection
+  function updateConnection(e) {
+    self.updateConnection(e.context);
+  }
+
+  this.executed(
+    [
+      "connection.create",
+      "connection.move",
+      "connection.delete",
+      "connection.reconnect",
+    ],
+    ifOd(updateConnection),
+  );
+
+  this.reverted(
+    [
+      "connection.create",
+      "connection.move",
+      "connection.delete",
+      "connection.reconnect",
+    ],
+    ifOd(updateConnection),
+  );
+
+  // update waypoints
+  function updateConnectionWaypoints(e) {
+    self.updateConnectionWaypoints(e.context.connection);
+  }
+
+  this.executed(
+    ["connection.layout", "connection.move", "connection.updateWaypoints"],
+    ifOd(updateConnectionWaypoints),
+  );
+
+  this.reverted(
+    ["connection.layout", "connection.move", "connection.updateWaypoints"],
+    ifOd(updateConnectionWaypoints),
+  );
+
+  // update attachments
+  function updateAttachment(e) {
+    self.updateAttachment(e.context);
+  }
+
+  this.executed(["element.updateAttachment"], ifOd(updateAttachment));
+  this.reverted(["element.updateAttachment"], ifOd(updateAttachment));
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_3__["default"])(ODUpdater, diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+ODUpdater.$inject = ["eventBus", "odFactory", "connectionDocking", "translate"];
+
+// implementation //////////////////////
+
+ODUpdater.prototype.updateAttachment = function (context) {
+  var shape = context.shape,
+    businessObject = shape.businessObject,
+    host = shape.host;
+
+  businessObject.attachedToRef = host && host.businessObject;
+};
+
+ODUpdater.prototype.updateParent = function (element, oldParent) {
+  // do not update label parent
+  if ((0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_4__.isLabel)(element)) {
+    return;
+  }
+
+  var parentShape = element.parent;
+
+  var businessObject = element.businessObject,
+    parentBusinessObject = parentShape && parentShape.businessObject,
+    parentDi = parentBusinessObject && parentBusinessObject.di;
+
+  this.updateSemanticParent(businessObject, parentBusinessObject);
+
+  this.updateDiParent(businessObject.di, parentDi);
+};
+
+ODUpdater.prototype.updateBounds = function (shape) {
+  var di = shape.businessObject.di;
+
+  var target = (0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_4__.isLabel)(shape) ? this._getLabel(di) : di;
+
+  var bounds = target.bounds;
+
+  if (!bounds) {
+    bounds = this._odFactory.createDiBounds();
+    target.set("bounds", bounds);
+  }
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(bounds, {
+    x: shape.x,
+    y: shape.y,
+    width: shape.width,
+    height: shape.height,
+  });
+};
+
+ODUpdater.prototype.updateDiParent = function (di, parentDi) {
+  if (parentDi && !(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__.is)(parentDi, "odDi:OdPlane")) {
+    parentDi = parentDi.$parent;
+  }
+
+  if (di.$parent === parentDi) {
+    return;
+  }
+
+  var planeElements = (parentDi || di.$parent).get("planeElement");
+
+  if (parentDi) {
+    planeElements.push(di);
+    di.$parent = parentDi;
+  } else {
+    (0,diagram_js_lib_util_Collections__WEBPACK_IMPORTED_MODULE_5__.remove)(planeElements, di);
+    di.$parent = null;
+  }
+};
+
+ODUpdater.prototype.updateSemanticParent = function (
+  businessObject,
+  newParent,
+  visualParent,
+) {
+  var containment,
+    translate = this._translate;
+
+  if (businessObject.$parent === newParent) {
+    return;
+  }
+
+  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__.is)(businessObject, "od:BoardElement")) {
+    containment = "boardElements";
+  }
+
+  if (!containment) {
+    throw new Error(
+      translate("no parent for {element} in {parent}", {
+        element: businessObject.id,
+        parent: newParent.id,
+      }),
+    );
+  }
+
+  var children;
+
+  if (businessObject.$parent) {
+    // remove from old parent
+    children = businessObject.$parent.get(containment);
+    (0,diagram_js_lib_util_Collections__WEBPACK_IMPORTED_MODULE_5__.remove)(children, businessObject);
+  }
+
+  if (!newParent) {
+    businessObject.$parent = null;
+  } else {
+    // add to new parent
+    children = newParent.get(containment);
+    children.push(businessObject);
+    businessObject.$parent = newParent;
+  }
+
+  if (visualParent) {
+    var diChildren = visualParent.get(containment);
+
+    (0,diagram_js_lib_util_Collections__WEBPACK_IMPORTED_MODULE_5__.remove)(children, businessObject);
+
+    if (newParent) {
+      if (!diChildren) {
+        diChildren = [];
+        newParent.set(containment, diChildren);
+      }
+
+      diChildren.push(businessObject);
+    }
+  }
+};
+
+ODUpdater.prototype.updateConnection = function (context) {
+  var connection = context.connection,
+    businessObject = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__.getBusinessObject)(connection),
+    newSource = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__.getBusinessObject)(connection.source),
+    newTarget = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__.getBusinessObject)(connection.target);
+
+  var inverseSet = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__.is)(businessObject, "od:Link");
+
+  if (businessObject.sourceRef !== newSource) {
+    if (inverseSet) {
+      (0,diagram_js_lib_util_Collections__WEBPACK_IMPORTED_MODULE_5__.remove)(
+        businessObject.sourceRef && businessObject.sourceRef.get("links"),
+        businessObject,
+      );
+
+      if (newSource && newSource.get("links")) {
+        newSource.get("links").push(businessObject);
+      }
+    }
+
+    businessObject.sourceRef = newSource;
+  }
+  if (businessObject.targetRef !== newTarget) {
+    businessObject.targetRef = newTarget;
+  }
+
+  this.updateConnectionWaypoints(connection);
+  this.updateDiConnection(businessObject.di, newSource, newTarget);
+};
+ODUpdater.prototype.updateConnectionWaypoints = function (connection) {
+  connection.businessObject.di.set(
+    "waypoint",
+    this._odFactory.createDiWaypoints(connection.waypoints),
+  );
+};
+
+// update existing sourceElement and targetElement di information
+ODUpdater.prototype.updateDiConnection = function (di, newSource, newTarget) {
+  if (di.sourceElement && di.sourceElement.boardElement !== newSource) {
+    di.sourceElement = newSource && newSource.di;
+  }
+
+  if (di.targetElement && di.targetElement.boardElement !== newTarget) {
+    di.targetElement = newTarget && newTarget.di;
+  }
+};
+
+// helpers //////////////////////
+
+ODUpdater.prototype._getLabel = function (di) {
+  if (!di.label) {
+    di.label = this._odFactory.createDiLabel();
+  }
+
+  return di.label;
+};
+
+/**
+ * Make sure the event listener is only called
+ * if the touched element is a od element.
+ *
+ * @param  {Function} fn
+ * @return {Function} guarded function
+ */
+function ifOd(fn) {
+  return function (event) {
+    var context = event.context,
+      element = context.shape || context.connection;
+
+    if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__.is)(element, "od:BoardElement")) {
+      fn(event);
+    }
+  };
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/behavior/AdaptiveLabelPositioningBehavior.js":
+/*!*****************************************************************************!*\
+  !*** ../lib/features/modeling/behavior/AdaptiveLabelPositioningBehavior.js ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ AdaptiveLabelPositioningBehavior)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! diagram-js/lib/layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var diagram_js_lib_util_Math__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! diagram-js/lib/util/Math */ "../node_modules/diagram-js/lib/util/PositionUtil.js");
+/* harmony import */ var _util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../util/LabelUtil */ "../lib/util/LabelUtil.js");
+/* harmony import */ var diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+
+
+
+
+
+
+
+
+
+
+var ALIGNMENTS = ["top", "bottom", "left", "right"];
+
+var ELEMENT_LABEL_DISTANCE = 10;
+
+/**
+ * A component that makes sure that external labels are added
+ * together with respective elements and properly updated (DI wise)
+ * during move.
+ *
+ * @param {EventBus} eventBus
+ * @param {Modeling} modeling
+ */
+function AdaptiveLabelPositioningBehavior(eventBus, modeling) {
+  diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
+
+  this.postExecuted(
+    ["connection.create", "connection.layout", "connection.updateWaypoints"],
+    function (event) {
+      var context = event.context,
+        connection = context.connection,
+        source = connection.source,
+        target = connection.target,
+        hints = context.hints || {};
+
+      if (hints.createElementsBehavior !== false) {
+        checkLabelAdjustment(source);
+        checkLabelAdjustment(target);
+      }
+    },
+  );
+
+  this.postExecuted(["label.create"], function (event) {
+    var context = event.context,
+      shape = context.shape,
+      hints = context.hints || {};
+
+    if (hints.createElementsBehavior !== false) {
+      checkLabelAdjustment(shape.labelTarget);
+    }
+  });
+
+  this.postExecuted(["elements.create"], function (event) {
+    var context = event.context,
+      elements = context.elements,
+      hints = context.hints || {};
+
+    if (hints.createElementsBehavior !== false) {
+      elements.forEach(function (element) {
+        checkLabelAdjustment(element);
+      });
+    }
+  });
+
+  function checkLabelAdjustment(element) {
+    // skip non-existing labels
+    if (!(0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__.hasExternalLabel)(element)) {
+      return;
+    }
+
+    var optimalPosition = getOptimalPosition(element);
+
+    // no optimal position found
+    if (!optimalPosition) {
+      return;
+    }
+
+    adjustLabelPosition(element, optimalPosition);
+  }
+
+  function adjustLabelPosition(element, orientation) {
+    var elementMid = (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_2__.getMid)(element),
+      label = element.label,
+      labelMid = (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_2__.getMid)(label);
+
+    // ignore labels that are being created
+    if (!label.parent) {
+      return;
+    }
+
+    var elementTrbl = (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_2__.asTRBL)(element);
+
+    var newLabelMid;
+
+    switch (orientation) {
+      case "top":
+        newLabelMid = {
+          x: elementMid.x,
+          y: elementTrbl.top - ELEMENT_LABEL_DISTANCE - label.height / 2,
+        };
+
+        break;
+
+      case "left":
+        newLabelMid = {
+          x: elementTrbl.left - ELEMENT_LABEL_DISTANCE - label.width / 2,
+          y: elementMid.y,
+        };
+
+        break;
+
+      case "bottom":
+        newLabelMid = {
+          x: elementMid.x,
+          y: elementTrbl.bottom + ELEMENT_LABEL_DISTANCE + label.height / 2,
+        };
+
+        break;
+
+      case "right":
+        newLabelMid = {
+          x: elementTrbl.right + ELEMENT_LABEL_DISTANCE + label.width / 2,
+          y: elementMid.y,
+        };
+
+        break;
+    }
+
+    var delta = (0,diagram_js_lib_util_Math__WEBPACK_IMPORTED_MODULE_3__.delta)(newLabelMid, labelMid);
+
+    modeling.moveShape(label, delta);
+  }
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_4__["default"])(AdaptiveLabelPositioningBehavior, diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+AdaptiveLabelPositioningBehavior.$inject = ["eventBus", "modeling"];
+
+// helpers //////////////////////
+
+/**
+ * Return alignments which are taken by a boundary's host element
+ *
+ * @param {Shape} element
+ *
+ * @return {Array<String>}
+ */
+function getTakenHostAlignments(element) {
+  var hostElement = element.host,
+    elementMid = (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_2__.getMid)(element),
+    hostOrientation = (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_2__.getOrientation)(elementMid, hostElement);
+
+  var freeAlignments;
+
+  // check whether there is a multi-orientation, e.g. 'top-left'
+  if (hostOrientation.indexOf("-") >= 0) {
+    freeAlignments = hostOrientation.split("-");
+  } else {
+    freeAlignments = [hostOrientation];
+  }
+
+  var takenAlignments = ALIGNMENTS.filter(function (alignment) {
+    return freeAlignments.indexOf(alignment) === -1;
+  });
+
+  return takenAlignments;
+}
+
+/**
+ * Return alignments which are taken by related connections
+ *
+ * @param {Shape} element
+ *
+ * @return {Array<String>}
+ */
+function getTakenConnectionAlignments(element) {
+  var elementMid = (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_2__.getMid)(element);
+
+  var takenAlignments = []
+    .concat(
+      element.incoming.map(function (c) {
+        return c.waypoints[c.waypoints.length - 2];
+      }),
+      element.outgoing.map(function (c) {
+        return c.waypoints[1];
+      }),
+    )
+    .map(function (point) {
+      return getApproximateOrientation(elementMid, point);
+    });
+
+  return takenAlignments;
+}
+
+/**
+ * Return the optimal label position around an element
+ * or _undefined_, if none was found.
+ *
+ * @param  {Shape} element
+ *
+ * @return {String} positioning identifier
+ */
+function getOptimalPosition(element) {
+  var labelMid = (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_2__.getMid)(element.label);
+
+  var elementMid = (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_2__.getMid)(element);
+
+  var labelOrientation = getApproximateOrientation(elementMid, labelMid);
+
+  if (!isAligned(labelOrientation)) {
+    return;
+  }
+
+  var takenAlignments = getTakenConnectionAlignments(element);
+
+  if (element.host) {
+    var takenHostAlignments = getTakenHostAlignments(element);
+
+    takenAlignments = takenAlignments.concat(takenHostAlignments);
+  }
+
+  var freeAlignments = ALIGNMENTS.filter(function (alignment) {
+    return takenAlignments.indexOf(alignment) === -1;
+  });
+
+  // NOTHING TO DO; label already aligned a.O.K.
+  if (freeAlignments.indexOf(labelOrientation) !== -1) {
+    return;
+  }
+
+  return freeAlignments[0];
+}
+
+function getApproximateOrientation(p0, p1) {
+  return (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_2__.getOrientation)(p1, p0, 5);
+}
+
+function isAligned(orientation) {
+  return ALIGNMENTS.indexOf(orientation) !== -1;
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/behavior/AppendBehavior.js":
+/*!***********************************************************!*\
+  !*** ../lib/features/modeling/behavior/AppendBehavior.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ AppendBehavior)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+
+
+
+
+function AppendBehavior(eventBus) {
+  diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
+
+  // assign correct shape position unless already set
+
+  this.preExecute(
+    "shape.append",
+    function (context) {
+      var source = context.source,
+        shape = context.shape;
+
+      if (!context.position) {
+        context.position = {
+          x: source.x + source.width + 80 + shape.width / 2,
+          y: source.y + source.height / 2,
+        };
+      }
+    },
+    true,
+  );
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(AppendBehavior, diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+AppendBehavior.$inject = ["eventBus"];
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/behavior/EmptyTextBoxBehavior.js":
+/*!*****************************************************************!*\
+  !*** ../lib/features/modeling/behavior/EmptyTextBoxBehavior.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ EmptyTextBoxBehavior)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../util/ModelUtil */ "../lib/util/ModelUtil.js");
+/* harmony import */ var diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+
+
+
+
+
+
+function EmptyTextBoxBehavior(
+  eventBus,
+  modeling,
+  directEditing,
+) {
+  diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
+
+  // delete text box if it has no text
+  this.postExecute(
+    "element.updateLabel",
+    function (context) {
+      var element = context.element,
+        newLabel = context.newLabel;
+
+      if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, "od:TextBox") && isEmpty(newLabel)) {
+        modeling.removeElements([element]);
+      }
+    },
+    true,
+  );
+
+  eventBus.on("directEditing.cancel", 1001, function (event) {
+    var active = event.active,
+      element = active.element;
+
+    if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, "od:TextBox") && isEmpty((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element).name)) {
+      directEditing._active = false;
+      modeling.removeElements([element]);
+    }
+  });
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_2__["default"])(EmptyTextBoxBehavior, diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+EmptyTextBoxBehavior.$inject = ["eventBus", "modeling", "directEditing"];
+
+// helpers //////////
+
+function isEmpty(label) {
+  return !label || label === "";
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/behavior/FixHoverBehavior.js":
+/*!*************************************************************!*\
+  !*** ../lib/features/modeling/behavior/FixHoverBehavior.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ FixHoverBehavior)
+/* harmony export */ });
+var HIGH_PRIORITY = 1500;
+
+/**
+ * Correct hover targets in certain situations to improve diagram interaction.
+ *
+ * @param {ElementRegistry} elementRegistry
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ */
+function FixHoverBehavior(elementRegistry, eventBus, canvas) {
+  eventBus.on(
+    [
+      "create.hover",
+      "create.move",
+      "create.end",
+      "shape.move.hover",
+      "shape.move.move",
+      "shape.move.end",
+    ],
+    HIGH_PRIORITY,
+    function (event) {
+      var context = event.context,
+        shape = context.shape || event.shape,
+        hover = event.hover;
+
+      var rootElement = canvas.getRootElement();
+
+      // ensure group & label elements are dropped always onto the root
+      if (hover !== rootElement && shape.labelTarget) {
+        event.hover = rootElement;
+        event.hoverGfx = elementRegistry.getGraphics(event.hover);
+      }
+    },
+  );
+}
+
+FixHoverBehavior.$inject = ["elementRegistry", "eventBus", "canvas"];
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/behavior/ImportDockingFix.js":
+/*!*************************************************************!*\
+  !*** ../lib/features/modeling/behavior/ImportDockingFix.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ImportDockingFix)
+/* harmony export */ });
+/* harmony import */ var diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! diagram-js/lib/layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var _util_LineIntersect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/LineIntersect */ "../lib/features/modeling/behavior/util/LineIntersect.js");
+
+
+
+
+/**
+ * Fix broken dockings after DI imports.
+ *
+ * @param {EventBus} eventBus
+ */
+function ImportDockingFix(eventBus) {
+  function adjustDocking(startPoint, nextPoint, elementMid) {
+    var elementTop = {
+      x: elementMid.x,
+      y: elementMid.y - 50,
+    };
+
+    var elementLeft = {
+      x: elementMid.x - 50,
+      y: elementMid.y,
+    };
+
+    var verticalIntersect = (0,_util_LineIntersect__WEBPACK_IMPORTED_MODULE_0__["default"])(
+        startPoint,
+        nextPoint,
+        elementMid,
+        elementTop,
+      ),
+      horizontalIntersect = (0,_util_LineIntersect__WEBPACK_IMPORTED_MODULE_0__["default"])(
+        startPoint,
+        nextPoint,
+        elementMid,
+        elementLeft,
+      );
+
+    // original is horizontal or vertical center cross intersection
+    var centerIntersect;
+
+    if (verticalIntersect && horizontalIntersect) {
+      if (
+        getDistance(verticalIntersect, elementMid) >
+        getDistance(horizontalIntersect, elementMid)
+      ) {
+        centerIntersect = horizontalIntersect;
+      } else {
+        centerIntersect = verticalIntersect;
+      }
+    } else {
+      centerIntersect = verticalIntersect || horizontalIntersect;
+    }
+
+    startPoint.original = centerIntersect;
+  }
+
+  function fixDockings(connection) {
+    var waypoints = connection.waypoints;
+
+    adjustDocking(waypoints[0], waypoints[1], (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getMid)(connection.source));
+
+    adjustDocking(
+      waypoints[waypoints.length - 1],
+      waypoints[waypoints.length - 2],
+      (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getMid)(connection.target),
+    );
+  }
+
+  eventBus.on("boardElement.added", function (e) {
+    var element = e.element;
+
+    if (element.waypoints) {
+      fixDockings(element);
+    }
+  });
+}
+
+ImportDockingFix.$inject = ["eventBus"];
+
+// helpers //////////////////////
+
+function getDistance(p1, p2) {
+  return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/behavior/LabelBehavior.js":
+/*!**********************************************************!*\
+  !*** ../lib/features/modeling/behavior/LabelBehavior.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   asEdges: () => (/* binding */ asEdges),
+/* harmony export */   "default": () => (/* binding */ LabelBehavior),
+/* harmony export */   getReferencePoint: () => (/* binding */ getReferencePoint),
+/* harmony export */   getReferencePointDelta: () => (/* binding */ getReferencePointDelta)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../util/ModelUtil */ "../lib/util/ModelUtil.js");
+/* harmony import */ var _util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../util/LabelUtil */ "../lib/util/LabelUtil.js");
+/* harmony import */ var _label_editing_LabelUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../label-editing/LabelUtil */ "../lib/features/label-editing/LabelUtil.js");
+/* harmony import */ var _util_LabelLayoutUtil__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./util/LabelLayoutUtil */ "../lib/features/modeling/behavior/util/LabelLayoutUtil.js");
+/* harmony import */ var diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+/* harmony import */ var diagram_js_lib_util_AttachUtil__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! diagram-js/lib/util/AttachUtil */ "../node_modules/diagram-js/lib/util/AttachUtil.js");
+/* harmony import */ var diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! diagram-js/lib/layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var diagram_js_lib_util_PositionUtil__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! diagram-js/lib/util/PositionUtil */ "../node_modules/diagram-js/lib/util/PositionUtil.js");
+/* harmony import */ var _util_GeometricUtil__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./util/GeometricUtil */ "../lib/features/modeling/behavior/util/GeometricUtil.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var DEFAULT_LABEL_DIMENSIONS = {
+  width: 90,
+  height: 20,
+};
+
+var NAME_PROPERTY = "name";
+
+/**
+ * A component that makes sure that external labels are added
+ * together with respective elements and properly updated (DI wise)
+ * during move.
+ *
+ * @param {EventBus} eventBus
+ * @param {Modeling} modeling
+ * @param {ODFactory} odFactory
+ * @param {TextRenderer} textRenderer
+ */
+function LabelBehavior(
+  eventBus,
+  modeling,
+  odFactory,
+  textRenderer,
+) {
+  diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
+
+  // update label if name property was updated
+  this.postExecute("element.updateProperties", function (e) {
+    var context = e.context,
+      element = context.element,
+      properties = context.properties;
+
+    if (NAME_PROPERTY in properties) {
+      modeling.updateLabel(element, properties[NAME_PROPERTY]);
+    }
+  });
+
+  // create label shape after shape/connection was created
+  this.postExecute(["shape.create", "connection.create"], function (e) {
+    var context = e.context,
+      hints = context.hints || {};
+
+    if (hints.createElementsBehavior === false) {
+      return;
+    }
+
+    var element = context.shape || context.connection,
+      businessObject = element.businessObject;
+
+    if ((0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__.isLabel)(element) || !(0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__.isLabelExternal)(element)) {
+      return;
+    }
+
+    // only create label if attribute available
+    if (!(0,_label_editing_LabelUtil__WEBPACK_IMPORTED_MODULE_2__.getLabel)(element)) {
+      return;
+    }
+
+    var labelCenter = (0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__.getExternalLabelMid)(element);
+
+    // we don't care about x and y
+    var labelDimensions = textRenderer.getExternalLabelBounds(
+      DEFAULT_LABEL_DIMENSIONS,
+      (0,_label_editing_LabelUtil__WEBPACK_IMPORTED_MODULE_2__.getLabel)(element),
+    );
+
+    modeling.createLabel(element, labelCenter, {
+      id: businessObject.id + "_label",
+      businessObject: businessObject,
+      width: labelDimensions.width,
+      height: labelDimensions.height,
+    });
+  });
+
+  // update label after label shape was deleted
+  this.postExecute("shape.delete", function (event) {
+    var context = event.context,
+      labelTarget = context.labelTarget,
+      hints = context.hints || {};
+
+    // check if label
+    if (labelTarget && hints.unsetLabel !== false) {
+      modeling.updateLabel(labelTarget, null, null, { removeShape: false });
+    }
+  });
+
+  // update di information on label creation
+  this.postExecute(["label.create"], function (event) {
+    var context = event.context,
+      element = context.shape,
+      businessObject,
+      di;
+
+    // we want to trigger on real labels only
+    if (!element.labelTarget) {
+      return;
+    }
+
+    // we want to trigger on board elements only
+    if (!(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__.is)(element.labelTarget || element, "od:BoardElement")) {
+      return;
+    }
+
+    (businessObject = element.businessObject), (di = businessObject.di);
+
+    if (!di.label) {
+      di.label = odFactory.create("odDi:OdLabel", {
+        bounds: odFactory.create("dc:Bounds"),
+      });
+    }
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_4__.assign)(di.label.bounds, {
+      x: element.x,
+      y: element.y,
+      width: element.width,
+      height: element.height,
+    });
+  });
+
+  function getVisibleLabelAdjustment(event) {
+    var context = event.context,
+      connection = context.connection,
+      label = connection.label,
+      hints = (0,min_dash__WEBPACK_IMPORTED_MODULE_4__.assign)({}, context.hints),
+      newWaypoints = context.newWaypoints || connection.waypoints,
+      oldWaypoints = context.oldWaypoints;
+
+    if (typeof hints.startChanged === "undefined") {
+      hints.startChanged = !!hints.connectionStart;
+    }
+
+    if (typeof hints.endChanged === "undefined") {
+      hints.endChanged = !!hints.connectionEnd;
+    }
+
+    return (0,_util_LabelLayoutUtil__WEBPACK_IMPORTED_MODULE_5__.getLabelAdjustment)(label, newWaypoints, oldWaypoints, hints);
+  }
+
+  this.postExecute(
+    ["connection.layout", "connection.updateWaypoints"],
+    function (event) {
+      var context = event.context,
+        hints = context.hints || {};
+
+      if (hints.labelBehavior === false) {
+        return;
+      }
+
+      var connection = context.connection,
+        label = connection.label,
+        labelAdjustment;
+
+      // handle missing label as well as the case
+      // that the label parent does not exist (yet),
+      // because it is being pasted / created via multi element create
+      //
+      // Cf. https://github.com/bpmn-io/bpmn-js/pull/1227
+      if (!label || !label.parent) {
+        return;
+      }
+
+      labelAdjustment = getVisibleLabelAdjustment(event);
+
+      modeling.moveShape(label, labelAdjustment);
+    },
+  );
+
+  // keep label position on shape replace
+  this.postExecute(["shape.replace"], function (event) {
+    var context = event.context,
+      newShape = context.newShape,
+      oldShape = context.oldShape;
+
+    var businessObject = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__.getBusinessObject)(newShape);
+
+    if (
+      businessObject &&
+      (0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__.isLabelExternal)(businessObject) &&
+      oldShape.label &&
+      newShape.label
+    ) {
+      newShape.label.x = oldShape.label.x;
+      newShape.label.y = oldShape.label.y;
+    }
+  });
+
+  // move external label after resizing
+  this.postExecute("shape.resize", function (event) {
+    var context = event.context,
+      shape = context.shape,
+      newBounds = context.newBounds,
+      oldBounds = context.oldBounds;
+
+    if ((0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__.hasExternalLabel)(shape)) {
+      var label = shape.label,
+        labelMid = (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_6__.getMid)(label),
+        edges = asEdges(oldBounds);
+
+      // get nearest border point to label as reference point
+      var referencePoint = getReferencePoint(labelMid, edges);
+
+      var delta = getReferencePointDelta(referencePoint, oldBounds, newBounds);
+
+      modeling.moveShape(label, delta);
+    }
+  });
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_7__["default"])(LabelBehavior, diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+LabelBehavior.$inject = ["eventBus", "modeling", "odFactory", "textRenderer"];
+
+// helpers //////////////////////
+
+/**
+ * Calculates a reference point delta relative to a new position
+ * of a certain element's bounds
+ *
+ * @param {Point} point
+ * @param {Bounds} oldBounds
+ * @param {Bounds} newBounds
+ *
+ * @return {Delta} delta
+ */
+function getReferencePointDelta(referencePoint, oldBounds, newBounds) {
+  var newReferencePoint = (0,diagram_js_lib_util_AttachUtil__WEBPACK_IMPORTED_MODULE_8__.getNewAttachPoint)(
+    referencePoint,
+    oldBounds,
+    newBounds,
+  );
+
+  return (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_6__.roundPoint)((0,diagram_js_lib_util_PositionUtil__WEBPACK_IMPORTED_MODULE_9__.delta)(newReferencePoint, referencePoint));
+}
+
+/**
+ * Generates the nearest point (reference point) for a given point
+ * onto given set of lines
+ *
+ * @param {Array<Point, Point>} lines
+ * @param {Point} point
+ *
+ * @param {Point}
+ */
+function getReferencePoint(point, lines) {
+  if (!lines.length) {
+    return;
+  }
+
+  var nearestLine = getNearestLine(point, lines);
+
+  return (0,_util_GeometricUtil__WEBPACK_IMPORTED_MODULE_10__.perpendicularFoot)(point, nearestLine);
+}
+
+/**
+ * Convert the given bounds to a lines array containing all edges
+ *
+ * @param {Bounds|Point} bounds
+ *
+ * @return Array<Point>
+ */
+function asEdges(bounds) {
+  return [
+    [
+      // top
+      {
+        x: bounds.x,
+        y: bounds.y,
+      },
+      {
+        x: bounds.x + (bounds.width || 0),
+        y: bounds.y,
+      },
+    ],
+    [
+      // right
+      {
+        x: bounds.x + (bounds.width || 0),
+        y: bounds.y,
+      },
+      {
+        x: bounds.x + (bounds.width || 0),
+        y: bounds.y + (bounds.height || 0),
+      },
+    ],
+    [
+      // bottom
+      {
+        x: bounds.x,
+        y: bounds.y + (bounds.height || 0),
+      },
+      {
+        x: bounds.x + (bounds.width || 0),
+        y: bounds.y + (bounds.height || 0),
+      },
+    ],
+    [
+      // left
+      {
+        x: bounds.x,
+        y: bounds.y,
+      },
+      {
+        x: bounds.x,
+        y: bounds.y + (bounds.height || 0),
+      },
+    ],
+  ];
+}
+
+/**
+ * Returns the nearest line for a given point by distance
+ * @param {Point} point
+ * @param Array<Point> lines
+ *
+ * @return Array<Point>
+ */
+function getNearestLine(point, lines) {
+  var distances = lines.map(function (l) {
+    return {
+      line: l,
+      distance: (0,_util_GeometricUtil__WEBPACK_IMPORTED_MODULE_10__.getDistancePointLine)(point, l),
+    };
+  });
+
+  var sorted = (0,min_dash__WEBPACK_IMPORTED_MODULE_4__.sortBy)(distances, "distance");
+
+  return sorted[0].line;
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/behavior/UnclaimIdBehavior.js":
+/*!**************************************************************!*\
+  !*** ../lib/features/modeling/behavior/UnclaimIdBehavior.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ UnclaimIdBehavior)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+/* harmony import */ var _util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../util/LabelUtil */ "../lib/util/LabelUtil.js");
+
+
+
+
+
+
+/**
+ * Unclaims model IDs on element deletion.
+ *
+ * @param {Canvas} canvas
+ * @param {Injector} injector
+ * @param {Moddle} moddle
+ * @param {Modeling} modeling
+ */
+function UnclaimIdBehavior(canvas, injector, moddle, modeling) {
+  injector.invoke(diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"], this);
+
+  this.preExecute("shape.delete", function (event) {
+    var context = event.context,
+      shape = context.shape,
+      shapeBo = shape.businessObject;
+
+    if ((0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_1__.isLabel)(shape)) {
+      return;
+    }
+
+    modeling.unclaimId(shapeBo.id, shapeBo);
+  });
+
+  this.preExecute("canvas.updateRoot", function () {
+    var rootElement = canvas.getRootElement(),
+      rootElementBo = rootElement.businessObject;
+
+    moddle.ids.unclaim(rootElementBo.id);
+  });
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_2__["default"])(UnclaimIdBehavior, diagram_js_lib_command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+UnclaimIdBehavior.$inject = ["canvas", "injector", "moddle", "modeling"];
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/behavior/index.js":
+/*!**************************************************!*\
+  !*** ../lib/features/modeling/behavior/index.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _AdaptiveLabelPositioningBehavior__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AdaptiveLabelPositioningBehavior */ "../lib/features/modeling/behavior/AdaptiveLabelPositioningBehavior.js");
+/* harmony import */ var _AppendBehavior__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AppendBehavior */ "../lib/features/modeling/behavior/AppendBehavior.js");
+/* harmony import */ var _FixHoverBehavior__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./FixHoverBehavior */ "../lib/features/modeling/behavior/FixHoverBehavior.js");
+/* harmony import */ var _ImportDockingFix__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ImportDockingFix */ "../lib/features/modeling/behavior/ImportDockingFix.js");
+/* harmony import */ var _LabelBehavior__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./LabelBehavior */ "../lib/features/modeling/behavior/LabelBehavior.js");
+/* harmony import */ var _UnclaimIdBehavior__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./UnclaimIdBehavior */ "../lib/features/modeling/behavior/UnclaimIdBehavior.js");
+/* harmony import */ var _EmptyTextBoxBehavior__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./EmptyTextBoxBehavior */ "../lib/features/modeling/behavior/EmptyTextBoxBehavior.js");
+
+
+
+
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [
+    "adaptiveLabelPositioningBehavior",
+    "appendBehavior",
+    "fixHoverBehavior",
+    "importDockingFix",
+    "labelBehavior",
+    "unclaimIdBehavior",
+    "emptyTextBoxBehavior",
+  ],
+  adaptiveLabelPositioningBehavior: ["type", _AdaptiveLabelPositioningBehavior__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  appendBehavior: ["type", _AppendBehavior__WEBPACK_IMPORTED_MODULE_1__["default"]],
+  fixHoverBehavior: ["type", _FixHoverBehavior__WEBPACK_IMPORTED_MODULE_2__["default"]],
+  importDockingFix: ["type", _ImportDockingFix__WEBPACK_IMPORTED_MODULE_3__["default"]],
+  labelBehavior: ["type", _LabelBehavior__WEBPACK_IMPORTED_MODULE_4__["default"]],
+  unclaimIdBehavior: ["type", _UnclaimIdBehavior__WEBPACK_IMPORTED_MODULE_5__["default"]],
+  emptyTextBoxBehavior: ["type", _EmptyTextBoxBehavior__WEBPACK_IMPORTED_MODULE_6__["default"]],
+});
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/behavior/util/GeometricUtil.js":
+/*!***************************************************************!*\
+  !*** ../lib/features/modeling/behavior/util/GeometricUtil.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getAngle: () => (/* binding */ getAngle),
+/* harmony export */   getDistancePointLine: () => (/* binding */ getDistancePointLine),
+/* harmony export */   getDistancePointPoint: () => (/* binding */ getDistancePointPoint),
+/* harmony export */   perpendicularFoot: () => (/* binding */ perpendicularFoot),
+/* harmony export */   rotateVector: () => (/* binding */ rotateVector),
+/* harmony export */   vectorLength: () => (/* binding */ vectorLength)
+/* harmony export */ });
+/**
+ * Returns the length of a vector
+ *
+ * @param {Vector}
+ * @return {Float}
+ */
+function vectorLength(v) {
+  return Math.sqrt(Math.pow(v.x, 2) + Math.pow(v.y, 2));
+}
+
+/**
+ * Calculates the angle between a line a the yAxis
+ *
+ * @param {Array}
+ * @return {Float}
+ */
+function getAngle(line) {
+  // return value is between 0, 180 and -180, -0
+  // @janstuemmel: maybe replace return a/b with b/a
+  return Math.atan((line[1].y - line[0].y) / (line[1].x - line[0].x));
+}
+
+/**
+ * Rotates a vector by a given angle
+ *
+ * @param {Vector}
+ * @param {Float} Angle in radians
+ * @return {Vector}
+ */
+function rotateVector(vector, angle) {
+  return !angle
+    ? vector
+    : {
+        x: Math.cos(angle) * vector.x - Math.sin(angle) * vector.y,
+        y: Math.sin(angle) * vector.x + Math.cos(angle) * vector.y,
+      };
+}
+
+/**
+ * Solves a 2D equation system
+ * a + r*b = c, where a,b,c are 2D vectors
+ *
+ * @param {Vector}
+ * @param {Vector}
+ * @param {Vector}
+ * @return {Float}
+ */
+function solveLambaSystem(a, b, c) {
+  // the 2d system
+  var system = [
+    { n: a[0] - c[0], lambda: b[0] },
+    { n: a[1] - c[1], lambda: b[1] },
+  ];
+
+  // solve
+  var n = system[0].n * b[0] + system[1].n * b[1],
+    l = system[0].lambda * b[0] + system[1].lambda * b[1];
+
+  return -n / l;
+}
+
+/**
+ * Position of perpendicular foot
+ *
+ * @param {Point}
+ * @param [ {Point}, {Point} ] line defined through two points
+ * @return {Point} the perpendicular foot position
+ */
+function perpendicularFoot(point, line) {
+  var a = line[0],
+    b = line[1];
+
+  // relative position of b from a
+  var bd = { x: b.x - a.x, y: b.y - a.y };
+
+  // solve equation system to the parametrized vectors param real value
+  var r = solveLambaSystem([a.x, a.y], [bd.x, bd.y], [point.x, point.y]);
+
+  return { x: a.x + r * bd.x, y: a.y + r * bd.y };
+}
+
+/**
+ * Calculates the distance between a point and a line
+ *
+ * @param {Point}
+ * @param [ {Point}, {Point} ] line defined through two points
+ * @return {Float} distance
+ */
+function getDistancePointLine(point, line) {
+  var pfPoint = perpendicularFoot(point, line);
+
+  // distance vector
+  var connectionVector = {
+    x: pfPoint.x - point.x,
+    y: pfPoint.y - point.y,
+  };
+
+  return vectorLength(connectionVector);
+}
+
+/**
+ * Calculates the distance between two points
+ *
+ * @param {Point}
+ * @param {Point}
+ * @return {Float} distance
+ */
+function getDistancePointPoint(point1, point2) {
+  return vectorLength({
+    x: point1.x - point2.x,
+    y: point1.y - point2.y,
+  });
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/behavior/util/LabelLayoutUtil.js":
+/*!*****************************************************************!*\
+  !*** ../lib/features/modeling/behavior/util/LabelLayoutUtil.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   findNewLabelLineStartIndex: () => (/* binding */ findNewLabelLineStartIndex),
+/* harmony export */   getLabelAdjustment: () => (/* binding */ getLabelAdjustment)
+/* harmony export */ });
+/* harmony import */ var _GeometricUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./GeometricUtil */ "../lib/features/modeling/behavior/util/GeometricUtil.js");
+/* harmony import */ var _LineAttachmentUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LineAttachmentUtil */ "../lib/features/modeling/behavior/util/LineAttachmentUtil.js");
+/* harmony import */ var diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! diagram-js/lib/layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+
+
+
+
+
+
+function findNewLabelLineStartIndex(
+  oldWaypoints,
+  newWaypoints,
+  attachment,
+  hints,
+) {
+  var index = attachment.segmentIndex;
+
+  var offset = newWaypoints.length - oldWaypoints.length;
+
+  // segmentMove happened
+  if (hints.segmentMove) {
+    var oldSegmentStartIndex = hints.segmentMove.segmentStartIndex,
+      newSegmentStartIndex = hints.segmentMove.newSegmentStartIndex;
+
+    // if label was on moved segment return new segment index
+    if (index === oldSegmentStartIndex) {
+      return newSegmentStartIndex;
+    }
+
+    // label is after new segment index
+    if (index >= newSegmentStartIndex) {
+      return index + offset < newSegmentStartIndex
+        ? newSegmentStartIndex
+        : index + offset;
+    }
+
+    // if label is before new segment index
+    return index;
+  }
+
+  // bendpointMove happened
+  if (hints.bendpointMove) {
+    var insert = hints.bendpointMove.insert,
+      bendpointIndex = hints.bendpointMove.bendpointIndex,
+      newIndex;
+
+    // waypoints length didnt change
+    if (offset === 0) {
+      return index;
+    }
+
+    // label behind new/removed bendpoint
+    if (index >= bendpointIndex) {
+      newIndex = insert ? index + 1 : index - 1;
+    }
+
+    // label before new/removed bendpoint
+    if (index < bendpointIndex) {
+      newIndex = index;
+
+      // decide label should take right or left segment
+      if (
+        insert &&
+        attachment.type !== "bendpoint" &&
+        bendpointIndex - 1 === index
+      ) {
+        var rel = relativePositionMidWaypoint(newWaypoints, bendpointIndex);
+
+        if (rel < attachment.relativeLocation) {
+          newIndex++;
+        }
+      }
+    }
+
+    return newIndex;
+  }
+
+  // start/end changed
+  if (offset === 0) {
+    return index;
+  }
+
+  if (hints.connectionStart) {
+    return index === 0 ? 0 : null;
+  }
+
+  if (hints.connectionEnd) {
+    return index === oldWaypoints.length - 2 ? newWaypoints.length - 2 : null;
+  }
+
+  // if nothing fits, return null
+  return null;
+}
+
+/**
+ * Calculate the required adjustment (move delta) for the given label
+ * after the connection waypoints got updated.
+ *
+ * @param {djs.model.Label} label
+ * @param {Array<Point>} newWaypoints
+ * @param {Array<Point>} oldWaypoints
+ * @param {Object} hints
+ *
+ * @return {Point} delta
+ */
+function getLabelAdjustment(label, newWaypoints, oldWaypoints, hints) {
+  var x = 0,
+    y = 0;
+
+  var labelPosition = getLabelMid(label);
+
+  // get closest attachment
+  var attachment = (0,_LineAttachmentUtil__WEBPACK_IMPORTED_MODULE_0__.getAttachment)(labelPosition, oldWaypoints),
+    oldLabelLineIndex = attachment.segmentIndex,
+    newLabelLineIndex = findNewLabelLineStartIndex(
+      oldWaypoints,
+      newWaypoints,
+      attachment,
+      hints,
+    );
+
+  if (newLabelLineIndex === null) {
+    return { x: x, y: y };
+  }
+
+  // should never happen
+  // TODO(@janstuemmel): throw an error here when connectionSegmentMove is refactored
+  if (newLabelLineIndex < 0 || newLabelLineIndex > newWaypoints.length - 2) {
+    return { x: x, y: y };
+  }
+
+  var oldLabelLine = getLine(oldWaypoints, oldLabelLineIndex),
+    newLabelLine = getLine(newWaypoints, newLabelLineIndex),
+    oldFoot = attachment.position;
+
+  var relativeFootPosition = getRelativeFootPosition(oldLabelLine, oldFoot),
+    angleDelta = getAngleDelta(oldLabelLine, newLabelLine);
+
+  // special rule if label on bendpoint
+  if (attachment.type === "bendpoint") {
+    var offset = newWaypoints.length - oldWaypoints.length,
+      oldBendpointIndex = attachment.bendpointIndex,
+      oldBendpoint = oldWaypoints[oldBendpointIndex];
+
+    // bendpoint position hasn't changed, return same position
+    if (newWaypoints.indexOf(oldBendpoint) !== -1) {
+      return { x: x, y: y };
+    }
+
+    // new bendpoint and old bendpoint have same index, then just return the offset
+    if (offset === 0) {
+      var newBendpoint = newWaypoints[oldBendpointIndex];
+
+      return {
+        x: newBendpoint.x - attachment.position.x,
+        y: newBendpoint.y - attachment.position.y,
+      };
+    }
+
+    // if bendpoints get removed
+    if (
+      offset < 0 &&
+      oldBendpointIndex !== 0 &&
+      oldBendpointIndex < oldWaypoints.length - 1
+    ) {
+      relativeFootPosition = relativePositionMidWaypoint(
+        oldWaypoints,
+        oldBendpointIndex,
+      );
+    }
+  }
+
+  var newFoot = {
+    x:
+      (newLabelLine[1].x - newLabelLine[0].x) * relativeFootPosition +
+      newLabelLine[0].x,
+    y:
+      (newLabelLine[1].y - newLabelLine[0].y) * relativeFootPosition +
+      newLabelLine[0].y,
+  };
+
+  // the rotated vector to label
+  var newLabelVector = (0,_GeometricUtil__WEBPACK_IMPORTED_MODULE_1__.rotateVector)(
+    {
+      x: labelPosition.x - oldFoot.x,
+      y: labelPosition.y - oldFoot.y,
+    },
+    angleDelta,
+  );
+
+  // the new relative position
+  x = newFoot.x + newLabelVector.x - labelPosition.x;
+  y = newFoot.y + newLabelVector.y - labelPosition.y;
+
+  return (0,diagram_js_lib_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_2__.roundPoint)({
+    x: x,
+    y: y,
+  });
+}
+
+// HELPERS //////////////////////
+
+function relativePositionMidWaypoint(waypoints, idx) {
+  var distanceSegment1 = (0,_GeometricUtil__WEBPACK_IMPORTED_MODULE_1__.getDistancePointPoint)(
+      waypoints[idx - 1],
+      waypoints[idx],
+    ),
+    distanceSegment2 = (0,_GeometricUtil__WEBPACK_IMPORTED_MODULE_1__.getDistancePointPoint)(
+      waypoints[idx],
+      waypoints[idx + 1],
+    );
+
+  var relativePosition =
+    distanceSegment1 / (distanceSegment1 + distanceSegment2);
+
+  return relativePosition;
+}
+
+function getLabelMid(label) {
+  return {
+    x: label.x + label.width / 2,
+    y: label.y + label.height / 2,
+  };
+}
+
+function getAngleDelta(l1, l2) {
+  var a1 = (0,_GeometricUtil__WEBPACK_IMPORTED_MODULE_1__.getAngle)(l1),
+    a2 = (0,_GeometricUtil__WEBPACK_IMPORTED_MODULE_1__.getAngle)(l2);
+  return a2 - a1;
+}
+
+function getLine(waypoints, idx) {
+  return [waypoints[idx], waypoints[idx + 1]];
+}
+
+function getRelativeFootPosition(line, foot) {
+  var length = (0,_GeometricUtil__WEBPACK_IMPORTED_MODULE_1__.getDistancePointPoint)(line[0], line[1]),
+    lengthToFoot = (0,_GeometricUtil__WEBPACK_IMPORTED_MODULE_1__.getDistancePointPoint)(line[0], foot);
+
+  return length === 0 ? 0 : lengthToFoot / length;
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/behavior/util/LineAttachmentUtil.js":
+/*!********************************************************************!*\
+  !*** ../lib/features/modeling/behavior/util/LineAttachmentUtil.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getAttachment: () => (/* binding */ getAttachment)
+/* harmony export */ });
+var sqrt = Math.sqrt,
+  min = Math.min,
+  max = Math.max,
+  abs = Math.abs;
+
+/**
+ * Calculate the square (power to two) of a number.
+ *
+ * @param {Number} n
+ *
+ * @return {Number}
+ */
+function sq(n) {
+  return Math.pow(n, 2);
+}
+
+/**
+ * Get distance between two points.
+ *
+ * @param {Point} p1
+ * @param {Point} p2
+ *
+ * @return {Number}
+ */
+function getDistance(p1, p2) {
+  return sqrt(sq(p1.x - p2.x) + sq(p1.y - p2.y));
+}
+
+/**
+ * Return the attachment of the given point on the specified line.
+ *
+ * The attachment is either a bendpoint (attached to the given point)
+ * or segment (attached to a location on a line segment) attachment:
+ *
+ * ```javascript
+ * var pointAttachment = {
+ *   type: 'bendpoint',
+ *   bendpointIndex: 3,
+ *   position: { x: 10, y: 10 } // the attach point on the line
+ * };
+ *
+ * var segmentAttachment = {
+ *   type: 'segment',
+ *   segmentIndex: 2,
+ *   relativeLocation: 0.31, // attach point location between 0 (at start) and 1 (at end)
+ *   position: { x: 10, y: 10 } // the attach point on the line
+ * };
+ * ```
+ *
+ * @param {Point} point
+ * @param {Array<Point>} line
+ *
+ * @return {Object} attachment
+ */
+function getAttachment(point, line) {
+  var idx = 0,
+    segmentStart,
+    segmentEnd,
+    segmentStartDistance,
+    segmentEndDistance,
+    attachmentPosition,
+    minDistance,
+    intersections,
+    attachment,
+    attachmentDistance,
+    closestAttachmentDistance,
+    closestAttachment;
+
+  for (idx = 0; idx < line.length - 1; idx++) {
+    segmentStart = line[idx];
+    segmentEnd = line[idx + 1];
+
+    if (pointsEqual(segmentStart, segmentEnd)) {
+      intersections = [segmentStart];
+    } else {
+      segmentStartDistance = getDistance(point, segmentStart);
+      segmentEndDistance = getDistance(point, segmentEnd);
+
+      minDistance = min(segmentStartDistance, segmentEndDistance);
+
+      intersections = getCircleSegmentIntersections(
+        segmentStart,
+        segmentEnd,
+        point,
+        minDistance,
+      );
+    }
+
+    if (intersections.length < 1) {
+      throw new Error("expected between [1, 2] circle -> line intersections");
+    }
+
+    // one intersection -> bendpoint attachment
+    if (intersections.length === 1) {
+      attachment = {
+        type: "bendpoint",
+        position: intersections[0],
+        segmentIndex: idx,
+        bendpointIndex: pointsEqual(segmentStart, intersections[0])
+          ? idx
+          : idx + 1,
+      };
+    }
+
+    // two intersections -> segment attachment
+    if (intersections.length === 2) {
+      attachmentPosition = mid(intersections[0], intersections[1]);
+
+      attachment = {
+        type: "segment",
+        position: attachmentPosition,
+        segmentIndex: idx,
+        relativeLocation:
+          getDistance(segmentStart, attachmentPosition) /
+          getDistance(segmentStart, segmentEnd),
+      };
+    }
+
+    attachmentDistance = getDistance(attachment.position, point);
+
+    if (!closestAttachment || closestAttachmentDistance > attachmentDistance) {
+      closestAttachment = attachment;
+      closestAttachmentDistance = attachmentDistance;
+    }
+  }
+
+  return closestAttachment;
+}
+
+/**
+ * Gets the intersection between a circle and a line segment.
+ *
+ * @param {Point} s1 segment start
+ * @param {Point} s2 segment end
+ * @param {Point} cc circle center
+ * @param {Number} cr circle radius
+ *
+ * @return {Array<Point>} intersections
+ */
+function getCircleSegmentIntersections(s1, s2, cc, cr) {
+  var baX = s2.x - s1.x;
+  var baY = s2.y - s1.y;
+  var caX = cc.x - s1.x;
+  var caY = cc.y - s1.y;
+
+  var a = baX * baX + baY * baY;
+  var bBy2 = baX * caX + baY * caY;
+  var c = caX * caX + caY * caY - cr * cr;
+
+  var pBy2 = bBy2 / a;
+  var q = c / a;
+
+  var disc = pBy2 * pBy2 - q;
+
+  // check against negative value to work around
+  // negative, very close to zero results (-4e-15)
+  // being produced in some environments
+  if (disc < 0 && disc > -0.000001) {
+    disc = 0;
+  }
+
+  if (disc < 0) {
+    return [];
+  }
+
+  // if disc == 0 ... dealt with later
+  var tmpSqrt = sqrt(disc);
+  var abScalingFactor1 = -pBy2 + tmpSqrt;
+  var abScalingFactor2 = -pBy2 - tmpSqrt;
+
+  var i1 = {
+    x: s1.x - baX * abScalingFactor1,
+    y: s1.y - baY * abScalingFactor1,
+  };
+
+  if (disc === 0) {
+    // abScalingFactor1 == abScalingFactor2
+    return [i1];
+  }
+
+  var i2 = {
+    x: s1.x - baX * abScalingFactor2,
+    y: s1.y - baY * abScalingFactor2,
+  };
+
+  // return only points on line segment
+  return [i1, i2].filter(function (p) {
+    return isPointInSegment(p, s1, s2);
+  });
+}
+
+function isPointInSegment(p, segmentStart, segmentEnd) {
+  return (
+    fenced(p.x, segmentStart.x, segmentEnd.x) &&
+    fenced(p.y, segmentStart.y, segmentEnd.y)
+  );
+}
+
+function fenced(n, rangeStart, rangeEnd) {
+  // use matching threshold to work around
+  // precision errors in intersection computation
+
+  return (
+    n >= min(rangeStart, rangeEnd) - EQUAL_THRESHOLD &&
+    n <= max(rangeStart, rangeEnd) + EQUAL_THRESHOLD
+  );
+}
+
+/**
+ * Calculate mid of two points.
+ *
+ * @param {Point} p1
+ * @param {Point} p2
+ *
+ * @return {Point}
+ */
+function mid(p1, p2) {
+  return {
+    x: (p1.x + p2.x) / 2,
+    y: (p1.y + p2.y) / 2,
+  };
+}
+
+var EQUAL_THRESHOLD = 0.1;
+
+function pointsEqual(p1, p2) {
+  return (
+    abs(p1.x - p2.x) <= EQUAL_THRESHOLD && abs(p1.y - p2.y) <= EQUAL_THRESHOLD
+  );
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/behavior/util/LineIntersect.js":
+/*!***************************************************************!*\
+  !*** ../lib/features/modeling/behavior/util/LineIntersect.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ lineIntersect)
+/* harmony export */ });
+/**
+ * Returns the intersection between two line segments a and b.
+ *
+ * @param {Point} l1s
+ * @param {Point} l1e
+ * @param {Point} l2s
+ * @param {Point} l2e
+ *
+ * @return {Point}
+ */
+function lineIntersect(l1s, l1e, l2s, l2e) {
+  // if the lines intersect, the result contains the x and y of the
+  // intersection (treating the lines as infinite) and booleans for
+  // whether line segment 1 or line segment 2 contain the point
+  var denominator, a, b, c, numerator;
+
+  denominator =
+    (l2e.y - l2s.y) * (l1e.x - l1s.x) - (l2e.x - l2s.x) * (l1e.y - l1s.y);
+
+  if (denominator == 0) {
+    return null;
+  }
+
+  a = l1s.y - l2s.y;
+  b = l1s.x - l2s.x;
+  numerator = (l2e.x - l2s.x) * a - (l2e.y - l2s.y) * b;
+
+  c = numerator / denominator;
+
+  // if we cast these lines infinitely in
+  // both directions, they intersect here
+  return {
+    x: Math.round(l1s.x + c * (l1e.x - l1s.x)),
+    y: Math.round(l1s.y + c * (l1e.y - l1s.y)),
+  };
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/cmd/IdClaimHandler.js":
+/*!******************************************************!*\
+  !*** ../lib/features/modeling/cmd/IdClaimHandler.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ IdClaimHandler)
+/* harmony export */ });
+function IdClaimHandler(moddle) {
+  this._moddle = moddle;
+}
+
+IdClaimHandler.$inject = ["moddle"];
+
+IdClaimHandler.prototype.execute = function (context) {
+  var ids = this._moddle.ids,
+    id = context.id,
+    element = context.element,
+    claiming = context.claiming;
+
+  if (claiming) {
+    ids.claim(id, element);
+  } else {
+    ids.unclaim(id);
+  }
+};
+
+/**
+ * Command revert implementation.
+ */
+IdClaimHandler.prototype.revert = function (context) {
+  var ids = this._moddle.ids,
+    id = context.id,
+    element = context.element,
+    claiming = context.claiming;
+
+  if (claiming) {
+    ids.unclaim(id);
+  } else {
+    ids.claim(id, element);
+  }
+};
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/cmd/UpdateCanvasRootHandler.js":
+/*!***************************************************************!*\
+  !*** ../lib/features/modeling/cmd/UpdateCanvasRootHandler.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ UpdateCanvasRootHandler)
+/* harmony export */ });
+/* harmony import */ var diagram_js_lib_util_Collections__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/util/Collections */ "../node_modules/diagram-js/lib/util/Collections.js");
+
+
+function UpdateCanvasRootHandler(canvas, modeling) {
+  this._canvas = canvas;
+  this._modeling = modeling;
+}
+
+UpdateCanvasRootHandler.$inject = ["canvas", "modeling"];
+
+UpdateCanvasRootHandler.prototype.execute = function (context) {
+  var canvas = this._canvas;
+
+  var newRoot = context.newRoot,
+    newRootBusinessObject = newRoot.businessObject,
+    oldRoot = canvas.getRootElement(),
+    oldRootBusinessObject = oldRoot.businessObject,
+    odDefinitions = oldRootBusinessObject.$parent,
+    diPlane = oldRootBusinessObject.di;
+
+  // (1) replace process old <> new root
+  canvas.setRootElement(newRoot, true);
+
+  // (2) update root elements
+  (0,diagram_js_lib_util_Collections__WEBPACK_IMPORTED_MODULE_0__.add)(odDefinitions.rootElements, newRootBusinessObject);
+  newRootBusinessObject.$parent = odDefinitions;
+
+  (0,diagram_js_lib_util_Collections__WEBPACK_IMPORTED_MODULE_0__.remove)(odDefinitions.rootElements, oldRootBusinessObject);
+  oldRootBusinessObject.$parent = null;
+
+  // (3) wire di
+  oldRootBusinessObject.di = null;
+
+  diPlane.boardElement = newRootBusinessObject;
+  newRootBusinessObject.di = diPlane;
+
+  context.oldRoot = oldRoot;
+
+  // TODO(nikku): return changed elements?
+  // return [ newRoot, oldRoot ];
+};
+
+UpdateCanvasRootHandler.prototype.revert = function (context) {
+  var canvas = this._canvas;
+
+  var newRoot = context.newRoot,
+    newRootBusinessObject = newRoot.businessObject,
+    oldRoot = context.oldRoot,
+    oldRootBusinessObject = oldRoot.businessObject,
+    odDefinitions = newRootBusinessObject.$parent,
+    diPlane = newRootBusinessObject.di;
+
+  // (1) replace process old <> new root
+  canvas.setRootElement(oldRoot, true);
+
+  // (2) update root elements
+  (0,diagram_js_lib_util_Collections__WEBPACK_IMPORTED_MODULE_0__.remove)(odDefinitions.rootElements, newRootBusinessObject);
+  newRootBusinessObject.$parent = null;
+
+  (0,diagram_js_lib_util_Collections__WEBPACK_IMPORTED_MODULE_0__.add)(odDefinitions.rootElements, oldRootBusinessObject);
+  oldRootBusinessObject.$parent = odDefinitions;
+
+  // (3) wire di
+  newRootBusinessObject.di = null;
+
+  diPlane.boardElement = oldRootBusinessObject;
+  oldRootBusinessObject.di = diPlane;
+
+  // TODO(nikku): return changed elements?
+  // return [ newRoot, oldRoot ];
+};
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/cmd/UpdatePropertiesHandler.js":
+/*!***************************************************************!*\
+  !*** ../lib/features/modeling/cmd/UpdatePropertiesHandler.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ UpdatePropertiesHandler)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../util/ModelUtil */ "../lib/util/ModelUtil.js");
+
+
+
+
+var ID = "id",
+  DI = "di";
+
+var NULL_DIMENSIONS = {
+  width: 0,
+  height: 0,
+};
+
+/**
+ * A handler that implements a od elements property update.
+ *
+ * This should be used to set simple properties on elements with
+ * an underlying XML business object.
+ *
+ * Use respective diagram-js provided handlers if you would
+ * like to perform automated modeling.
+ */
+function UpdatePropertiesHandler(
+  elementRegistry,
+  moddle,
+  translate,
+  modeling,
+  textRenderer,
+) {
+  this._elementRegistry = elementRegistry;
+  this._moddle = moddle;
+  this._translate = translate;
+  this._modeling = modeling;
+  this._textRenderer = textRenderer;
+}
+
+UpdatePropertiesHandler.$inject = [
+  "elementRegistry",
+  "moddle",
+  "translate",
+  "modeling",
+  "textRenderer",
+];
+
+// api //////////////////////
+
+/**
+ * Updates a board element with a list of new properties
+ *
+ * @param {Object} context
+ * @param {djs.model.Base} context.element the element to update
+ * @param {Object} context.properties a list of properties to set on the element's
+ *                                    businessObject (the XML model element)
+ *
+ * @return {Array<djs.model.Base>} the updated element
+ */
+UpdatePropertiesHandler.prototype.execute = function (context) {
+  var element = context.element,
+    changed = [element],
+    translate = this._translate;
+
+  if (!element) {
+    throw new Error(translate("element required"));
+  }
+
+  var elementRegistry = this._elementRegistry,
+    ids = this._moddle.ids;
+
+  var businessObject = element.businessObject,
+    properties = unwrapBusinessObjects(context.properties),
+    oldProperties =
+      context.oldProperties || getProperties(businessObject, properties);
+
+  if (isIdChange(properties, businessObject)) {
+    ids.unclaim(businessObject[ID]);
+
+    elementRegistry.updateId(element, properties[ID]);
+
+    ids.claim(properties[ID], businessObject);
+  }
+
+  // update properties
+  setProperties(businessObject, properties);
+
+  // store old values
+  context.oldProperties = oldProperties;
+  context.changed = changed;
+
+  // indicate changed on objects affected by the update
+  return changed;
+};
+
+UpdatePropertiesHandler.prototype.postExecute = function (context) {
+  var element = context.element,
+    label = element.label;
+
+  var text = label && (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getBusinessObject)(label).name;
+
+  if (!text) {
+    return;
+  }
+
+  // get layouted text bounds and resize external
+  // external label accordingly
+  var newLabelBounds = this._textRenderer.getExternalLabelBounds(label, text);
+
+  this._modeling.resizeShape(label, newLabelBounds, NULL_DIMENSIONS);
+};
+
+/**
+ * Reverts the update on a board elements properties.
+ *
+ * @param  {Object} context
+ *
+ * @return {djs.model.Base} the updated element
+ */
+UpdatePropertiesHandler.prototype.revert = function (context) {
+  var element = context.element,
+    properties = context.properties,
+    oldProperties = context.oldProperties,
+    businessObject = element.businessObject,
+    elementRegistry = this._elementRegistry,
+    ids = this._moddle.ids;
+
+  // update properties
+  setProperties(businessObject, oldProperties);
+
+  if (isIdChange(properties, businessObject)) {
+    ids.unclaim(properties[ID]);
+
+    elementRegistry.updateId(element, oldProperties[ID]);
+
+    ids.claim(oldProperties[ID], businessObject);
+  }
+
+  return context.changed;
+};
+
+function isIdChange(properties, businessObject) {
+  return ID in properties && properties[ID] !== businessObject[ID];
+}
+
+function getProperties(businessObject, properties) {
+  var propertyNames = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.keys)(properties);
+
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.reduce)(
+    propertyNames,
+    function (result, key) {
+      // handle DI separately
+      if (key !== DI) {
+        result[key] = businessObject.get(key);
+      } else {
+        result[key] = getDiProperties(businessObject.di, (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.keys)(properties.di));
+      }
+
+      return result;
+    },
+    {},
+  );
+}
+
+function getDiProperties(di, propertyNames) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.reduce)(
+    propertyNames,
+    function (result, key) {
+      result[key] = di.get(key);
+
+      return result;
+    },
+    {},
+  );
+}
+
+function setProperties(businessObject, properties) {
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(properties, function (value, key) {
+    if (key !== DI) {
+      businessObject.set(key, value);
+    } else {
+      // only update, if businessObject.di exists
+      if (businessObject.di) {
+        setDiProperties(businessObject.di, value);
+      }
+    }
+  });
+}
+
+function setDiProperties(di, properties) {
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(properties, function (value, key) {
+    di.set(key, value);
+  });
+}
+
+var referencePropertyNames = ["default"];
+
+/**
+ * Make sure we unwrap the actual business object
+ * behind diagram element that may have been
+ * passed as arguments.
+ *
+ * @param  {Object} properties
+ *
+ * @return {Object} unwrappedProps
+ */
+function unwrapBusinessObjects(properties) {
+  var unwrappedProps = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)({}, properties);
+
+  referencePropertyNames.forEach(function (name) {
+    if (name in properties) {
+      unwrappedProps[name] = (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__.getBusinessObject)(unwrappedProps[name]);
+    }
+  });
+
+  return unwrappedProps;
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/modeling/index.js":
+/*!*****************************************!*\
+  !*** ../lib/features/modeling/index.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _behavior__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./behavior */ "../lib/features/modeling/behavior/index.js");
+/* harmony import */ var _rules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../rules */ "../lib/features/rules/index.js");
+/* harmony import */ var _di_ordering__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../di-ordering */ "../lib/features/di-ordering/index.js");
+/* harmony import */ var _ordering__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../ordering */ "../lib/features/ordering/index.js");
+/* harmony import */ var diagram_js_lib_command__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/command */ "../node_modules/diagram-js/lib/command/index.js");
+/* harmony import */ var diagram_js_lib_features_tooltips__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! diagram-js/lib/features/tooltips */ "../node_modules/diagram-js/lib/features/tooltips/index.js");
+/* harmony import */ var diagram_js_lib_features_label_support__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! diagram-js/lib/features/label-support */ "../node_modules/diagram-js/lib/features/label-support/index.js");
+/* harmony import */ var diagram_js_lib_features_attach_support__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! diagram-js/lib/features/attach-support */ "../node_modules/diagram-js/lib/features/attach-support/index.js");
+/* harmony import */ var diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! diagram-js/lib/features/selection */ "../node_modules/diagram-js/lib/features/selection/index.js");
+/* harmony import */ var diagram_js_lib_features_change_support__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! diagram-js/lib/features/change-support */ "../node_modules/diagram-js/lib/features/change-support/index.js");
+/* harmony import */ var diagram_js_lib_features_space_tool__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! diagram-js/lib/features/space-tool */ "../node_modules/diagram-js/lib/features/space-tool/index.js");
+/* harmony import */ var _ODFactory__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./ODFactory */ "../lib/features/modeling/ODFactory.js");
+/* harmony import */ var _ODUpdater__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./ODUpdater */ "../lib/features/modeling/ODUpdater.js");
+/* harmony import */ var _ElementFactory__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./ElementFactory */ "../lib/features/modeling/ElementFactory.js");
+/* harmony import */ var _Modeling__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./Modeling */ "../lib/features/modeling/Modeling.js");
+/* harmony import */ var _ODLayouter__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./ODLayouter */ "../lib/features/modeling/ODLayouter.js");
+/* harmony import */ var diagram_js_lib_layout_CroppingConnectionDocking__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! diagram-js/lib/layout/CroppingConnectionDocking */ "../node_modules/diagram-js/lib/layout/CroppingConnectionDocking.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: ["modeling", "odUpdater"],
+  __depends__: [
+    _behavior__WEBPACK_IMPORTED_MODULE_0__["default"],
+    _rules__WEBPACK_IMPORTED_MODULE_1__["default"],
+    _di_ordering__WEBPACK_IMPORTED_MODULE_2__["default"],
+    _ordering__WEBPACK_IMPORTED_MODULE_3__["default"],
+    diagram_js_lib_command__WEBPACK_IMPORTED_MODULE_4__["default"],
+    diagram_js_lib_features_tooltips__WEBPACK_IMPORTED_MODULE_5__["default"],
+    diagram_js_lib_features_label_support__WEBPACK_IMPORTED_MODULE_6__["default"],
+    diagram_js_lib_features_attach_support__WEBPACK_IMPORTED_MODULE_7__["default"],
+    diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_8__["default"],
+    diagram_js_lib_features_change_support__WEBPACK_IMPORTED_MODULE_9__["default"],
+    diagram_js_lib_features_space_tool__WEBPACK_IMPORTED_MODULE_10__["default"],
+  ],
+  odFactory: ["type", _ODFactory__WEBPACK_IMPORTED_MODULE_11__["default"]],
+  odUpdater: ["type", _ODUpdater__WEBPACK_IMPORTED_MODULE_12__["default"]],
+  elementFactory: ["type", _ElementFactory__WEBPACK_IMPORTED_MODULE_13__["default"]],
+  modeling: ["type", _Modeling__WEBPACK_IMPORTED_MODULE_14__["default"]],
+  layouter: ["type", _ODLayouter__WEBPACK_IMPORTED_MODULE_15__["default"]],
+  connectionDocking: ["type", diagram_js_lib_layout_CroppingConnectionDocking__WEBPACK_IMPORTED_MODULE_16__["default"]],
+});
 
 
 /***/ }),
@@ -1520,6 +7076,910 @@ function getParent(element, anyType) {
 
   return null;
 }
+
+
+/***/ }),
+
+/***/ "../lib/features/ordering/ODOrderingProvider.js":
+/*!******************************************************!*\
+  !*** ../lib/features/ordering/ODOrderingProvider.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ODOrderingProvider)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var diagram_js_lib_features_ordering_OrderingProvider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/ordering/OrderingProvider */ "../node_modules/diagram-js/lib/features/ordering/OrderingProvider.js");
+/* harmony import */ var _modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../modeling/util/ModelingUtil */ "../lib/features/modeling/util/ModelingUtil.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+
+
+
+
+
+
+/**
+ * a simple ordering provider that makes sure:
+ *
+ * (0) labels and groups are rendered always on top
+ * (1) elements are ordered by a {level} property
+ */
+function ODOrderingProvider(eventBus, canvas, translate) {
+  diagram_js_lib_features_ordering_OrderingProvider__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
+
+  var orders = [
+    { type: "od:Object", order: { level: 5 } },
+    {
+      type: "od:Link",
+      order: {
+        level: 3,
+      },
+    },
+  ];
+
+  function computeOrder(element) {
+    if (element.labelTarget) {
+      return { level: 10 };
+    }
+
+    var entry = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.find)(orders, function (o) {
+      return (0,_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_2__.isAny)(element, [o.type]);
+    });
+
+    return (entry && entry.order) || { level: 1 };
+  }
+
+  function getOrder(element) {
+    var order = element.order;
+
+    if (!order) {
+      element.order = order = computeOrder(element);
+    }
+
+    if (!order) {
+      throw new Error("no order for <" + element.id + ">");
+    }
+
+    return order;
+  }
+
+  function findActualParent(element, newParent, containers) {
+    var actualParent = newParent;
+
+    while (actualParent) {
+      if ((0,_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_2__.isAny)(actualParent, containers)) {
+        break;
+      }
+
+      actualParent = actualParent.parent;
+    }
+
+    if (!actualParent) {
+      throw new Error(
+        translate("no parent for {element} in {parent}", {
+          element: element.id,
+          parent: newParent.id,
+        }),
+      );
+    }
+
+    return actualParent;
+  }
+
+  this.getOrdering = function (element, newParent) {
+    // render labels always on top
+    if (element.labelTarget) {
+      return {
+        parent: canvas.getRootElement(),
+        index: -1,
+      };
+    }
+
+    var elementOrder = getOrder(element);
+
+    if (elementOrder.containers) {
+      newParent = findActualParent(element, newParent, elementOrder.containers);
+    }
+
+    var currentIndex = newParent.children.indexOf(element);
+
+    var insertIndex = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.findIndex)(newParent.children, function (child) {
+      // do not compare with labels, they are created
+      // in the wrong order (right after elements) during import and
+      // mess up the positioning.
+      if (!element.labelTarget && child.labelTarget) {
+        return false;
+      }
+
+      return elementOrder.level < getOrder(child).level;
+    });
+
+    // if the element is already in the child list at
+    // a smaller index, we need to adjust the insert index.
+    // this takes into account that the element is being removed
+    // before being re-inserted
+    if (insertIndex !== -1) {
+      if (currentIndex !== -1 && currentIndex < insertIndex) {
+        insertIndex -= 1;
+      }
+    }
+
+    return {
+      index: insertIndex,
+      parent: newParent,
+    };
+  };
+}
+
+ODOrderingProvider.$inject = ["eventBus", "canvas", "translate"];
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_3__["default"])(ODOrderingProvider, diagram_js_lib_features_ordering_OrderingProvider__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+
+/***/ }),
+
+/***/ "../lib/features/ordering/index.js":
+/*!*****************************************!*\
+  !*** ../lib/features/ordering/index.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/i18n/translate */ "../node_modules/diagram-js/lib/i18n/translate/index.js");
+/* harmony import */ var _ODOrderingProvider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ODOrderingProvider */ "../lib/features/ordering/ODOrderingProvider.js");
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  __init__: ["odOrderingProvider"],
+  odOrderingProvider: ["type", _ODOrderingProvider__WEBPACK_IMPORTED_MODULE_1__["default"]],
+});
+
+
+/***/ }),
+
+/***/ "../lib/features/palette/PaletteProvider.js":
+/*!**************************************************!*\
+  !*** ../lib/features/palette/PaletteProvider.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ PaletteProvider)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * A palette provider for od elements.
+ */
+function PaletteProvider(
+  palette,
+  create,
+  elementFactory,
+  spaceTool,
+  lassoTool,
+  handTool,
+  globalConnect,
+  translate,
+) {
+  this._create = create;
+  this._elementFactory = elementFactory;
+  this._spaceTool = spaceTool;
+  this._lassoTool = lassoTool;
+  this._handTool = handTool;
+  this._globalConnect = globalConnect;
+  this._translate = translate;
+
+  palette.registerProvider(this);
+}
+
+PaletteProvider.$inject = [
+  "palette",
+  "create",
+  "elementFactory",
+  "spaceTool",
+  "lassoTool",
+  "handTool",
+  "globalConnect",
+  "translate",
+];
+
+PaletteProvider.prototype.getPaletteEntries = function (element) {
+  var actions = {},
+    create = this._create,
+    elementFactory = this._elementFactory,
+    spaceTool = this._spaceTool,
+    lassoTool = this._lassoTool,
+    handTool = this._handTool,
+    globalConnect = this._globalConnect,
+    translate = this._translate;
+
+  function createAction(type, group, className, title, options) {
+    function createListener(event) {
+      var shape = elementFactory.createShape((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({ type: type }, options));
+      create.start(event, shape);
+    }
+
+    var shortType = type.replace(/^od:/, "");
+
+    return {
+      group: group,
+      className: className,
+      title: title || translate("Create {type}", { type: shortType }),
+      action: {
+        dragstart: createListener,
+        click: createListener,
+      },
+    };
+  }
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(actions, {
+    "hand-tool": {
+      group: "tools",
+      className: "bpmn-icon-hand-tool",
+      title: translate("Activate the hand tool"),
+      action: {
+        click: function (event) {
+          handTool.activateHand(event);
+        },
+      },
+    },
+    "lasso-tool": {
+      group: "tools",
+      className: "bpmn-icon-lasso-tool",
+      title: translate("Activate the lasso tool"),
+      action: {
+        click: function (event) {
+          lassoTool.activateSelection(event);
+        },
+      },
+    },
+    "space-tool": {
+      group: "tools",
+      className: "bpmn-icon-space-tool",
+      title: translate("Activate the create/remove space tool"),
+      action: {
+        click: function (event) {
+          spaceTool.activateSelection(event);
+        },
+      },
+    },
+    "tool-separator": {
+      group: "tools",
+      separator: true,
+    },
+    "create-object": createAction(
+      "od:Object",
+      "od-elements",
+      "od-icon-object",
+      translate("Create object"),
+    ),
+    "object-linker": {
+      group: "od-elements",
+      className: "bpmn-icon-connection",
+      title: translate("Link objects"),
+      action: {
+        click: function (event) {
+          globalConnect.start(event);
+        },
+      },
+    },
+    "od-separator": {
+      group: "od-elements",
+      separator: true,
+    },
+    "create.text-box": createAction(
+      "od:TextBox",
+      "text",
+      "pjs-text-box",
+      translate("Create text"),
+    ),
+  });
+
+  return actions;
+};
+
+
+/***/ }),
+
+/***/ "../lib/features/palette/index.js":
+/*!****************************************!*\
+  !*** ../lib/features/palette/index.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var diagram_js_lib_features_palette__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/palette */ "../node_modules/diagram-js/lib/features/palette/index.js");
+/* harmony import */ var diagram_js_lib_features_create__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! diagram-js/lib/features/create */ "../node_modules/diagram-js/lib/features/create/index.js");
+/* harmony import */ var diagram_js_lib_features_space_tool__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! diagram-js/lib/features/space-tool */ "../node_modules/diagram-js/lib/features/space-tool/index.js");
+/* harmony import */ var diagram_js_lib_features_lasso_tool__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! diagram-js/lib/features/lasso-tool */ "../node_modules/diagram-js/lib/features/lasso-tool/index.js");
+/* harmony import */ var diagram_js_lib_features_hand_tool__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/features/hand-tool */ "../node_modules/diagram-js/lib/features/hand-tool/index.js");
+/* harmony import */ var diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! diagram-js/lib/i18n/translate */ "../node_modules/diagram-js/lib/i18n/translate/index.js");
+/* harmony import */ var diagram_js_lib_features_global_connect__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! diagram-js/lib/features/global-connect */ "../node_modules/diagram-js/lib/features/global-connect/index.js");
+/* harmony import */ var _PaletteProvider__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./PaletteProvider */ "../lib/features/palette/PaletteProvider.js");
+
+
+
+
+
+
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    diagram_js_lib_features_palette__WEBPACK_IMPORTED_MODULE_0__["default"],
+    diagram_js_lib_features_create__WEBPACK_IMPORTED_MODULE_1__["default"],
+    diagram_js_lib_features_space_tool__WEBPACK_IMPORTED_MODULE_2__["default"],
+    diagram_js_lib_features_lasso_tool__WEBPACK_IMPORTED_MODULE_3__["default"],
+    diagram_js_lib_features_hand_tool__WEBPACK_IMPORTED_MODULE_4__["default"],
+    diagram_js_lib_features_global_connect__WEBPACK_IMPORTED_MODULE_5__["default"],
+    diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_6__["default"],
+  ],
+  __init__: ["paletteProvider"],
+  paletteProvider: ["type", _PaletteProvider__WEBPACK_IMPORTED_MODULE_7__["default"]],
+});
+
+
+/***/ }),
+
+/***/ "../lib/features/rules/ODRules.js":
+/*!****************************************!*\
+  !*** ../lib/features/rules/ODRules.js ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ODRules)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/ModelUtil */ "../lib/util/ModelUtil.js");
+/* harmony import */ var _util_LabelUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/LabelUtil */ "../lib/util/LabelUtil.js");
+/* harmony import */ var diagram_js_lib_features_rules_RuleProvider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/rules/RuleProvider */ "../node_modules/diagram-js/lib/features/rules/RuleProvider.js");
+/* harmony import */ var _modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../modeling/util/ModelingUtil */ "../lib/features/modeling/util/ModelingUtil.js");
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * OD specific modeling rule
+ */
+function ODRules(eventBus) {
+  diagram_js_lib_features_rules_RuleProvider__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(ODRules, diagram_js_lib_features_rules_RuleProvider__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+ODRules.$inject = ["eventBus"];
+
+ODRules.prototype.init = function () {
+  this.addRule("connection.start", function (context) {
+    var source = context.source;
+
+    return canStartConnection(source);
+  });
+
+  this.addRule("connection.create", function (context) {
+    var source = context.source,
+      target = context.target,
+      hints = context.hints || {},
+      targetParent = hints.targetParent;
+
+    // temporarily set target parent for scoping
+    // checks to work
+    if (targetParent) {
+      target.parent = targetParent;
+    }
+
+    try {
+      return canConnect(source, target);
+    } finally {
+      // unset temporary target parent
+      if (targetParent) {
+        target.parent = null;
+      }
+    }
+  });
+
+  this.addRule("connection.reconnect", function (context) {
+    var connection = context.connection,
+      source = context.source,
+      target = context.target;
+
+    return canConnect(source, target, connection);
+  });
+
+  this.addRule("connection.updateWaypoints", function (context) {
+    return {
+      type: context.connection.type,
+    };
+  });
+
+  this.addRule("shape.resize", function (context) {
+    var shape = context.shape,
+      newBounds = context.newBounds;
+
+    return canResize(shape, newBounds);
+  });
+
+  this.addRule("elements.create", function (context) {
+    var elements = context.elements,
+      position = context.position,
+      target = context.target;
+
+    return (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.every)(elements, function (element) {
+      if (element.host) {
+        return canAttach(element, element.host, null, position);
+      }
+
+      return canCreate(element, target, null, position);
+    });
+  });
+
+  this.addRule("elements.move", function (context) {
+    var target = context.target,
+      shapes = context.shapes,
+      position = context.position;
+
+    return (
+      canAttach(shapes, target, null, position) ||
+      canMove(shapes, target, position)
+    );
+  });
+
+  this.addRule("shape.create", function (context) {
+    return canCreate(
+      context.shape,
+      context.target,
+      context.source,
+      context.position,
+    );
+  });
+
+  this.addRule("shape.attach", function (context) {
+    return canAttach(context.shape, context.target, null, context.position);
+  });
+
+  this.addRule("element.copy", function (context) {
+    var element = context.element,
+      elements = context.elements;
+
+    return canCopy(elements, element);
+  });
+};
+
+ODRules.prototype.canConnect = canConnect;
+
+ODRules.prototype.canMove = canMove;
+
+ODRules.prototype.canAttach = canAttach;
+
+ODRules.prototype.canDrop = canDrop;
+
+ODRules.prototype.canCreate = canCreate;
+
+ODRules.prototype.canReplace = canReplace;
+
+ODRules.prototype.canResize = canResize;
+
+ODRules.prototype.canCopy = canCopy;
+
+/**
+ * Utility functions for rule checking
+ */
+
+function isSame(a, b) {
+  return a === b;
+}
+
+function getParents(element) {
+  var parents = [];
+
+  while (element) {
+    element = element.parent;
+
+    if (element) {
+      parents.push(element);
+    }
+  }
+
+  return parents;
+}
+
+function isParent(possibleParent, element) {
+  var allParents = getParents(element);
+  return allParents.indexOf(possibleParent) !== -1;
+}
+
+function isGroup(element) {
+  return (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__.is)(element, "od:Group") && !element.labelTarget;
+}
+
+/**
+ * Checks if given element can be used for starting connection.
+ *
+ * @param  {Element} element
+ * @return {boolean}
+ */
+function canStartConnection(element) {
+  if (nonExistingOrLabel(element)) {
+    return null;
+  }
+
+  return (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__.is)(element, "od:Object");
+}
+
+function nonExistingOrLabel(element) {
+  return !element || (0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_4__.isLabel)(element);
+}
+
+function canConnect(source, target) {
+  if (nonExistingOrLabel(source) || nonExistingOrLabel(target)) {
+    return null;
+  }
+  if (canConnectLink(source, target)) {
+    return { type: "od:Link" };
+  }
+  return false;
+}
+
+function canConnectLink(source, target) {
+  return (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__.is)(source, "od:Object") && (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__.is)(target, "od:Object");
+}
+
+/**
+ * Can an element be dropped into the target element
+ *
+ * @return {Boolean}
+ */
+function canDrop(element, target) {
+  // can move labels
+  if ((0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_4__.isLabel)(element) || isGroup(element)) {
+    return true;
+  }
+
+  // drop board elements onto boards
+  return (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__.is)(element, "od:BoardElement") && (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__.is)(target, "od:OdBoard");
+}
+
+function canReplace(elements, target) {
+  return target;
+}
+
+function canAttach(elements, target) {
+  if (!Array.isArray(elements)) {
+    elements = [elements];
+  }
+
+  // only (re-)attach one element at a time
+  if (elements.length !== 1) {
+    return false;
+  }
+
+  var element = elements[0];
+
+  // do not attach labels
+  if ((0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_4__.isLabel)(element)) {
+    return false;
+  }
+
+  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__.is)(target, "od:BoardElement")) {
+    return false;
+  }
+
+  return "attach";
+}
+
+function canMove(elements, target) {
+  // allow default move check to start move operation
+  if (!target) {
+    return true;
+  }
+
+  return elements.every(function (element) {
+    return canDrop(element, target);
+  });
+}
+
+function canCreate(shape, target, source, position) {
+  if (!target) {
+    return false;
+  }
+
+  if ((0,_util_LabelUtil__WEBPACK_IMPORTED_MODULE_4__.isLabel)(shape) || isGroup(shape)) {
+    return true;
+  }
+
+  if (isSame(source, target)) {
+    return false;
+  }
+
+  // ensure we do not drop the element
+  // into source
+  if (source && isParent(source, target)) {
+    return false;
+  }
+
+  return canDrop(shape, target, position);
+}
+
+function canResize(shape, newBounds) {
+  if ((0,_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_5__.isAny)(shape, ["od:Object"])) {
+    return !newBounds || (newBounds.width >= 50 && newBounds.height >= 50);
+  }
+  return false;
+}
+
+function canCopy(elements, element) {
+  return true;
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/rules/index.js":
+/*!**************************************!*\
+  !*** ../lib/features/rules/index.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var diagram_js_lib_features_rules__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/rules */ "../node_modules/diagram-js/lib/features/rules/index.js");
+/* harmony import */ var _ODRules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ODRules */ "../lib/features/rules/ODRules.js");
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [diagram_js_lib_features_rules__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  __init__: ["odRules"],
+  odRules: ["type", _ODRules__WEBPACK_IMPORTED_MODULE_1__["default"]],
+});
+
+
+/***/ }),
+
+/***/ "../lib/features/snapping/ODCreateMoveSnapping.js":
+/*!********************************************************!*\
+  !*** ../lib/features/snapping/ODCreateMoveSnapping.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ODCreateMoveSnapping)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var diagram_js_lib_features_snapping_CreateMoveSnapping__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/snapping/CreateMoveSnapping */ "../node_modules/diagram-js/lib/features/snapping/CreateMoveSnapping.js");
+
+
+
+
+/**
+ * Snap during create and move.
+ *
+ * @param {EventBus} eventBus
+ * @param {Injector} injector
+ */
+function ODCreateMoveSnapping(injector) {
+  injector.invoke(diagram_js_lib_features_snapping_CreateMoveSnapping__WEBPACK_IMPORTED_MODULE_0__["default"], this);
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(ODCreateMoveSnapping, diagram_js_lib_features_snapping_CreateMoveSnapping__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+ODCreateMoveSnapping.$inject = ["injector"];
+
+ODCreateMoveSnapping.prototype.initSnap = function (event) {
+  return diagram_js_lib_features_snapping_CreateMoveSnapping__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.initSnap.call(this, event);
+};
+
+ODCreateMoveSnapping.prototype.addSnapTargetPoints = function (
+  snapPoints,
+  shape,
+  target,
+) {
+  return diagram_js_lib_features_snapping_CreateMoveSnapping__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.addSnapTargetPoints.call(
+    this,
+    snapPoints,
+    shape,
+    target,
+  );
+};
+
+ODCreateMoveSnapping.prototype.getSnapTargets = function (shape, target) {
+  return diagram_js_lib_features_snapping_CreateMoveSnapping__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.getSnapTargets.call(this, shape, target);
+};
+
+
+/***/ }),
+
+/***/ "../lib/features/snapping/ObjectConnectSnapping.js":
+/*!*********************************************************!*\
+  !*** ../lib/features/snapping/ObjectConnectSnapping.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ObjectConnectSnapping)
+/* harmony export */ });
+/* harmony import */ var diagram_js_lib_features_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! diagram-js/lib/features/snapping/SnapUtil */ "../node_modules/diagram-js/lib/features/snapping/SnapUtil.js");
+/* harmony import */ var diagram_js_lib_features_keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/keyboard/KeyboardUtil */ "../node_modules/diagram-js/lib/features/keyboard/KeyboardUtil.js");
+/* harmony import */ var _modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../modeling/util/ModelingUtil */ "../lib/features/modeling/util/ModelingUtil.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+
+
+
+
+
+
+var HIGHER_PRIORITY = 1250;
+
+var OBJECT_BOUNDS_PADDING = 10;
+
+var TARGET_CENTER_PADDING = 20;
+
+var AXES = ["x", "y"];
+
+/**
+ * Snap during connect.
+ *
+ * @param {EventBus} eventBus
+ */
+function ObjectConnectSnapping(eventBus) {
+  eventBus.on(
+    ["connect.hover", "connect.move", "connect.end"],
+    HIGHER_PRIORITY,
+    function (event) {
+      var context = event.context,
+        canExecute = context.canExecute,
+        start = context.start,
+        hover = context.hover;
+
+      // do NOT snap on CMD
+      if (event.originalEvent && (0,diagram_js_lib_features_keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isCmd)(event.originalEvent)) {
+        return;
+      }
+
+      if (!context.initialConnectionStart) {
+        context.initialConnectionStart = context.connectionStart;
+      }
+
+      // snap hover
+      if (canExecute && hover) {
+        snapToShape(event, hover, getTargetBoundsPadding());
+      }
+
+      if (hover && isAnyType(canExecute, ["od:Link"])) {
+        context.connectionStart = (0,diagram_js_lib_features_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.mid)(start);
+
+        // snap hover
+        if ((0,_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_2__.isAny)(hover, ["od:Object"])) {
+          snapToTargetMid(event, hover);
+        }
+      }
+    },
+  );
+}
+
+ObjectConnectSnapping.$inject = ["eventBus"];
+
+// helpers //////////
+
+// snap to target if event in target
+function snapToShape(event, target, padding) {
+  AXES.forEach(function (axis) {
+    var dimensionForAxis = getDimensionForAxis(axis, target);
+
+    if (event[axis] < target[axis] + padding) {
+      (0,diagram_js_lib_features_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.setSnapped)(event, axis, target[axis] + padding);
+    } else if (event[axis] > target[axis] + dimensionForAxis - padding) {
+      (0,diagram_js_lib_features_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.setSnapped)(event, axis, target[axis] + dimensionForAxis - padding);
+    }
+  });
+}
+
+// snap to target mid if event in target mid
+function snapToTargetMid(event, target) {
+  var targetMid = (0,diagram_js_lib_features_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.mid)(target);
+
+  AXES.forEach(function (axis) {
+    if (isMid(event, target, axis)) {
+      (0,diagram_js_lib_features_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.setSnapped)(event, axis, targetMid[axis]);
+    }
+  });
+}
+
+function isType(attrs, type) {
+  return attrs && attrs.type === type;
+}
+
+function isAnyType(attrs, types) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.some)(types, function (type) {
+    return isType(attrs, type);
+  });
+}
+
+function getDimensionForAxis(axis, element) {
+  return axis === "x" ? element.width : element.height;
+}
+
+function getTargetBoundsPadding() {
+  return OBJECT_BOUNDS_PADDING;
+}
+
+function isMid(event, target, axis) {
+  return (
+    event[axis] > target[axis] + TARGET_CENTER_PADDING &&
+    event[axis] <
+      target[axis] + getDimensionForAxis(axis, target) - TARGET_CENTER_PADDING
+  );
+}
+
+
+/***/ }),
+
+/***/ "../lib/features/snapping/index.js":
+/*!*****************************************!*\
+  !*** ../lib/features/snapping/index.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ODCreateMoveSnapping__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ODCreateMoveSnapping */ "../lib/features/snapping/ODCreateMoveSnapping.js");
+/* harmony import */ var diagram_js_lib_features_snapping__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! diagram-js/lib/features/snapping */ "../node_modules/diagram-js/lib/features/snapping/index.js");
+/* harmony import */ var _ObjectConnectSnapping__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ObjectConnectSnapping */ "../lib/features/snapping/ObjectConnectSnapping.js");
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [diagram_js_lib_features_snapping__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  __init__: ["connectSnapping", "createMoveSnapping"],
+  connectSnapping: ["type", _ObjectConnectSnapping__WEBPACK_IMPORTED_MODULE_1__["default"]],
+  createMoveSnapping: ["type", _ODCreateMoveSnapping__WEBPACK_IMPORTED_MODULE_2__["default"]],
+});
 
 
 /***/ }),
@@ -2702,6 +9162,706 @@ function open() {
 
 /***/ }),
 
+/***/ "../node_modules/diagram-js-direct-editing/index.js":
+/*!**********************************************************!*\
+  !*** ../node_modules/diagram-js-direct-editing/index.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var diagram_js_lib_features_interaction_events__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! diagram-js/lib/features/interaction-events */ "../node_modules/diagram-js/lib/features/interaction-events/index.js");
+/* harmony import */ var _lib_DirectEditing__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/DirectEditing */ "../node_modules/diagram-js-direct-editing/lib/DirectEditing.js");
+
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    diagram_js_lib_features_interaction_events__WEBPACK_IMPORTED_MODULE_1__["default"]
+  ],
+  __init__: [ 'directEditing' ],
+  directEditing: [ 'type', _lib_DirectEditing__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+});
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js-direct-editing/lib/DirectEditing.js":
+/*!**********************************************************************!*\
+  !*** ../node_modules/diagram-js-direct-editing/lib/DirectEditing.js ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ DirectEditing)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _TextBox__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TextBox */ "../node_modules/diagram-js-direct-editing/lib/TextBox.js");
+
+
+
+
+
+/**
+ * A direct editing component that allows users
+ * to edit an elements text directly in the diagram
+ *
+ * @param {EventBus} eventBus the event bus
+ */
+function DirectEditing(eventBus, canvas) {
+
+  this._eventBus = eventBus;
+
+  this._providers = [];
+  this._textbox = new _TextBox__WEBPACK_IMPORTED_MODULE_0__["default"]({
+    container: canvas.getContainer(),
+    keyHandler: (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.bind)(this._handleKey, this),
+    resizeHandler: (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.bind)(this._handleResize, this)
+  });
+}
+
+DirectEditing.$inject = [ 'eventBus', 'canvas' ];
+
+
+/**
+ * Register a direct editing provider
+
+ * @param {Object} provider the provider, must expose an #activate(element) method that returns
+ *                          an activation context ({ bounds: {x, y, width, height }, text }) if
+ *                          direct editing is available for the given element.
+ *                          Additionally the provider must expose a #update(element, value) method
+ *                          to receive direct editing updates.
+ */
+DirectEditing.prototype.registerProvider = function(provider) {
+  this._providers.push(provider);
+};
+
+
+/**
+ * Returns true if direct editing is currently active
+ *
+ * @param {djs.model.Base} [element]
+ *
+ * @return {boolean}
+ */
+DirectEditing.prototype.isActive = function(element) {
+  return !!(this._active && (!element || this._active.element === element));
+};
+
+
+/**
+ * Cancel direct editing, if it is currently active
+ */
+DirectEditing.prototype.cancel = function() {
+  if (!this._active) {
+    return;
+  }
+
+  this._fire('cancel');
+  this.close();
+};
+
+
+DirectEditing.prototype._fire = function(event, context) {
+  this._eventBus.fire('directEditing.' + event, context || { active: this._active });
+};
+
+DirectEditing.prototype.close = function() {
+  this._textbox.destroy();
+
+  this._fire('deactivate');
+
+  this._active = null;
+
+  this.resizable = undefined;
+};
+
+
+DirectEditing.prototype.complete = function() {
+
+  var active = this._active;
+
+  if (!active) {
+    return;
+  }
+
+  var containerBounds,
+      previousBounds = active.context.bounds,
+      newBounds = this.$textbox.getBoundingClientRect(),
+      newText = this.getValue(),
+      previousText = active.context.text;
+
+  if (
+    newText !== previousText ||
+    newBounds.height !== previousBounds.height ||
+    newBounds.width !== previousBounds.width
+  ) {
+    containerBounds = this._textbox.container.getBoundingClientRect();
+
+    active.provider.update(active.element, newText, active.context.text, {
+      x: newBounds.left - containerBounds.left,
+      y: newBounds.top - containerBounds.top,
+      width: newBounds.width,
+      height: newBounds.height
+    });
+  }
+
+  this._fire('complete');
+
+  this.close();
+};
+
+
+DirectEditing.prototype.getValue = function() {
+  return this._textbox.getValue();
+};
+
+
+DirectEditing.prototype._handleKey = function(e) {
+
+  // stop bubble
+  e.stopPropagation();
+
+  var key = e.keyCode || e.charCode;
+
+  // ESC
+  if (key === 27) {
+    e.preventDefault();
+    return this.cancel();
+  }
+
+  // Enter
+  if (key === 13 && !e.shiftKey) {
+    e.preventDefault();
+    return this.complete();
+  }
+};
+
+
+DirectEditing.prototype._handleResize = function(event) {
+  this._fire('resize', event);
+};
+
+
+/**
+ * Activate direct editing on the given element
+ *
+ * @param {Object} ElementDescriptor the descriptor for a shape or connection
+ * @return {Boolean} true if the activation was possible
+ */
+DirectEditing.prototype.activate = function(element) {
+  if (this.isActive()) {
+    this.cancel();
+  }
+
+  // the direct editing context
+  var context;
+
+  var provider = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.find)(this._providers, function(p) {
+    return ((context = p.activate(element))) ? p : null;
+  });
+
+  // check if activation took place
+  if (context) {
+    this.$textbox = this._textbox.create(
+      context.bounds,
+      context.style,
+      context.text,
+      context.options
+    );
+
+    this._active = {
+      element: element,
+      context: context,
+      provider: provider
+    };
+
+    if (context.options && context.options.resizable) {
+      this.resizable = true;
+    }
+
+    this._fire('activate');
+  }
+
+  return !!context;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js-direct-editing/lib/TextBox.js":
+/*!****************************************************************!*\
+  !*** ../node_modules/diagram-js-direct-editing/lib/TextBox.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ TextBox)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+
+
+
+
+var min = Math.min,
+    max = Math.max;
+
+function preventDefault(e) {
+  e.preventDefault();
+}
+
+function stopPropagation(e) {
+  e.stopPropagation();
+}
+
+function isTextNode(node) {
+  return node.nodeType === Node.TEXT_NODE;
+}
+
+function toArray(nodeList) {
+  return [].slice.call(nodeList);
+}
+
+/**
+ * Initializes a container for a content editable div.
+ *
+ * Structure:
+ *
+ * container
+ *   parent
+ *     content
+ *     resize-handle
+ *
+ * @param {object} options
+ * @param {DOMElement} options.container The DOM element to append the contentContainer to
+ * @param {Function} options.keyHandler Handler for key events
+ * @param {Function} options.resizeHandler Handler for resize events
+ */
+function TextBox(options) {
+  this.container = options.container;
+
+  this.parent = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(
+    '<div class="djs-direct-editing-parent">' +
+      '<div class="djs-direct-editing-content" contenteditable="true"></div>' +
+    '</div>'
+  );
+
+  this.content = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('[contenteditable]', this.parent);
+
+  this.keyHandler = options.keyHandler || function() {};
+  this.resizeHandler = options.resizeHandler || function() {};
+
+  this.autoResize = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.bind)(this.autoResize, this);
+  this.handlePaste = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.bind)(this.handlePaste, this);
+}
+
+
+/**
+ * Create a text box with the given position, size, style and text content
+ *
+ * @param {Object} bounds
+ * @param {Number} bounds.x absolute x position
+ * @param {Number} bounds.y absolute y position
+ * @param {Number} [bounds.width] fixed width value
+ * @param {Number} [bounds.height] fixed height value
+ * @param {Number} [bounds.maxWidth] maximum width value
+ * @param {Number} [bounds.maxHeight] maximum height value
+ * @param {Number} [bounds.minWidth] minimum width value
+ * @param {Number} [bounds.minHeight] minimum height value
+ * @param {Object} [style]
+ * @param {String} value text content
+ *
+ * @return {DOMElement} The created content DOM element
+ */
+TextBox.prototype.create = function(bounds, style, value, options) {
+  var self = this;
+
+  var parent = this.parent,
+      content = this.content,
+      container = this.container;
+
+  options = this.options = options || {};
+
+  style = this.style = style || {};
+
+  var parentStyle = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.pick)(style, [
+    'width',
+    'height',
+    'maxWidth',
+    'maxHeight',
+    'minWidth',
+    'minHeight',
+    'left',
+    'top',
+    'backgroundColor',
+    'position',
+    'overflow',
+    'border',
+    'wordWrap',
+    'textAlign',
+    'outline',
+    'transform'
+  ]);
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(parent.style, {
+    width: bounds.width + 'px',
+    height: bounds.height + 'px',
+    maxWidth: bounds.maxWidth + 'px',
+    maxHeight: bounds.maxHeight + 'px',
+    minWidth: bounds.minWidth + 'px',
+    minHeight: bounds.minHeight + 'px',
+    left: bounds.x + 'px',
+    top: bounds.y + 'px',
+    backgroundColor: '#ffffff',
+    position: 'absolute',
+    overflow: 'visible',
+    border: '1px solid #ccc',
+    boxSizing: 'border-box',
+    wordWrap: 'normal',
+    textAlign: 'center',
+    outline: 'none'
+  }, parentStyle);
+
+  var contentStyle = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.pick)(style, [
+    'fontFamily',
+    'fontSize',
+    'fontWeight',
+    'lineHeight',
+    'padding',
+    'paddingTop',
+    'paddingRight',
+    'paddingBottom',
+    'paddingLeft'
+  ]);
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(content.style, {
+    boxSizing: 'border-box',
+    width: '100%',
+    outline: 'none',
+    wordWrap: 'break-word'
+  }, contentStyle);
+
+  if (options.centerVertically) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(content.style, {
+      position: 'absolute',
+      top: '50%',
+      transform: 'translate(0, -50%)'
+    }, contentStyle);
+  }
+
+  content.innerText = value;
+
+  min_dom__WEBPACK_IMPORTED_MODULE_0__.event.bind(content, 'keydown', this.keyHandler);
+  min_dom__WEBPACK_IMPORTED_MODULE_0__.event.bind(content, 'mousedown', stopPropagation);
+  min_dom__WEBPACK_IMPORTED_MODULE_0__.event.bind(content, 'paste', self.handlePaste);
+
+  if (options.autoResize) {
+    min_dom__WEBPACK_IMPORTED_MODULE_0__.event.bind(content, 'input', this.autoResize);
+  }
+
+  if (options.resizable) {
+    this.resizable(style);
+  }
+
+  container.appendChild(parent);
+
+  // set selection to end of text
+  this.setSelection(content.lastChild, content.lastChild && content.lastChild.length);
+
+  return parent;
+};
+
+/**
+ * Intercept paste events to remove formatting from pasted text.
+ */
+TextBox.prototype.handlePaste = function(e) {
+  var options = this.options,
+      style = this.style;
+
+  e.preventDefault();
+
+  var text;
+
+  if (e.clipboardData) {
+
+    // Chrome, Firefox, Safari
+    text = e.clipboardData.getData('text/plain');
+  } else {
+
+    // Internet Explorer
+    text = window.clipboardData.getData('Text');
+  }
+
+  this.insertText(text);
+
+  if (options.autoResize) {
+    var hasResized = this.autoResize(style);
+
+    if (hasResized) {
+      this.resizeHandler(hasResized);
+    }
+  }
+};
+
+TextBox.prototype.insertText = function(text) {
+  text = normalizeEndOfLineSequences(text);
+
+  // insertText command not supported by Internet Explorer
+  var success = document.execCommand('insertText', false, text);
+
+  if (success) {
+    return;
+  }
+
+  this._insertTextIE(text);
+};
+
+TextBox.prototype._insertTextIE = function(text) {
+
+  // Internet Explorer
+  var range = this.getSelection(),
+      startContainer = range.startContainer,
+      endContainer = range.endContainer,
+      startOffset = range.startOffset,
+      endOffset = range.endOffset,
+      commonAncestorContainer = range.commonAncestorContainer;
+
+  var childNodesArray = toArray(commonAncestorContainer.childNodes);
+
+  var container,
+      offset;
+
+  if (isTextNode(commonAncestorContainer)) {
+    var containerTextContent = startContainer.textContent;
+
+    startContainer.textContent =
+      containerTextContent.substring(0, startOffset)
+      + text
+      + containerTextContent.substring(endOffset);
+
+    container = startContainer;
+    offset = startOffset + text.length;
+
+  } else if (startContainer === this.content && endContainer === this.content) {
+    var textNode = document.createTextNode(text);
+
+    this.content.insertBefore(textNode, childNodesArray[startOffset]);
+
+    container = textNode;
+    offset = textNode.textContent.length;
+  } else {
+    var startContainerChildIndex = childNodesArray.indexOf(startContainer),
+        endContainerChildIndex = childNodesArray.indexOf(endContainer);
+
+    childNodesArray.forEach(function(childNode, index) {
+
+      if (index === startContainerChildIndex) {
+        childNode.textContent =
+          startContainer.textContent.substring(0, startOffset) +
+          text +
+          endContainer.textContent.substring(endOffset);
+      } else if (index > startContainerChildIndex && index <= endContainerChildIndex) {
+        (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.remove)(childNode);
+      }
+    });
+
+    container = startContainer;
+    offset = startOffset + text.length;
+  }
+
+  if (container && offset !== undefined) {
+
+    // is necessary in Internet Explorer
+    setTimeout(function() {
+      self.setSelection(container, offset);
+    });
+  }
+};
+
+/**
+ * Automatically resize element vertically to fit its content.
+ */
+TextBox.prototype.autoResize = function() {
+  var parent = this.parent,
+      content = this.content;
+
+  var fontSize = parseInt(this.style.fontSize) || 12;
+
+  if (content.scrollHeight > parent.offsetHeight ||
+      content.scrollHeight < parent.offsetHeight - fontSize) {
+    var bounds = parent.getBoundingClientRect();
+
+    var height = content.scrollHeight;
+    parent.style.height = height + 'px';
+
+    this.resizeHandler({
+      width: bounds.width,
+      height: bounds.height,
+      dx: 0,
+      dy: height - bounds.height
+    });
+  }
+};
+
+/**
+ * Make an element resizable by adding a resize handle.
+ */
+TextBox.prototype.resizable = function() {
+  var self = this;
+
+  var parent = this.parent,
+      resizeHandle = this.resizeHandle;
+
+  var minWidth = parseInt(this.style.minWidth) || 0,
+      minHeight = parseInt(this.style.minHeight) || 0,
+      maxWidth = parseInt(this.style.maxWidth) || Infinity,
+      maxHeight = parseInt(this.style.maxHeight) || Infinity;
+
+  if (!resizeHandle) {
+    resizeHandle = this.resizeHandle = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(
+      '<div class="djs-direct-editing-resize-handle"></div>'
+    );
+
+    var startX, startY, startWidth, startHeight;
+
+    var onMouseDown = function(e) {
+      preventDefault(e);
+      stopPropagation(e);
+
+      startX = e.clientX;
+      startY = e.clientY;
+
+      var bounds = parent.getBoundingClientRect();
+
+      startWidth = bounds.width;
+      startHeight = bounds.height;
+
+      min_dom__WEBPACK_IMPORTED_MODULE_0__.event.bind(document, 'mousemove', onMouseMove);
+      min_dom__WEBPACK_IMPORTED_MODULE_0__.event.bind(document, 'mouseup', onMouseUp);
+    };
+
+    var onMouseMove = function(e) {
+      preventDefault(e);
+      stopPropagation(e);
+
+      var newWidth = min(max(startWidth + e.clientX - startX, minWidth), maxWidth);
+      var newHeight = min(max(startHeight + e.clientY - startY, minHeight), maxHeight);
+
+      parent.style.width = newWidth + 'px';
+      parent.style.height = newHeight + 'px';
+
+      self.resizeHandler({
+        width: startWidth,
+        height: startHeight,
+        dx: e.clientX - startX,
+        dy: e.clientY - startY
+      });
+    };
+
+    var onMouseUp = function(e) {
+      preventDefault(e);
+      stopPropagation(e);
+
+      min_dom__WEBPACK_IMPORTED_MODULE_0__.event.unbind(document,'mousemove', onMouseMove, false);
+      min_dom__WEBPACK_IMPORTED_MODULE_0__.event.unbind(document, 'mouseup', onMouseUp, false);
+    };
+
+    min_dom__WEBPACK_IMPORTED_MODULE_0__.event.bind(resizeHandle, 'mousedown', onMouseDown);
+  }
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(resizeHandle.style, {
+    position: 'absolute',
+    bottom: '0px',
+    right: '0px',
+    cursor: 'nwse-resize',
+    width: '0',
+    height: '0',
+    borderTop: (parseInt(this.style.fontSize) / 4 || 3) + 'px solid transparent',
+    borderRight: (parseInt(this.style.fontSize) / 4 || 3) + 'px solid #ccc',
+    borderBottom: (parseInt(this.style.fontSize) / 4 || 3) + 'px solid #ccc',
+    borderLeft: (parseInt(this.style.fontSize) / 4 || 3) + 'px solid transparent'
+  });
+
+  parent.appendChild(resizeHandle);
+};
+
+
+/**
+ * Clear content and style of the textbox, unbind listeners and
+ * reset CSS style.
+ */
+TextBox.prototype.destroy = function() {
+  var parent = this.parent,
+      content = this.content,
+      resizeHandle = this.resizeHandle;
+
+  // clear content
+  content.innerText = '';
+
+  // clear styles
+  parent.removeAttribute('style');
+  content.removeAttribute('style');
+
+  min_dom__WEBPACK_IMPORTED_MODULE_0__.event.unbind(content, 'keydown', this.keyHandler);
+  min_dom__WEBPACK_IMPORTED_MODULE_0__.event.unbind(content, 'mousedown', stopPropagation);
+  min_dom__WEBPACK_IMPORTED_MODULE_0__.event.unbind(content, 'input', this.autoResize);
+  min_dom__WEBPACK_IMPORTED_MODULE_0__.event.unbind(content, 'paste', this.handlePaste);
+
+  if (resizeHandle) {
+    resizeHandle.removeAttribute('style');
+
+    (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.remove)(resizeHandle);
+  }
+
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.remove)(parent);
+};
+
+
+TextBox.prototype.getValue = function() {
+  return this.content.innerText.trim();
+};
+
+
+TextBox.prototype.getSelection = function() {
+  var selection = window.getSelection(),
+      range = selection.getRangeAt(0);
+
+  return range;
+};
+
+
+TextBox.prototype.setSelection = function(container, offset) {
+  var range = document.createRange();
+
+  if (container === null) {
+    range.selectNodeContents(this.content);
+  } else {
+    range.setStart(container, offset);
+    range.setEnd(container, offset);
+  }
+
+  var selection = window.getSelection();
+
+  selection.removeAllRanges();
+  selection.addRange(range);
+};
+
+// helpers //////////
+
+function normalizeEndOfLineSequences(string) {
+  return string.replace(/\r\n|\r|\n/g, '\n');
+}
+
+/***/ }),
+
 /***/ "../node_modules/diagram-js/lib/Diagram.js":
 /*!*************************************************!*\
   !*** ../node_modules/diagram-js/lib/Diagram.js ***!
@@ -2888,6 +10048,858 @@ Diagram.prototype.destroy = function() {
 Diagram.prototype.clear = function() {
   this.get('eventBus').fire('diagram.clear');
 };
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/command/CommandInterceptor.js":
+/*!********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/command/CommandInterceptor.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ CommandInterceptor)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * @typedef {import('../core/Types').ElementLike} ElementLike
+ * @typedef {import('../core/EventBus').default} EventBus
+ * @typedef {import('./CommandStack').CommandContext} CommandContext
+ *
+ * @typedef {string|string[]} Events
+ * @typedef { (context: CommandContext) => ElementLike[] | void } HandlerFunction
+ * @typedef { (context: CommandContext) => void } ComposeHandlerFunction
+ */
+
+var DEFAULT_PRIORITY = 1000;
+
+/**
+ * A utility that can be used to plug into the command execution for
+ * extension and/or validation.
+ *
+ * @class
+ * @constructor
+ *
+ * @example
+ *
+ * ```javascript
+ * import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor';
+ *
+ * class CommandLogger extends CommandInterceptor {
+ *   constructor(eventBus) {
+ *     super(eventBus);
+ *
+ *   this.preExecute('shape.create', (event) => {
+ *     console.log('commandStack.shape-create.preExecute', event);
+ *   });
+ * }
+ * ```
+ *
+ * @param {EventBus} eventBus
+ */
+function CommandInterceptor(eventBus) {
+
+  /**
+   * @type {EventBus}
+   */
+  this._eventBus = eventBus;
+}
+
+CommandInterceptor.$inject = [ 'eventBus' ];
+
+function unwrapEvent(fn, that) {
+  return function(event) {
+    return fn.call(that || null, event.context, event.command, event);
+  };
+}
+
+
+/**
+ * Intercept a command during one of the phases.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {string} [hook] phase to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.on = function(events, hook, priority, handlerFn, unwrap, that) {
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isFunction)(hook) || (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(hook)) {
+    that = unwrap;
+    unwrap = handlerFn;
+    handlerFn = priority;
+    priority = hook;
+    hook = null;
+  }
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isFunction)(priority)) {
+    that = unwrap;
+    unwrap = handlerFn;
+    handlerFn = priority;
+    priority = DEFAULT_PRIORITY;
+  }
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isObject)(unwrap)) {
+    that = unwrap;
+    unwrap = false;
+  }
+
+  if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isFunction)(handlerFn)) {
+    throw new Error('handlerFn must be a function');
+  }
+
+  if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(events)) {
+    events = [ events ];
+  }
+
+  var eventBus = this._eventBus;
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(events, function(event) {
+
+    // concat commandStack(.event)?(.hook)?
+    var fullEvent = [ 'commandStack', event, hook ].filter(function(e) { return e; }).join('.');
+
+    eventBus.on(fullEvent, priority, unwrap ? unwrapEvent(handlerFn, that) : handlerFn, that);
+  });
+};
+
+/**
+ * Add a <canExecute> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.canExecute = createHook('canExecute');
+
+/**
+ * Add a <preExecute> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.preExecute = createHook('preExecute');
+
+/**
+ * Add a <preExecuted> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.preExecuted = createHook('preExecuted');
+
+/**
+ * Add a <execute> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.execute = createHook('execute');
+
+/**
+ * Add a <executed> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.executed = createHook('executed');
+
+/**
+ * Add a <postExecute> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.postExecute = createHook('postExecute');
+
+/**
+ * Add a <postExecuted> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.postExecuted = createHook('postExecuted');
+
+/**
+ * Add a <revert> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.revert = createHook('revert');
+
+/**
+ * Add a <reverted> phase of command interceptor.
+ *
+ * @param {Events} [events] command(s) to intercept
+ * @param {number} [priority]
+ * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+ * @param {boolean} [unwrap] whether the event should be unwrapped
+ * @param {any} [that]
+ */
+CommandInterceptor.prototype.reverted = createHook('reverted');
+
+/*
+ * Add prototype methods for each phase of command execution (e.g. execute,
+ * revert).
+ *
+ * @param {string} hook
+ *
+ * @return { (
+ *   events?: Events,
+ *   priority?: number,
+ *   handlerFn: ComposeHandlerFunction|HandlerFunction,
+ *   unwrap?: boolean
+ * ) => any }
+ */
+function createHook(hook) {
+
+  /**
+   * @this {CommandInterceptor}
+   *
+   * @param {Events} [events]
+   * @param {number} [priority]
+   * @param {ComposeHandlerFunction|HandlerFunction} handlerFn
+   * @param {boolean} [unwrap]
+   * @param {any} [that]
+   */
+  const hookFn = function(events, priority, handlerFn, unwrap, that) {
+
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isFunction)(events) || (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(events)) {
+      that = unwrap;
+      unwrap = handlerFn;
+      handlerFn = priority;
+      priority = events;
+      events = null;
+    }
+
+    this.on(events, hook, priority, handlerFn, unwrap, that);
+  };
+
+  return hookFn;
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/command/CommandStack.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/command/CommandStack.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ CommandStack)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * @typedef {import('didi').Injector} Injector
+ *
+ * @typedef {import('../core/Types').ElementLike} ElementLike
+ *
+ * @typedef {import('../core/EventBus').default} EventBus
+ * @typedef {import('./CommandHandler').default} CommandHandler
+ *
+ * @typedef { any } CommandContext
+ * @typedef { {
+ *   new (...args: any[]) : CommandHandler
+ * } } CommandHandlerConstructor
+ * @typedef { {
+ *   [key: string]: CommandHandler;
+ * } } CommandHandlerMap
+ * @typedef { {
+ *   command: string;
+ *   context: any;
+ *   id?: any;
+ * } } CommandStackAction
+ * @typedef { {
+ *   actions: CommandStackAction[];
+ *   dirty: ElementLike[];
+ *   trigger: 'execute' | 'undo' | 'redo' | 'clear' | null;
+ *   atomic?: boolean;
+ * } } CurrentExecution
+ */
+
+/**
+ * A service that offers un- and redoable execution of commands.
+ *
+ * The command stack is responsible for executing modeling actions
+ * in a un- and redoable manner. To do this it delegates the actual
+ * command execution to {@link CommandHandler}s.
+ *
+ * Command handlers provide {@link CommandHandler#execute(ctx)} and
+ * {@link CommandHandler#revert(ctx)} methods to un- and redo a command
+ * identified by a command context.
+ *
+ *
+ * ## Life-Cycle events
+ *
+ * In the process the command stack fires a number of life-cycle events
+ * that other components to participate in the command execution.
+ *
+ *    * preExecute
+ *    * preExecuted
+ *    * execute
+ *    * executed
+ *    * postExecute
+ *    * postExecuted
+ *    * revert
+ *    * reverted
+ *
+ * A special event is used for validating, whether a command can be
+ * performed prior to its execution.
+ *
+ *    * canExecute
+ *
+ * Each of the events is fired as `commandStack.{eventName}` and
+ * `commandStack.{commandName}.{eventName}`, respectively. This gives
+ * components fine grained control on where to hook into.
+ *
+ * The event object fired transports `command`, the name of the
+ * command and `context`, the command context.
+ *
+ *
+ * ## Creating Command Handlers
+ *
+ * Command handlers should provide the {@link CommandHandler#execute(ctx)}
+ * and {@link CommandHandler#revert(ctx)} methods to implement
+ * redoing and undoing of a command.
+ *
+ * A command handler _must_ ensure undo is performed properly in order
+ * not to break the undo chain. It must also return the shapes that
+ * got changed during the `execute` and `revert` operations.
+ *
+ * Command handlers may execute other modeling operations (and thus
+ * commands) in their `preExecute(d)` and `postExecute(d)` phases. The command
+ * stack will properly group all commands together into a logical unit
+ * that may be re- and undone atomically.
+ *
+ * Command handlers must not execute other commands from within their
+ * core implementation (`execute`, `revert`).
+ *
+ *
+ * ## Change Tracking
+ *
+ * During the execution of the CommandStack it will keep track of all
+ * elements that have been touched during the command's execution.
+ *
+ * At the end of the CommandStack execution it will notify interested
+ * components via an 'elements.changed' event with all the dirty
+ * elements.
+ *
+ * The event can be picked up by components that are interested in the fact
+ * that elements have been changed. One use case for this is updating
+ * their graphical representation after moving / resizing or deletion.
+ *
+ * @see CommandHandler
+ *
+ * @param {EventBus} eventBus
+ * @param {Injector} injector
+ */
+function CommandStack(eventBus, injector) {
+
+  /**
+   * A map of all registered command handlers.
+   *
+   * @type {CommandHandlerMap}
+   */
+  this._handlerMap = {};
+
+  /**
+   * A stack containing all re/undoable actions on the diagram
+   *
+   * @type {CommandStackAction[]}
+   */
+  this._stack = [];
+
+  /**
+   * The current index on the stack
+   *
+   * @type {number}
+   */
+  this._stackIdx = -1;
+
+  /**
+   * Current active commandStack execution
+   *
+   * @type {CurrentExecution}
+   */
+  this._currentExecution = {
+    actions: [],
+    dirty: [],
+    trigger: null
+  };
+
+  /**
+   * @type {Injector}
+   */
+  this._injector = injector;
+
+  /**
+   * @type EventBus
+   */
+  this._eventBus = eventBus;
+
+  /**
+   * @type { number }
+   */
+  this._uid = 1;
+
+  eventBus.on([
+    'diagram.destroy',
+    'diagram.clear'
+  ], function() {
+    this.clear(false);
+  }, this);
+}
+
+CommandStack.$inject = [ 'eventBus', 'injector' ];
+
+
+/**
+ * Execute a command.
+ *
+ * @param {string} command The command to execute.
+ * @param {CommandContext} context The context with which to execute the command.
+ */
+CommandStack.prototype.execute = function(command, context) {
+  if (!command) {
+    throw new Error('command required');
+  }
+
+  this._currentExecution.trigger = 'execute';
+
+  const action = { command: command, context: context };
+
+  this._pushAction(action);
+  this._internalExecute(action);
+  this._popAction();
+};
+
+
+/**
+ * Check whether a command can be executed.
+ *
+ * Implementors may hook into the mechanism on two ways:
+ *
+ *   * in event listeners:
+ *
+ *     Users may prevent the execution via an event listener.
+ *     It must prevent the default action for `commandStack.(<command>.)canExecute` events.
+ *
+ *   * in command handlers:
+ *
+ *     If the method {@link CommandHandler#canExecute} is implemented in a handler
+ *     it will be called to figure out whether the execution is allowed.
+ *
+ * @param {string} command The command to execute.
+ * @param {CommandContext} context The context with which to execute the command.
+ *
+ * @return {boolean} Whether the command can be executed with the given context.
+ */
+CommandStack.prototype.canExecute = function(command, context) {
+
+  const action = { command: command, context: context };
+
+  const handler = this._getHandler(command);
+
+  let result = this._fire(command, 'canExecute', action);
+
+  // handler#canExecute will only be called if no listener
+  // decided on a result already
+  if (result === undefined) {
+    if (!handler) {
+      return false;
+    }
+
+    if (handler.canExecute) {
+      result = handler.canExecute(context);
+    }
+  }
+
+  return result;
+};
+
+
+/**
+ * Clear the command stack, erasing all undo / redo history.
+ *
+ * @param {boolean} [emit=true] Whether to fire an event. Defaults to `true`.
+ */
+CommandStack.prototype.clear = function(emit) {
+  this._stack.length = 0;
+  this._stackIdx = -1;
+
+  if (emit !== false) {
+    this._fire('changed', { trigger: 'clear' });
+  }
+};
+
+
+/**
+ * Undo last command(s)
+ */
+CommandStack.prototype.undo = function() {
+  let action = this._getUndoAction(),
+      next;
+
+  if (action) {
+    this._currentExecution.trigger = 'undo';
+
+    this._pushAction(action);
+
+    while (action) {
+      this._internalUndo(action);
+      next = this._getUndoAction();
+
+      if (!next || next.id !== action.id) {
+        break;
+      }
+
+      action = next;
+    }
+
+    this._popAction();
+  }
+};
+
+
+/**
+ * Redo last command(s)
+ */
+CommandStack.prototype.redo = function() {
+  let action = this._getRedoAction(),
+      next;
+
+  if (action) {
+    this._currentExecution.trigger = 'redo';
+
+    this._pushAction(action);
+
+    while (action) {
+      this._internalExecute(action, true);
+      next = this._getRedoAction();
+
+      if (!next || next.id !== action.id) {
+        break;
+      }
+
+      action = next;
+    }
+
+    this._popAction();
+  }
+};
+
+
+/**
+ * Register a handler instance with the command stack.
+ *
+ * @param {string} command Command to be executed.
+ * @param {CommandHandler} handler Handler to execute the command.
+ */
+CommandStack.prototype.register = function(command, handler) {
+  this._setHandler(command, handler);
+};
+
+
+/**
+ * Register a handler type with the command stack  by instantiating it and
+ * injecting its dependencies.
+ *
+ * @param {string} command Command to be executed.
+ * @param {CommandHandlerConstructor} handlerCls Constructor to instantiate a {@link CommandHandler}.
+ */
+CommandStack.prototype.registerHandler = function(command, handlerCls) {
+
+  if (!command || !handlerCls) {
+    throw new Error('command and handlerCls must be defined');
+  }
+
+  const handler = this._injector.instantiate(handlerCls);
+  this.register(command, handler);
+};
+
+/**
+ * @return {boolean}
+ */
+CommandStack.prototype.canUndo = function() {
+  return !!this._getUndoAction();
+};
+
+/**
+ * @return {boolean}
+ */
+CommandStack.prototype.canRedo = function() {
+  return !!this._getRedoAction();
+};
+
+// stack access  //////////////////////
+
+CommandStack.prototype._getRedoAction = function() {
+  return this._stack[this._stackIdx + 1];
+};
+
+
+CommandStack.prototype._getUndoAction = function() {
+  return this._stack[this._stackIdx];
+};
+
+
+// internal functionality //////////////////////
+
+CommandStack.prototype._internalUndo = function(action) {
+  const command = action.command,
+        context = action.context;
+
+  const handler = this._getHandler(command);
+
+  // guard against illegal nested command stack invocations
+  this._atomicDo(() => {
+    this._fire(command, 'revert', action);
+
+    if (handler.revert) {
+      this._markDirty(handler.revert(context));
+    }
+
+    this._revertedAction(action);
+
+    this._fire(command, 'reverted', action);
+  });
+};
+
+
+CommandStack.prototype._fire = function(command, qualifier, event) {
+  if (arguments.length < 3) {
+    event = qualifier;
+    qualifier = null;
+  }
+
+  const names = qualifier ? [ command + '.' + qualifier, qualifier ] : [ command ];
+  let result;
+
+  event = this._eventBus.createEvent(event);
+
+  for (const name of names) {
+    result = this._eventBus.fire('commandStack.' + name, event);
+
+    if (event.cancelBubble) {
+      break;
+    }
+  }
+
+  return result;
+};
+
+CommandStack.prototype._createId = function() {
+  return this._uid++;
+};
+
+CommandStack.prototype._atomicDo = function(fn) {
+
+  const execution = this._currentExecution;
+
+  execution.atomic = true;
+
+  try {
+    fn();
+  } finally {
+    execution.atomic = false;
+  }
+};
+
+CommandStack.prototype._internalExecute = function(action, redo) {
+  const command = action.command,
+        context = action.context;
+
+  const handler = this._getHandler(command);
+
+  if (!handler) {
+    throw new Error('no command handler registered for <' + command + '>');
+  }
+
+  this._pushAction(action);
+
+  if (!redo) {
+    this._fire(command, 'preExecute', action);
+
+    if (handler.preExecute) {
+      handler.preExecute(context);
+    }
+
+    this._fire(command, 'preExecuted', action);
+  }
+
+  // guard against illegal nested command stack invocations
+  this._atomicDo(() => {
+
+    this._fire(command, 'execute', action);
+
+    if (handler.execute) {
+
+      // actual execute + mark return results as dirty
+      this._markDirty(handler.execute(context));
+    }
+
+    // log to stack
+    this._executedAction(action, redo);
+
+    this._fire(command, 'executed', action);
+  });
+
+  if (!redo) {
+    this._fire(command, 'postExecute', action);
+
+    if (handler.postExecute) {
+      handler.postExecute(context);
+    }
+
+    this._fire(command, 'postExecuted', action);
+  }
+
+  this._popAction();
+};
+
+
+CommandStack.prototype._pushAction = function(action) {
+
+  const execution = this._currentExecution,
+        actions = execution.actions;
+
+  const baseAction = actions[0];
+
+  if (execution.atomic) {
+    throw new Error('illegal invocation in <execute> or <revert> phase (action: ' + action.command + ')');
+  }
+
+  if (!action.id) {
+    action.id = (baseAction && baseAction.id) || this._createId();
+  }
+
+  actions.push(action);
+};
+
+
+CommandStack.prototype._popAction = function() {
+  const execution = this._currentExecution,
+        trigger = execution.trigger,
+        actions = execution.actions,
+        dirty = execution.dirty;
+
+  actions.pop();
+
+  if (!actions.length) {
+    this._eventBus.fire('elements.changed', { elements: (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.uniqueBy)('id', dirty.reverse()) });
+
+    dirty.length = 0;
+
+    this._fire('changed', { trigger: trigger });
+
+    execution.trigger = null;
+  }
+};
+
+
+CommandStack.prototype._markDirty = function(elements) {
+  const execution = this._currentExecution;
+
+  if (!elements) {
+    return;
+  }
+
+  elements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(elements) ? elements : [ elements ];
+
+  execution.dirty = execution.dirty.concat(elements);
+};
+
+
+CommandStack.prototype._executedAction = function(action, redo) {
+  const stackIdx = ++this._stackIdx;
+
+  if (!redo) {
+    this._stack.splice(stackIdx, this._stack.length, action);
+  }
+};
+
+
+CommandStack.prototype._revertedAction = function(action) {
+  this._stackIdx--;
+};
+
+
+CommandStack.prototype._getHandler = function(command) {
+  return this._handlerMap[command];
+};
+
+CommandStack.prototype._setHandler = function(command, handler) {
+  if (!command || !handler) {
+    throw new Error('command and handler required');
+  }
+
+  if (this._handlerMap[command]) {
+    throw new Error('overriding handler for command <' + command + '>');
+  }
+
+  this._handlerMap[command] = handler;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/command/index.js":
+/*!*******************************************************!*\
+  !*** ../node_modules/diagram-js/lib/command/index.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _CommandStack__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CommandStack */ "../node_modules/diagram-js/lib/command/CommandStack.js");
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  commandStack: [ 'type', _CommandStack__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+});
 
 
 /***/ }),
@@ -6148,6 +14160,8275 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "../node_modules/diagram-js/lib/features/align-elements/AlignElements.js":
+/*!*******************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/align-elements/AlignElements.js ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ AlignElements)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * @typedef {import('../../model/Types').Element} Element
+ *
+ * @typedef {import('../modeling/Modeling').default} Modeling
+ * @typedef {import('../rules/Rules').default} Rules
+ *
+ * @typedef {import('../../util/Types').Axis} Axis
+ * @typedef {import('../../util/Types').Dimension} Dimension
+ *
+ * @typedef { 'top' | 'right' | 'bottom' | 'left' | 'center' | 'middle' } Alignment
+ */
+
+function last(arr) {
+  return arr && arr[arr.length - 1];
+}
+
+function sortTopOrMiddle(element) {
+  return element.y;
+}
+
+function sortLeftOrCenter(element) {
+  return element.x;
+}
+
+/**
+ * Sorting functions for different alignments.
+ *
+ * @type {Record<string, Function>}
+ */
+var ALIGNMENT_SORTING = {
+  left: sortLeftOrCenter,
+  center: sortLeftOrCenter,
+  right: function(element) {
+    return element.x + element.width;
+  },
+  top: sortTopOrMiddle,
+  middle: sortTopOrMiddle,
+  bottom: function(element) {
+    return element.y + element.height;
+  }
+};
+
+/**
+ * @param {Modeling} modeling
+ * @param {Rules} rules
+ */
+function AlignElements(modeling, rules) {
+  this._modeling = modeling;
+  this._rules = rules;
+}
+
+AlignElements.$inject = [ 'modeling', 'rules' ];
+
+
+/**
+ * Get relevant axis and dimension for given alignment.
+ *
+ * @param {Alignment} type
+ *
+ * @return { {
+ *   axis: Axis;
+ *   dimension: Dimension;
+ * } }
+ */
+AlignElements.prototype._getOrientationDetails = function(type) {
+  var vertical = [ 'top', 'bottom', 'middle' ],
+      axis = 'x',
+      dimension = 'width';
+
+  if (vertical.indexOf(type) !== -1) {
+    axis = 'y';
+    dimension = 'height';
+  }
+
+  return {
+    axis: axis,
+    dimension: dimension
+  };
+};
+
+AlignElements.prototype._isType = function(type, types) {
+  return types.indexOf(type) !== -1;
+};
+
+/**
+ * Get point on relevant axis for given alignment.
+ *
+ * @param {Alignment} type
+ * @param {Element[]} sortedElements
+ *
+ * @return {Partial<Record<Alignment, number>>}
+ */
+AlignElements.prototype._alignmentPosition = function(type, sortedElements) {
+  var orientation = this._getOrientationDetails(type),
+      axis = orientation.axis,
+      dimension = orientation.dimension,
+      alignment = {},
+      centers = {},
+      hasSharedCenters = false,
+      centeredElements,
+      firstElement,
+      lastElement;
+
+  function getMiddleOrTop(first, last) {
+    return Math.round((first[axis] + last[axis] + last[dimension]) / 2);
+  }
+
+  if (this._isType(type, [ 'left', 'top' ])) {
+    alignment[type] = sortedElements[0][axis];
+
+  } else if (this._isType(type, [ 'right', 'bottom' ])) {
+    lastElement = last(sortedElements);
+
+    alignment[type] = lastElement[axis] + lastElement[dimension];
+
+  } else if (this._isType(type, [ 'center', 'middle' ])) {
+
+    // check if there is a center shared by more than one shape
+    // if not, just take the middle of the range
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(sortedElements, function(element) {
+      var center = element[axis] + Math.round(element[dimension] / 2);
+
+      if (centers[center]) {
+        centers[center].elements.push(element);
+      } else {
+        centers[center] = {
+          elements: [ element ],
+          center: center
+        };
+      }
+    });
+
+    centeredElements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.sortBy)(centers, function(center) {
+      if (center.elements.length > 1) {
+        hasSharedCenters = true;
+      }
+
+      return center.elements.length;
+    });
+
+    if (hasSharedCenters) {
+      alignment[type] = last(centeredElements).center;
+
+      return alignment;
+    }
+
+    firstElement = sortedElements[0];
+
+    sortedElements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.sortBy)(sortedElements, function(element) {
+      return element[axis] + element[dimension];
+    });
+
+    lastElement = last(sortedElements);
+
+    alignment[type] = getMiddleOrTop(firstElement, lastElement);
+  }
+
+  return alignment;
+};
+
+/**
+ * Align elements on relevant axis for given alignment.
+ *
+ * @param {Element[]} elements
+ * @param {Alignment} type
+ */
+AlignElements.prototype.trigger = function(elements, type) {
+  var modeling = this._modeling,
+      allowed;
+
+  // filter out elements which cannot be aligned
+  var filteredElements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.filter)(elements, function(element) {
+    return !(element.waypoints || element.host || element.labelTarget);
+  });
+
+  // filter out elements via rules
+  allowed = this._rules.allowed('elements.align', { elements: filteredElements });
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(allowed)) {
+    filteredElements = allowed;
+  }
+
+  if (filteredElements.length < 2 || !allowed) {
+    return;
+  }
+
+  var sortFn = ALIGNMENT_SORTING[type];
+
+  var sortedElements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.sortBy)(filteredElements, sortFn);
+
+  var alignment = this._alignmentPosition(type, sortedElements);
+
+  modeling.alignElements(sortedElements, alignment);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/align-elements/index.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/align-elements/index.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _AlignElements__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AlignElements */ "../node_modules/diagram-js/lib/features/align-elements/AlignElements.js");
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [ 'alignElements' ],
+  alignElements: [ 'type', _AlignElements__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/attach-support/AttachSupport.js":
+/*!*******************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/attach-support/AttachSupport.js ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ AttachSupport)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _util_Removal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Removal */ "../node_modules/diagram-js/lib/util/Removal.js");
+/* harmony import */ var _util_AttachUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/AttachUtil */ "../node_modules/diagram-js/lib/util/AttachUtil.js");
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+
+
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('didi').Injector} Injector
+ *
+ * @typedef {import('../../model/Types').Element} Element
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../rules/Rules').default} Rules
+ * @typedef {import('../modeling/Modeling').default} Modeling
+ */
+
+var LOW_PRIORITY = 251,
+    HIGH_PRIORITY = 1401;
+
+var MARKER_ATTACH = 'attach-ok';
+
+
+/**
+ * Adds the notion of attached elements to the modeler.
+ *
+ * Optionally depends on `diagram-js/lib/features/move` to render
+ * the attached elements during move preview.
+ *
+ * Optionally depends on `diagram-js/lib/features/label-support`
+ * to render attached labels during move preview.
+ *
+ * @param {Injector} injector
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ * @param {Rules} rules
+ * @param {Modeling} modeling
+ */
+function AttachSupport(injector, eventBus, canvas, rules, modeling) {
+
+  _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
+
+  var movePreview = injector.get('movePreview', false);
+
+
+  // remove all the attached elements from the shapes to be validated
+  // add all the attached shapes to the overall list of moved shapes
+  eventBus.on('shape.move.start', HIGH_PRIORITY, function(e) {
+
+    var context = e.context,
+        shapes = context.shapes,
+        validatedShapes = context.validatedShapes;
+
+    context.shapes = addAttached(shapes);
+
+    context.validatedShapes = removeAttached(validatedShapes);
+  });
+
+  // add attachers to the visual's group
+  movePreview && eventBus.on('shape.move.start', LOW_PRIORITY, function(e) {
+
+    var context = e.context,
+        shapes = context.shapes,
+        attachers = getAttachers(shapes);
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(attachers, function(attacher) {
+      movePreview.makeDraggable(context, attacher, true);
+
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(attacher.labels, function(label) {
+        movePreview.makeDraggable(context, label, true);
+      });
+    });
+  });
+
+  // add attach-ok marker to current host
+  movePreview && eventBus.on('shape.move.start', function(event) {
+    var context = event.context,
+        shapes = context.shapes;
+
+    if (shapes.length !== 1) {
+      return;
+    }
+
+    var shape = shapes[0];
+
+    var host = shape.host;
+
+    if (host) {
+      canvas.addMarker(host, MARKER_ATTACH);
+
+      eventBus.once([
+        'shape.move.out',
+        'shape.move.cleanup'
+      ], function() {
+        canvas.removeMarker(host, MARKER_ATTACH);
+      });
+    }
+  });
+
+  // add all attachers to move closure
+  this.preExecuted('elements.move', HIGH_PRIORITY, function(e) {
+    var context = e.context,
+        closure = context.closure,
+        shapes = context.shapes,
+        attachers = getAttachers(shapes);
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(attachers, function(attacher) {
+      closure.add(attacher, closure.topLevel[attacher.host.id]);
+    });
+  });
+
+  // perform the attaching after shapes are done moving
+  this.postExecuted('elements.move', function(e) {
+
+    var context = e.context,
+        shapes = context.shapes,
+        newHost = context.newHost,
+        attachers;
+
+    // only single elements can be attached
+    // multiply elements can be detached
+    if (newHost && shapes.length !== 1) {
+      return;
+    }
+
+    if (newHost) {
+      attachers = shapes;
+    } else {
+
+      // find attachers moved without host
+      attachers = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.filter)(shapes, function(shape) {
+        var host = shape.host;
+
+        return isAttacher(shape) && !includes(shapes, host);
+      });
+    }
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(attachers, function(attacher) {
+      modeling.updateAttachment(attacher, newHost);
+    });
+  });
+
+  // ensure invalid attachment connections are removed
+  this.postExecuted('elements.move', function(e) {
+
+    var shapes = e.context.shapes;
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(shapes, function(shape) {
+
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(shape.attachers, function(attacher) {
+
+        // remove invalid outgoing connections
+        (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(attacher.outgoing.slice(), function(connection) {
+          var allowed = rules.allowed('connection.reconnect', {
+            connection: connection,
+            source: connection.source,
+            target: connection.target
+          });
+
+          if (!allowed) {
+            modeling.removeConnection(connection);
+          }
+        });
+
+        // remove invalid incoming connections
+        (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(attacher.incoming.slice(), function(connection) {
+          var allowed = rules.allowed('connection.reconnect', {
+            connection: connection,
+            source: connection.source,
+            target: connection.target
+          });
+
+          if (!allowed) {
+            modeling.removeConnection(connection);
+          }
+        });
+      });
+    });
+  });
+
+  this.postExecute('shape.create', function(e) {
+    var context = e.context,
+        shape = context.shape,
+        host = context.host;
+
+    if (host) {
+      modeling.updateAttachment(shape, host);
+    }
+  });
+
+  // update attachments if the host is replaced
+  this.postExecute('shape.replace', function(e) {
+
+    var context = e.context,
+        oldShape = context.oldShape,
+        newShape = context.newShape;
+
+    // move the attachers to the new host
+    (0,_util_Removal__WEBPACK_IMPORTED_MODULE_2__.saveClear)(oldShape.attachers, function(attacher) {
+      var allowed = rules.allowed('elements.move', {
+        target: newShape,
+        shapes: [ attacher ]
+      });
+
+      if (allowed === 'attach') {
+        modeling.updateAttachment(attacher, newShape);
+      } else {
+        modeling.removeShape(attacher);
+      }
+    });
+
+    // move attachers if new host has different size
+    if (newShape.attachers.length) {
+
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(newShape.attachers, function(attacher) {
+        var delta = (0,_util_AttachUtil__WEBPACK_IMPORTED_MODULE_3__.getNewAttachShapeDelta)(attacher, oldShape, newShape);
+        modeling.moveShape(attacher, delta, attacher.parent);
+      });
+    }
+
+  });
+
+  // move shape on host resize
+  this.postExecute('shape.resize', function(event) {
+    var context = event.context,
+        shape = context.shape,
+        oldBounds = context.oldBounds,
+        newBounds = context.newBounds,
+        attachers = shape.attachers,
+        hints = context.hints || {};
+
+    if (hints.attachSupport === false) {
+      return;
+    }
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(attachers, function(attacher) {
+      var delta = (0,_util_AttachUtil__WEBPACK_IMPORTED_MODULE_3__.getNewAttachShapeDelta)(attacher, oldBounds, newBounds);
+
+      modeling.moveShape(attacher, delta, attacher.parent);
+
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(attacher.labels, function(label) {
+        modeling.moveShape(label, delta, label.parent);
+      });
+    });
+  });
+
+  // remove attachments
+  this.preExecute('shape.delete', function(event) {
+
+    var shape = event.context.shape;
+
+    (0,_util_Removal__WEBPACK_IMPORTED_MODULE_2__.saveClear)(shape.attachers, function(attacher) {
+      modeling.removeShape(attacher);
+    });
+
+    if (shape.host) {
+      modeling.updateAttachment(shape, null);
+    }
+  });
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_4__["default"])(AttachSupport, _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+AttachSupport.$inject = [
+  'injector',
+  'eventBus',
+  'canvas',
+  'rules',
+  'modeling'
+];
+
+
+/**
+ * Return attachers of the given shapes
+ *
+ * @param {Element[]} shapes
+ * @return {Element[]}
+ */
+function getAttachers(shapes) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.flatten)((0,min_dash__WEBPACK_IMPORTED_MODULE_1__.map)(shapes, function(s) {
+    return s.attachers || [];
+  }));
+}
+
+/**
+ * Return a combined list of elements and
+ * attachers.
+ *
+ * @param {Element[]} elements
+ * @return {Element[]} filtered
+ */
+function addAttached(elements) {
+  var attachers = getAttachers(elements);
+
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.unionBy)('id', elements, attachers);
+}
+
+/**
+ * Return a filtered list of elements that do not
+ * contain attached elements with hosts being part
+ * of the selection.
+ *
+ * @param {Element[]} elements
+ *
+ * @return {Element[]} filtered
+ */
+function removeAttached(elements) {
+
+  var ids = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.groupBy)(elements, 'id');
+
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.filter)(elements, function(element) {
+    while (element) {
+
+      // host in selection
+      if (element.host && ids[element.host.id]) {
+        return false;
+      }
+
+      element = element.parent;
+    }
+
+    return true;
+  });
+}
+
+function isAttacher(shape) {
+  return !!shape.host;
+}
+
+function includes(array, item) {
+  return array.indexOf(item) !== -1;
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/attach-support/index.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/attach-support/index.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _rules__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../rules */ "../node_modules/diagram-js/lib/features/rules/index.js");
+/* harmony import */ var _AttachSupport__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AttachSupport */ "../node_modules/diagram-js/lib/features/attach-support/AttachSupport.js");
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _rules__WEBPACK_IMPORTED_MODULE_0__["default"]
+  ],
+  __init__: [ 'attachSupport' ],
+  attachSupport: [ 'type', _AttachSupport__WEBPACK_IMPORTED_MODULE_1__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/auto-place/AutoPlace.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/auto-place/AutoPlace.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ AutoPlace)
+/* harmony export */ });
+/* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var _AutoPlaceUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AutoPlaceUtil */ "../node_modules/diagram-js/lib/features/auto-place/AutoPlaceUtil.js");
+
+
+
+
+/**
+ * @typedef {import('../../core/Types').ShapeLike} Shape
+ *
+ * @typedef {import('../../util/Types').Point} Point
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../modeling/Modeling').default} Modeling
+ */
+
+var LOW_PRIORITY = 100;
+
+
+/**
+ * A service that places elements connected to existing ones
+ * to an appropriate position in an _automated_ fashion.
+ *
+ * @param {EventBus} eventBus
+ * @param {Modeling} modeling
+ * @param {Canvas} canvas
+ */
+function AutoPlace(eventBus, modeling, canvas) {
+
+  eventBus.on('autoPlace', LOW_PRIORITY, function(context) {
+    var shape = context.shape,
+        source = context.source;
+
+    return getNewShapePosition(source, shape);
+  });
+
+  eventBus.on('autoPlace.end', function(event) {
+    canvas.scrollToElement(event.shape);
+  });
+
+  /**
+   * Append shape to source at appropriate position.
+   *
+   * @param {Shape} source
+   * @param {Shape} shape
+   *
+   * @return {Shape} appended shape
+   */
+  this.append = function(source, shape, hints) {
+
+    eventBus.fire('autoPlace.start', {
+      source: source,
+      shape: shape
+    });
+
+    // allow others to provide the position
+    var position = eventBus.fire('autoPlace', {
+      source: source,
+      shape: shape
+    });
+
+    var newShape = modeling.appendShape(source, shape, position, source.parent, hints);
+
+    eventBus.fire('autoPlace.end', {
+      source: source,
+      shape: newShape
+    });
+
+    return newShape;
+  };
+
+}
+
+AutoPlace.$inject = [
+  'eventBus',
+  'modeling',
+  'canvas'
+];
+
+// helpers //////////
+
+/**
+ * Find the new position for the target element to
+ * connect to source.
+ *
+ * @param {Shape} source
+ * @param {Shape} element
+ * @param {Object} [hints]
+ * @param {Object} [hints.defaultDistance]
+ *
+ * @return {Point}
+ */
+function getNewShapePosition(source, element, hints) {
+  if (!hints) {
+    hints = {};
+  }
+
+  var distance = hints.defaultDistance || _AutoPlaceUtil__WEBPACK_IMPORTED_MODULE_0__.DEFAULT_DISTANCE;
+
+  var sourceMid = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getMid)(source),
+      sourceTrbl = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(source);
+
+  // simply put element right next to source
+  return {
+    x: sourceTrbl.right + distance + element.width / 2,
+    y: sourceMid.y
+  };
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/auto-place/AutoPlaceSelectionBehavior.js":
+/*!****************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/auto-place/AutoPlaceSelectionBehavior.js ***!
+  \****************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ AutoPlaceSelectionBehavior)
+/* harmony export */ });
+/**
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../selection/Selection').default} Selection
+ */
+
+/**
+ * Select element after auto placement.
+ *
+ * @param {EventBus} eventBus
+ * @param {Selection} selection
+ */
+function AutoPlaceSelectionBehavior(eventBus, selection) {
+
+  eventBus.on('autoPlace.end', 500, function(e) {
+    selection.select(e.shape);
+  });
+
+}
+
+AutoPlaceSelectionBehavior.$inject = [
+  'eventBus',
+  'selection'
+];
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/auto-place/AutoPlaceUtil.js":
+/*!***************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/auto-place/AutoPlaceUtil.js ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DEFAULT_DISTANCE: () => (/* binding */ DEFAULT_DISTANCE),
+/* harmony export */   findFreePosition: () => (/* binding */ findFreePosition),
+/* harmony export */   generateGetNextPosition: () => (/* binding */ generateGetNextPosition),
+/* harmony export */   getConnectedAtPosition: () => (/* binding */ getConnectedAtPosition),
+/* harmony export */   getConnectedDistance: () => (/* binding */ getConnectedDistance)
+/* harmony export */ });
+/* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+
+
+/**
+ * @typedef {import('../../model/Types').Connection} Connection
+ * @typedef {import('../../model/Types').Element} Element
+ * @typedef {import('../../model/Types').Shape} Shape
+ *
+ * @typedef {import('../../util/Types').Point} Point
+ */
+
+// padding to detect element placement
+var PLACEMENT_DETECTION_PAD = 10;
+
+var DEFAULT_DISTANCE = 50;
+
+var DEFAULT_MAX_DISTANCE = 250;
+
+
+/**
+ * Get free position starting from given position.
+ *
+ * @param {Shape} source
+ * @param {Shape} element
+ * @param {Point} position
+ * @param {(element: Element, position: Point, connectedAtPosition: Element) => Element} getNextPosition
+ *
+ * @return {Point}
+ */
+function findFreePosition(source, element, position, getNextPosition) {
+  var connectedAtPosition;
+
+  while ((connectedAtPosition = getConnectedAtPosition(source, position, element))) {
+    position = getNextPosition(element, position, connectedAtPosition);
+  }
+
+  return position;
+}
+
+/**
+ * Returns function that returns next position.
+ *
+ * @param {Object} nextPositionDirection
+ * @param {Object} [nextPositionDirection.x]
+ * @param {Object} [nextPositionDirection.y]
+ *
+ * @return {(element: Element, previousPosition: Point, connectedAtPosition: Element) => Point}
+ */
+function generateGetNextPosition(nextPositionDirection) {
+  return function(element, previousPosition, connectedAtPosition) {
+    var nextPosition = {
+      x: previousPosition.x,
+      y: previousPosition.y
+    };
+
+    [ 'x', 'y' ].forEach(function(axis) {
+
+      var nextPositionDirectionForAxis = nextPositionDirection[ axis ];
+
+      if (!nextPositionDirectionForAxis) {
+        return;
+      }
+
+      var dimension = axis === 'x' ? 'width' : 'height';
+
+      var margin = nextPositionDirectionForAxis.margin,
+          minDistance = nextPositionDirectionForAxis.minDistance;
+
+      if (margin < 0) {
+        nextPosition[ axis ] = Math.min(
+          connectedAtPosition[ axis ] + margin - element[ dimension ] / 2,
+          previousPosition[ axis ] - minDistance + margin
+        );
+      } else {
+        nextPosition[ axis ] = Math.max(
+          connectedAtPosition[ axis ] + connectedAtPosition[ dimension ] + margin + element[ dimension ] / 2,
+          previousPosition[ axis ] + minDistance + margin
+        );
+      }
+    });
+
+    return nextPosition;
+  };
+}
+
+/**
+ * Return target at given position, if defined.
+ *
+ * This takes connected elements from host and attachers
+ * into account, too.
+ */
+function getConnectedAtPosition(source, position, element) {
+
+  var bounds = {
+    x: position.x - (element.width / 2),
+    y: position.y - (element.height / 2),
+    width: element.width,
+    height: element.height
+  };
+
+  var closure = getAutoPlaceClosure(source, element);
+
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.find)(closure, function(target) {
+
+    if (target === element) {
+      return false;
+    }
+
+    var orientation = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getOrientation)(target, bounds, PLACEMENT_DETECTION_PAD);
+
+    return orientation === 'intersect';
+  });
+}
+
+/**
+* Compute optimal distance between source and target based on existing connections to and from source.
+* Assumes left-to-right and top-to-down modeling.
+*
+* @param {Shape} source
+* @param {Object} [hints]
+* @param {number} [hints.defaultDistance]
+* @param {string} [hints.direction]
+* @param {(connection: Connection) => boolean} [hints.filter]
+* @param {(connection: Connection) => number} [hints.getWeight]
+* @param {number} [hints.maxDistance]
+* @param {string} [hints.reference]
+*
+* @return {number}
+*/
+function getConnectedDistance(source, hints) {
+  if (!hints) {
+    hints = {};
+  }
+
+  // targets > sources by default
+  function getDefaultWeight(connection) {
+    return connection.source === source ? 1 : -1;
+  }
+
+  var defaultDistance = hints.defaultDistance || DEFAULT_DISTANCE,
+      direction = hints.direction || 'e',
+      filter = hints.filter,
+      getWeight = hints.getWeight || getDefaultWeight,
+      maxDistance = hints.maxDistance || DEFAULT_MAX_DISTANCE,
+      reference = hints.reference || 'start';
+
+  if (!filter) {
+    filter = noneFilter;
+  }
+
+  function getDistance(a, b) {
+    if (direction === 'n') {
+      if (reference === 'start') {
+        return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(a).top - (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(b).bottom;
+      } else if (reference === 'center') {
+        return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(a).top - (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getMid)(b).y;
+      } else {
+        return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(a).top - (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(b).top;
+      }
+    } else if (direction === 'w') {
+      if (reference === 'start') {
+        return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(a).left - (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(b).right;
+      } else if (reference === 'center') {
+        return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(a).left - (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getMid)(b).x;
+      } else {
+        return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(a).left - (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(b).left;
+      }
+    } else if (direction === 's') {
+      if (reference === 'start') {
+        return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(b).top - (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(a).bottom;
+      } else if (reference === 'center') {
+        return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getMid)(b).y - (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(a).bottom;
+      } else {
+        return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(b).bottom - (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(a).bottom;
+      }
+    } else {
+      if (reference === 'start') {
+        return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(b).left - (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(a).right;
+      } else if (reference === 'center') {
+        return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getMid)(b).x - (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(a).right;
+      } else {
+        return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(b).right - (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(a).right;
+      }
+    }
+  }
+
+  var sourcesDistances = source.incoming
+    .filter(filter)
+    .map(function(connection) {
+      var weight = getWeight(connection);
+
+      var distance = weight < 0
+        ? getDistance(connection.source, source)
+        : getDistance(source, connection.source);
+
+      return {
+        id: connection.source.id,
+        distance: distance,
+        weight: weight
+      };
+    });
+
+  var targetsDistances = source.outgoing
+    .filter(filter)
+    .map(function(connection) {
+      var weight = getWeight(connection);
+
+      var distance = weight > 0
+        ? getDistance(source, connection.target)
+        : getDistance(connection.target, source);
+
+      return {
+        id: connection.target.id,
+        distance: distance,
+        weight: weight
+      };
+    });
+
+  var distances = sourcesDistances.concat(targetsDistances).reduce(function(accumulator, currentValue) {
+    accumulator[ currentValue.id + '__weight_' + currentValue.weight ] = currentValue;
+
+    return accumulator;
+  }, {});
+
+  var distancesGrouped = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.reduce)(distances, function(accumulator, currentValue) {
+    var distance = currentValue.distance,
+        weight = currentValue.weight;
+
+    if (distance < 0 || distance > maxDistance) {
+      return accumulator;
+    }
+
+    if (!accumulator[ String(distance) ]) {
+      accumulator[ String(distance) ] = 0;
+    }
+
+    accumulator[ String(distance) ] += 1 * weight;
+
+    if (!accumulator.distance || accumulator[ accumulator.distance ] < accumulator[ String(distance) ]) {
+      accumulator.distance = distance;
+    }
+
+    return accumulator;
+  }, {});
+
+  return distancesGrouped.distance || defaultDistance;
+}
+
+/**
+ * Returns all connected elements around the given source.
+ *
+ * This includes:
+ *
+ *   - connected elements
+ *   - host connected elements
+ *   - attachers connected elements
+ *
+ * @param {Shape} source
+ *
+ * @return {Shape[]}
+ */
+function getAutoPlaceClosure(source) {
+
+  var allConnected = getConnected(source);
+
+  if (source.host) {
+    allConnected = allConnected.concat(getConnected(source.host));
+  }
+
+  if (source.attachers) {
+    allConnected = allConnected.concat(source.attachers.reduce(function(shapes, attacher) {
+      return shapes.concat(getConnected(attacher));
+    }, []));
+  }
+
+  return allConnected;
+}
+
+function getConnected(element) {
+  return getTargets(element).concat(getSources(element));
+}
+
+function getSources(shape) {
+  return shape.incoming.map(function(connection) {
+    return connection.source;
+  });
+}
+
+function getTargets(shape) {
+  return shape.outgoing.map(function(connection) {
+    return connection.target;
+  });
+}
+
+function noneFilter() {
+  return true;
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/auto-place/index.js":
+/*!*******************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/auto-place/index.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _AutoPlace__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AutoPlace */ "../node_modules/diagram-js/lib/features/auto-place/AutoPlace.js");
+/* harmony import */ var _AutoPlaceSelectionBehavior__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AutoPlaceSelectionBehavior */ "../node_modules/diagram-js/lib/features/auto-place/AutoPlaceSelectionBehavior.js");
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [ 'autoPlaceSelectionBehavior' ],
+  autoPlace: [ 'type', _AutoPlace__WEBPACK_IMPORTED_MODULE_0__["default"] ],
+  autoPlaceSelectionBehavior: [ 'type', _AutoPlaceSelectionBehavior__WEBPACK_IMPORTED_MODULE_1__["default"] ]
+});
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/auto-scroll/AutoScroll.js":
+/*!*************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/auto-scroll/AutoScroll.js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ AutoScroll)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _util_Event__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/Event */ "../node_modules/diagram-js/lib/util/Event.js");
+
+
+
+
+/**
+ * @typedef {import('../../util/Types').Point} Point
+ *
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../../core/Canvas').default} Canvas
+ */
+
+/**
+ * Initiates canvas scrolling if current cursor point is close to a border.
+ * Cancelled when current point moves back inside the scrolling borders
+ * or cancelled manually.
+ *
+ * Default options :
+ *   scrollThresholdIn: [ 20, 20, 20, 20 ],
+ *   scrollThresholdOut: [ 0, 0, 0, 0 ],
+ *   scrollRepeatTimeout: 15,
+ *   scrollStep: 10
+ *
+ * Threshold order:
+ *   [ left, top, right, bottom ]
+ *
+ * @param {Object} config
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ */
+function AutoScroll(config, eventBus, canvas) {
+
+  this._canvas = canvas;
+
+  this._opts = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({
+    scrollThresholdIn: [ 20, 20, 20, 20 ],
+    scrollThresholdOut: [ 0, 0, 0, 0 ],
+    scrollRepeatTimeout: 15,
+    scrollStep: 10
+  }, config);
+
+  var self = this;
+
+  eventBus.on('drag.move', function(e) {
+    var point = self._toBorderPoint(e);
+
+    self.startScroll(point);
+  });
+
+  eventBus.on([ 'drag.cleanup' ], function() {
+    self.stopScroll();
+  });
+}
+
+AutoScroll.$inject = [
+  'config.autoScroll',
+  'eventBus',
+  'canvas'
+];
+
+
+/**
+ * Starts scrolling loop.
+ * Point is given in global scale in canvas container box plane.
+ *
+ * @param {Point} point
+ */
+AutoScroll.prototype.startScroll = function(point) {
+
+  var canvas = this._canvas;
+  var opts = this._opts;
+  var self = this;
+
+  var clientRect = canvas.getContainer().getBoundingClientRect();
+
+  var diff = [
+    point.x,
+    point.y,
+    clientRect.width - point.x,
+    clientRect.height - point.y
+  ];
+
+  this.stopScroll();
+
+  var dx = 0,
+      dy = 0;
+
+  for (var i = 0; i < 4; i++) {
+    if (between(diff[i], opts.scrollThresholdOut[i], opts.scrollThresholdIn[i])) {
+      if (i === 0) {
+        dx = opts.scrollStep;
+      } else if (i == 1) {
+        dy = opts.scrollStep;
+      } else if (i == 2) {
+        dx = -opts.scrollStep;
+      } else if (i == 3) {
+        dy = -opts.scrollStep;
+      }
+    }
+  }
+
+  if (dx !== 0 || dy !== 0) {
+    canvas.scroll({ dx: dx, dy: dy });
+
+    this._scrolling = setTimeout(function() {
+      self.startScroll(point);
+    }, opts.scrollRepeatTimeout);
+  }
+};
+
+function between(val, start, end) {
+  if (start < val && val < end) {
+    return true;
+  }
+
+  return false;
+}
+
+
+/**
+ * Stops scrolling loop.
+ */
+AutoScroll.prototype.stopScroll = function() {
+  clearTimeout(this._scrolling);
+};
+
+
+/**
+ * Overrides defaults options.
+ *
+ * @param {Object} options
+ */
+AutoScroll.prototype.setOptions = function(options) {
+  this._opts = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, this._opts, options);
+};
+
+
+/**
+ * Converts event to a point in canvas container plane in global scale.
+ *
+ * @param {Event} event
+ * @return {Point}
+ */
+AutoScroll.prototype._toBorderPoint = function(event) {
+  var clientRect = this._canvas._container.getBoundingClientRect();
+
+  var globalPosition = (0,_util_Event__WEBPACK_IMPORTED_MODULE_1__.toPoint)(event.originalEvent);
+
+  return {
+    x: globalPosition.x - clientRect.left,
+    y: globalPosition.y - clientRect.top
+  };
+};
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/auto-scroll/index.js":
+/*!********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/auto-scroll/index.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _dragging__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../dragging */ "../node_modules/diagram-js/lib/features/dragging/index.js");
+/* harmony import */ var _AutoScroll__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AutoScroll */ "../node_modules/diagram-js/lib/features/auto-scroll/AutoScroll.js");
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _dragging__WEBPACK_IMPORTED_MODULE_0__["default"],
+  ],
+  __init__: [ 'autoScroll' ],
+  autoScroll: [ 'type', _AutoScroll__WEBPACK_IMPORTED_MODULE_1__["default"] ]
+});
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/bendpoints/BendpointMove.js":
+/*!***************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/bendpoints/BendpointMove.js ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ BendpointMove),
+/* harmony export */   isReverse: () => (/* binding */ isReverse)
+/* harmony export */ });
+/* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+
+
+/**
+ * @typedef {import('didi').Injector} Injector
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../dragging/Dragging').default} Dragging
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../modeling/Modeling').default} Modeling
+ * @typedef {import('../rules/Rules').default} Rules
+ */
+
+var round = Math.round;
+
+var RECONNECT_START = 'reconnectStart',
+    RECONNECT_END = 'reconnectEnd',
+    UPDATE_WAYPOINTS = 'updateWaypoints';
+
+
+/**
+ * Move bendpoints through drag and drop to add/remove bendpoints or reconnect connection.
+ *
+ * @param {Injector} injector
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ * @param {Dragging} dragging
+ * @param {Rules} rules
+ * @param {Modeling} modeling
+ */
+function BendpointMove(injector, eventBus, canvas, dragging, rules, modeling) {
+  this._injector = injector;
+
+  this.start = function(event, connection, bendpointIndex, insert) {
+    var gfx = canvas.getGraphics(connection),
+        source = connection.source,
+        target = connection.target,
+        waypoints = connection.waypoints,
+        type;
+
+    if (!insert && bendpointIndex === 0) {
+      type = RECONNECT_START;
+    } else
+    if (!insert && bendpointIndex === waypoints.length - 1) {
+      type = RECONNECT_END;
+    } else {
+      type = UPDATE_WAYPOINTS;
+    }
+
+    var command = type === UPDATE_WAYPOINTS ? 'connection.updateWaypoints' : 'connection.reconnect';
+
+    var allowed = rules.allowed(command, {
+      connection: connection,
+      source: source,
+      target: target
+    });
+
+    if (allowed === false) {
+      allowed = rules.allowed(command, {
+        connection: connection,
+        source: target,
+        target: source
+      });
+    }
+
+    if (allowed === false) {
+      return;
+    }
+
+    dragging.init(event, 'bendpoint.move', {
+      data: {
+        connection: connection,
+        connectionGfx: gfx,
+        context: {
+          allowed: allowed,
+          bendpointIndex: bendpointIndex,
+          connection: connection,
+          source: source,
+          target: target,
+          insert: insert,
+          type: type
+        }
+      }
+    });
+  };
+
+  eventBus.on('bendpoint.move.hover', function(event) {
+    var context = event.context,
+        connection = context.connection,
+        source = connection.source,
+        target = connection.target,
+        hover = event.hover,
+        type = context.type;
+
+    // cache hover state
+    context.hover = hover;
+
+    var allowed;
+
+    if (!hover) {
+      return;
+    }
+
+    var command = type === UPDATE_WAYPOINTS ? 'connection.updateWaypoints' : 'connection.reconnect';
+
+    allowed = context.allowed = rules.allowed(command, {
+      connection: connection,
+      source: type === RECONNECT_START ? hover : source,
+      target: type === RECONNECT_END ? hover : target
+    });
+
+    if (allowed) {
+      context.source = type === RECONNECT_START ? hover : source;
+      context.target = type === RECONNECT_END ? hover : target;
+
+      return;
+    }
+
+    if (allowed === false) {
+      allowed = context.allowed = rules.allowed(command, {
+        connection: connection,
+        source: type === RECONNECT_END ? hover : target,
+        target: type === RECONNECT_START ? hover : source
+      });
+    }
+
+    if (allowed) {
+      context.source = type === RECONNECT_END ? hover : target;
+      context.target = type === RECONNECT_START ? hover : source;
+    }
+  });
+
+  eventBus.on([ 'bendpoint.move.out', 'bendpoint.move.cleanup' ], function(event) {
+    var context = event.context,
+        type = context.type;
+
+    context.hover = null;
+    context.source = null;
+    context.target = null;
+
+    if (type !== UPDATE_WAYPOINTS) {
+      context.allowed = false;
+    }
+  });
+
+  eventBus.on('bendpoint.move.end', function(event) {
+    var context = event.context,
+        allowed = context.allowed,
+        bendpointIndex = context.bendpointIndex,
+        connection = context.connection,
+        insert = context.insert,
+        newWaypoints = connection.waypoints.slice(),
+        source = context.source,
+        target = context.target,
+        type = context.type,
+        hints = context.hints || {};
+
+    // ensure integer values (important if zoom level was > 1 during move)
+    var docking = {
+      x: round(event.x),
+      y: round(event.y)
+    };
+
+    if (!allowed) {
+      return false;
+    }
+
+    if (type === UPDATE_WAYPOINTS) {
+      if (insert) {
+
+        // insert new bendpoint
+        newWaypoints.splice(bendpointIndex, 0, docking);
+      } else {
+
+        // swap previous waypoint with moved one
+        newWaypoints[bendpointIndex] = docking;
+      }
+
+      // pass hints about actual moved bendpoint
+      // useful for connection/label layout
+      hints.bendpointMove = {
+        insert: insert,
+        bendpointIndex: bendpointIndex
+      };
+
+      newWaypoints = this.cropWaypoints(connection, newWaypoints);
+
+      modeling.updateWaypoints(connection, (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__.filterRedundantWaypoints)(newWaypoints), hints);
+    } else {
+      if (type === RECONNECT_START) {
+        hints.docking = 'source';
+
+        if (isReverse(context)) {
+          hints.docking = 'target';
+
+          hints.newWaypoints = newWaypoints.reverse();
+        }
+      } else if (type === RECONNECT_END) {
+        hints.docking = 'target';
+
+        if (isReverse(context)) {
+          hints.docking = 'source';
+
+          hints.newWaypoints = newWaypoints.reverse();
+        }
+      }
+
+      modeling.reconnect(connection, source, target, docking, hints);
+    }
+  }, this);
+}
+
+BendpointMove.$inject = [
+  'injector',
+  'eventBus',
+  'canvas',
+  'dragging',
+  'rules',
+  'modeling'
+];
+
+BendpointMove.prototype.cropWaypoints = function(connection, newWaypoints) {
+  var connectionDocking = this._injector.get('connectionDocking', false);
+
+  if (!connectionDocking) {
+    return newWaypoints;
+  }
+
+  var waypoints = connection.waypoints;
+
+  connection.waypoints = newWaypoints;
+
+  connection.waypoints = connectionDocking.getCroppedWaypoints(connection);
+
+  newWaypoints = connection.waypoints;
+
+  connection.waypoints = waypoints;
+
+  return newWaypoints;
+};
+
+
+// helpers //////////
+
+function isReverse(context) {
+  var hover = context.hover,
+      source = context.source,
+      target = context.target,
+      type = context.type;
+
+  if (type === RECONNECT_START) {
+    return hover && target && hover === target && source !== target;
+  }
+
+  if (type === RECONNECT_END) {
+    return hover && source && hover === source && source !== target;
+  }
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/bendpoints/BendpointMovePreview.js":
+/*!**********************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/bendpoints/BendpointMovePreview.js ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ BendpointMovePreview)
+/* harmony export */ });
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var _BendpointUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BendpointUtil */ "../node_modules/diagram-js/lib/features/bendpoints/BendpointUtil.js");
+/* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
+/* harmony import */ var _BendpointMove__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./BendpointMove */ "../node_modules/diagram-js/lib/features/bendpoints/BendpointMove.js");
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('didi').Injector} Injector
+ *
+ * @typedef {import('../bendpoints/BendpointMove').default} BendpointMove
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ */
+
+var RECONNECT_START = 'reconnectStart',
+    RECONNECT_END = 'reconnectEnd',
+    UPDATE_WAYPOINTS = 'updateWaypoints';
+
+var MARKER_OK = 'connect-ok',
+    MARKER_NOT_OK = 'connect-not-ok',
+    MARKER_CONNECT_HOVER = 'connect-hover',
+    MARKER_CONNECT_UPDATING = 'djs-updating',
+    MARKER_ELEMENT_HIDDEN = 'djs-element-hidden';
+
+var HIGH_PRIORITY = 1100;
+
+/**
+ * Preview connection while moving bendpoints.
+ *
+ * @param {BendpointMove} bendpointMove
+ * @param {Injector} injector
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ */
+function BendpointMovePreview(bendpointMove, injector, eventBus, canvas) {
+  this._injector = injector;
+
+  var connectionPreview = injector.get('connectionPreview', false);
+
+  eventBus.on('bendpoint.move.start', function(event) {
+    var context = event.context,
+        bendpointIndex = context.bendpointIndex,
+        connection = context.connection,
+        insert = context.insert,
+        waypoints = connection.waypoints,
+        newWaypoints = waypoints.slice();
+
+    context.waypoints = waypoints;
+
+    if (insert) {
+
+      // insert placeholder for new bendpoint
+      newWaypoints.splice(bendpointIndex, 0, { x: event.x, y: event.y });
+    }
+
+    connection.waypoints = newWaypoints;
+
+    // add dragger gfx
+    var draggerGfx = context.draggerGfx = (0,_BendpointUtil__WEBPACK_IMPORTED_MODULE_0__.addBendpoint)(canvas.getLayer('overlays'));
+
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.classes)(draggerGfx).add('djs-dragging');
+
+    canvas.addMarker(connection, MARKER_ELEMENT_HIDDEN);
+    canvas.addMarker(connection, MARKER_CONNECT_UPDATING);
+  });
+
+  eventBus.on('bendpoint.move.hover', function(event) {
+    var context = event.context,
+        allowed = context.allowed,
+        hover = context.hover,
+        type = context.type;
+
+    if (hover) {
+      canvas.addMarker(hover, MARKER_CONNECT_HOVER);
+
+      if (type === UPDATE_WAYPOINTS) {
+        return;
+      }
+
+      if (allowed) {
+        canvas.removeMarker(hover, MARKER_NOT_OK);
+        canvas.addMarker(hover, MARKER_OK);
+      } else if (allowed === false) {
+        canvas.removeMarker(hover, MARKER_OK);
+        canvas.addMarker(hover, MARKER_NOT_OK);
+      }
+    }
+  });
+
+  eventBus.on([
+    'bendpoint.move.out',
+    'bendpoint.move.cleanup'
+  ], HIGH_PRIORITY, function(event) {
+    var context = event.context,
+        hover = context.hover,
+        target = context.target;
+
+    if (hover) {
+      canvas.removeMarker(hover, MARKER_CONNECT_HOVER);
+      canvas.removeMarker(hover, target ? MARKER_OK : MARKER_NOT_OK);
+    }
+  });
+
+  eventBus.on('bendpoint.move.move', function(event) {
+    var context = event.context,
+        allowed = context.allowed,
+        bendpointIndex = context.bendpointIndex,
+        draggerGfx = context.draggerGfx,
+        hover = context.hover,
+        type = context.type,
+        connection = context.connection,
+        source = connection.source,
+        target = connection.target,
+        newWaypoints = connection.waypoints.slice(),
+        bendpoint = { x: event.x, y: event.y },
+        hints = context.hints || {},
+        drawPreviewHints = {};
+
+    if (connectionPreview) {
+      if (hints.connectionStart) {
+        drawPreviewHints.connectionStart = hints.connectionStart;
+      }
+
+      if (hints.connectionEnd) {
+        drawPreviewHints.connectionEnd = hints.connectionEnd;
+      }
+
+
+      if (type === RECONNECT_START) {
+        if ((0,_BendpointMove__WEBPACK_IMPORTED_MODULE_2__.isReverse)(context)) {
+          drawPreviewHints.connectionEnd = drawPreviewHints.connectionEnd || bendpoint;
+
+          drawPreviewHints.source = target;
+          drawPreviewHints.target = hover || source;
+
+          newWaypoints = newWaypoints.reverse();
+        } else {
+          drawPreviewHints.connectionStart = drawPreviewHints.connectionStart || bendpoint;
+
+          drawPreviewHints.source = hover || source;
+          drawPreviewHints.target = target;
+        }
+      } else if (type === RECONNECT_END) {
+        if ((0,_BendpointMove__WEBPACK_IMPORTED_MODULE_2__.isReverse)(context)) {
+          drawPreviewHints.connectionStart = drawPreviewHints.connectionStart || bendpoint;
+
+          drawPreviewHints.source = hover || target;
+          drawPreviewHints.target = source;
+
+          newWaypoints = newWaypoints.reverse();
+        } else {
+          drawPreviewHints.connectionEnd = drawPreviewHints.connectionEnd || bendpoint;
+
+          drawPreviewHints.source = source;
+          drawPreviewHints.target = hover || target;
+        }
+
+      } else {
+        drawPreviewHints.noCropping = true;
+        drawPreviewHints.noLayout = true;
+        newWaypoints[ bendpointIndex ] = bendpoint;
+      }
+
+      if (type === UPDATE_WAYPOINTS) {
+        newWaypoints = bendpointMove.cropWaypoints(connection, newWaypoints);
+      }
+
+      drawPreviewHints.waypoints = newWaypoints;
+
+      connectionPreview.drawPreview(context, allowed, drawPreviewHints);
+    }
+
+    (0,_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_3__.translate)(draggerGfx, event.x, event.y);
+  }, this);
+
+  eventBus.on([
+    'bendpoint.move.end',
+    'bendpoint.move.cancel'
+  ], HIGH_PRIORITY, function(event) {
+    var context = event.context,
+        connection = context.connection,
+        draggerGfx = context.draggerGfx,
+        hover = context.hover,
+        target = context.target,
+        waypoints = context.waypoints;
+
+    connection.waypoints = waypoints;
+
+    // remove dragger gfx
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.remove)(draggerGfx);
+
+    canvas.removeMarker(connection, MARKER_CONNECT_UPDATING);
+    canvas.removeMarker(connection, MARKER_ELEMENT_HIDDEN);
+
+    if (hover) {
+      canvas.removeMarker(hover, MARKER_OK);
+      canvas.removeMarker(hover, target ? MARKER_OK : MARKER_NOT_OK);
+    }
+
+    if (connectionPreview) {
+      connectionPreview.cleanUp(context);
+    }
+  });
+}
+
+BendpointMovePreview.$inject = [
+  'bendpointMove',
+  'injector',
+  'eventBus',
+  'canvas'
+];
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/bendpoints/BendpointSnapping.js":
+/*!*******************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/bendpoints/BendpointSnapping.js ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ BendpointSnapping)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../snapping/SnapUtil */ "../node_modules/diagram-js/lib/features/snapping/SnapUtil.js");
+/* harmony import */ var _BendpointUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BendpointUtil */ "../node_modules/diagram-js/lib/features/bendpoints/BendpointUtil.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/ModelUtil */ "../node_modules/diagram-js/lib/util/ModelUtil.js");
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/EventBus').default} EventBus
+ */
+var abs = Math.abs,
+    round = Math.round;
+
+var TOLERANCE = 10;
+
+/**
+ * @param {EventBus} eventBus
+ */
+function BendpointSnapping(eventBus) {
+
+  function snapTo(values, value) {
+
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(values)) {
+      var i = values.length;
+
+      while (i--) if (abs(values[i] - value) <= TOLERANCE) {
+        return values[i];
+      }
+    } else {
+      values = +values;
+      var rem = value % values;
+
+      if (rem < TOLERANCE) {
+        return value - rem;
+      }
+
+      if (rem > values - TOLERANCE) {
+        return value - rem + values;
+      }
+    }
+
+    return value;
+  }
+
+  function getSnapPoint(element, event) {
+
+    if (element.waypoints) {
+      return (0,_BendpointUtil__WEBPACK_IMPORTED_MODULE_1__.getClosestPointOnConnection)(event, element);
+    }
+
+    if (element.width) {
+      return {
+        x: round(element.width / 2 + element.x),
+        y: round(element.height / 2 + element.y)
+      };
+    }
+  }
+
+  // connection segment snapping //////////////////////
+
+  function getConnectionSegmentSnaps(event) {
+
+    var context = event.context,
+        snapPoints = context.snapPoints,
+        connection = context.connection,
+        waypoints = connection.waypoints,
+        segmentStart = context.segmentStart,
+        segmentStartIndex = context.segmentStartIndex,
+        segmentEnd = context.segmentEnd,
+        segmentEndIndex = context.segmentEndIndex,
+        axis = context.axis;
+
+    if (snapPoints) {
+      return snapPoints;
+    }
+
+    var referenceWaypoints = [
+      waypoints[segmentStartIndex - 1],
+      segmentStart,
+      segmentEnd,
+      waypoints[segmentEndIndex + 1]
+    ];
+
+    if (segmentStartIndex < 2) {
+      referenceWaypoints.unshift(getSnapPoint(connection.source, event));
+    }
+
+    if (segmentEndIndex > waypoints.length - 3) {
+      referenceWaypoints.unshift(getSnapPoint(connection.target, event));
+    }
+
+    context.snapPoints = snapPoints = { horizontal: [] , vertical: [] };
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(referenceWaypoints, function(p) {
+
+      // we snap on existing bendpoints only,
+      // not placeholders that are inserted during add
+      if (p) {
+        p = p.original || p;
+
+        if (axis === 'y') {
+          snapPoints.horizontal.push(p.y);
+        }
+
+        if (axis === 'x') {
+          snapPoints.vertical.push(p.x);
+        }
+      }
+    });
+
+    return snapPoints;
+  }
+
+  eventBus.on('connectionSegment.move.move', 1500, function(event) {
+    var snapPoints = getConnectionSegmentSnaps(event),
+        x = event.x,
+        y = event.y,
+        sx, sy;
+
+    if (!snapPoints) {
+      return;
+    }
+
+    // snap
+    sx = snapTo(snapPoints.vertical, x);
+    sy = snapTo(snapPoints.horizontal, y);
+
+
+    // correction x/y
+    var cx = (x - sx),
+        cy = (y - sy);
+
+    // update delta
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(event, {
+      dx: event.dx - cx,
+      dy: event.dy - cy,
+      x: sx,
+      y: sy
+    });
+
+    // only set snapped if actually snapped
+    if (cx || snapPoints.vertical.indexOf(x) !== -1) {
+      (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__.setSnapped)(event, 'x', sx);
+    }
+
+    if (cy || snapPoints.horizontal.indexOf(y) !== -1) {
+      (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__.setSnapped)(event, 'y', sy);
+    }
+  });
+
+
+  // bendpoint snapping //////////////////////
+
+  function getBendpointSnaps(context) {
+
+    var snapPoints = context.snapPoints,
+        waypoints = context.connection.waypoints,
+        bendpointIndex = context.bendpointIndex;
+
+    if (snapPoints) {
+      return snapPoints;
+    }
+
+    var referenceWaypoints = [ waypoints[bendpointIndex - 1], waypoints[bendpointIndex + 1] ];
+
+    context.snapPoints = snapPoints = { horizontal: [] , vertical: [] };
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(referenceWaypoints, function(p) {
+
+      // we snap on existing bendpoints only,
+      // not placeholders that are inserted during add
+      if (p) {
+        p = p.original || p;
+
+        snapPoints.horizontal.push(p.y);
+        snapPoints.vertical.push(p.x);
+      }
+    });
+
+    return snapPoints;
+  }
+
+  // Snap Endpoint of new connection
+  eventBus.on([
+    'connect.hover',
+    'connect.move',
+    'connect.end'
+  ], 1500, function(event) {
+    var context = event.context,
+        hover = context.hover,
+        hoverMid = hover && getSnapPoint(hover, event);
+
+    // only snap on connections, elements can have multiple connect endpoints
+    if (!(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__.isConnection)(hover) || !hoverMid || !hoverMid.x || !hoverMid.y) {
+      return;
+    }
+
+    (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__.setSnapped)(event, 'x', hoverMid.x);
+    (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__.setSnapped)(event, 'y', hoverMid.y);
+  });
+
+  eventBus.on([ 'bendpoint.move.move', 'bendpoint.move.end' ], 1500, function(event) {
+
+    var context = event.context,
+        snapPoints = getBendpointSnaps(context),
+        hover = context.hover,
+        hoverMid = hover && getSnapPoint(hover, event),
+        x = event.x,
+        y = event.y,
+        sx, sy;
+
+    if (!snapPoints) {
+      return;
+    }
+
+    // snap to hover mid
+    sx = snapTo(hoverMid ? snapPoints.vertical.concat([ hoverMid.x ]) : snapPoints.vertical, x);
+    sy = snapTo(hoverMid ? snapPoints.horizontal.concat([ hoverMid.y ]) : snapPoints.horizontal, y);
+
+    // correction x/y
+    var cx = (x - sx),
+        cy = (y - sy);
+
+    // update delta
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(event, {
+      dx: event.dx - cx,
+      dy: event.dy - cy,
+      x: event.x - cx,
+      y: event.y - cy
+    });
+
+    // only set snapped if actually snapped
+    if (cx || snapPoints.vertical.indexOf(x) !== -1) {
+      (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__.setSnapped)(event, 'x', sx);
+    }
+
+    if (cy || snapPoints.horizontal.indexOf(y) !== -1) {
+      (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__.setSnapped)(event, 'y', sy);
+    }
+  });
+}
+
+
+BendpointSnapping.$inject = [ 'eventBus' ];
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/bendpoints/BendpointUtil.js":
+/*!***************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/bendpoints/BendpointUtil.js ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BENDPOINT_CLS: () => (/* binding */ BENDPOINT_CLS),
+/* harmony export */   SEGMENT_DRAGGER_CLS: () => (/* binding */ SEGMENT_DRAGGER_CLS),
+/* harmony export */   addBendpoint: () => (/* binding */ addBendpoint),
+/* harmony export */   addSegmentDragger: () => (/* binding */ addSegmentDragger),
+/* harmony export */   calculateSegmentMoveRegion: () => (/* binding */ calculateSegmentMoveRegion),
+/* harmony export */   getClosestPointOnConnection: () => (/* binding */ getClosestPointOnConnection),
+/* harmony export */   getConnectionIntersection: () => (/* binding */ getConnectionIntersection),
+/* harmony export */   toCanvasCoordinates: () => (/* binding */ toCanvasCoordinates)
+/* harmony export */ });
+/* harmony import */ var _util_Event__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Event */ "../node_modules/diagram-js/lib/util/Event.js");
+/* harmony import */ var _util_Geometry__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/Geometry */ "../node_modules/diagram-js/lib/util/Geometry.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
+/* harmony import */ var _util_LineIntersection__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/LineIntersection */ "../node_modules/diagram-js/lib/util/LineIntersection.js");
+/* harmony import */ var _GeometricUtil__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./GeometricUtil */ "../node_modules/diagram-js/lib/features/bendpoints/GeometricUtil.js");
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/Types').ConnectionLike} Connection
+ *
+ * @typedef {import('../../util/Types').Point} Point
+ */
+
+var BENDPOINT_CLS = 'djs-bendpoint';
+var SEGMENT_DRAGGER_CLS = 'djs-segment-dragger';
+
+function toCanvasCoordinates(canvas, event) {
+
+  var position = (0,_util_Event__WEBPACK_IMPORTED_MODULE_0__.toPoint)(event),
+      clientRect = canvas._container.getBoundingClientRect(),
+      offset;
+
+  // canvas relative position
+
+  offset = {
+    x: clientRect.left,
+    y: clientRect.top
+  };
+
+  // update actual event payload with canvas relative measures
+
+  var viewbox = canvas.viewbox();
+
+  return {
+    x: viewbox.x + (position.x - offset.x) / viewbox.scale,
+    y: viewbox.y + (position.y - offset.y) / viewbox.scale
+  };
+}
+
+function getConnectionIntersection(canvas, waypoints, event) {
+  var localPosition = toCanvasCoordinates(canvas, event),
+      intersection = (0,_util_LineIntersection__WEBPACK_IMPORTED_MODULE_1__.getApproxIntersection)(waypoints, localPosition);
+
+  return intersection;
+}
+
+function addBendpoint(parentGfx, cls) {
+  var groupGfx = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('g');
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.classes)(groupGfx).add(BENDPOINT_CLS);
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.append)(parentGfx, groupGfx);
+
+  var visual = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('circle');
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(visual, {
+    cx: 0,
+    cy: 0,
+    r: 4
+  });
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.classes)(visual).add('djs-visual');
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.append)(groupGfx, visual);
+
+  var hit = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('circle');
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(hit, {
+    cx: 0,
+    cy: 0,
+    r: 10
+  });
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.classes)(hit).add('djs-hit');
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.append)(groupGfx, hit);
+
+  if (cls) {
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.classes)(groupGfx).add(cls);
+  }
+
+  return groupGfx;
+}
+
+function createParallelDragger(parentGfx, segmentStart, segmentEnd, alignment) {
+  var draggerGfx = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('g');
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.append)(parentGfx, draggerGfx);
+
+  var width = 18,
+      height = 6,
+      padding = 11,
+      hitWidth = calculateHitWidth(segmentStart, segmentEnd, alignment),
+      hitHeight = height + padding;
+
+  var visual = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('rect');
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(visual, {
+    x: -width / 2,
+    y: -height / 2,
+    width: width,
+    height: height
+  });
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.classes)(visual).add('djs-visual');
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.append)(draggerGfx, visual);
+
+  var hit = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('rect');
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(hit, {
+    x: -hitWidth / 2,
+    y: -hitHeight / 2,
+    width: hitWidth,
+    height: hitHeight
+  });
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.classes)(hit).add('djs-hit');
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.append)(draggerGfx, hit);
+
+  (0,_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_3__.rotate)(draggerGfx, alignment === 'v' ? 90 : 0, 0, 0);
+
+  return draggerGfx;
+}
+
+
+function addSegmentDragger(parentGfx, segmentStart, segmentEnd) {
+
+  var groupGfx = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('g'),
+      mid = (0,_util_Geometry__WEBPACK_IMPORTED_MODULE_4__.getMidPoint)(segmentStart, segmentEnd),
+      alignment = (0,_util_Geometry__WEBPACK_IMPORTED_MODULE_4__.pointsAligned)(segmentStart, segmentEnd);
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.append)(parentGfx, groupGfx);
+
+  createParallelDragger(groupGfx, segmentStart, segmentEnd, alignment);
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.classes)(groupGfx).add(SEGMENT_DRAGGER_CLS);
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.classes)(groupGfx).add(alignment === 'h' ? 'horizontal' : 'vertical');
+
+  (0,_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_3__.translate)(groupGfx, mid.x, mid.y);
+
+  return groupGfx;
+}
+
+/**
+ * Calculates region for segment move which is 2/3 of the full segment length
+ * @param {number} segmentLength
+ *
+ * @return {number}
+ */
+function calculateSegmentMoveRegion(segmentLength) {
+  return Math.abs(Math.round(segmentLength * 2 / 3));
+}
+
+/**
+ * Returns the point with the closest distance that is on the connection path.
+ *
+ * @param {Point} position
+ * @param {Connection} connection
+ * @return {Point}
+ */
+function getClosestPointOnConnection(position, connection) {
+  var segment = getClosestSegment(position, connection);
+
+  return (0,_GeometricUtil__WEBPACK_IMPORTED_MODULE_5__.perpendicularFoot)(position, segment);
+}
+
+
+// helper //////////
+
+function calculateHitWidth(segmentStart, segmentEnd, alignment) {
+  var segmentLengthXAxis = segmentEnd.x - segmentStart.x,
+      segmentLengthYAxis = segmentEnd.y - segmentStart.y;
+
+  return alignment === 'h' ?
+    calculateSegmentMoveRegion(segmentLengthXAxis) :
+    calculateSegmentMoveRegion(segmentLengthYAxis);
+}
+
+function getClosestSegment(position, connection) {
+  var waypoints = connection.waypoints;
+
+  var minDistance = Infinity,
+      segmentIndex;
+
+  for (var i = 0; i < waypoints.length - 1; i++) {
+    var start = waypoints[i],
+        end = waypoints[i + 1],
+        distance = (0,_GeometricUtil__WEBPACK_IMPORTED_MODULE_5__.getDistancePointLine)(position, [ start, end ]);
+
+    if (distance < minDistance) {
+      minDistance = distance;
+      segmentIndex = i;
+    }
+  }
+
+  return [ waypoints[segmentIndex], waypoints[segmentIndex + 1] ];
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/bendpoints/Bendpoints.js":
+/*!************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/bendpoints/Bendpoints.js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Bendpoints)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var _BendpointUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BendpointUtil */ "../node_modules/diagram-js/lib/features/bendpoints/BendpointUtil.js");
+/* harmony import */ var _util_EscapeUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/EscapeUtil */ "../node_modules/diagram-js/lib/util/EscapeUtil.js");
+/* harmony import */ var _util_Geometry__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Geometry */ "../node_modules/diagram-js/lib/util/Geometry.js");
+/* harmony import */ var _util_Mouse__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../util/Mouse */ "../node_modules/diagram-js/lib/util/Mouse.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../bendpoints/BendpointMove').default} BendpointMove
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../bendpoints/ConnectionSegmentMove').default} ConnectionSegmentMove
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../interaction-events/InteractionEvents').default} InteractionEvents
+ */
+
+/**
+ * A service that adds editable bendpoints to connections.
+ *
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ * @param {InteractionEvents} interactionEvents
+ * @param {BendpointMove} bendpointMove
+ * @param {ConnectionSegmentMove} connectionSegmentMove
+ */
+function Bendpoints(
+    eventBus, canvas, interactionEvents,
+    bendpointMove, connectionSegmentMove) {
+
+  /**
+   * Returns true if intersection point is inside middle region of segment, adjusted by
+   * optional threshold
+   */
+  function isIntersectionMiddle(intersection, waypoints, treshold) {
+    var idx = intersection.index,
+        p = intersection.point,
+        p0, p1, mid, aligned, xDelta, yDelta;
+
+    if (idx <= 0 || intersection.bendpoint) {
+      return false;
+    }
+
+    p0 = waypoints[idx - 1];
+    p1 = waypoints[idx];
+    mid = (0,_util_Geometry__WEBPACK_IMPORTED_MODULE_0__.getMidPoint)(p0, p1),
+    aligned = (0,_util_Geometry__WEBPACK_IMPORTED_MODULE_0__.pointsAligned)(p0, p1);
+    xDelta = Math.abs(p.x - mid.x);
+    yDelta = Math.abs(p.y - mid.y);
+
+    return aligned && xDelta <= treshold && yDelta <= treshold;
+  }
+
+  /**
+   * Calculates the threshold from a connection's middle which fits the two-third-region
+   */
+  function calculateIntersectionThreshold(connection, intersection) {
+    var waypoints = connection.waypoints,
+        relevantSegment, alignment, segmentLength, threshold;
+
+    if (intersection.index <= 0 || intersection.bendpoint) {
+      return null;
+    }
+
+    // segment relative to connection intersection
+    relevantSegment = {
+      start: waypoints[intersection.index - 1],
+      end: waypoints[intersection.index]
+    };
+
+    alignment = (0,_util_Geometry__WEBPACK_IMPORTED_MODULE_0__.pointsAligned)(relevantSegment.start, relevantSegment.end);
+
+    if (!alignment) {
+      return null;
+    }
+
+    if (alignment === 'h') {
+      segmentLength = relevantSegment.end.x - relevantSegment.start.x;
+    } else {
+      segmentLength = relevantSegment.end.y - relevantSegment.start.y;
+    }
+
+    // calculate threshold relative to 2/3 of segment length
+    threshold = (0,_BendpointUtil__WEBPACK_IMPORTED_MODULE_1__.calculateSegmentMoveRegion)(segmentLength) / 2;
+
+    return threshold;
+  }
+
+  function activateBendpointMove(event, connection) {
+    var waypoints = connection.waypoints,
+        intersection = (0,_BendpointUtil__WEBPACK_IMPORTED_MODULE_1__.getConnectionIntersection)(canvas, waypoints, event),
+        threshold;
+
+    if (!intersection) {
+      return;
+    }
+
+    threshold = calculateIntersectionThreshold(connection, intersection);
+
+    if (isIntersectionMiddle(intersection, waypoints, threshold)) {
+      connectionSegmentMove.start(event, connection, intersection.index);
+    } else {
+      bendpointMove.start(event, connection, intersection.index, !intersection.bendpoint);
+    }
+
+    // we've handled the event
+    return true;
+  }
+
+  function bindInteractionEvents(node, eventName, element) {
+
+    min_dom__WEBPACK_IMPORTED_MODULE_2__.event.bind(node, eventName, function(event) {
+      interactionEvents.triggerMouseEvent(eventName, event, element);
+      event.stopPropagation();
+    });
+  }
+
+  function getBendpointsContainer(element, create) {
+
+    var layer = canvas.getLayer('overlays'),
+        gfx = (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.query)('.djs-bendpoints[data-element-id="' + (0,_util_EscapeUtil__WEBPACK_IMPORTED_MODULE_3__.escapeCSS)(element.id) + '"]', layer);
+
+    if (!gfx && create) {
+      gfx = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.create)('g');
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(gfx, { 'data-element-id': element.id });
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.classes)(gfx).add('djs-bendpoints');
+
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.append)(layer, gfx);
+
+      bindInteractionEvents(gfx, 'mousedown', element);
+      bindInteractionEvents(gfx, 'click', element);
+      bindInteractionEvents(gfx, 'dblclick', element);
+    }
+
+    return gfx;
+  }
+
+  function getSegmentDragger(idx, parentGfx) {
+    return (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.query)(
+      '.djs-segment-dragger[data-segment-idx="' + idx + '"]',
+      parentGfx
+    );
+  }
+
+  function createBendpoints(gfx, connection) {
+    connection.waypoints.forEach(function(p, idx) {
+      var bendpoint = (0,_BendpointUtil__WEBPACK_IMPORTED_MODULE_1__.addBendpoint)(gfx);
+
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.append)(gfx, bendpoint);
+
+      (0,_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_5__.translate)(bendpoint, p.x, p.y);
+    });
+
+    // add floating bendpoint
+    (0,_BendpointUtil__WEBPACK_IMPORTED_MODULE_1__.addBendpoint)(gfx, 'floating');
+  }
+
+  function createSegmentDraggers(gfx, connection) {
+
+    var waypoints = connection.waypoints;
+
+    var segmentStart,
+        segmentEnd,
+        segmentDraggerGfx;
+
+    for (var i = 1; i < waypoints.length; i++) {
+
+      segmentStart = waypoints[i - 1];
+      segmentEnd = waypoints[i];
+
+      if ((0,_util_Geometry__WEBPACK_IMPORTED_MODULE_0__.pointsAligned)(segmentStart, segmentEnd)) {
+        segmentDraggerGfx = (0,_BendpointUtil__WEBPACK_IMPORTED_MODULE_1__.addSegmentDragger)(gfx, segmentStart, segmentEnd);
+
+        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(segmentDraggerGfx, { 'data-segment-idx': i });
+
+        bindInteractionEvents(segmentDraggerGfx, 'mousemove', connection);
+      }
+    }
+  }
+
+  function clearBendpoints(gfx) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_6__.forEach)((0,min_dom__WEBPACK_IMPORTED_MODULE_2__.queryAll)('.' + _BendpointUtil__WEBPACK_IMPORTED_MODULE_1__.BENDPOINT_CLS, gfx), function(node) {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.remove)(node);
+    });
+  }
+
+  function clearSegmentDraggers(gfx) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_6__.forEach)((0,min_dom__WEBPACK_IMPORTED_MODULE_2__.queryAll)('.' + _BendpointUtil__WEBPACK_IMPORTED_MODULE_1__.SEGMENT_DRAGGER_CLS, gfx), function(node) {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.remove)(node);
+    });
+  }
+
+  function addHandles(connection) {
+
+    var gfx = getBendpointsContainer(connection);
+
+    if (!gfx) {
+      gfx = getBendpointsContainer(connection, true);
+
+      createBendpoints(gfx, connection);
+      createSegmentDraggers(gfx, connection);
+    }
+
+    return gfx;
+  }
+
+  function updateHandles(connection) {
+
+    var gfx = getBendpointsContainer(connection);
+
+    if (gfx) {
+      clearSegmentDraggers(gfx);
+      clearBendpoints(gfx);
+      createSegmentDraggers(gfx, connection);
+      createBendpoints(gfx, connection);
+    }
+  }
+
+  function updateFloatingBendpointPosition(parentGfx, intersection) {
+    var floating = (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.query)('.floating', parentGfx),
+        point = intersection.point;
+
+    if (!floating) {
+      return;
+    }
+
+    (0,_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_5__.translate)(floating, point.x, point.y);
+
+  }
+
+  function updateSegmentDraggerPosition(parentGfx, intersection, waypoints) {
+
+    var draggerGfx = getSegmentDragger(intersection.index, parentGfx),
+        segmentStart = waypoints[intersection.index - 1],
+        segmentEnd = waypoints[intersection.index],
+        point = intersection.point,
+        mid = (0,_util_Geometry__WEBPACK_IMPORTED_MODULE_0__.getMidPoint)(segmentStart, segmentEnd),
+        alignment = (0,_util_Geometry__WEBPACK_IMPORTED_MODULE_0__.pointsAligned)(segmentStart, segmentEnd),
+        draggerVisual, relativePosition;
+
+    if (!draggerGfx) {
+      return;
+    }
+
+    draggerVisual = getDraggerVisual(draggerGfx);
+
+    relativePosition = {
+      x: point.x - mid.x,
+      y: point.y - mid.y
+    };
+
+    if (alignment === 'v') {
+
+      // rotate position
+      relativePosition = {
+        x: relativePosition.y,
+        y: relativePosition.x
+      };
+    }
+
+    (0,_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_5__.translate)(draggerVisual, relativePosition.x, relativePosition.y);
+  }
+
+  eventBus.on('connection.changed', function(event) {
+    updateHandles(event.element);
+  });
+
+  eventBus.on('connection.remove', function(event) {
+    var gfx = getBendpointsContainer(event.element);
+
+    if (gfx) {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.remove)(gfx);
+    }
+  });
+
+  eventBus.on('element.marker.update', function(event) {
+
+    var element = event.element,
+        bendpointsGfx;
+
+    if (!element.waypoints) {
+      return;
+    }
+
+    bendpointsGfx = addHandles(element);
+
+    if (event.add) {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.classes)(bendpointsGfx).add(event.marker);
+    } else {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.classes)(bendpointsGfx).remove(event.marker);
+    }
+  });
+
+  eventBus.on('element.mousemove', function(event) {
+
+    var element = event.element,
+        waypoints = element.waypoints,
+        bendpointsGfx,
+        intersection;
+
+    if (waypoints) {
+      bendpointsGfx = getBendpointsContainer(element, true);
+
+      intersection = (0,_BendpointUtil__WEBPACK_IMPORTED_MODULE_1__.getConnectionIntersection)(canvas, waypoints, event.originalEvent);
+
+      if (!intersection) {
+        return;
+      }
+
+      updateFloatingBendpointPosition(bendpointsGfx, intersection);
+
+      if (!intersection.bendpoint) {
+        updateSegmentDraggerPosition(bendpointsGfx, intersection, waypoints);
+      }
+
+    }
+  });
+
+  eventBus.on('element.mousedown', function(event) {
+
+    if (!(0,_util_Mouse__WEBPACK_IMPORTED_MODULE_7__.isPrimaryButton)(event)) {
+      return;
+    }
+
+    var originalEvent = event.originalEvent,
+        element = event.element;
+
+    if (!element.waypoints) {
+      return;
+    }
+
+    return activateBendpointMove(originalEvent, element);
+  });
+
+  eventBus.on('selection.changed', function(event) {
+    var newSelection = event.newSelection,
+        primary = newSelection[0];
+
+    if (primary && primary.waypoints) {
+      addHandles(primary);
+    }
+  });
+
+  eventBus.on('element.hover', function(event) {
+    var element = event.element;
+
+    if (element.waypoints) {
+      addHandles(element);
+      interactionEvents.registerEvent(event.gfx, 'mousemove', 'element.mousemove');
+    }
+  });
+
+  eventBus.on('element.out', function(event) {
+    interactionEvents.unregisterEvent(event.gfx, 'mousemove', 'element.mousemove');
+  });
+
+  // update bendpoint container data attribute on element ID change
+  eventBus.on('element.updateId', function(context) {
+    var element = context.element,
+        newId = context.newId;
+
+    if (element.waypoints) {
+      var bendpointContainer = getBendpointsContainer(element);
+
+      if (bendpointContainer) {
+        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.attr)(bendpointContainer, { 'data-element-id': newId });
+      }
+    }
+  });
+
+  // API
+
+  this.addHandles = addHandles;
+  this.updateHandles = updateHandles;
+  this.getBendpointsContainer = getBendpointsContainer;
+  this.getSegmentDragger = getSegmentDragger;
+}
+
+Bendpoints.$inject = [
+  'eventBus',
+  'canvas',
+  'interactionEvents',
+  'bendpointMove',
+  'connectionSegmentMove'
+];
+
+
+
+// helper /////////////
+
+function getDraggerVisual(draggerGfx) {
+  return (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.query)('.djs-visual', draggerGfx);
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/bendpoints/ConnectionSegmentMove.js":
+/*!***********************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/bendpoints/ConnectionSegmentMove.js ***!
+  \***********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ConnectionSegmentMove)
+/* harmony export */ });
+/* harmony import */ var _util_Geometry__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Geometry */ "../node_modules/diagram-js/lib/util/Geometry.js");
+/* harmony import */ var _BendpointUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BendpointUtil */ "../node_modules/diagram-js/lib/features/bendpoints/BendpointUtil.js");
+/* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
+
+
+
+
+
+
+var MARKER_CONNECT_HOVER = 'connect-hover',
+    MARKER_CONNECT_UPDATING = 'djs-updating';
+
+
+
+
+
+/**
+ * @typedef {import('../../model/Types').Shape} Shape
+ *
+ * @typedef {import('../../util/Types').Axis} Axis
+ * @typedef {import('../../util/Types').Point} Point
+ *
+ * @typedef {import('didi').Injector} Injector
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../dragging/Dragging').default} Dragging
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../../core/GraphicsFactory').default} GraphicsFactory
+ * @typedef {import('../modeling/Modeling').default} Modeling
+ */
+
+function axisAdd(point, axis, delta) {
+  return axisSet(point, axis, point[axis] + delta);
+}
+
+function axisSet(point, axis, value) {
+  return {
+    x: (axis === 'x' ? value : point.x),
+    y: (axis === 'y' ? value : point.y)
+  };
+}
+
+function axisFenced(position, segmentStart, segmentEnd, axis) {
+
+  var maxValue = Math.max(segmentStart[axis], segmentEnd[axis]),
+      minValue = Math.min(segmentStart[axis], segmentEnd[axis]);
+
+  var padding = 20;
+
+  var fencedValue = Math.min(Math.max(minValue + padding, position[axis]), maxValue - padding);
+
+  return axisSet(segmentStart, axis, fencedValue);
+}
+
+function flipAxis(axis) {
+  return axis === 'x' ? 'y' : 'x';
+}
+
+/**
+ * Get the docking point on the given element.
+ *
+ * Compute a reasonable docking, if non exists.
+ *
+ * @param {Point} point
+ * @param {Shape} referenceElement
+ * @param {Axis} moveAxis
+ *
+ * @return {Point}
+ */
+function getDocking(point, referenceElement, moveAxis) {
+
+  var referenceMid,
+      inverseAxis;
+
+  if (point.original) {
+    return point.original;
+  } else {
+    referenceMid = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__.getMid)(referenceElement);
+    inverseAxis = flipAxis(moveAxis);
+
+    return axisSet(point, inverseAxis, referenceMid[inverseAxis]);
+  }
+}
+
+/**
+ * A component that implements moving of bendpoints.
+ *
+ * @param {Injector} injector
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ * @param {Canvas} dragging
+ * @param {GraphicsFactory} graphicsFactory
+ * @param {Modeling} modeling
+ */
+function ConnectionSegmentMove(
+    injector, eventBus, canvas,
+    dragging, graphicsFactory, modeling) {
+
+  // optional connection docking integration
+  var connectionDocking = injector.get('connectionDocking', false);
+
+
+  // API
+
+  this.start = function(event, connection, idx) {
+
+    var context,
+        gfx = canvas.getGraphics(connection),
+        segmentStartIndex = idx - 1,
+        segmentEndIndex = idx,
+        waypoints = connection.waypoints,
+        segmentStart = waypoints[segmentStartIndex],
+        segmentEnd = waypoints[segmentEndIndex],
+        intersection = (0,_BendpointUtil__WEBPACK_IMPORTED_MODULE_1__.getConnectionIntersection)(canvas, waypoints, event),
+        direction, axis, dragPosition;
+
+    direction = (0,_util_Geometry__WEBPACK_IMPORTED_MODULE_2__.pointsAligned)(segmentStart, segmentEnd);
+
+    // do not move diagonal connection
+    if (!direction) {
+      return;
+    }
+
+    // the axis where we are going to move things
+    axis = direction === 'v' ? 'x' : 'y';
+
+    if (segmentStartIndex === 0) {
+      segmentStart = getDocking(segmentStart, connection.source, axis);
+    }
+
+    if (segmentEndIndex === waypoints.length - 1) {
+      segmentEnd = getDocking(segmentEnd, connection.target, axis);
+    }
+
+    if (intersection) {
+      dragPosition = intersection.point;
+    } else {
+
+      // set to segment center as default
+      dragPosition = {
+        x: (segmentStart.x + segmentEnd.x) / 2,
+        y: (segmentStart.y + segmentEnd.y) / 2
+      };
+    }
+
+    context = {
+      connection: connection,
+      segmentStartIndex: segmentStartIndex,
+      segmentEndIndex: segmentEndIndex,
+      segmentStart: segmentStart,
+      segmentEnd: segmentEnd,
+      axis: axis,
+      dragPosition: dragPosition
+    };
+
+    dragging.init(event, dragPosition, 'connectionSegment.move', {
+      cursor: axis === 'x' ? 'resize-ew' : 'resize-ns',
+      data: {
+        connection: connection,
+        connectionGfx: gfx,
+        context: context
+      }
+    });
+  };
+
+  /**
+   * Crop connection if connection cropping is provided.
+   *
+   * @param {Connection} connection
+   * @param {Point[]} newWaypoints
+   *
+   * @return {Point[]} cropped connection waypoints
+   */
+  function cropConnection(connection, newWaypoints) {
+
+    // crop connection, if docking service is provided only
+    if (!connectionDocking) {
+      return newWaypoints;
+    }
+
+    var oldWaypoints = connection.waypoints,
+        croppedWaypoints;
+
+    // temporary set new waypoints
+    connection.waypoints = newWaypoints;
+
+    croppedWaypoints = connectionDocking.getCroppedWaypoints(connection);
+
+    // restore old waypoints
+    connection.waypoints = oldWaypoints;
+
+    return croppedWaypoints;
+  }
+
+  // DRAGGING IMPLEMENTATION
+
+  function redrawConnection(data) {
+    graphicsFactory.update('connection', data.connection, data.connectionGfx);
+  }
+
+  function updateDragger(context, segmentOffset, event) {
+
+    var newWaypoints = context.newWaypoints,
+        segmentStartIndex = context.segmentStartIndex + segmentOffset,
+        segmentStart = newWaypoints[segmentStartIndex],
+        segmentEndIndex = context.segmentEndIndex + segmentOffset,
+        segmentEnd = newWaypoints[segmentEndIndex],
+        axis = flipAxis(context.axis);
+
+    // make sure the dragger does not move
+    // outside the connection
+    var draggerPosition = axisFenced(event, segmentStart, segmentEnd, axis);
+
+    // update dragger
+    (0,_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_3__.translate)(context.draggerGfx, draggerPosition.x, draggerPosition.y);
+  }
+
+  /**
+   * Filter waypoints for redundant ones (i.e. on the same axis).
+   * Returns the filtered waypoints and the offset related to the segment move.
+   *
+   * @param {Point[]} waypoints
+   * @param {Integer} segmentStartIndex of moved segment start
+   *
+   * @return {Object} { filteredWaypoints, segmentOffset }
+   */
+  function filterRedundantWaypoints(waypoints, segmentStartIndex) {
+
+    var segmentOffset = 0;
+
+    var filteredWaypoints = waypoints.filter(function(r, idx) {
+      if ((0,_util_Geometry__WEBPACK_IMPORTED_MODULE_2__.pointsOnLine)(waypoints[idx - 1], waypoints[idx + 1], r)) {
+
+        // remove point and increment offset
+        segmentOffset = idx <= segmentStartIndex ? segmentOffset - 1 : segmentOffset;
+        return false;
+      }
+
+      // dont remove point
+      return true;
+    });
+
+    return {
+      waypoints: filteredWaypoints,
+      segmentOffset: segmentOffset
+    };
+  }
+
+  eventBus.on('connectionSegment.move.start', function(event) {
+
+    var context = event.context,
+        connection = event.connection,
+        layer = canvas.getLayer('overlays');
+
+    context.originalWaypoints = connection.waypoints.slice();
+
+    // add dragger gfx
+    context.draggerGfx = (0,_BendpointUtil__WEBPACK_IMPORTED_MODULE_1__.addSegmentDragger)(layer, context.segmentStart, context.segmentEnd);
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.classes)(context.draggerGfx).add('djs-dragging');
+
+    canvas.addMarker(connection, MARKER_CONNECT_UPDATING);
+  });
+
+  eventBus.on('connectionSegment.move.move', function(event) {
+
+    var context = event.context,
+        connection = context.connection,
+        segmentStartIndex = context.segmentStartIndex,
+        segmentEndIndex = context.segmentEndIndex,
+        segmentStart = context.segmentStart,
+        segmentEnd = context.segmentEnd,
+        axis = context.axis;
+
+    var newWaypoints = context.originalWaypoints.slice(),
+        newSegmentStart = axisAdd(segmentStart, axis, event['d' + axis]),
+        newSegmentEnd = axisAdd(segmentEnd, axis, event['d' + axis]);
+
+    // original waypoint count and added / removed
+    // from start waypoint delta. We use the later
+    // to retrieve the updated segmentStartIndex / segmentEndIndex
+    var waypointCount = newWaypoints.length,
+        segmentOffset = 0;
+
+    // move segment start / end by axis delta
+    newWaypoints[segmentStartIndex] = newSegmentStart;
+    newWaypoints[segmentEndIndex] = newSegmentEnd;
+
+    var sourceToSegmentOrientation,
+        targetToSegmentOrientation;
+
+    // handle first segment
+    if (segmentStartIndex < 2) {
+      sourceToSegmentOrientation = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__.getOrientation)(connection.source, newSegmentStart);
+
+      // first bendpoint, remove first segment if intersecting
+      if (segmentStartIndex === 1) {
+
+        if (sourceToSegmentOrientation === 'intersect') {
+          newWaypoints.shift();
+          newWaypoints[0] = newSegmentStart;
+          segmentOffset--;
+        }
+      }
+
+      // docking point, add segment if not intersecting anymore
+      else {
+        if (sourceToSegmentOrientation !== 'intersect') {
+          newWaypoints.unshift(segmentStart);
+          segmentOffset++;
+        }
+      }
+    }
+
+    // handle last segment
+    if (segmentEndIndex > waypointCount - 3) {
+      targetToSegmentOrientation = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__.getOrientation)(connection.target, newSegmentEnd);
+
+      // last bendpoint, remove last segment if intersecting
+      if (segmentEndIndex === waypointCount - 2) {
+
+        if (targetToSegmentOrientation === 'intersect') {
+          newWaypoints.pop();
+          newWaypoints[newWaypoints.length - 1] = newSegmentEnd;
+        }
+      }
+
+      // last bendpoint, remove last segment if intersecting
+      else {
+        if (targetToSegmentOrientation !== 'intersect') {
+          newWaypoints.push(segmentEnd);
+        }
+      }
+    }
+
+    // update connection waypoints
+    context.newWaypoints = connection.waypoints = cropConnection(connection, newWaypoints);
+
+    // update dragger position
+    updateDragger(context, segmentOffset, event);
+
+    // save segmentOffset in context
+    context.newSegmentStartIndex = segmentStartIndex + segmentOffset;
+
+    // redraw connection
+    redrawConnection(event);
+  });
+
+  eventBus.on('connectionSegment.move.hover', function(event) {
+
+    event.context.hover = event.hover;
+    canvas.addMarker(event.hover, MARKER_CONNECT_HOVER);
+  });
+
+  eventBus.on([
+    'connectionSegment.move.out',
+    'connectionSegment.move.cleanup'
+  ], function(event) {
+
+    // remove connect marker
+    // if it was added
+    var hover = event.context.hover;
+
+    if (hover) {
+      canvas.removeMarker(hover, MARKER_CONNECT_HOVER);
+    }
+  });
+
+  eventBus.on('connectionSegment.move.cleanup', function(event) {
+
+    var context = event.context,
+        connection = context.connection;
+
+    // remove dragger gfx
+    if (context.draggerGfx) {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_4__.remove)(context.draggerGfx);
+    }
+
+    canvas.removeMarker(connection, MARKER_CONNECT_UPDATING);
+  });
+
+  eventBus.on([
+    'connectionSegment.move.cancel',
+    'connectionSegment.move.end'
+  ], function(event) {
+    var context = event.context,
+        connection = context.connection;
+
+    connection.waypoints = context.originalWaypoints;
+
+    redrawConnection(event);
+  });
+
+  eventBus.on('connectionSegment.move.end', function(event) {
+
+    var context = event.context,
+        connection = context.connection,
+        newWaypoints = context.newWaypoints,
+        newSegmentStartIndex = context.newSegmentStartIndex;
+
+    // ensure we have actual pixel values bendpoint
+    // coordinates (important when zoom level was > 1 during move)
+    newWaypoints = newWaypoints.map(function(p) {
+      return {
+        original: p.original,
+        x: Math.round(p.x),
+        y: Math.round(p.y)
+      };
+    });
+
+    // apply filter redunant waypoints
+    var filtered = filterRedundantWaypoints(newWaypoints, newSegmentStartIndex);
+
+    // get filtered waypoints
+    var filteredWaypoints = filtered.waypoints,
+        croppedWaypoints = cropConnection(connection, filteredWaypoints),
+        segmentOffset = filtered.segmentOffset;
+
+    var hints = {
+      segmentMove: {
+        segmentStartIndex: context.segmentStartIndex,
+        newSegmentStartIndex: newSegmentStartIndex + segmentOffset
+      }
+    };
+
+    modeling.updateWaypoints(connection, croppedWaypoints, hints);
+  });
+}
+
+ConnectionSegmentMove.$inject = [
+  'injector',
+  'eventBus',
+  'canvas',
+  'dragging',
+  'graphicsFactory',
+  'modeling'
+];
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/bendpoints/GeometricUtil.js":
+/*!***************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/bendpoints/GeometricUtil.js ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getAngle: () => (/* binding */ getAngle),
+/* harmony export */   getDistancePointLine: () => (/* binding */ getDistancePointLine),
+/* harmony export */   getDistancePointPoint: () => (/* binding */ getDistancePointPoint),
+/* harmony export */   perpendicularFoot: () => (/* binding */ perpendicularFoot),
+/* harmony export */   rotateVector: () => (/* binding */ rotateVector),
+/* harmony export */   vectorLength: () => (/* binding */ vectorLength)
+/* harmony export */ });
+/**
+ * @typedef {import('../../util/Types').Point} Point
+ * @typedef {import('../../util/Types').Vector} Vector
+ */
+
+/**
+ * Returns the length of a vector.
+ *
+ * @param {Vector} vector
+ *
+ * @return {number}
+ */
+function vectorLength(vector) {
+  return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
+}
+
+
+/**
+ * Calculates the angle between a line a the Y axis.
+ *
+ * @param {Point[]} line
+ *
+ * @return {number}
+ */
+function getAngle(line) {
+
+  // return value is between 0, 180 and -180, -0
+  // @janstuemmel: maybe replace return a/b with b/a
+  return Math.atan((line[1].y - line[0].y) / (line[1].x - line[0].x));
+}
+
+
+/**
+ * Rotates a vector by a given angle.
+ *
+ * @param {Vector} vector
+ * @param {number} angle The angle in radians.
+ *
+ * @return {Vector}
+ */
+function rotateVector(vector, angle) {
+  return (!angle) ? vector : {
+    x: Math.cos(angle) * vector.x - Math.sin(angle) * vector.y,
+    y: Math.sin(angle) * vector.x + Math.cos(angle) * vector.y
+  };
+}
+
+
+/**
+ * Solves a 2D equation system
+ * a + r*b = c, where a,b,c are 2D vectors
+ *
+ * @param {Vector} a
+ * @param {Vector} b
+ * @param {Vector} c
+ *
+ * @return {number}
+ */
+function solveLambaSystem(a, b, c) {
+
+  // the 2d system
+  var system = [
+    { n: a[0] - c[0], lambda: b[0] },
+    { n: a[1] - c[1], lambda: b[1] }
+  ];
+
+  // solve
+  var n = system[0].n * b[0] + system[1].n * b[1],
+      l = system[0].lambda * b[0] + system[1].lambda * b[1];
+
+  return -n / l;
+}
+
+
+/**
+ * Calculates the position of the perpendicular foot.
+ *
+ * @param {Point} point
+ * @param {Point[]} line
+ *
+ * @return {Point}
+ */
+function perpendicularFoot(point, line) {
+
+  var a = line[0], b = line[1];
+
+  // relative position of b from a
+  var bd = { x: b.x - a.x, y: b.y - a.y };
+
+  // solve equation system to the parametrized vectors param real value
+  var r = solveLambaSystem([ a.x, a.y ], [ bd.x, bd.y ], [ point.x, point.y ]);
+
+  return { x: a.x + r * bd.x, y: a.y + r * bd.y };
+}
+
+
+/**
+ * Calculates the distance between a point and a line.
+ *
+ * @param {Point} point
+ * @param {Point[]} line
+ *
+ * @return {number}
+ */
+function getDistancePointLine(point, line) {
+
+  var pfPoint = perpendicularFoot(point, line);
+
+  // distance vector
+  var connectionVector = {
+    x: pfPoint.x - point.x,
+    y: pfPoint.y - point.y
+  };
+
+  return vectorLength(connectionVector);
+}
+
+
+/**
+ * Calculates the distance between two points.
+ *
+ * @param {Point} point1
+ * @param {Point} point2
+ *
+ * @return {number}
+ */
+function getDistancePointPoint(point1, point2) {
+
+  return vectorLength({
+    x: point1.x - point2.x,
+    y: point1.y - point2.y
+  });
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/bendpoints/index.js":
+/*!*******************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/bendpoints/index.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _dragging__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../dragging */ "../node_modules/diagram-js/lib/features/dragging/index.js");
+/* harmony import */ var _rules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../rules */ "../node_modules/diagram-js/lib/features/rules/index.js");
+/* harmony import */ var _Bendpoints__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Bendpoints */ "../node_modules/diagram-js/lib/features/bendpoints/Bendpoints.js");
+/* harmony import */ var _BendpointMove__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./BendpointMove */ "../node_modules/diagram-js/lib/features/bendpoints/BendpointMove.js");
+/* harmony import */ var _BendpointMovePreview__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./BendpointMovePreview */ "../node_modules/diagram-js/lib/features/bendpoints/BendpointMovePreview.js");
+/* harmony import */ var _ConnectionSegmentMove__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./ConnectionSegmentMove */ "../node_modules/diagram-js/lib/features/bendpoints/ConnectionSegmentMove.js");
+/* harmony import */ var _BendpointSnapping__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./BendpointSnapping */ "../node_modules/diagram-js/lib/features/bendpoints/BendpointSnapping.js");
+
+
+
+
+
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _dragging__WEBPACK_IMPORTED_MODULE_0__["default"],
+    _rules__WEBPACK_IMPORTED_MODULE_1__["default"]
+  ],
+  __init__: [ 'bendpoints', 'bendpointSnapping', 'bendpointMovePreview' ],
+  bendpoints: [ 'type', _Bendpoints__WEBPACK_IMPORTED_MODULE_2__["default"] ],
+  bendpointMove: [ 'type', _BendpointMove__WEBPACK_IMPORTED_MODULE_3__["default"] ],
+  bendpointMovePreview: [ 'type', _BendpointMovePreview__WEBPACK_IMPORTED_MODULE_4__["default"] ],
+  connectionSegmentMove: [ 'type', _ConnectionSegmentMove__WEBPACK_IMPORTED_MODULE_5__["default"] ],
+  bendpointSnapping: [ 'type', _BendpointSnapping__WEBPACK_IMPORTED_MODULE_6__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/change-support/ChangeSupport.js":
+/*!*******************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/change-support/ChangeSupport.js ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ChangeSupport)
+/* harmony export */ });
+/* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
+
+
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../../core/GraphicsFactory').default} GraphicsFactory
+ */
+
+/**
+ * Adds change support to the diagram, including
+ *
+ * <ul>
+ *   <li>redrawing shapes and connections on change</li>
+ * </ul>
+ *
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ * @param {ElementRegistry} elementRegistry
+ * @param {GraphicsFactory} graphicsFactory
+ */
+function ChangeSupport(
+    eventBus, canvas, elementRegistry,
+    graphicsFactory) {
+
+
+  // redraw shapes / connections on change
+
+  eventBus.on('element.changed', function(event) {
+
+    var element = event.element;
+
+    // element might have been deleted and replaced by new element with same ID
+    // thus check for parent of element except for root element
+    if (element.parent || element === canvas.getRootElement()) {
+      event.gfx = elementRegistry.getGraphics(element);
+    }
+
+    // shape + gfx may have been deleted
+    if (!event.gfx) {
+      return;
+    }
+
+    eventBus.fire((0,_util_Elements__WEBPACK_IMPORTED_MODULE_0__.getType)(element) + '.changed', event);
+  });
+
+  eventBus.on('elements.changed', function(event) {
+
+    var elements = event.elements;
+
+    elements.forEach(function(e) {
+      eventBus.fire('element.changed', { element: e });
+    });
+
+    graphicsFactory.updateContainments(elements);
+  });
+
+  eventBus.on('shape.changed', function(event) {
+    graphicsFactory.update('shape', event.element, event.gfx);
+  });
+
+  eventBus.on('connection.changed', function(event) {
+    graphicsFactory.update('connection', event.element, event.gfx);
+  });
+}
+
+ChangeSupport.$inject = [
+  'eventBus',
+  'canvas',
+  'elementRegistry',
+  'graphicsFactory'
+];
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/change-support/index.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/change-support/index.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ChangeSupport__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ChangeSupport */ "../node_modules/diagram-js/lib/features/change-support/ChangeSupport.js");
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [ 'changeSupport' ],
+  changeSupport: [ 'type', _ChangeSupport__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+});
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/clipboard/Clipboard.js":
+/*!**********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/clipboard/Clipboard.js ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Clipboard)
+/* harmony export */ });
+/**
+ * A clip board stub
+ */
+function Clipboard() {}
+
+
+Clipboard.prototype.get = function() {
+  return this._data;
+};
+
+Clipboard.prototype.set = function(data) {
+  this._data = data;
+};
+
+Clipboard.prototype.clear = function() {
+  var data = this._data;
+
+  delete this._data;
+
+  return data;
+};
+
+Clipboard.prototype.isEmpty = function() {
+  return !this._data;
+};
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/clipboard/index.js":
+/*!******************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/clipboard/index.js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Clipboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Clipboard */ "../node_modules/diagram-js/lib/features/clipboard/Clipboard.js");
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  clipboard: [ 'type', _Clipboard__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/connect/Connect.js":
+/*!******************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/connect/Connect.js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Connect),
+/* harmony export */   isReverse: () => (/* binding */ isReverse)
+/* harmony export */ });
+/* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+
+
+/**
+ * @typedef {import('../../model/Types').Element} Element
+ *
+ * @typedef {import('../../util/Types').Point} Point
+ *
+ * @typedef {import('../dragging/Dragging').default} Dragging
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../modeling/Modeling').default} Modeling
+ * @typedef {import('../rules/Rules').default} Rules
+ */
+
+/**
+ * @param {EventBus} eventBus
+ * @param {Dragging} dragging
+ * @param {Modeling} modeling
+ * @param {Rules} rules
+ */
+function Connect(eventBus, dragging, modeling, rules) {
+
+  // rules
+
+  function canConnect(source, target) {
+    return rules.allowed('connection.create', {
+      source: source,
+      target: target
+    });
+  }
+
+  function canConnectReverse(source, target) {
+    return canConnect(target, source);
+  }
+
+
+  // event handlers
+
+  eventBus.on('connect.hover', function(event) {
+    var context = event.context,
+        start = context.start,
+        hover = event.hover,
+        canExecute;
+
+    // cache hover state
+    context.hover = hover;
+
+    canExecute = context.canExecute = canConnect(start, hover);
+
+    // ignore hover
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNil)(canExecute)) {
+      return;
+    }
+
+    if (canExecute !== false) {
+      context.source = start;
+      context.target = hover;
+
+      return;
+    }
+
+    canExecute = context.canExecute = canConnectReverse(start, hover);
+
+    // ignore hover
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNil)(canExecute)) {
+      return;
+    }
+
+    if (canExecute !== false) {
+      context.source = hover;
+      context.target = start;
+    }
+  });
+
+  eventBus.on([ 'connect.out', 'connect.cleanup' ], function(event) {
+    var context = event.context;
+
+    context.hover = null;
+    context.source = null;
+    context.target = null;
+
+    context.canExecute = false;
+  });
+
+  eventBus.on('connect.end', function(event) {
+    var context = event.context,
+        canExecute = context.canExecute,
+        connectionStart = context.connectionStart,
+        connectionEnd = {
+          x: event.x,
+          y: event.y
+        },
+        source = context.source,
+        target = context.target;
+
+    if (!canExecute) {
+      return false;
+    }
+
+    var attrs = null,
+        hints = {
+          connectionStart: isReverse(context) ? connectionEnd : connectionStart,
+          connectionEnd: isReverse(context) ? connectionStart : connectionEnd
+        };
+
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isObject)(canExecute)) {
+      attrs = canExecute;
+    }
+
+    context.connection = modeling.connect(source, target, attrs, hints);
+  });
+
+
+  // API
+
+  /**
+   * Start connect operation.
+   *
+   * @param {MouseEvent|TouchEvent} event
+   * @param {Element} start
+   * @param {Point} [connectionStart]
+   * @param {boolean} [autoActivate=false]
+   */
+  this.start = function(event, start, connectionStart, autoActivate) {
+    if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isObject)(connectionStart)) {
+      autoActivate = connectionStart;
+      connectionStart = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getMid)(start);
+    }
+
+    dragging.init(event, 'connect', {
+      autoActivate: autoActivate,
+      data: {
+        shape: start,
+        context: {
+          start: start,
+          connectionStart: connectionStart
+        }
+      }
+    });
+  };
+}
+
+Connect.$inject = [
+  'eventBus',
+  'dragging',
+  'modeling',
+  'rules'
+];
+
+
+// helpers //////////
+
+function isReverse(context) {
+  var hover = context.hover,
+      source = context.source,
+      target = context.target;
+
+  return hover && source && hover === source && source !== target;
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/connect/ConnectPreview.js":
+/*!*************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/connect/ConnectPreview.js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ConnectPreview)
+/* harmony export */ });
+/* harmony import */ var _Connect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Connect */ "../node_modules/diagram-js/lib/features/connect/Connect.js");
+
+
+/**
+ * @typedef {import('didi').Injector} Injector
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ */
+
+var HIGH_PRIORITY = 1100,
+    LOW_PRIORITY = 900;
+
+var MARKER_OK = 'connect-ok',
+    MARKER_NOT_OK = 'connect-not-ok';
+
+/**
+ * Shows connection preview during connect.
+ *
+ * @param {Injector} injector
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ */
+function ConnectPreview(injector, eventBus, canvas) {
+  var connectionPreview = injector.get('connectionPreview', false);
+
+  connectionPreview && eventBus.on('connect.move', function(event) {
+    var context = event.context,
+        canConnect = context.canExecute,
+        hover = context.hover,
+        source = context.source,
+        start = context.start,
+        startPosition = context.startPosition,
+        target = context.target,
+        connectionStart = context.connectionStart || startPosition,
+        connectionEnd = context.connectionEnd || {
+          x: event.x,
+          y: event.y
+        },
+        previewStart = connectionStart,
+        previewEnd = connectionEnd;
+
+    if ((0,_Connect__WEBPACK_IMPORTED_MODULE_0__.isReverse)(context)) {
+      previewStart = connectionEnd;
+      previewEnd = connectionStart;
+    }
+
+    connectionPreview.drawPreview(context, canConnect, {
+      source: source || start,
+      target: target || hover,
+      connectionStart: previewStart,
+      connectionEnd: previewEnd
+    });
+  });
+
+  eventBus.on('connect.hover', LOW_PRIORITY, function(event) {
+    var context = event.context,
+        hover = event.hover,
+        canExecute = context.canExecute;
+
+    // ignore hover
+    if (canExecute === null) {
+      return;
+    }
+
+    canvas.addMarker(hover, canExecute ? MARKER_OK : MARKER_NOT_OK);
+  });
+
+  eventBus.on([
+    'connect.out',
+    'connect.cleanup'
+  ], HIGH_PRIORITY, function(event) {
+    var hover = event.hover;
+
+    if (hover) {
+      canvas.removeMarker(hover, MARKER_OK);
+      canvas.removeMarker(hover, MARKER_NOT_OK);
+    }
+  });
+
+  connectionPreview && eventBus.on('connect.cleanup', function(event) {
+    connectionPreview.cleanUp(event.context);
+  });
+}
+
+ConnectPreview.$inject = [
+  'injector',
+  'eventBus',
+  'canvas'
+];
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/connect/index.js":
+/*!****************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/connect/index.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _selection__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../selection */ "../node_modules/diagram-js/lib/features/selection/index.js");
+/* harmony import */ var _rules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../rules */ "../node_modules/diagram-js/lib/features/rules/index.js");
+/* harmony import */ var _dragging__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../dragging */ "../node_modules/diagram-js/lib/features/dragging/index.js");
+/* harmony import */ var _Connect__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Connect */ "../node_modules/diagram-js/lib/features/connect/Connect.js");
+/* harmony import */ var _ConnectPreview__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ConnectPreview */ "../node_modules/diagram-js/lib/features/connect/ConnectPreview.js");
+
+
+
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _selection__WEBPACK_IMPORTED_MODULE_0__["default"],
+    _rules__WEBPACK_IMPORTED_MODULE_1__["default"],
+    _dragging__WEBPACK_IMPORTED_MODULE_2__["default"]
+  ],
+  __init__: [
+    'connectPreview'
+  ],
+  connect: [ 'type', _Connect__WEBPACK_IMPORTED_MODULE_3__["default"] ],
+  connectPreview: [ 'type', _ConnectPreview__WEBPACK_IMPORTED_MODULE_4__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/connection-preview/ConnectionPreview.js":
+/*!***************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/connection-preview/ConnectionPreview.js ***!
+  \***************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ConnectionPreview)
+/* harmony export */ });
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var _util_RenderUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/RenderUtil */ "../node_modules/diagram-js/lib/util/RenderUtil.js");
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../model/Types').Element} Element
+ * @typedef {import('../../model/Types').Connection} Connection
+ * @typedef {import('../../model/Types').Shape} Shape
+ *
+ * @typedef {import('../../util/Types').Point} Point
+ *
+ * @typedef {import('didi').Injector} Injector
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/ElementFactory').default} ElementFactory
+ * @typedef {import('../../core/GraphicsFactory').default} GraphicsFactory
+ */
+
+var MARKER_CONNECTION_PREVIEW = 'djs-connection-preview';
+
+/**
+ * Draws connection preview. Optionally, this can use layouter and connection docking to draw
+ * better looking previews.
+ *
+ * @param {Injector} injector
+ * @param {Canvas} canvas
+ * @param {GraphicsFactory} graphicsFactory
+ * @param {ElementFactory} elementFactory
+ */
+function ConnectionPreview(
+    injector,
+    canvas,
+    graphicsFactory,
+    elementFactory
+) {
+  this._canvas = canvas;
+  this._graphicsFactory = graphicsFactory;
+  this._elementFactory = elementFactory;
+
+  // optional components
+  this._connectionDocking = injector.get('connectionDocking', false);
+  this._layouter = injector.get('layouter', false);
+}
+
+ConnectionPreview.$inject = [
+  'injector',
+  'canvas',
+  'graphicsFactory',
+  'elementFactory'
+];
+
+/**
+ * Draw connection preview.
+ *
+ * Provide at least one of <source, connectionStart> and <target, connectionEnd> to create a preview.
+ * In the clean up stage, call `connectionPreview#cleanUp` with the context to remove preview.
+ *
+ * @param {Object} context
+ * @param {Object|boolean} canConnect
+ * @param {Object} hints
+ * @param {Element} [hints.source] source element
+ * @param {Element} [hints.target] target element
+ * @param {Point} [hints.connectionStart] connection preview start
+ * @param {Point} [hints.connectionEnd] connection preview end
+ * @param {Point[]} [hints.waypoints] provided waypoints for preview
+ * @param {boolean} [hints.noLayout] true if preview should not be laid out
+ * @param {boolean} [hints.noCropping] true if preview should not be cropped
+ * @param {boolean} [hints.noNoop] true if simple connection should not be drawn
+ */
+ConnectionPreview.prototype.drawPreview = function(context, canConnect, hints) {
+
+  hints = hints || {};
+
+  var connectionPreviewGfx = context.connectionPreviewGfx,
+      getConnection = context.getConnection,
+      source = hints.source,
+      target = hints.target,
+      waypoints = hints.waypoints,
+      connectionStart = hints.connectionStart,
+      connectionEnd = hints.connectionEnd,
+      noLayout = hints.noLayout,
+      noCropping = hints.noCropping,
+      noNoop = hints.noNoop,
+      connection;
+
+  var self = this;
+
+  if (!connectionPreviewGfx) {
+    connectionPreviewGfx = context.connectionPreviewGfx = this.createConnectionPreviewGfx();
+  }
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.clear)(connectionPreviewGfx);
+
+  if (!getConnection) {
+    getConnection = context.getConnection = cacheReturnValues(function(canConnect, source, target) {
+      return self.getConnection(canConnect, source, target);
+    });
+  }
+
+  if (canConnect) {
+    connection = getConnection(canConnect, source, target);
+  }
+
+  if (!connection) {
+    !noNoop && this.drawNoopPreview(connectionPreviewGfx, hints);
+    return;
+  }
+
+  connection.waypoints = waypoints || [];
+
+  // optional layout
+  if (this._layouter && !noLayout) {
+    connection.waypoints = this._layouter.layoutConnection(connection, {
+      source: source,
+      target: target,
+      connectionStart: connectionStart,
+      connectionEnd: connectionEnd,
+      waypoints: hints.waypoints || connection.waypoints
+    });
+  }
+
+  // fallback if no waypoints were provided nor created with layouter
+  if (!connection.waypoints || !connection.waypoints.length) {
+    connection.waypoints = [
+      source ? (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getMid)(source) : connectionStart,
+      target ? (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getMid)(target) : connectionEnd
+    ];
+  }
+
+  // optional cropping
+  if (this._connectionDocking && (source || target) && !noCropping) {
+    connection.waypoints = this._connectionDocking.getCroppedWaypoints(connection, source, target);
+  }
+
+  this._graphicsFactory.drawConnection(connectionPreviewGfx, connection);
+};
+
+/**
+ * Draw simple connection between source and target or provided points.
+ *
+ * @param {SVGElement} connectionPreviewGfx container for the connection
+ * @param {Object} hints
+ * @param {Element} [hints.source] source element
+ * @param {Element} [hints.target] target element
+ * @param {Point} [hints.connectionStart] required if source is not provided
+ * @param {Point} [hints.connectionEnd] required if target is not provided
+ */
+ConnectionPreview.prototype.drawNoopPreview = function(connectionPreviewGfx, hints) {
+  var source = hints.source,
+      target = hints.target,
+      start = hints.connectionStart || (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getMid)(source),
+      end = hints.connectionEnd || (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getMid)(target);
+
+  var waypoints = this.cropWaypoints(start, end, source, target);
+
+  var connection = this.createNoopConnection(waypoints[0], waypoints[1]);
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.append)(connectionPreviewGfx, connection);
+};
+
+/**
+ * Return cropped waypoints.
+ *
+ * @param {Point} start
+ * @param {Point} end
+ * @param {Element} source
+ * @param {Element} target
+ *
+ * @return {Point[]}
+ */
+ConnectionPreview.prototype.cropWaypoints = function(start, end, source, target) {
+  var graphicsFactory = this._graphicsFactory,
+      sourcePath = source && graphicsFactory.getShapePath(source),
+      targetPath = target && graphicsFactory.getShapePath(target),
+      connectionPath = graphicsFactory.getConnectionPath({ waypoints: [ start, end ] });
+
+  start = (source && (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getElementLineIntersection)(sourcePath, connectionPath, true)) || start;
+  end = (target && (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getElementLineIntersection)(targetPath, connectionPath, false)) || end;
+
+  return [ start, end ];
+};
+
+/**
+ * Remove connection preview container if it exists.
+ *
+ * @param {Object} [context]
+ * @param {SVGElement} [context.connectionPreviewGfx] preview container
+ */
+ConnectionPreview.prototype.cleanUp = function(context) {
+  if (context && context.connectionPreviewGfx) {
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.remove)(context.connectionPreviewGfx);
+  }
+};
+
+/**
+ * Get connection that connects source and target.
+ *
+ * @param {Object|boolean} canConnect
+ *
+ * @return {Connection}
+ */
+ConnectionPreview.prototype.getConnection = function(canConnect) {
+  var attrs = ensureConnectionAttrs(canConnect);
+
+  return this._elementFactory.createConnection(attrs);
+};
+
+
+/**
+ * Add and return preview graphics.
+ *
+ * @return {SVGElement}
+ */
+ConnectionPreview.prototype.createConnectionPreviewGfx = function() {
+  var gfx = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.create)('g');
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(gfx, {
+    pointerEvents: 'none'
+  });
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.classes)(gfx).add(MARKER_CONNECTION_PREVIEW);
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.append)(this._canvas.getActiveLayer(), gfx);
+
+  return gfx;
+};
+
+/**
+ * Create and return simple connection.
+ *
+ * @param {Point} start
+ * @param {Point} end
+ *
+ * @return {SVGElement}
+ */
+ConnectionPreview.prototype.createNoopConnection = function(start, end) {
+  return (0,_util_RenderUtil__WEBPACK_IMPORTED_MODULE_2__.createLine)([ start, end ], {
+    'stroke': '#333',
+    'strokeDasharray': [ 1 ],
+    'strokeWidth': 2,
+    'pointer-events': 'none'
+  });
+};
+
+// helpers //////////
+
+/**
+ * Returns function that returns cached return values referenced by stringified first argument.
+ *
+ * @param {Function} fn
+ *
+ * @return {Function}
+ */
+function cacheReturnValues(fn) {
+  var returnValues = {};
+
+  /**
+   * Return cached return value referenced by stringified first argument.
+   *
+   * @return {*}
+   */
+  return function(firstArgument) {
+    var key = JSON.stringify(firstArgument);
+
+    var returnValue = returnValues[key];
+
+    if (!returnValue) {
+      returnValue = returnValues[key] = fn.apply(null, arguments);
+    }
+
+    return returnValue;
+  };
+}
+
+/**
+ * Ensure connection attributes is object.
+ *
+ * @param {Object|boolean} canConnect
+ *
+ * @return {Object}
+ */
+function ensureConnectionAttrs(canConnect) {
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isObject)(canConnect)) {
+    return canConnect;
+  } else {
+    return {};
+  }
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/connection-preview/index.js":
+/*!***************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/connection-preview/index.js ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ConnectionPreview__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ConnectionPreview */ "../node_modules/diagram-js/lib/features/connection-preview/ConnectionPreview.js");
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [ 'connectionPreview' ],
+  connectionPreview: [ 'type', _ConnectionPreview__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/context-pad/ContextPad.js":
+/*!*************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/context-pad/ContextPad.js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ContextPad)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
+/* harmony import */ var _util_EscapeUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/EscapeUtil */ "../node_modules/diagram-js/lib/util/EscapeUtil.js");
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../model/Types').Element} Element
+ *
+ * @typedef {import('../../util/Types').Rect} Rect
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../overlays/Overlays').default} Overlays
+ *
+ * @typedef {import('../overlays/Overlays').Overlay} Overlay
+ *
+ * @typedef {import('./ContextPadProvider').default} ContextPadProvider
+ * @typedef {import('./ContextPadProvider').ContextPadEntries} ContextPadEntries
+ *
+ * @typedef { {
+ *   scale?: {
+ *     min?: number;
+ *     max?: number;
+ *   };
+ * } } ContextPadConfig
+ */
+
+/**
+ * @template {Element} [ElementType=Element]
+ *
+ * @typedef {ElementType|ElementType[]} ContextPadTarget
+ */
+
+var entrySelector = '.entry';
+
+var DEFAULT_PRIORITY = 1000;
+var CONTEXT_PAD_PADDING = 12;
+
+/**
+ * A context pad that displays element specific, contextual actions next
+ * to a diagram element.
+ *
+ * @param {Canvas} canvas
+ * @param {ContextPadConfig} config
+ * @param {EventBus} eventBus
+ * @param {Overlays} overlays
+ */
+function ContextPad(canvas, config, eventBus, overlays) {
+
+  this._canvas = canvas;
+  this._eventBus = eventBus;
+  this._overlays = overlays;
+
+  var scale = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isDefined)(config && config.scale) ? config.scale : {
+    min: 1,
+    max: 1.5
+  };
+
+  this._overlaysConfig = {
+    scale: scale
+  };
+
+  this._current = null;
+
+  this._init();
+}
+
+ContextPad.$inject = [
+  'canvas',
+  'config.contextPad',
+  'eventBus',
+  'overlays'
+];
+
+
+/**
+ * Registers events needed for interaction with other components.
+ */
+ContextPad.prototype._init = function() {
+  var self = this;
+
+  this._eventBus.on('selection.changed', function(event) {
+
+    var selection = event.newSelection;
+
+    var target = selection.length
+      ? selection.length === 1
+        ? selection[0]
+        : selection
+      : null;
+
+    if (target) {
+      self.open(target, true);
+    } else {
+      self.close();
+    }
+  });
+
+  this._eventBus.on('elements.changed', function(event) {
+    var elements = event.elements,
+        current = self._current;
+
+    if (!current) {
+      return;
+    }
+
+    var currentTarget = current.target;
+
+    var currentChanged = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.some)(
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(currentTarget) ? currentTarget : [ currentTarget ],
+      function(element) {
+        return includes(elements, element);
+      }
+    );
+
+    // re-open if elements in current selection changed
+    if (currentChanged) {
+      self.open(currentTarget, true);
+    }
+  });
+};
+
+/**
+ * @overlord
+ *
+ * Register a context pad provider with the default priority. See
+ * {@link ContextPadProvider} for examples.
+ *
+ * @param {ContextPadProvider} provider
+ */
+
+/**
+ * Register a context pad provider with the given priority. See
+ * {@link ContextPadProvider} for examples.
+ *
+ * @param {number} priority
+ * @param {ContextPadProvider} provider
+ */
+ContextPad.prototype.registerProvider = function(priority, provider) {
+  if (!provider) {
+    provider = priority;
+    priority = DEFAULT_PRIORITY;
+  }
+
+  this._eventBus.on('contextPad.getProviders', priority, function(event) {
+    event.providers.push(provider);
+  });
+};
+
+
+/**
+ * Get context pad entries for given elements.
+ *
+ * @param {ContextPadTarget} target
+ *
+ * @return {ContextPadEntries} list of entries
+ */
+ContextPad.prototype.getEntries = function(target) {
+  var providers = this._getProviders();
+
+  var provideFn = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(target)
+    ? 'getMultiElementContextPadEntries'
+    : 'getContextPadEntries';
+
+  var entries = {};
+
+  // loop through all providers and their entries.
+  // group entries by id so that overriding an entry is possible
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(providers, function(provider) {
+
+    if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isFunction)(provider[provideFn])) {
+      return;
+    }
+
+    var entriesOrUpdater = provider[provideFn](target);
+
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isFunction)(entriesOrUpdater)) {
+      entries = entriesOrUpdater(entries);
+    } else {
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(entriesOrUpdater, function(entry, id) {
+        entries[id] = entry;
+      });
+    }
+  });
+
+  return entries;
+};
+
+
+/**
+ * Trigger context pad via DOM event.
+ *
+ * The entry to trigger is determined by the target element.
+ *
+ * @param {string} action
+ * @param {Event} event
+ * @param {boolean} [autoActivate=false]
+ */
+ContextPad.prototype.trigger = function(action, event, autoActivate) {
+
+  var entry,
+      originalEvent,
+      button = event.delegateTarget || event.target;
+
+  if (!button) {
+    return event.preventDefault();
+  }
+
+  entry = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.attr)(button, 'data-action');
+  originalEvent = event.originalEvent || event;
+
+  return this.triggerEntry(entry, action, originalEvent, autoActivate);
+};
+
+/**
+ * Trigger context pad entry entry.
+ *
+ * @param {string} entryId
+ * @param {string} action
+ * @param {Event} event
+ * @param {boolean} [autoActivate=false]
+ */
+ContextPad.prototype.triggerEntry = function(entryId, action, event, autoActivate) {
+
+  if (!this.isShown()) {
+    return;
+  }
+
+  var target = this._current.target,
+      entries = this._current.entries;
+
+  var entry = entries[entryId];
+
+  if (!entry) {
+    return;
+  }
+
+  var handler = entry.action;
+
+  if (this._eventBus.fire('contextPad.trigger', { entry, event }) === false) {
+    return;
+  }
+
+  // simple action (via callback function)
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isFunction)(handler)) {
+    if (action === 'click') {
+      return handler(event, target, autoActivate);
+    }
+  } else {
+    if (handler[action]) {
+      return handler[action](event, target, autoActivate);
+    }
+  }
+
+  // silence other actions
+  event.preventDefault();
+};
+
+
+/**
+ * Open the context pad for given elements.
+ *
+ * @param {ContextPadTarget} target
+ * @param {boolean} [force=false] - Force re-opening context pad.
+ */
+ContextPad.prototype.open = function(target, force) {
+  if (!force && this.isOpen(target)) {
+    return;
+  }
+
+  this.close();
+
+  this._updateAndOpen(target);
+};
+
+ContextPad.prototype._getProviders = function() {
+
+  var event = this._eventBus.createEvent({
+    type: 'contextPad.getProviders',
+    providers: []
+  });
+
+  this._eventBus.fire(event);
+
+  return event.providers;
+};
+
+
+/**
+ * @param {ContextPadTarget} target
+ */
+ContextPad.prototype._updateAndOpen = function(target) {
+  var entries = this.getEntries(target),
+      pad = this.getPad(target),
+      html = pad.html,
+      image;
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(entries, function(entry, id) {
+    var grouping = entry.group || 'default',
+        control = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.domify)(entry.html || '<div class="entry" draggable="true"></div>'),
+        container;
+
+    (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.attr)(control, 'data-action', id);
+
+    container = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.query)('[data-group=' + (0,_util_EscapeUtil__WEBPACK_IMPORTED_MODULE_2__.escapeCSS)(grouping) + ']', html);
+    if (!container) {
+      container = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.domify)('<div class="group"></div>');
+      (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.attr)(container, 'data-group', grouping);
+
+      html.appendChild(container);
+    }
+
+    container.appendChild(control);
+
+    if (entry.className) {
+      addClasses(control, entry.className);
+    }
+
+    if (entry.title) {
+      (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.attr)(control, 'title', entry.title);
+    }
+
+    if (entry.imageUrl) {
+      image = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.domify)('<img>');
+      (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.attr)(image, 'src', entry.imageUrl);
+      image.style.width = '100%';
+      image.style.height = '100%';
+
+      control.appendChild(image);
+    }
+  });
+
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.classes)(html).add('open');
+
+  this._current = {
+    target: target,
+    entries: entries,
+    pad: pad
+  };
+
+  this._eventBus.fire('contextPad.open', { current: this._current });
+};
+
+/**
+ * @param {ContextPadTarget} target
+ *
+ * @return {Overlay}
+ */
+ContextPad.prototype.getPad = function(target) {
+  if (this.isOpen()) {
+    return this._current.pad;
+  }
+
+  var self = this;
+
+  var overlays = this._overlays;
+
+  var html = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.domify)('<div class="djs-context-pad"></div>');
+
+  var position = this._getPosition(target);
+
+  var overlaysConfig = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({
+    html: html
+  }, this._overlaysConfig, position);
+
+  min_dom__WEBPACK_IMPORTED_MODULE_1__.delegate.bind(html, entrySelector, 'click', function(event) {
+    self.trigger('click', event);
+  });
+
+  min_dom__WEBPACK_IMPORTED_MODULE_1__.delegate.bind(html, entrySelector, 'dragstart', function(event) {
+    self.trigger('dragstart', event);
+  });
+
+  // stop propagation of mouse events
+  min_dom__WEBPACK_IMPORTED_MODULE_1__.event.bind(html, 'mousedown', function(event) {
+    event.stopPropagation();
+  });
+
+  var activeRootElement = this._canvas.getRootElement();
+
+  this._overlayId = overlays.add(activeRootElement, 'context-pad', overlaysConfig);
+
+  var pad = overlays.get(this._overlayId);
+
+  this._eventBus.fire('contextPad.create', {
+    target: target,
+    pad: pad
+  });
+
+  return pad;
+};
+
+
+/**
+ * Close the context pad
+ */
+ContextPad.prototype.close = function() {
+  if (!this.isOpen()) {
+    return;
+  }
+
+  this._overlays.remove(this._overlayId);
+
+  this._overlayId = null;
+
+  this._eventBus.fire('contextPad.close', { current: this._current });
+
+  this._current = null;
+};
+
+/**
+ * Check if pad is open.
+ *
+ * If target is provided, check if it is opened
+ * for the given target (single or multiple elements).
+ *
+ * @param {ContextPadTarget} [target]
+ * @return {boolean}
+ */
+ContextPad.prototype.isOpen = function(target) {
+  var current = this._current;
+
+  if (!current) {
+    return false;
+  }
+
+  // basic no-args is open check
+  if (!target) {
+    return true;
+  }
+
+  var currentTarget = current.target;
+
+  // strict handling of single vs. multi-selection
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(target) !== (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(currentTarget)) {
+    return false;
+  }
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(target)) {
+    return (
+      target.length === currentTarget.length &&
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.every)(target, function(element) {
+        return includes(currentTarget, element);
+      })
+    );
+  } else {
+    return currentTarget === target;
+  }
+};
+
+
+/**
+ * Check if pad is open and not hidden.
+ *
+ * @return {boolean}
+ */
+ContextPad.prototype.isShown = function() {
+  return this.isOpen() && this._overlays.isShown();
+};
+
+
+/**
+ * Get contex pad position.
+ *
+ * @param {ContextPadTarget} target
+ *
+ * @return {Rect}
+ */
+ContextPad.prototype._getPosition = function(target) {
+
+  var elements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(target) ? target : [ target ];
+  var bBox = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_3__.getBBox)(elements);
+
+  return {
+    position: {
+      left: bBox.x + bBox.width + CONTEXT_PAD_PADDING,
+      top: bBox.y - CONTEXT_PAD_PADDING / 2
+    }
+  };
+};
+
+
+// helpers //////////
+
+function addClasses(element, classNames) {
+  var classes = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.classes)(element);
+
+  classNames = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(classNames) ? classNames : classNames.split(/\s+/g);
+
+  classNames.forEach(function(cls) {
+    classes.add(cls);
+  });
+}
+
+/**
+ * @param {any[]} array
+ * @param {any} item
+ *
+ * @return {boolean}
+ */
+function includes(array, item) {
+  return array.indexOf(item) !== -1;
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/context-pad/index.js":
+/*!********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/context-pad/index.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _interaction_events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../interaction-events */ "../node_modules/diagram-js/lib/features/interaction-events/index.js");
+/* harmony import */ var _overlays__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../overlays */ "../node_modules/diagram-js/lib/features/overlays/index.js");
+/* harmony import */ var _ContextPad__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ContextPad */ "../node_modules/diagram-js/lib/features/context-pad/ContextPad.js");
+
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _interaction_events__WEBPACK_IMPORTED_MODULE_0__["default"],
+    _overlays__WEBPACK_IMPORTED_MODULE_1__["default"]
+  ],
+  contextPad: [ 'type', _ContextPad__WEBPACK_IMPORTED_MODULE_2__["default"] ]
+});
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/copy-paste/CopyPaste.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/copy-paste/CopyPaste.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ CopyPaste)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/ModelUtil */ "../node_modules/diagram-js/lib/util/ModelUtil.js");
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/Types').ElementLike} Element
+ * @typedef {import('../../core/Types').ShapeLike} Shape
+ *
+ * @typedef {import('../../util/Types').Point} Point
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../clipboard/Clipboard').default} Clipboard
+ * @typedef {import('../create/Create').default} Create
+ * @typedef {import('../../core/ElementFactory').default} ElementFactory
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../modeling/Modeling').default} Modeling
+ * @typedef {import('../mouse/Mouse').default} Mouse
+ * @typedef {import('../rules/Rules').default} Rules
+ */
+
+/**
+ * @typedef { (event: { elements: Element[] }) => Element[]|boolean } CopyPasteCanCopyElementsListener
+ */
+
+/**
+ * @typedef { (event: { descriptor: any, element: Element, elements: Element[] }) => void } CopyPasteCopyElementListener
+ */
+
+/**
+ * @typedef { (event: { element: Element, children: Element[] }) => void } CopyPasteCreateTreeListener
+ */
+
+/**
+ * @typedef { (event: { elements: any, tree: any }) => void } CopyPasteElementsCopiedListener
+ */
+
+/**
+ * @typedef { (event: { cache: any, descriptor: any }) => void } CopyPastePasteElementListener
+ */
+
+/**
+ * @typedef { (event: { hints: any }) => void } CopyPastePasteElementsListener
+ */
+
+/**
+ * Copy and paste elements.
+ *
+ * @param {Canvas} canvas
+ * @param {Create} create
+ * @param {Clipboard} clipboard
+ * @param {ElementFactory} elementFactory
+ * @param {EventBus} eventBus
+ * @param {Modeling} modeling
+ * @param {Mouse} mouse
+ * @param {Rules} rules
+ */
+function CopyPaste(
+    canvas,
+    create,
+    clipboard,
+    elementFactory,
+    eventBus,
+    modeling,
+    mouse,
+    rules
+) {
+
+  this._canvas = canvas;
+  this._create = create;
+  this._clipboard = clipboard;
+  this._elementFactory = elementFactory;
+  this._eventBus = eventBus;
+  this._modeling = modeling;
+  this._mouse = mouse;
+  this._rules = rules;
+
+  eventBus.on('copyPaste.copyElement', function(context) {
+    var descriptor = context.descriptor,
+        element = context.element,
+        elements = context.elements;
+
+    // default priority (priority = 1)
+    descriptor.priority = 1;
+
+    descriptor.id = element.id;
+
+    var parentCopied = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.find)(elements, function(e) {
+      return e === element.parent;
+    });
+
+    // do NOT reference parent if parent wasn't copied
+    if (parentCopied) {
+      descriptor.parent = element.parent.id;
+    }
+
+    // attachers (priority = 2)
+    if (isAttacher(element)) {
+      descriptor.priority = 2;
+
+      descriptor.host = element.host.id;
+    }
+
+    // connections (priority = 3)
+    if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isConnection)(element)) {
+      descriptor.priority = 3;
+
+      descriptor.source = element.source.id;
+      descriptor.target = element.target.id;
+
+      descriptor.waypoints = copyWaypoints(element);
+    }
+
+    // labels (priority = 4)
+    if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isLabel)(element)) {
+      descriptor.priority = 4;
+
+      descriptor.labelTarget = element.labelTarget.id;
+    }
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)([ 'x', 'y', 'width', 'height' ], function(property) {
+      if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(element[ property ])) {
+        descriptor[ property ] = element[ property ];
+      }
+    });
+
+    descriptor.hidden = element.hidden;
+    descriptor.collapsed = element.collapsed;
+
+  });
+
+  eventBus.on('copyPaste.pasteElements', function(context) {
+    var hints = context.hints;
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(hints, {
+      createElementsBehavior: false
+    });
+  });
+}
+
+CopyPaste.$inject = [
+  'canvas',
+  'create',
+  'clipboard',
+  'elementFactory',
+  'eventBus',
+  'modeling',
+  'mouse',
+  'rules'
+];
+
+
+/**
+ * Copy elements.
+ *
+ * @param {Element[]} elements
+ *
+ * @return {Object}
+ */
+CopyPaste.prototype.copy = function(elements) {
+  var allowed,
+      tree;
+
+  if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(elements)) {
+    elements = elements ? [ elements ] : [];
+  }
+
+  allowed = this._eventBus.fire('copyPaste.canCopyElements', {
+    elements: elements
+  });
+
+  if (allowed === false) {
+    tree = {};
+  } else {
+    tree = this.createTree((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(allowed) ? allowed : elements);
+  }
+
+  // we set an empty tree, selection of elements
+  // to copy was empty.
+  this._clipboard.set(tree);
+
+  this._eventBus.fire('copyPaste.elementsCopied', {
+    elements: elements,
+    tree: tree
+  });
+
+  return tree;
+};
+
+/**
+ * Paste elements.
+ *
+ * @param {Object} [context]
+ * @param {Shape} [context.element] The optional parent.
+ * @param {Point} [context.point] The optional osition.
+ * @param {Object} [context.hints] The optional hints.
+ */
+CopyPaste.prototype.paste = function(context) {
+  var tree = this._clipboard.get();
+
+  if (this._clipboard.isEmpty()) {
+    return;
+  }
+
+  var hints = context && context.hints || {};
+
+  this._eventBus.fire('copyPaste.pasteElements', {
+    hints: hints
+  });
+
+  var elements = this._createElements(tree);
+
+  // paste directly
+  if (context && context.element && context.point) {
+    return this._paste(elements, context.element, context.point, hints);
+  }
+
+  this._create.start(this._mouse.getLastMoveEvent(), elements, {
+    hints: hints || {}
+  });
+};
+
+/**
+ * Paste elements directly.
+ *
+ * @param {Element[]} elements
+ * @param {Shape} target
+ * @param {Point} position
+ * @param {Object} [hints]
+ */
+CopyPaste.prototype._paste = function(elements, target, position, hints) {
+
+  // make sure each element has x and y
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(elements, function(element) {
+    if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(element.x)) {
+      element.x = 0;
+    }
+
+    if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(element.y)) {
+      element.y = 0;
+    }
+  });
+
+  var bbox = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getBBox)(elements);
+
+  // center elements around cursor
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(elements, function(element) {
+    if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isConnection)(element)) {
+      element.waypoints = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.map)(element.waypoints, function(waypoint) {
+        return {
+          x: waypoint.x - bbox.x - bbox.width / 2,
+          y: waypoint.y - bbox.y - bbox.height / 2
+        };
+      });
+    }
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(element, {
+      x: element.x - bbox.x - bbox.width / 2,
+      y: element.y - bbox.y - bbox.height / 2
+    });
+  });
+
+  return this._modeling.createElements(elements, position, target, (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, hints));
+};
+
+/**
+ * Create elements from tree.
+ */
+CopyPaste.prototype._createElements = function(tree) {
+  var self = this;
+
+  var eventBus = this._eventBus;
+
+  var cache = {};
+
+  var elements = [];
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(tree, function(branch, depth) {
+
+    depth = parseInt(depth, 10);
+
+    // sort by priority
+    branch = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.sortBy)(branch, 'priority');
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(branch, function(descriptor) {
+
+      // remove priority
+      var attrs = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.omit)(descriptor, [ 'priority' ]));
+
+      if (cache[ descriptor.parent ]) {
+        attrs.parent = cache[ descriptor.parent ];
+      } else {
+        delete attrs.parent;
+      }
+
+      eventBus.fire('copyPaste.pasteElement', {
+        cache: cache,
+        descriptor: attrs
+      });
+
+      var element;
+
+      if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isConnection)(attrs)) {
+        attrs.source = cache[ descriptor.source ];
+        attrs.target = cache[ descriptor.target ];
+
+        element = cache[ descriptor.id ] = self.createConnection(attrs);
+
+        elements.push(element);
+
+        return;
+      }
+
+      if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isLabel)(attrs)) {
+        attrs.labelTarget = cache[ attrs.labelTarget ];
+
+        element = cache[ descriptor.id ] = self.createLabel(attrs);
+
+        elements.push(element);
+
+        return;
+      }
+
+      if (attrs.host) {
+        attrs.host = cache[ attrs.host ];
+      }
+
+      element = cache[ descriptor.id ] = self.createShape(attrs);
+
+      elements.push(element);
+    });
+
+  });
+
+  return elements;
+};
+
+CopyPaste.prototype.createConnection = function(attrs) {
+  var connection = this._elementFactory.createConnection((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.omit)(attrs, [ 'id' ]));
+
+  return connection;
+};
+
+CopyPaste.prototype.createLabel = function(attrs) {
+  var label = this._elementFactory.createLabel((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.omit)(attrs, [ 'id' ]));
+
+  return label;
+};
+
+CopyPaste.prototype.createShape = function(attrs) {
+  var shape = this._elementFactory.createShape((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.omit)(attrs, [ 'id' ]));
+
+  return shape;
+};
+
+/**
+ * Check wether element has relations to other elements e.g. attachers, labels and connections.
+ *
+ * @param {Object} element
+ * @param {Element[]} elements
+ *
+ * @return {boolean}
+ */
+CopyPaste.prototype.hasRelations = function(element, elements) {
+  var labelTarget,
+      source,
+      target;
+
+  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isConnection)(element)) {
+    source = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.find)(elements, (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.matchPattern)({ id: element.source.id }));
+    target = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.find)(elements, (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.matchPattern)({ id: element.target.id }));
+
+    if (!source || !target) {
+      return false;
+    }
+  }
+
+  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isLabel)(element)) {
+    labelTarget = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.find)(elements, (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.matchPattern)({ id: element.labelTarget.id }));
+
+    if (!labelTarget) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+/**
+ * Create a tree-like structure from elements.
+ *
+ * @example
+ *
+ * ```javascript
+ * tree: {
+ *  0: [
+ *    { id: 'Shape_1', priority: 1, ... },
+ *    { id: 'Shape_2', priority: 1, ... },
+ *    { id: 'Connection_1', source: 'Shape_1', target: 'Shape_2', priority: 3, ... },
+ *    ...
+ *  ],
+ *  1: [
+ *    { id: 'Shape_3', parent: 'Shape1', priority: 1, ... },
+ *    ...
+ *  ]
+ * };
+ * ```
+ *
+ * @param {Element[]} elements
+ *
+ * @return {Object}
+ */
+CopyPaste.prototype.createTree = function(elements) {
+  var rules = this._rules,
+      self = this;
+
+  var tree = {},
+      elementsData = [];
+
+  var parents = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getParents)(elements);
+
+  function canCopy(element, elements) {
+    return rules.allowed('element.copy', {
+      element: element,
+      elements: elements
+    });
+  }
+
+  function addElementData(element, depth) {
+
+    // (1) check wether element has already been added
+    var foundElementData = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.find)(elementsData, function(elementsData) {
+      return element === elementsData.element;
+    });
+
+    // (2) add element if not already added
+    if (!foundElementData) {
+      elementsData.push({
+        element: element,
+        depth: depth
+      });
+
+      return;
+    }
+
+    // (3) update depth
+    if (foundElementData.depth < depth) {
+      elementsData = removeElementData(foundElementData, elementsData);
+
+      elementsData.push({
+        element: foundElementData.element,
+        depth: depth
+      });
+    }
+  }
+
+  function removeElementData(elementData, elementsData) {
+    var index = elementsData.indexOf(elementData);
+
+    if (index !== -1) {
+      elementsData.splice(index, 1);
+    }
+
+    return elementsData;
+  }
+
+  // (1) add elements
+  (0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.eachElement)(parents, function(element, _index, depth) {
+
+    // do NOT add external labels directly
+    if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isLabel)(element)) {
+      return;
+    }
+
+    // always copy external labels
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(element.labels, function(label) {
+      addElementData(label, depth);
+    });
+
+    function addRelatedElements(elements) {
+      elements && elements.length && (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(elements, function(element) {
+
+        // add external labels
+        (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(element.labels, function(label) {
+          addElementData(label, depth);
+        });
+
+        addElementData(element, depth);
+      });
+    }
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)([ element.attachers, element.incoming, element.outgoing ], addRelatedElements);
+
+    addElementData(element, depth);
+
+    var children = [];
+
+    if (element.children) {
+      children = element.children.slice();
+    }
+
+    // allow others to add children to tree
+    self._eventBus.fire('copyPaste.createTree', {
+      element: element,
+      children: children
+    });
+
+    return children;
+  });
+
+  elements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.map)(elementsData, function(elementData) {
+    return elementData.element;
+  });
+
+  // (2) copy elements
+  elementsData = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.map)(elementsData, function(elementData) {
+    elementData.descriptor = {};
+
+    self._eventBus.fire('copyPaste.copyElement', {
+      descriptor: elementData.descriptor,
+      element: elementData.element,
+      elements: elements
+    });
+
+    return elementData;
+  });
+
+  // (3) sort elements by priority
+  elementsData = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.sortBy)(elementsData, function(elementData) {
+    return elementData.descriptor.priority;
+  });
+
+  elements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.map)(elementsData, function(elementData) {
+    return elementData.element;
+  });
+
+  // (4) create tree
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(elementsData, function(elementData) {
+    var depth = elementData.depth;
+
+    if (!self.hasRelations(elementData.element, elements)) {
+      removeElement(elementData.element, elements);
+
+      return;
+    }
+
+    if (!canCopy(elementData.element, elements)) {
+      removeElement(elementData.element, elements);
+
+      return;
+    }
+
+    if (!tree[depth]) {
+      tree[depth] = [];
+    }
+
+    tree[depth].push(elementData.descriptor);
+  });
+
+  return tree;
+};
+
+// helpers //////////
+
+function isAttacher(element) {
+  return !!element.host;
+}
+
+function copyWaypoints(element) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.map)(element.waypoints, function(waypoint) {
+
+    waypoint = copyWaypoint(waypoint);
+
+    if (waypoint.original) {
+      waypoint.original = copyWaypoint(waypoint.original);
+    }
+
+    return waypoint;
+  });
+}
+
+function copyWaypoint(waypoint) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, waypoint);
+}
+
+function removeElement(element, elements) {
+  var index = elements.indexOf(element);
+
+  if (index === -1) {
+    return elements;
+  }
+
+  return elements.splice(index, 1);
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/copy-paste/index.js":
+/*!*******************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/copy-paste/index.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _clipboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../clipboard */ "../node_modules/diagram-js/lib/features/clipboard/index.js");
+/* harmony import */ var _create__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../create */ "../node_modules/diagram-js/lib/features/create/index.js");
+/* harmony import */ var _mouse__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../mouse */ "../node_modules/diagram-js/lib/features/mouse/index.js");
+/* harmony import */ var _rules__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../rules */ "../node_modules/diagram-js/lib/features/rules/index.js");
+/* harmony import */ var _CopyPaste__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./CopyPaste */ "../node_modules/diagram-js/lib/features/copy-paste/CopyPaste.js");
+
+
+
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _clipboard__WEBPACK_IMPORTED_MODULE_0__["default"],
+    _create__WEBPACK_IMPORTED_MODULE_1__["default"],
+    _mouse__WEBPACK_IMPORTED_MODULE_2__["default"],
+    _rules__WEBPACK_IMPORTED_MODULE_3__["default"]
+  ],
+  __init__: [ 'copyPaste' ],
+  copyPaste: [ 'type', _CopyPaste__WEBPACK_IMPORTED_MODULE_4__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/create/Create.js":
+/*!****************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/create/Create.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Create)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/ModelUtil */ "../node_modules/diagram-js/lib/util/ModelUtil.js");
+var MARKER_OK = 'drop-ok',
+    MARKER_NOT_OK = 'drop-not-ok',
+    MARKER_ATTACH = 'attach-ok',
+    MARKER_NEW_PARENT = 'new-parent';
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/Types').ElementLike} Element
+ * @typedef {import('../../core/Types').ShapeLike} Shape
+ *
+ * @typedef {import('../../util/Types').Point} Point
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../dragging/Dragging').default} Dragging
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../modeling/Modeling').default} Modeling
+ * @typedef {import('../rules/Rules').default} Rules
+ */
+
+var PREFIX = 'create';
+
+var HIGH_PRIORITY = 2000;
+
+
+/**
+ * Create new elements through drag and drop.
+ *
+ * @param {Canvas} canvas
+ * @param {Dragging} dragging
+ * @param {EventBus} eventBus
+ * @param {Modeling} modeling
+ * @param {Rules} rules
+ */
+function Create(
+    canvas,
+    dragging,
+    eventBus,
+    modeling,
+    rules
+) {
+
+  // rules //////////
+
+  /**
+   * Check wether elements can be created.
+   *
+   * @param {Element[]} elements
+   * @param {Shape} target
+   * @param {Point} position
+   * @param {Element} [source]
+   *
+   * @return {boolean|null|Object}
+   */
+  function canCreate(elements, target, position, source, hints) {
+    if (!target) {
+      return false;
+    }
+
+    // ignore child elements and external labels
+    elements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.filter)(elements, function(element) {
+      var labelTarget = element.labelTarget;
+
+      return !element.parent && !((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isLabel)(element) && elements.indexOf(labelTarget) !== -1);
+    });
+
+    var shape = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.find)(elements, function(element) {
+      return !(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isConnection)(element);
+    });
+
+    var attach = false,
+        connect = false,
+        create = false;
+
+    // (1) attaching single shapes
+    if (isSingleShape(elements)) {
+      attach = rules.allowed('shape.attach', {
+        position: position,
+        shape: shape,
+        target: target
+      });
+    }
+
+    if (!attach) {
+
+      // (2) creating elements
+      if (isSingleShape(elements)) {
+        create = rules.allowed('shape.create', {
+          position: position,
+          shape: shape,
+          source: source,
+          target: target
+        });
+      } else {
+        create = rules.allowed('elements.create', {
+          elements: elements,
+          position: position,
+          target: target
+        });
+      }
+
+    }
+
+    var connectionTarget = hints.connectionTarget;
+
+    // (3) appending single shapes
+    if (create || attach) {
+      if (shape && source) {
+        connect = rules.allowed('connection.create', {
+          source: connectionTarget === source ? shape : source,
+          target: connectionTarget === source ? source : shape,
+          hints: {
+            targetParent: target,
+            targetAttach: attach
+          }
+        });
+      }
+
+      return {
+        attach: attach,
+        connect: connect
+      };
+    }
+
+    // ignore wether or not elements can be created
+    if (create === null || attach === null) {
+      return null;
+    }
+
+    return false;
+  }
+
+  function setMarker(element, marker) {
+    [ MARKER_ATTACH, MARKER_OK, MARKER_NOT_OK, MARKER_NEW_PARENT ].forEach(function(m) {
+
+      if (m === marker) {
+        canvas.addMarker(element, m);
+      } else {
+        canvas.removeMarker(element, m);
+      }
+    });
+  }
+
+  // event handling //////////
+
+  eventBus.on([ 'create.move', 'create.hover' ], function(event) {
+    var context = event.context,
+        elements = context.elements,
+        hover = event.hover,
+        source = context.source,
+        hints = context.hints || {};
+
+    if (!hover) {
+      context.canExecute = false;
+      context.target = null;
+
+      return;
+    }
+
+    ensureConstraints(event);
+
+    var position = {
+      x: event.x,
+      y: event.y
+    };
+
+    var canExecute = context.canExecute = hover && canCreate(elements, hover, position, source, hints);
+
+    if (hover && canExecute !== null) {
+      context.target = hover;
+
+      if (canExecute && canExecute.attach) {
+        setMarker(hover, MARKER_ATTACH);
+      } else {
+        setMarker(hover, canExecute ? MARKER_NEW_PARENT : MARKER_NOT_OK);
+      }
+    }
+  });
+
+  eventBus.on([ 'create.end', 'create.out', 'create.cleanup' ], function(event) {
+    var hover = event.hover;
+
+    if (hover) {
+      setMarker(hover, null);
+    }
+  });
+
+  eventBus.on('create.end', function(event) {
+    var context = event.context,
+        source = context.source,
+        shape = context.shape,
+        elements = context.elements,
+        target = context.target,
+        canExecute = context.canExecute,
+        attach = canExecute && canExecute.attach,
+        connect = canExecute && canExecute.connect,
+        hints = context.hints || {};
+
+    if (canExecute === false || !target) {
+      return false;
+    }
+
+    ensureConstraints(event);
+
+    var position = {
+      x: event.x,
+      y: event.y
+    };
+
+    if (connect) {
+      shape = modeling.appendShape(source, shape, position, target, {
+        attach: attach,
+        connection: connect === true ? {} : connect,
+        connectionTarget: hints.connectionTarget
+      });
+    } else {
+      elements = modeling.createElements(elements, position, target, (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, hints, {
+        attach: attach
+      }));
+
+      // update shape
+      shape = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.find)(elements, function(element) {
+        return !(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isConnection)(element);
+      });
+    }
+
+    // update elements and shape
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(context, {
+      elements: elements,
+      shape: shape
+    });
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(event, {
+      elements: elements,
+      shape: shape
+    });
+  });
+
+  function cancel() {
+    var context = dragging.context();
+
+    if (context && context.prefix === PREFIX) {
+      dragging.cancel();
+    }
+  }
+
+  // cancel on <elements.changed> that is not result of <drag.end>
+  eventBus.on('create.init', function() {
+    eventBus.on('elements.changed', cancel);
+
+    eventBus.once([ 'create.cancel', 'create.end' ], HIGH_PRIORITY, function() {
+      eventBus.off('elements.changed', cancel);
+    });
+  });
+
+  // API //////////
+
+  this.start = function(event, elements, context) {
+    if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(elements)) {
+      elements = [ elements ];
+    }
+
+    var shape = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.find)(elements, function(element) {
+      return !(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isConnection)(element);
+    });
+
+    if (!shape) {
+
+      // at least one shape is required
+      return;
+    }
+
+    context = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({
+      elements: elements,
+      hints: {},
+      shape: shape
+    }, context || {});
+
+    // make sure each element has x and y
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(elements, function(element) {
+      if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(element.x)) {
+        element.x = 0;
+      }
+
+      if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(element.y)) {
+        element.y = 0;
+      }
+    });
+
+    var visibleElements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.filter)(elements, function(element) {
+      return !element.hidden;
+    });
+
+    var bbox = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getBBox)(visibleElements);
+
+    // center elements around cursor
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(elements, function(element) {
+      if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isConnection)(element)) {
+        element.waypoints = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.map)(element.waypoints, function(waypoint) {
+          return {
+            x: waypoint.x - bbox.x - bbox.width / 2,
+            y: waypoint.y - bbox.y - bbox.height / 2
+          };
+        });
+      }
+
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(element, {
+        x: element.x - bbox.x - bbox.width / 2,
+        y: element.y - bbox.y - bbox.height / 2
+      });
+    });
+
+    dragging.init(event, PREFIX, {
+      cursor: 'grabbing',
+      autoActivate: true,
+      data: {
+        shape: shape,
+        elements: elements,
+        context: context
+      }
+    });
+  };
+}
+
+Create.$inject = [
+  'canvas',
+  'dragging',
+  'eventBus',
+  'modeling',
+  'rules'
+];
+
+// helpers //////////
+
+function ensureConstraints(event) {
+  var context = event.context,
+      createConstraints = context.createConstraints;
+
+  if (!createConstraints) {
+    return;
+  }
+
+  if (createConstraints.left) {
+    event.x = Math.max(event.x, createConstraints.left);
+  }
+
+  if (createConstraints.right) {
+    event.x = Math.min(event.x, createConstraints.right);
+  }
+
+  if (createConstraints.top) {
+    event.y = Math.max(event.y, createConstraints.top);
+  }
+
+  if (createConstraints.bottom) {
+    event.y = Math.min(event.y, createConstraints.bottom);
+  }
+}
+
+function isSingleShape(elements) {
+  return elements && elements.length === 1 && !(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isConnection)(elements[ 0 ]);
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/create/CreatePreview.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/create/CreatePreview.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ CreatePreview)
+/* harmony export */ });
+/* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
+/* harmony import */ var _util_GraphicsUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/GraphicsUtil */ "../node_modules/diagram-js/lib/util/GraphicsUtil.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../../core/GraphicsFactory').default} GraphicsFactory
+ * @typedef {import('../preview-support/PreviewSupport').default} PreviewSupport
+ * @typedef {import('../../draw/Styles').default} Styles
+ */
+
+var LOW_PRIORITY = 750;
+
+/**
+ * @param {Canvas} canvas
+ * @param {EventBus} eventBus
+ * @param {GraphicsFactory} graphicsFactory
+ * @param {PreviewSupport} previewSupport
+ * @param {Styles} styles
+ */
+function CreatePreview(
+    canvas,
+    eventBus,
+    graphicsFactory,
+    previewSupport,
+    styles
+) {
+  function createDragGroup(elements) {
+    var dragGroup = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.create)('g');
+
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(dragGroup, styles.cls('djs-drag-group', [ 'no-events' ]));
+
+    var childrenGfx = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.create)('g');
+
+    elements.forEach(function(element) {
+
+      // create graphics
+      var gfx;
+
+      if (element.hidden) {
+        return;
+      }
+
+      if (element.waypoints) {
+        gfx = graphicsFactory._createContainer('connection', childrenGfx);
+
+        graphicsFactory.drawConnection((0,_util_GraphicsUtil__WEBPACK_IMPORTED_MODULE_1__.getVisual)(gfx), element);
+      } else {
+        gfx = graphicsFactory._createContainer('shape', childrenGfx);
+
+        graphicsFactory.drawShape((0,_util_GraphicsUtil__WEBPACK_IMPORTED_MODULE_1__.getVisual)(gfx), element);
+
+        (0,_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_2__.translate)(gfx, element.x, element.y);
+      }
+
+      // add preview
+      previewSupport.addDragger(element, dragGroup, gfx);
+    });
+
+    return dragGroup;
+  }
+
+  eventBus.on('create.move', LOW_PRIORITY, function(event) {
+
+    var hover = event.hover,
+        context = event.context,
+        elements = context.elements,
+        dragGroup = context.dragGroup;
+
+    // lazily create previews
+    if (!dragGroup) {
+      dragGroup = context.dragGroup = createDragGroup(elements);
+    }
+
+    var activeLayer;
+
+    if (hover) {
+      if (!dragGroup.parentNode) {
+        activeLayer = canvas.getActiveLayer();
+
+        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.append)(activeLayer, dragGroup);
+      }
+
+      (0,_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_2__.translate)(dragGroup, event.x, event.y);
+    } else {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.remove)(dragGroup);
+    }
+  });
+
+  eventBus.on('create.cleanup', function(event) {
+    var context = event.context,
+        dragGroup = context.dragGroup;
+
+    if (dragGroup) {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.remove)(dragGroup);
+    }
+  });
+}
+
+CreatePreview.$inject = [
+  'canvas',
+  'eventBus',
+  'graphicsFactory',
+  'previewSupport',
+  'styles'
+];
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/create/index.js":
+/*!***************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/create/index.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _dragging__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../dragging */ "../node_modules/diagram-js/lib/features/dragging/index.js");
+/* harmony import */ var _preview_support__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../preview-support */ "../node_modules/diagram-js/lib/features/preview-support/index.js");
+/* harmony import */ var _rules__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../rules */ "../node_modules/diagram-js/lib/features/rules/index.js");
+/* harmony import */ var _selection__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../selection */ "../node_modules/diagram-js/lib/features/selection/index.js");
+/* harmony import */ var _Create__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Create */ "../node_modules/diagram-js/lib/features/create/Create.js");
+/* harmony import */ var _CreatePreview__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./CreatePreview */ "../node_modules/diagram-js/lib/features/create/CreatePreview.js");
+
+
+
+
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _dragging__WEBPACK_IMPORTED_MODULE_0__["default"],
+    _preview_support__WEBPACK_IMPORTED_MODULE_1__["default"],
+    _rules__WEBPACK_IMPORTED_MODULE_2__["default"],
+    _selection__WEBPACK_IMPORTED_MODULE_3__["default"]
+  ],
+  __init__: [
+    'create',
+    'createPreview'
+  ],
+  create: [ 'type', _Create__WEBPACK_IMPORTED_MODULE_4__["default"] ],
+  createPreview: [ 'type', _CreatePreview__WEBPACK_IMPORTED_MODULE_5__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/dragging/Dragging.js":
+/*!********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/dragging/Dragging.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Dragging)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var _util_Event__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/Event */ "../node_modules/diagram-js/lib/util/Event.js");
+/* harmony import */ var _util_Cursor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Cursor */ "../node_modules/diagram-js/lib/util/Cursor.js");
+/* harmony import */ var _util_ClickTrap__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../util/ClickTrap */ "../node_modules/diagram-js/lib/util/ClickTrap.js");
+/* harmony import */ var _util_PositionUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/PositionUtil */ "../node_modules/diagram-js/lib/util/PositionUtil.js");
+/* harmony import */ var _keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../keyboard/KeyboardUtil */ "../node_modules/diagram-js/lib/features/keyboard/KeyboardUtil.js");
+var round = Math.round;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../util/Types').Point} Point
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../selection/Selection').default} Selection
+ */
+
+var DRAG_ACTIVE_CLS = 'djs-drag-active';
+
+
+function preventDefault(event) {
+  event.preventDefault();
+}
+
+function isTouchEvent(event) {
+
+  // check for TouchEvent being available first
+  // (i.e. not available on desktop Firefox)
+  return typeof TouchEvent !== 'undefined' && event instanceof TouchEvent;
+}
+
+function getLength(point) {
+  return Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.y, 2));
+}
+
+/**
+ * A helper that fires canvas localized drag events and realizes
+ * the general "drag-and-drop" look and feel.
+ *
+ * Calling {@link Dragging#activate} activates dragging on a canvas.
+ *
+ * It provides the following:
+ *
+ *   * emits life cycle events, namespaced with a prefix assigned
+ *     during dragging activation
+ *   * sets and restores the cursor
+ *   * sets and restores the selection if elements still exist
+ *   * ensures there can be only one drag operation active at a time
+ *
+ * Dragging may be canceled manually by calling {@link Dragging#cancel}
+ * or by pressing ESC.
+ *
+ *
+ * ## Life-cycle events
+ *
+ * Dragging can be in three different states, off, initialized
+ * and active.
+ *
+ * (1) off: no dragging operation is in progress
+ * (2) initialized: a new drag operation got initialized but not yet
+ *                  started (i.e. because of no initial move)
+ * (3) started: dragging is in progress
+ *
+ * Eventually dragging will be off again after a drag operation has
+ * been ended or canceled via user click or ESC key press.
+ *
+ * To indicate transitions between these states dragging emits generic
+ * life-cycle events with the `drag.` prefix _and_ events namespaced
+ * to a prefix choosen by a user during drag initialization.
+ *
+ * The following events are emitted (appropriately prefixed) via
+ * the {@link EventBus}.
+ *
+ * * `init`
+ * * `start`
+ * * `move`
+ * * `end`
+ * * `ended` (dragging already in off state)
+ * * `cancel` (only if previously started)
+ * * `canceled` (dragging already in off state, only if previously started)
+ * * `cleanup`
+ *
+ *
+ * @example
+ *
+ * ```javascript
+ * function MyDragComponent(eventBus, dragging) {
+ *
+ *   eventBus.on('mydrag.start', function(event) {
+ *     console.log('yes, we start dragging');
+ *   });
+ *
+ *   eventBus.on('mydrag.move', function(event) {
+ *     console.log('canvas local coordinates', event.x, event.y, event.dx, event.dy);
+ *
+ *     // local drag data is passed with the event
+ *     event.context.foo; // "BAR"
+ *
+ *     // the original mouse event, too
+ *     event.originalEvent; // MouseEvent(...)
+ *   });
+ *
+ *   eventBus.on('element.click', function(event) {
+ *     dragging.init(event, 'mydrag', {
+ *       cursor: 'grabbing',
+ *       data: {
+ *         context: {
+ *           foo: "BAR"
+ *         }
+ *       }
+ *     });
+ *   });
+ * }
+ * ```
+ *
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ * @param {Selection} selection
+ * @param {ElementRegistry} elementRegistry
+ */
+function Dragging(eventBus, canvas, selection, elementRegistry) {
+
+  var defaultOptions = {
+    threshold: 5,
+    trapClick: true
+  };
+
+  // the currently active drag operation
+  // dragging is active as soon as this context exists.
+  //
+  // it is visually _active_ only when a context.active flag is set to true.
+  var context;
+
+  /* convert a global event into local coordinates */
+  function toLocalPoint(globalPosition) {
+
+    var viewbox = canvas.viewbox();
+
+    var clientRect = canvas._container.getBoundingClientRect();
+
+    return {
+      x: viewbox.x + (globalPosition.x - clientRect.left) / viewbox.scale,
+      y: viewbox.y + (globalPosition.y - clientRect.top) / viewbox.scale
+    };
+  }
+
+  // helpers
+
+  function fire(type, dragContext) {
+    dragContext = dragContext || context;
+
+    var event = eventBus.createEvent(
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(
+        {},
+        dragContext.payload,
+        dragContext.data,
+        { isTouch: dragContext.isTouch }
+      )
+    );
+
+    // default integration
+    if (eventBus.fire('drag.' + type, event) === false) {
+      return false;
+    }
+
+    return eventBus.fire(dragContext.prefix + '.' + type, event);
+  }
+
+  function restoreSelection(previousSelection) {
+    var existingSelection = previousSelection.filter(function(element) {
+      return elementRegistry.get(element.id);
+    });
+
+    existingSelection.length && selection.select(existingSelection);
+  }
+
+  // event listeners
+
+  function move(event, activate) {
+    var payload = context.payload,
+        displacement = context.displacement;
+
+    var globalStart = context.globalStart,
+        globalCurrent = (0,_util_Event__WEBPACK_IMPORTED_MODULE_1__.toPoint)(event),
+        globalDelta = (0,_util_PositionUtil__WEBPACK_IMPORTED_MODULE_2__.delta)(globalCurrent, globalStart);
+
+    var localStart = context.localStart,
+        localCurrent = toLocalPoint(globalCurrent),
+        localDelta = (0,_util_PositionUtil__WEBPACK_IMPORTED_MODULE_2__.delta)(localCurrent, localStart);
+
+
+    // activate context explicitly or once threshold is reached
+    if (!context.active && (activate || getLength(globalDelta) > context.threshold)) {
+
+      // fire start event with original
+      // starting coordinates
+
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(payload, {
+        x: round(localStart.x + displacement.x),
+        y: round(localStart.y + displacement.y),
+        dx: 0,
+        dy: 0
+      }, { originalEvent: event });
+
+      if (false === fire('start')) {
+        return cancel();
+      }
+
+      context.active = true;
+
+      // unset selection and remember old selection
+      // the previous (old) selection will always passed
+      // with the event via the event.previousSelection property
+      if (!context.keepSelection) {
+        payload.previousSelection = selection.get();
+        selection.select(null);
+      }
+
+      // allow custom cursor
+      if (context.cursor) {
+        (0,_util_Cursor__WEBPACK_IMPORTED_MODULE_3__.set)(context.cursor);
+      }
+
+      // indicate dragging via marker on root element
+      canvas.addMarker(canvas.getRootElement(), DRAG_ACTIVE_CLS);
+    }
+
+    (0,_util_Event__WEBPACK_IMPORTED_MODULE_1__.stopPropagation)(event);
+
+    if (context.active) {
+
+      // update payload with actual coordinates
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(payload, {
+        x: round(localCurrent.x + displacement.x),
+        y: round(localCurrent.y + displacement.y),
+        dx: round(localDelta.x),
+        dy: round(localDelta.y)
+      }, { originalEvent: event });
+
+      // emit move event
+      fire('move');
+    }
+  }
+
+  function end(event) {
+    var previousContext,
+        returnValue = true;
+
+    if (context.active) {
+
+      if (event) {
+        context.payload.originalEvent = event;
+
+        // suppress original event (click, ...)
+        // because we just ended a drag operation
+        (0,_util_Event__WEBPACK_IMPORTED_MODULE_1__.stopPropagation)(event);
+      }
+
+      // implementations may stop restoring the
+      // original state (selections, ...) by preventing the
+      // end events default action
+      returnValue = fire('end');
+    }
+
+    if (returnValue === false) {
+      fire('rejected');
+    }
+
+    previousContext = cleanup(returnValue !== true);
+
+    // last event to be fired when all drag operations are done
+    // at this point in time no drag operation is in progress anymore
+    fire('ended', previousContext);
+  }
+
+
+  // cancel active drag operation if the user presses
+  // the ESC key on the keyboard
+
+  function checkCancel(event) {
+
+    if ((0,_keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_4__.isKey)('Escape', event)) {
+      preventDefault(event);
+
+      cancel();
+    }
+  }
+
+
+  // prevent ghost click that might occur after a finished
+  // drag and drop session
+
+  function trapClickAndEnd(event) {
+
+    var untrap;
+
+    // trap the click in case we are part of an active
+    // drag operation. This will effectively prevent
+    // the ghost click that cannot be canceled otherwise.
+    if (context.active) {
+
+      untrap = (0,_util_ClickTrap__WEBPACK_IMPORTED_MODULE_5__.install)(eventBus);
+
+      // remove trap after minimal delay
+      setTimeout(untrap, 400);
+
+      // prevent default action (click)
+      preventDefault(event);
+    }
+
+    end(event);
+  }
+
+  function trapTouch(event) {
+    move(event);
+  }
+
+  // update the drag events model element (`hover`) and graphical element (`hoverGfx`)
+  // properties during hover and out and fire {prefix}.hover and {prefix}.out properties
+  // respectively
+
+  function hover(event) {
+    var payload = context.payload;
+
+    payload.hoverGfx = event.gfx;
+    payload.hover = event.element;
+
+    fire('hover');
+  }
+
+  function out(event) {
+    fire('out');
+
+    var payload = context.payload;
+
+    payload.hoverGfx = null;
+    payload.hover = null;
+  }
+
+
+  // life-cycle methods
+
+  function cancel(restore) {
+    var previousContext;
+
+    if (!context) {
+      return;
+    }
+
+    var wasActive = context.active;
+
+    if (wasActive) {
+      fire('cancel');
+    }
+
+    previousContext = cleanup(restore);
+
+    if (wasActive) {
+
+      // last event to be fired when all drag operations are done
+      // at this point in time no drag operation is in progress anymore
+      fire('canceled', previousContext);
+    }
+  }
+
+  function cleanup(restore) {
+    var previousContext,
+        endDrag;
+
+    fire('cleanup');
+
+    // reset cursor
+    (0,_util_Cursor__WEBPACK_IMPORTED_MODULE_3__.unset)();
+
+    if (context.trapClick) {
+      endDrag = trapClickAndEnd;
+    } else {
+      endDrag = end;
+    }
+
+    // reset dom listeners
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'mousemove', move);
+
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'dragstart', preventDefault);
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'selectstart', preventDefault);
+
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'mousedown', endDrag, true);
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'mouseup', endDrag, true);
+
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'keyup', checkCancel);
+
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'touchstart', trapTouch, true);
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'touchcancel', cancel, true);
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'touchmove', move, true);
+    min_dom__WEBPACK_IMPORTED_MODULE_6__.event.unbind(document, 'touchend', end, true);
+
+    eventBus.off('element.hover', hover);
+    eventBus.off('element.out', out);
+
+    // remove drag marker on root element
+    canvas.removeMarker(canvas.getRootElement(), DRAG_ACTIVE_CLS);
+
+    // restore selection, unless it has changed
+    var previousSelection = context.payload.previousSelection;
+
+    if (restore !== false && previousSelection && !selection.get().length) {
+      restoreSelection(previousSelection);
+    }
+
+    previousContext = context;
+
+    context = null;
+
+    return previousContext;
+  }
+
+  /**
+   * Initialize a drag operation.
+   *
+   * If `localPosition` is given, drag events will be emitted
+   * relative to it.
+   *
+   * @param {MouseEvent|TouchEvent} [event]
+   * @param {Point} [relativeTo] actual diagram local position this drag operation should start at
+   * @param {string} prefix
+   * @param {Object} [options]
+   */
+  function init(event, relativeTo, prefix, options) {
+
+    // only one drag operation may be active, at a time
+    if (context) {
+      cancel(false);
+    }
+
+    if (typeof relativeTo === 'string') {
+      options = prefix;
+      prefix = relativeTo;
+      relativeTo = null;
+    }
+
+    options = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, defaultOptions, options || {});
+
+    var data = options.data || {},
+        originalEvent,
+        globalStart,
+        localStart,
+        endDrag,
+        isTouch;
+
+    if (options.trapClick) {
+      endDrag = trapClickAndEnd;
+    } else {
+      endDrag = end;
+    }
+
+    if (event) {
+      originalEvent = (0,_util_Event__WEBPACK_IMPORTED_MODULE_1__.getOriginal)(event) || event;
+      globalStart = (0,_util_Event__WEBPACK_IMPORTED_MODULE_1__.toPoint)(event);
+
+      (0,_util_Event__WEBPACK_IMPORTED_MODULE_1__.stopPropagation)(event);
+
+      // prevent default browser dragging behavior
+      if (originalEvent.type === 'dragstart') {
+        preventDefault(originalEvent);
+      }
+    } else {
+      originalEvent = null;
+      globalStart = { x: 0, y: 0 };
+    }
+
+    localStart = toLocalPoint(globalStart);
+
+    if (!relativeTo) {
+      relativeTo = localStart;
+    }
+
+    isTouch = isTouchEvent(originalEvent);
+
+    context = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({
+      prefix: prefix,
+      data: data,
+      payload: {},
+      globalStart: globalStart,
+      displacement: (0,_util_PositionUtil__WEBPACK_IMPORTED_MODULE_2__.delta)(relativeTo, localStart),
+      localStart: localStart,
+      isTouch: isTouch
+    }, options);
+
+    // skip dom registration if trigger
+    // is set to manual (during testing)
+    if (!options.manual) {
+
+      // add dom listeners
+
+      if (isTouch) {
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'touchstart', trapTouch, true);
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'touchcancel', cancel, true);
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'touchmove', move, true);
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'touchend', end, true);
+      } else {
+
+        // assume we use the mouse to interact per default
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'mousemove', move);
+
+        // prevent default browser drag and text selection behavior
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'dragstart', preventDefault);
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'selectstart', preventDefault);
+
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'mousedown', endDrag, true);
+        min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'mouseup', endDrag, true);
+      }
+
+      min_dom__WEBPACK_IMPORTED_MODULE_6__.event.bind(document, 'keyup', checkCancel);
+
+      eventBus.on('element.hover', hover);
+      eventBus.on('element.out', out);
+    }
+
+    fire('init');
+
+    if (options.autoActivate) {
+      move(event, true);
+    }
+  }
+
+  // cancel on diagram destruction
+  eventBus.on('diagram.destroy', cancel);
+
+
+  // API
+
+  this.init = init;
+  this.move = move;
+  this.hover = hover;
+  this.out = out;
+  this.end = end;
+
+  this.cancel = cancel;
+
+  // for introspection
+
+  this.context = function() {
+    return context;
+  };
+
+  this.setOptions = function(options) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(defaultOptions, options);
+  };
+}
+
+Dragging.$inject = [
+  'eventBus',
+  'canvas',
+  'selection',
+  'elementRegistry'
+];
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/dragging/index.js":
+/*!*****************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/dragging/index.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _hover_fix__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../hover-fix */ "../node_modules/diagram-js/lib/features/hover-fix/index.js");
+/* harmony import */ var _selection__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../selection */ "../node_modules/diagram-js/lib/features/selection/index.js");
+/* harmony import */ var _Dragging__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Dragging */ "../node_modules/diagram-js/lib/features/dragging/Dragging.js");
+
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _hover_fix__WEBPACK_IMPORTED_MODULE_0__["default"],
+    _selection__WEBPACK_IMPORTED_MODULE_1__["default"],
+  ],
+  dragging: [ 'type', _Dragging__WEBPACK_IMPORTED_MODULE_2__["default"] ],
+});
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/editor-actions/EditorActions.js":
+/*!*******************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/editor-actions/EditorActions.js ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ EditorActions)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * @typedef {import('didi').Injector} Injector
+ *
+ * @typedef {import('../../core/EventBus').default} EventBus
+ */
+
+var NOT_REGISTERED_ERROR = 'is not a registered action',
+    IS_REGISTERED_ERROR = 'is already registered';
+
+
+/**
+ * An interface that provides access to modeling actions by decoupling
+ * the one who requests the action to be triggered and the trigger itself.
+ *
+ * It's possible to add new actions by registering them with ´registerAction´
+ * and likewise unregister existing ones with ´unregisterAction´.
+ *
+ *
+ * ## Life-Cycle and configuration
+ *
+ * The editor actions will wait for diagram initialization before
+ * registering default actions _and_ firing an `editorActions.init` event.
+ *
+ * Interested parties may listen to the `editorActions.init` event with
+ * low priority to check, which actions got registered. Other components
+ * may use the event to register their own actions via `registerAction`.
+ *
+ * @param {EventBus} eventBus
+ * @param {Injector} injector
+ */
+function EditorActions(eventBus, injector) {
+
+  // initialize actions
+  this._actions = {};
+
+  var self = this;
+
+  eventBus.on('diagram.init', function() {
+
+    // all diagram modules got loaded; check which ones
+    // are available and register the respective default actions
+    self._registerDefaultActions(injector);
+
+    // ask interested parties to register available editor
+    // actions on diagram initialization
+    eventBus.fire('editorActions.init', {
+      editorActions: self
+    });
+  });
+
+}
+
+EditorActions.$inject = [
+  'eventBus',
+  'injector'
+];
+
+/**
+ * Register default actions.
+ *
+ * @param {Injector} injector
+ */
+EditorActions.prototype._registerDefaultActions = function(injector) {
+
+  // (1) retrieve optional components to integrate with
+
+  var commandStack = injector.get('commandStack', false);
+  var modeling = injector.get('modeling', false);
+  var selection = injector.get('selection', false);
+  var zoomScroll = injector.get('zoomScroll', false);
+  var copyPaste = injector.get('copyPaste', false);
+  var canvas = injector.get('canvas', false);
+  var rules = injector.get('rules', false);
+  var keyboardMove = injector.get('keyboardMove', false);
+  var keyboardMoveSelection = injector.get('keyboardMoveSelection', false);
+
+  // (2) check components and register actions
+
+  if (commandStack) {
+    this.register('undo', function() {
+      commandStack.undo();
+    });
+
+    this.register('redo', function() {
+      commandStack.redo();
+    });
+  }
+
+  if (copyPaste && selection) {
+    this.register('copy', function() {
+      var selectedElements = selection.get();
+
+      if (selectedElements.length) {
+        return copyPaste.copy(selectedElements);
+      }
+    });
+  }
+
+  if (copyPaste) {
+    this.register('paste', function() {
+      copyPaste.paste();
+    });
+  }
+
+  if (zoomScroll) {
+    this.register('stepZoom', function(opts) {
+      zoomScroll.stepZoom(opts.value);
+    });
+  }
+
+  if (canvas) {
+    this.register('zoom', function(opts) {
+      canvas.zoom(opts.value);
+    });
+  }
+
+  if (modeling && selection && rules) {
+    this.register('removeSelection', function() {
+
+      var selectedElements = selection.get();
+
+      if (!selectedElements.length) {
+        return;
+      }
+
+      var allowed = rules.allowed('elements.delete', { elements: selectedElements }),
+          removableElements;
+
+      if (allowed === false) {
+        return;
+      }
+      else if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(allowed)) {
+        removableElements = allowed;
+      }
+      else {
+        removableElements = selectedElements;
+      }
+
+      if (removableElements.length) {
+        modeling.removeElements(removableElements.slice());
+      }
+    });
+  }
+
+  if (keyboardMove) {
+    this.register('moveCanvas', function(opts) {
+      keyboardMove.moveCanvas(opts);
+    });
+  }
+
+  if (keyboardMoveSelection) {
+    this.register('moveSelection', function(opts) {
+      keyboardMoveSelection.moveSelection(opts.direction, opts.accelerated);
+    });
+  }
+
+};
+
+
+/**
+ * Triggers a registered action
+ *
+ * @param {string} action
+ * @param {Object} opts
+ *
+ * @return {unknown} Returns what the registered listener returns
+ */
+EditorActions.prototype.trigger = function(action, opts) {
+  if (!this._actions[action]) {
+    throw error(action, NOT_REGISTERED_ERROR);
+  }
+
+  return this._actions[action](opts);
+};
+
+
+/**
+ * Registers a collections of actions.
+ * The key of the object will be the name of the action.
+ *
+ * @example
+ *
+ * ```javascript
+ * var actions = {
+ *   spaceTool: function() {
+ *     spaceTool.activateSelection();
+ *   },
+ *   lassoTool: function() {
+ *     lassoTool.activateSelection();
+ *   }
+ * ];
+ *
+ * editorActions.register(actions);
+ *
+ * editorActions.isRegistered('spaceTool'); // true
+ * ```
+ *
+ * @param {Object} actions
+ */
+EditorActions.prototype.register = function(actions, listener) {
+  var self = this;
+
+  if (typeof actions === 'string') {
+    return this._registerAction(actions, listener);
+  }
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(actions, function(listener, action) {
+    self._registerAction(action, listener);
+  });
+};
+
+/**
+ * Registers a listener to an action key
+ *
+ * @param {string} action
+ * @param {Function} listener
+ */
+EditorActions.prototype._registerAction = function(action, listener) {
+  if (this.isRegistered(action)) {
+    throw error(action, IS_REGISTERED_ERROR);
+  }
+
+  this._actions[action] = listener;
+};
+
+/**
+ * Unregister an existing action
+ *
+ * @param {string} action
+ */
+EditorActions.prototype.unregister = function(action) {
+  if (!this.isRegistered(action)) {
+    throw error(action, NOT_REGISTERED_ERROR);
+  }
+
+  this._actions[action] = undefined;
+};
+
+/**
+ * Returns the number of actions that are currently registered
+ *
+ * @return {number}
+ */
+EditorActions.prototype.getActions = function() {
+  return Object.keys(this._actions);
+};
+
+/**
+ * Checks wether the given action is registered
+ *
+ * @param {string} action
+ *
+ * @return {boolean}
+ */
+EditorActions.prototype.isRegistered = function(action) {
+  return !!this._actions[action];
+};
+
+
+function error(action, message) {
+  return new Error(action + ' ' + message);
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/editor-actions/index.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/editor-actions/index.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _EditorActions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./EditorActions */ "../node_modules/diagram-js/lib/features/editor-actions/EditorActions.js");
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [ 'editorActions' ],
+  editorActions: [ 'type', _EditorActions__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/global-connect/GlobalConnect.js":
+/*!*******************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/global-connect/GlobalConnect.js ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ GlobalConnect)
+/* harmony export */ });
+var MARKER_OK = 'connect-ok',
+    MARKER_NOT_OK = 'connect-not-ok';
+
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../connect/Connect').default} Connect
+ * @typedef {import('../dragging/Dragging').default} Dragging
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../mouse/Mouse').default} Mouse
+ * @typedef {import('../rules/Rules').default} Rules
+ * @typedef {import('../tool-manager/ToolManager').default} ToolManager
+ *
+ * @typedef {import('../../model/Types').Element} Element
+ */
+
+/**
+ * @class
+ * @constructor
+ *
+ * @param {EventBus} eventBus
+ * @param {Dragging} dragging
+ * @param {Connect} connect
+ * @param {Canvas} canvas
+ * @param {ToolManager} toolManager
+ * @param {Rules} rules
+ * @param {Mouse} mouse
+ */
+function GlobalConnect(
+    eventBus, dragging, connect,
+    canvas, toolManager, rules,
+    mouse) {
+
+  var self = this;
+
+  this._dragging = dragging;
+  this._rules = rules;
+  this._mouse = mouse;
+
+  toolManager.registerTool('global-connect', {
+    tool: 'global-connect',
+    dragging: 'global-connect.drag'
+  });
+
+  eventBus.on('global-connect.hover', function(event) {
+    var context = event.context,
+        startTarget = event.hover;
+
+    var canStartConnect = context.canStartConnect = self.canStartConnect(startTarget);
+
+    // simply ignore hover
+    if (canStartConnect === null) {
+      return;
+    }
+
+    context.startTarget = startTarget;
+
+    canvas.addMarker(startTarget, canStartConnect ? MARKER_OK : MARKER_NOT_OK);
+  });
+
+
+  eventBus.on([ 'global-connect.out', 'global-connect.cleanup' ], function(event) {
+    var startTarget = event.context.startTarget,
+        canStartConnect = event.context.canStartConnect;
+
+    if (startTarget) {
+      canvas.removeMarker(startTarget, canStartConnect ? MARKER_OK : MARKER_NOT_OK);
+    }
+  });
+
+
+  eventBus.on([ 'global-connect.ended' ], function(event) {
+    var context = event.context,
+        startTarget = context.startTarget,
+        startPosition = {
+          x: event.x,
+          y: event.y
+        };
+
+    var canStartConnect = self.canStartConnect(startTarget);
+
+    if (!canStartConnect) {
+      return;
+    }
+
+    eventBus.once('element.out', function() {
+      eventBus.once([ 'connect.ended', 'connect.canceled' ], function() {
+        eventBus.fire('global-connect.drag.ended');
+      });
+
+      connect.start(null, startTarget, startPosition);
+    });
+
+    return false;
+  });
+}
+
+GlobalConnect.$inject = [
+  'eventBus',
+  'dragging',
+  'connect',
+  'canvas',
+  'toolManager',
+  'rules',
+  'mouse'
+];
+
+/**
+ * Initiates tool activity.
+ */
+GlobalConnect.prototype.start = function(event, autoActivate) {
+  this._dragging.init(event, 'global-connect', {
+    autoActivate: autoActivate,
+    trapClick: false,
+    data: {
+      context: {}
+    }
+  });
+};
+
+GlobalConnect.prototype.toggle = function() {
+
+  if (this.isActive()) {
+    return this._dragging.cancel();
+  }
+
+  var mouseEvent = this._mouse.getLastMoveEvent();
+
+  return this.start(mouseEvent, !!mouseEvent);
+};
+
+GlobalConnect.prototype.isActive = function() {
+  var context = this._dragging.context();
+
+  return context && /^global-connect/.test(context.prefix);
+};
+
+/**
+ * Check if source element can initiate connection.
+ *
+ * @param {Element} startTarget
+ * @return {boolean}
+ */
+GlobalConnect.prototype.canStartConnect = function(startTarget) {
+  return this._rules.allowed('connection.start', { source: startTarget });
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/global-connect/index.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/global-connect/index.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _connect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../connect */ "../node_modules/diagram-js/lib/features/connect/index.js");
+/* harmony import */ var _rules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../rules */ "../node_modules/diagram-js/lib/features/rules/index.js");
+/* harmony import */ var _dragging__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../dragging */ "../node_modules/diagram-js/lib/features/dragging/index.js");
+/* harmony import */ var _tool_manager__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../tool-manager */ "../node_modules/diagram-js/lib/features/tool-manager/index.js");
+/* harmony import */ var _mouse__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../mouse */ "../node_modules/diagram-js/lib/features/mouse/index.js");
+/* harmony import */ var _GlobalConnect__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./GlobalConnect */ "../node_modules/diagram-js/lib/features/global-connect/GlobalConnect.js");
+
+
+
+
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _connect__WEBPACK_IMPORTED_MODULE_0__["default"],
+    _rules__WEBPACK_IMPORTED_MODULE_1__["default"],
+    _dragging__WEBPACK_IMPORTED_MODULE_2__["default"],
+    _tool_manager__WEBPACK_IMPORTED_MODULE_3__["default"],
+    _mouse__WEBPACK_IMPORTED_MODULE_4__["default"]
+  ],
+  globalConnect: [ 'type', _GlobalConnect__WEBPACK_IMPORTED_MODULE_5__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/grid-snapping/GridSnapping.js":
+/*!*****************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/grid-snapping/GridSnapping.js ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ GridSnapping)
+/* harmony export */ });
+/* harmony import */ var _snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../snapping/SnapUtil */ "../node_modules/diagram-js/lib/features/snapping/SnapUtil.js");
+/* harmony import */ var _keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../keyboard/KeyboardUtil */ "../node_modules/diagram-js/lib/features/keyboard/KeyboardUtil.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _GridUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./GridUtil */ "../node_modules/diagram-js/lib/features/grid-snapping/GridUtil.js");
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('../../core/EventBus').default} EventBus
+ */
+
+var LOWER_PRIORITY = 1200;
+var LOW_PRIORITY = 800;
+
+/**
+ * Basic grid snapping that covers connecting, creating, moving, resizing shapes, moving bendpoints
+ * and connection segments.
+ *
+ * @param {ElementRegistry} elementRegistry
+ * @param {EventBus} eventBus
+ * @param {Object} config
+ */
+function GridSnapping(elementRegistry, eventBus, config) {
+
+  var active = !config || config.active !== false;
+
+  this._eventBus = eventBus;
+
+  var self = this;
+
+  eventBus.on('diagram.init', LOW_PRIORITY, function() {
+    self.setActive(active);
+  });
+
+  eventBus.on([
+    'create.move',
+    'create.end',
+    'bendpoint.move.move',
+    'bendpoint.move.end',
+    'connect.move',
+    'connect.end',
+    'connectionSegment.move.move',
+    'connectionSegment.move.end',
+    'resize.move',
+    'resize.end',
+    'shape.move.move',
+    'shape.move.end'
+  ], LOWER_PRIORITY, function(event) {
+    var originalEvent = event.originalEvent;
+
+    if (!self.active || (originalEvent && (0,_keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isCmd)(originalEvent))) {
+      return;
+    }
+
+    var context = event.context,
+        gridSnappingContext = context.gridSnappingContext;
+
+    if (!gridSnappingContext) {
+      gridSnappingContext = context.gridSnappingContext = {};
+    }
+
+    [ 'x', 'y' ].forEach(function(axis) {
+      var options = {};
+
+      // allow snapping with offset
+      var snapOffset = getSnapOffset(event, axis, elementRegistry);
+
+      if (snapOffset) {
+        options.offset = snapOffset;
+      }
+
+      // allow snapping with min and max
+      var snapConstraints = getSnapConstraints(event, axis);
+
+      if (snapConstraints) {
+        (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(options, snapConstraints);
+      }
+
+      if (!(0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__.isSnapped)(event, axis)) {
+        self.snapEvent(event, axis, options);
+      }
+    });
+  });
+}
+
+/**
+ * Snap an events x or y with optional min, max and offset.
+ *
+ * @param {Object} event
+ * @param {string} axis
+ * @param {number} [options.min]
+ * @param {number} [options.max]
+ * @param {number} [options.offset]
+ */
+GridSnapping.prototype.snapEvent = function(event, axis, options) {
+  var snappedValue = this.snapValue(event[ axis ], options);
+
+  (0,_snapping_SnapUtil__WEBPACK_IMPORTED_MODULE_2__.setSnapped)(event, axis, snappedValue);
+};
+
+/**
+ * Expose grid spacing for third parties (i.e. extensions).
+ *
+ * @return {number} spacing of grid dots
+ */
+GridSnapping.prototype.getGridSpacing = function() {
+  return _GridUtil__WEBPACK_IMPORTED_MODULE_3__.SPACING;
+};
+
+/**
+ * Snap value with optional min, max and offset.
+ *
+ * @param {number} value
+ * @param {Object} options
+ * @param {number} [options.min]
+ * @param {number} [options.max]
+ * @param {number} [options.offset]
+ */
+GridSnapping.prototype.snapValue = function(value, options) {
+  var offset = 0;
+
+  if (options && options.offset) {
+    offset = options.offset;
+  }
+
+  value += offset;
+
+  value = (0,_GridUtil__WEBPACK_IMPORTED_MODULE_3__.quantize)(value, _GridUtil__WEBPACK_IMPORTED_MODULE_3__.SPACING);
+
+  var min, max;
+
+  if (options && options.min) {
+    min = options.min;
+
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isNumber)(min)) {
+      min = (0,_GridUtil__WEBPACK_IMPORTED_MODULE_3__.quantize)(min + offset, _GridUtil__WEBPACK_IMPORTED_MODULE_3__.SPACING, 'ceil');
+
+      value = Math.max(value, min);
+    }
+  }
+
+  if (options && options.max) {
+    max = options.max;
+
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isNumber)(max)) {
+      max = (0,_GridUtil__WEBPACK_IMPORTED_MODULE_3__.quantize)(max + offset, _GridUtil__WEBPACK_IMPORTED_MODULE_3__.SPACING, 'floor');
+
+      value = Math.min(value, max);
+    }
+  }
+
+  value -= offset;
+
+  return value;
+};
+
+GridSnapping.prototype.isActive = function() {
+  return this.active;
+};
+
+GridSnapping.prototype.setActive = function(active) {
+  this.active = active;
+
+  this._eventBus.fire('gridSnapping.toggle', { active: active });
+};
+
+GridSnapping.prototype.toggleActive = function() {
+  this.setActive(!this.active);
+};
+
+GridSnapping.$inject = [
+  'elementRegistry',
+  'eventBus',
+  'config.gridSnapping'
+];
+
+// helpers //////////
+
+/**
+ * Get minimum and maximum snap constraints.
+ * Constraints are cached.
+ *
+ * @param {Object} event
+ * @param {Object} event.context
+ * @param {string} axis
+ *
+ * @return {boolean|Object}
+ */
+function getSnapConstraints(event, axis) {
+  var context = event.context,
+      createConstraints = context.createConstraints,
+      resizeConstraints = context.resizeConstraints || {},
+      gridSnappingContext = context.gridSnappingContext,
+      snapConstraints = gridSnappingContext.snapConstraints;
+
+  // cache snap constraints
+  if (snapConstraints && snapConstraints[ axis ]) {
+    return snapConstraints[ axis ];
+  }
+
+  if (!snapConstraints) {
+    snapConstraints = gridSnappingContext.snapConstraints = {};
+  }
+
+  if (!snapConstraints[ axis ]) {
+    snapConstraints[ axis ] = {};
+  }
+
+  var direction = context.direction;
+
+  // create
+  if (createConstraints) {
+    if (isHorizontal(axis)) {
+      snapConstraints.x.min = createConstraints.left;
+      snapConstraints.x.max = createConstraints.right;
+    } else {
+      snapConstraints.y.min = createConstraints.top;
+      snapConstraints.y.max = createConstraints.bottom;
+    }
+  }
+
+  // resize
+  var minResizeConstraints = resizeConstraints.min,
+      maxResizeConstraints = resizeConstraints.max;
+
+  if (minResizeConstraints) {
+    if (isHorizontal(axis)) {
+
+      if (isWest(direction)) {
+        snapConstraints.x.max = minResizeConstraints.left;
+      } else {
+        snapConstraints.x.min = minResizeConstraints.right;
+      }
+
+    } else {
+
+      if (isNorth(direction)) {
+        snapConstraints.y.max = minResizeConstraints.top;
+      } else {
+        snapConstraints.y.min = minResizeConstraints.bottom;
+      }
+
+    }
+  }
+
+  if (maxResizeConstraints) {
+    if (isHorizontal(axis)) {
+
+      if (isWest(direction)) {
+        snapConstraints.x.min = maxResizeConstraints.left;
+      } else {
+        snapConstraints.x.max = maxResizeConstraints.right;
+      }
+
+    } else {
+
+      if (isNorth(direction)) {
+        snapConstraints.y.min = maxResizeConstraints.top;
+      } else {
+        snapConstraints.y.max = maxResizeConstraints.bottom;
+      }
+
+    }
+  }
+
+  return snapConstraints[ axis ];
+}
+
+/**
+ * Get snap offset.
+ * Offset is cached.
+ *
+ * @param {Object} event
+ * @param {string} axis
+ * @param {ElementRegistry} elementRegistry
+ *
+ * @return {number}
+ */
+function getSnapOffset(event, axis, elementRegistry) {
+  var context = event.context,
+      shape = event.shape,
+      gridSnappingContext = context.gridSnappingContext,
+      snapLocation = gridSnappingContext.snapLocation,
+      snapOffset = gridSnappingContext.snapOffset;
+
+  // cache snap offset
+  if (snapOffset && (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isNumber)(snapOffset[ axis ])) {
+    return snapOffset[ axis ];
+  }
+
+  if (!snapOffset) {
+    snapOffset = gridSnappingContext.snapOffset = {};
+  }
+
+  if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isNumber)(snapOffset[ axis ])) {
+    snapOffset[ axis ] = 0;
+  }
+
+  if (!shape) {
+    return snapOffset[ axis ];
+  }
+
+  if (!elementRegistry.get(shape.id)) {
+
+    if (isHorizontal(axis)) {
+      snapOffset[ axis ] += shape[ axis ] + shape.width / 2;
+    } else {
+      snapOffset[ axis ] += shape[ axis ] + shape.height / 2;
+    }
+  }
+
+  if (!snapLocation) {
+    return snapOffset[ axis ];
+  }
+
+  if (axis === 'x') {
+    if (/left/.test(snapLocation)) {
+      snapOffset[ axis ] -= shape.width / 2;
+    } else if (/right/.test(snapLocation)) {
+      snapOffset[ axis ] += shape.width / 2;
+    }
+  } else {
+    if (/top/.test(snapLocation)) {
+      snapOffset[ axis ] -= shape.height / 2;
+    } else if (/bottom/.test(snapLocation)) {
+      snapOffset[ axis ] += shape.height / 2;
+    }
+  }
+
+  return snapOffset[ axis ];
+}
+
+function isHorizontal(axis) {
+  return axis === 'x';
+}
+
+function isNorth(direction) {
+  return direction.indexOf('n') !== -1;
+}
+
+function isWest(direction) {
+  return direction.indexOf('w') !== -1;
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/grid-snapping/GridUtil.js":
+/*!*************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/grid-snapping/GridUtil.js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SPACING: () => (/* binding */ SPACING),
+/* harmony export */   quantize: () => (/* binding */ quantize)
+/* harmony export */ });
+var SPACING = 10;
+
+function quantize(value, quantum, fn) {
+  if (!fn) {
+    fn = 'round';
+  }
+
+  return Math[ fn ](value / quantum) * quantum;
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/grid-snapping/behavior/ResizeBehavior.js":
+/*!****************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/grid-snapping/behavior/ResizeBehavior.js ***!
+  \****************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ResizeBehavior)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+
+
+
+
+/**
+ * @typedef {import('../../../model/Types').Shape} Shape
+ *
+ * @typedef {import('../../../util/Types').Rect} Rect
+ *
+ * @typedef {import('../../../core/EventBus').default} EventBus
+ * @typedef {import('../../grid-snapping/GridSnapping').default} GridSnapping
+ */
+
+/**
+ * Integrates resizing with grid snapping.
+ *
+ * @param {EventBus} eventBus
+ * @param {GridSnapping} gridSnapping
+ */
+function ResizeBehavior(eventBus, gridSnapping) {
+  _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
+
+  this._gridSnapping = gridSnapping;
+
+  var self = this;
+
+  this.preExecute('shape.resize', function(event) {
+    var context = event.context,
+        hints = context.hints || {},
+        autoResize = hints.autoResize;
+
+    if (!autoResize) {
+      return;
+    }
+
+    var shape = context.shape,
+        newBounds = context.newBounds;
+
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isString)(autoResize)) {
+      context.newBounds = self.snapComplex(newBounds, autoResize);
+    } else {
+      context.newBounds = self.snapSimple(shape, newBounds);
+    }
+  });
+}
+
+ResizeBehavior.$inject = [
+  'eventBus',
+  'gridSnapping',
+  'modeling'
+];
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_2__["default"])(ResizeBehavior, _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/**
+ * Snap width and height in relation to center.
+ *
+ * @param {Shape} shape
+ * @param {Rect} newBounds
+ *
+ * @return {Rect} Snapped bounds.
+ */
+ResizeBehavior.prototype.snapSimple = function(shape, newBounds) {
+  var gridSnapping = this._gridSnapping;
+
+  newBounds.width = gridSnapping.snapValue(newBounds.width, {
+    min: newBounds.width
+  });
+
+  newBounds.height = gridSnapping.snapValue(newBounds.height, {
+    min: newBounds.height
+  });
+
+  newBounds.x = shape.x + (shape.width / 2) - (newBounds.width / 2);
+  newBounds.y = shape.y + (shape.height / 2) - (newBounds.height / 2);
+
+  return newBounds;
+};
+
+/**
+ * Snap x, y, width and height according to given directions.
+ *
+ * @param {Rect} newBounds
+ * @param {string} directions - Directions as {n|w|s|e}.
+ *
+ * @return {Rect} Snapped bounds.
+ */
+ResizeBehavior.prototype.snapComplex = function(newBounds, directions) {
+  if (/w|e/.test(directions)) {
+    newBounds = this.snapHorizontally(newBounds, directions);
+  }
+
+  if (/n|s/.test(directions)) {
+    newBounds = this.snapVertically(newBounds, directions);
+  }
+
+  return newBounds;
+};
+
+/**
+ * Snap in one or both directions horizontally.
+ *
+ * @param {Rect} newBounds
+ * @param {string} directions - Directions as {n|w|s|e}.
+ *
+ * @return {Rect} Snapped bounds.
+ */
+ResizeBehavior.prototype.snapHorizontally = function(newBounds, directions) {
+  var gridSnapping = this._gridSnapping,
+      west = /w/.test(directions),
+      east = /e/.test(directions);
+
+  var snappedNewBounds = {};
+
+  snappedNewBounds.width = gridSnapping.snapValue(newBounds.width, {
+    min: newBounds.width
+  });
+
+  if (east) {
+
+    // handle <we>
+    if (west) {
+      snappedNewBounds.x = gridSnapping.snapValue(newBounds.x, {
+        max: newBounds.x
+      });
+
+      snappedNewBounds.width += gridSnapping.snapValue(newBounds.x - snappedNewBounds.x, {
+        min: newBounds.x - snappedNewBounds.x
+      });
+    }
+
+    // handle <e>
+    else {
+      newBounds.x = newBounds.x + newBounds.width - snappedNewBounds.width;
+    }
+  }
+
+  // assign snapped x and width
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(newBounds, snappedNewBounds);
+
+  return newBounds;
+};
+
+/**
+ * Snap in one or both directions vertically.
+ *
+ * @param {Rect} newBounds
+ * @param {string} directions - Directions as {n|w|s|e}.
+ *
+ * @return {Rect} Snapped bounds.
+ */
+ResizeBehavior.prototype.snapVertically = function(newBounds, directions) {
+  var gridSnapping = this._gridSnapping,
+      north = /n/.test(directions),
+      south = /s/.test(directions);
+
+  var snappedNewBounds = {};
+
+  snappedNewBounds.height = gridSnapping.snapValue(newBounds.height, {
+    min: newBounds.height
+  });
+
+  if (north) {
+
+    // handle <ns>
+    if (south) {
+      snappedNewBounds.y = gridSnapping.snapValue(newBounds.y, {
+        max: newBounds.y
+      });
+
+      snappedNewBounds.height += gridSnapping.snapValue(newBounds.y - snappedNewBounds.y, {
+        min: newBounds.y - snappedNewBounds.y
+      });
+    }
+
+    // handle <n>
+    else {
+      newBounds.y = newBounds.y + newBounds.height - snappedNewBounds.height;
+    }
+  }
+
+  // assign snapped y and height
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(newBounds, snappedNewBounds);
+
+  return newBounds;
+};
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/grid-snapping/behavior/SpaceToolBehavior.js":
+/*!*******************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/grid-snapping/behavior/SpaceToolBehavior.js ***!
+  \*******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ SpaceToolBehavior)
+/* harmony export */ });
+/**
+ * @typedef {import('../../../core/EventBus').default} EventBus
+ * @typedef {import('../../grid-snapping/GridSnapping').default} GridSnapping
+ */
+
+var HIGH_PRIORITY = 2000;
+
+/**
+ * Integrates space tool with grid snapping.
+ *
+ * @param {EventBus} eventBus
+ * @param {GridSnapping} gridSnapping
+ */
+function SpaceToolBehavior(eventBus, gridSnapping) {
+  eventBus.on([
+    'spaceTool.move',
+    'spaceTool.end'
+  ], HIGH_PRIORITY, function(event) {
+    var context = event.context;
+
+    if (!context.initialized) {
+      return;
+    }
+
+    var axis = context.axis;
+
+    var snapped;
+
+    if (axis === 'x') {
+
+      // snap delta x to multiple of 10
+      snapped = gridSnapping.snapValue(event.dx);
+
+      event.x = event.x + snapped - event.dx;
+      event.dx = snapped;
+    } else {
+
+      // snap delta y to multiple of 10
+      snapped = gridSnapping.snapValue(event.dy);
+
+      event.y = event.y + snapped - event.dy;
+      event.dy = snapped;
+    }
+  });
+}
+
+SpaceToolBehavior.$inject = [
+  'eventBus',
+  'gridSnapping'
+];
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/grid-snapping/behavior/index.js":
+/*!*******************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/grid-snapping/behavior/index.js ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ResizeBehavior__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ResizeBehavior */ "../node_modules/diagram-js/lib/features/grid-snapping/behavior/ResizeBehavior.js");
+/* harmony import */ var _SpaceToolBehavior__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SpaceToolBehavior */ "../node_modules/diagram-js/lib/features/grid-snapping/behavior/SpaceToolBehavior.js");
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [
+    'gridSnappingResizeBehavior',
+    'gridSnappingSpaceToolBehavior'
+  ],
+  gridSnappingResizeBehavior: [ 'type', _ResizeBehavior__WEBPACK_IMPORTED_MODULE_0__["default"] ],
+  gridSnappingSpaceToolBehavior: [ 'type', _SpaceToolBehavior__WEBPACK_IMPORTED_MODULE_1__["default"] ]
+});
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/grid-snapping/index.js":
+/*!**********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/grid-snapping/index.js ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _GridSnapping__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./GridSnapping */ "../node_modules/diagram-js/lib/features/grid-snapping/GridSnapping.js");
+/* harmony import */ var _behavior__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./behavior */ "../node_modules/diagram-js/lib/features/grid-snapping/behavior/index.js");
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [ _behavior__WEBPACK_IMPORTED_MODULE_0__["default"] ],
+  __init__: [ 'gridSnapping' ],
+  gridSnapping: [ 'type', _GridSnapping__WEBPACK_IMPORTED_MODULE_1__["default"] ]
+});
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/hand-tool/HandTool.js":
+/*!*********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/hand-tool/HandTool.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ HandTool)
+/* harmony export */ });
+/* harmony import */ var _util_Mouse__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Mouse */ "../node_modules/diagram-js/lib/util/Mouse.js");
+/* harmony import */ var _features_keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../features/keyboard/KeyboardUtil */ "../node_modules/diagram-js/lib/features/keyboard/KeyboardUtil.js");
+
+
+
+
+/**
+ * @typedef {import('didi').Injector} Injector
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../dragging/Dragging').default} Dragging
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../mouse/Mouse').default} Mouse
+ * @typedef {import('../tool-manager/ToolManager').default} ToolManager
+ */
+
+var HIGH_PRIORITY = 1500;
+var HAND_CURSOR = 'grab';
+
+/**
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ * @param {Dragging} dragging
+ * @param {Injector} injector
+ * @param {ToolManager} toolManager
+ * @param {Mouse} mouse
+ */
+function HandTool(
+    eventBus, canvas, dragging,
+    injector, toolManager, mouse) {
+
+  this._dragging = dragging;
+  this._mouse = mouse;
+
+  var self = this,
+      keyboard = injector.get('keyboard', false);
+
+  toolManager.registerTool('hand', {
+    tool: 'hand',
+    dragging: 'hand.move'
+  });
+
+  eventBus.on('element.mousedown', HIGH_PRIORITY, function(event) {
+
+    if (!(0,_util_Mouse__WEBPACK_IMPORTED_MODULE_0__.hasPrimaryModifier)(event)) {
+      return;
+    }
+
+    self.activateMove(event.originalEvent, true);
+
+    return false;
+  });
+
+  keyboard && keyboard.addListener(HIGH_PRIORITY, function(e) {
+    if (!isSpace(e.keyEvent) || self.isActive()) {
+      return;
+    }
+
+    var mouseEvent = self._mouse.getLastMoveEvent();
+
+    self.activateMove(mouseEvent, !!mouseEvent);
+  }, 'keyboard.keydown');
+
+  keyboard && keyboard.addListener(HIGH_PRIORITY, function(e) {
+    if (!isSpace(e.keyEvent) || !self.isActive()) {
+      return;
+    }
+
+    self.toggle();
+  }, 'keyboard.keyup');
+
+  eventBus.on('hand.end', function(event) {
+    var target = event.originalEvent.target;
+
+    // only reactive on diagram click
+    // on some occasions, event.hover is not set and we have to check if the target is an svg
+    if (!event.hover && !(target instanceof SVGElement)) {
+      return false;
+    }
+
+    eventBus.once('hand.ended', function() {
+      self.activateMove(event.originalEvent, { reactivate: true });
+    });
+
+  });
+
+  eventBus.on('hand.move.move', function(event) {
+    var scale = canvas.viewbox().scale;
+
+    canvas.scroll({
+      dx: event.dx * scale,
+      dy: event.dy * scale
+    });
+  });
+
+  eventBus.on('hand.move.end', function(event) {
+    var context = event.context,
+        reactivate = context.reactivate;
+
+    // Don't reactivate if the user is using the keyboard keybinding
+    if (!(0,_util_Mouse__WEBPACK_IMPORTED_MODULE_0__.hasPrimaryModifier)(event) && reactivate) {
+
+      eventBus.once('hand.move.ended', function(event) {
+        self.activateHand(event.originalEvent, true, true);
+      });
+
+    }
+
+    return false;
+  });
+
+}
+
+HandTool.$inject = [
+  'eventBus',
+  'canvas',
+  'dragging',
+  'injector',
+  'toolManager',
+  'mouse'
+];
+
+
+HandTool.prototype.activateMove = function(event, autoActivate, context) {
+  if (typeof autoActivate === 'object') {
+    context = autoActivate;
+    autoActivate = false;
+  }
+
+  this._dragging.init(event, 'hand.move', {
+    autoActivate: autoActivate,
+    cursor: HAND_CURSOR,
+    data: {
+      context: context || {}
+    }
+  });
+};
+
+HandTool.prototype.activateHand = function(event, autoActivate, reactivate) {
+  this._dragging.init(event, 'hand', {
+    trapClick: false,
+    autoActivate: autoActivate,
+    cursor: HAND_CURSOR,
+    data: {
+      context: {
+        reactivate: reactivate
+      }
+    }
+  });
+};
+
+HandTool.prototype.toggle = function() {
+  if (this.isActive()) {
+    return this._dragging.cancel();
+  }
+
+  var mouseEvent = this._mouse.getLastMoveEvent();
+
+  this.activateHand(mouseEvent, !!mouseEvent);
+};
+
+HandTool.prototype.isActive = function() {
+  var context = this._dragging.context();
+
+  if (context) {
+    return /^(hand|hand\.move)$/.test(context.prefix);
+  }
+
+  return false;
+};
+
+// helpers //////////
+
+function isSpace(keyEvent) {
+  return (0,_features_keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_1__.isKey)('Space', keyEvent);
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/hand-tool/index.js":
+/*!******************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/hand-tool/index.js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _tool_manager__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../tool-manager */ "../node_modules/diagram-js/lib/features/tool-manager/index.js");
+/* harmony import */ var _mouse__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../mouse */ "../node_modules/diagram-js/lib/features/mouse/index.js");
+/* harmony import */ var _HandTool__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./HandTool */ "../node_modules/diagram-js/lib/features/hand-tool/HandTool.js");
+
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _tool_manager__WEBPACK_IMPORTED_MODULE_0__["default"],
+    _mouse__WEBPACK_IMPORTED_MODULE_1__["default"]
+  ],
+  __init__: [ 'handTool' ],
+  handTool: [ 'type', _HandTool__WEBPACK_IMPORTED_MODULE_2__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/hover-fix/HoverFix.js":
+/*!*********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/hover-fix/HoverFix.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ HoverFix)
+/* harmony export */ });
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var _util_Event__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Event */ "../node_modules/diagram-js/lib/util/Event.js");
+
+
+
+
+/**
+ * @typedef {import('didi').Injector} Injector
+ *
+ * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('../../core/EventBus').default} EventBus
+ */
+
+var HIGH_PRIORITY = 1500;
+
+
+/**
+ * Browsers may swallow certain events (hover, out ...) if users are to
+ * fast with the mouse.
+ *
+ * @see http://stackoverflow.com/questions/7448468/why-cant-i-reliably-capture-a-mouseout-event
+ *
+ * The fix implemented in this component ensure that we
+ *
+ * 1) have a hover state after a successful drag.move event
+ * 2) have an out event when dragging leaves an element
+ *
+ * @param {ElementRegistry} elementRegistry
+ * @param {EventBus} eventBus
+ * @param {Injector} injector
+ */
+function HoverFix(elementRegistry, eventBus, injector) {
+
+  var self = this;
+
+  var dragging = injector.get('dragging', false);
+
+  /**
+   * Make sure we are god damn hovering!
+   *
+   * @param {Event} dragging event
+   */
+  function ensureHover(event) {
+
+    if (event.hover) {
+      return;
+    }
+
+    var originalEvent = event.originalEvent;
+
+    var gfx = self._findTargetGfx(originalEvent);
+
+    var element = gfx && elementRegistry.get(gfx);
+
+    if (gfx && element) {
+
+      // 1) cancel current mousemove
+      event.stopPropagation();
+
+      // 2) emit fake hover for new target
+      dragging.hover({ element: element, gfx: gfx });
+
+      // 3) re-trigger move event
+      dragging.move(originalEvent);
+    }
+  }
+
+
+  if (dragging) {
+
+    /**
+     * We wait for a specific sequence of events before
+     * emitting a fake drag.hover event.
+     *
+     * Event Sequence:
+     *
+     * drag.start
+     * drag.move >> ensure we are hovering
+     */
+    eventBus.on('drag.start', function(event) {
+
+      eventBus.once('drag.move', HIGH_PRIORITY, function(event) {
+
+        ensureHover(event);
+
+      });
+
+    });
+  }
+
+
+  /**
+   * We make sure that element.out is always fired, even if the
+   * browser swallows an element.out event.
+   *
+   * Event sequence:
+   *
+   * element.hover
+   * (element.out >> sometimes swallowed)
+   * element.hover >> ensure we fired element.out
+   */
+  (function() {
+    var hoverGfx;
+    var hover;
+
+    eventBus.on('element.hover', function(event) {
+
+      // (1) remember current hover element
+      hoverGfx = event.gfx;
+      hover = event.element;
+    });
+
+    eventBus.on('element.hover', HIGH_PRIORITY, function(event) {
+
+      // (3) am I on an element still?
+      if (hover) {
+
+        // (4) that is a problem, gotta "simulate the out"
+        eventBus.fire('element.out', {
+          element: hover,
+          gfx: hoverGfx
+        });
+      }
+
+    });
+
+    eventBus.on('element.out', function() {
+
+      // (2) unset hover state if we correctly outed us *GG*
+      hoverGfx = null;
+      hover = null;
+    });
+
+  })();
+
+  this._findTargetGfx = function(event) {
+    var position,
+        target;
+
+    if (!(event instanceof MouseEvent)) {
+      return;
+    }
+
+    position = (0,_util_Event__WEBPACK_IMPORTED_MODULE_0__.toPoint)(event);
+
+    // damn expensive operation, ouch!
+    target = document.elementFromPoint(position.x, position.y);
+
+    return getGfx(target);
+  };
+
+}
+
+HoverFix.$inject = [
+  'elementRegistry',
+  'eventBus',
+  'injector'
+];
+
+
+// helpers /////////////////////
+
+function getGfx(target) {
+  return (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.closest)(target, 'svg, .djs-element', true);
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/hover-fix/index.js":
+/*!******************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/hover-fix/index.js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _HoverFix__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./HoverFix */ "../node_modules/diagram-js/lib/features/hover-fix/HoverFix.js");
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [
+    'hoverFix'
+  ],
+  hoverFix: [ 'type', _HoverFix__WEBPACK_IMPORTED_MODULE_0__["default"] ],
+});
+
+/***/ }),
+
 /***/ "../node_modules/diagram-js/lib/features/interaction-events/InteractionEvents.js":
 /*!***************************************************************************************!*\
   !*** ../node_modules/diagram-js/lib/features/interaction-events/InteractionEvents.js ***!
@@ -6691,6 +22972,5526 @@ __webpack_require__.r(__webpack_exports__);
   __init__: [ 'interactionEvents' ],
   interactionEvents: [ 'type', _InteractionEvents__WEBPACK_IMPORTED_MODULE_0__["default"] ]
 });
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/keyboard-move-selection/KeyboardMoveSelection.js":
+/*!************************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/keyboard-move-selection/KeyboardMoveSelection.js ***!
+  \************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ KeyboardMoveSelection)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * @typedef {import('../keyboard/Keyboard').default} Keyboard
+ * @typedef {import('../modeling/Modeling').default} Modeling
+ * @typedef {import('../rules/Rules').default} Rules
+ * @typedef {import('../selection/Selection').default} Selection
+ */
+
+var DEFAULT_CONFIG = {
+  moveSpeed: 1,
+  moveSpeedAccelerated: 10
+};
+
+var HIGHER_PRIORITY = 1500;
+
+var LEFT = 'left';
+var UP = 'up';
+var RIGHT = 'right';
+var DOWN = 'down';
+
+var KEY_TO_DIRECTION = {
+  ArrowLeft: LEFT,
+  Left: LEFT,
+  ArrowUp: UP,
+  Up: UP,
+  ArrowRight: RIGHT,
+  Right: RIGHT,
+  ArrowDown: DOWN,
+  Down: DOWN
+};
+
+var DIRECTIONS_DELTA = {
+  left: function(speed) {
+    return {
+      x: -speed,
+      y: 0
+    };
+  },
+  up: function(speed) {
+    return {
+      x: 0,
+      y: -speed
+    };
+  },
+  right: function(speed) {
+    return {
+      x: speed,
+      y: 0
+    };
+  },
+  down: function(speed) {
+    return {
+      x: 0,
+      y: speed
+    };
+  }
+};
+
+
+/**
+ * Enables to move selection with keyboard arrows.
+ * Use with Shift for modified speed (default=1, with Shift=10).
+ * Pressed Cmd/Ctrl turns the feature off.
+ *
+ * @param {Object} config
+ * @param {number} [config.moveSpeed=1]
+ * @param {number} [config.moveSpeedAccelerated=10]
+ * @param {Keyboard} keyboard
+ * @param {Modeling} modeling
+ * @param {Rules} rules
+ * @param {Selection} selection
+ */
+function KeyboardMoveSelection(
+    config,
+    keyboard,
+    modeling,
+    rules,
+    selection
+) {
+
+  var self = this;
+
+  this._config = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, DEFAULT_CONFIG, config || {});
+
+  keyboard.addListener(HIGHER_PRIORITY, function(event) {
+
+    var keyEvent = event.keyEvent;
+
+    var direction = KEY_TO_DIRECTION[keyEvent.key];
+
+    if (!direction) {
+      return;
+    }
+
+    if (keyboard.isCmd(keyEvent)) {
+      return;
+    }
+
+    var accelerated = keyboard.isShift(keyEvent);
+
+    self.moveSelection(direction, accelerated);
+
+    return true;
+  });
+
+
+  /**
+   * Move selected elements in the given direction,
+   * optionally specifying accelerated movement.
+   *
+   * @param {string} direction
+   * @param {boolean} [accelerated=false]
+   */
+  this.moveSelection = function(direction, accelerated) {
+
+    var selectedElements = selection.get();
+
+    if (!selectedElements.length) {
+      return;
+    }
+
+    var speed = this._config[
+      accelerated ?
+        'moveSpeedAccelerated' :
+        'moveSpeed'
+    ];
+
+    var delta = DIRECTIONS_DELTA[direction](speed);
+
+    var canMove = rules.allowed('elements.move', {
+      shapes: selectedElements
+    });
+
+    if (canMove) {
+      modeling.moveElements(selectedElements, delta);
+    }
+  };
+
+}
+
+KeyboardMoveSelection.$inject = [
+  'config.keyboardMoveSelection',
+  'keyboard',
+  'modeling',
+  'rules',
+  'selection'
+];
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/keyboard-move-selection/index.js":
+/*!********************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/keyboard-move-selection/index.js ***!
+  \********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _keyboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../keyboard */ "../node_modules/diagram-js/lib/features/keyboard/index.js");
+/* harmony import */ var _selection__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../selection */ "../node_modules/diagram-js/lib/features/selection/index.js");
+/* harmony import */ var _KeyboardMoveSelection__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./KeyboardMoveSelection */ "../node_modules/diagram-js/lib/features/keyboard-move-selection/KeyboardMoveSelection.js");
+
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _keyboard__WEBPACK_IMPORTED_MODULE_0__["default"],
+    _selection__WEBPACK_IMPORTED_MODULE_1__["default"]
+  ],
+  __init__: [
+    'keyboardMoveSelection'
+  ],
+  keyboardMoveSelection: [ 'type', _KeyboardMoveSelection__WEBPACK_IMPORTED_MODULE_2__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/keyboard/Keyboard.js":
+/*!********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/keyboard/Keyboard.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Keyboard)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var _KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./KeyboardUtil */ "../node_modules/diagram-js/lib/features/keyboard/KeyboardUtil.js");
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/EventBus').default} EventBus
+ *
+ * @typedef {({ keyEvent: KeyboardEvent }) => any} Listener
+ */
+
+var KEYDOWN_EVENT = 'keyboard.keydown',
+    KEYUP_EVENT = 'keyboard.keyup';
+
+var HANDLE_MODIFIER_ATTRIBUTE = 'input-handle-modified-keys';
+
+var DEFAULT_PRIORITY = 1000;
+
+/**
+ * A keyboard abstraction that may be activated and
+ * deactivated by users at will, consuming global key events
+ * and triggering diagram actions.
+ *
+ * For keys pressed down, keyboard fires `keyboard.keydown` event.
+ * The event context contains one field which is `KeyboardEvent` event.
+ *
+ * The implementation fires the following key events that allow
+ * other components to hook into key handling:
+ *
+ *  - keyboard.bind
+ *  - keyboard.unbind
+ *  - keyboard.init
+ *  - keyboard.destroy
+ *
+ * All events contain one field which is node.
+ *
+ * A default binding for the keyboard may be specified via the
+ * `keyboard.bindTo` configuration option.
+ *
+ * @param {Object} config
+ * @param {EventTarget} [config.bindTo]
+ * @param {EventBus} eventBus
+ */
+function Keyboard(config, eventBus) {
+  var self = this;
+
+  this._config = config || {};
+  this._eventBus = eventBus;
+
+  this._keydownHandler = this._keydownHandler.bind(this);
+  this._keyupHandler = this._keyupHandler.bind(this);
+
+  // properly clean dom registrations
+  eventBus.on('diagram.destroy', function() {
+    self._fire('destroy');
+
+    self.unbind();
+  });
+
+  eventBus.on('diagram.init', function() {
+    self._fire('init');
+  });
+
+  eventBus.on('attach', function() {
+    if (config && config.bindTo) {
+      self.bind(config.bindTo);
+    }
+  });
+
+  eventBus.on('detach', function() {
+    self.unbind();
+  });
+}
+
+Keyboard.$inject = [
+  'config.keyboard',
+  'eventBus'
+];
+
+Keyboard.prototype._keydownHandler = function(event) {
+  this._keyHandler(event, KEYDOWN_EVENT);
+};
+
+Keyboard.prototype._keyupHandler = function(event) {
+  this._keyHandler(event, KEYUP_EVENT);
+};
+
+Keyboard.prototype._keyHandler = function(event, type) {
+  var eventBusResult;
+
+  if (this._isEventIgnored(event)) {
+    return;
+  }
+
+  var context = {
+    keyEvent: event
+  };
+
+  eventBusResult = this._eventBus.fire(type || KEYDOWN_EVENT, context);
+
+  if (eventBusResult) {
+    event.preventDefault();
+  }
+};
+
+Keyboard.prototype._isEventIgnored = function(event) {
+  if (event.defaultPrevented) {
+    return true;
+  }
+
+  return isInput(event.target) && this._isModifiedKeyIgnored(event);
+};
+
+Keyboard.prototype._isModifiedKeyIgnored = function(event) {
+  if (!(0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isCmd)(event)) {
+    return true;
+  }
+
+  var allowedModifiers = this._getAllowedModifiers(event.target);
+  return allowedModifiers.indexOf(event.key) === -1;
+};
+
+Keyboard.prototype._getAllowedModifiers = function(element) {
+  var modifierContainer = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.closest)(element, '[' + HANDLE_MODIFIER_ATTRIBUTE + ']', true);
+
+  if (!modifierContainer || (this._node && !this._node.contains(modifierContainer))) {
+    return [];
+  }
+
+  return modifierContainer.getAttribute(HANDLE_MODIFIER_ATTRIBUTE).split(',');
+};
+
+/**
+ * Bind keyboard events to the given DOM node.
+ *
+ * @param {EventTarget} node
+ */
+Keyboard.prototype.bind = function(node) {
+
+  // make sure that the keyboard is only bound once to the DOM
+  this.unbind();
+
+  this._node = node;
+
+  // bind key events
+  min_dom__WEBPACK_IMPORTED_MODULE_1__.event.bind(node, 'keydown', this._keydownHandler);
+  min_dom__WEBPACK_IMPORTED_MODULE_1__.event.bind(node, 'keyup', this._keyupHandler);
+
+  this._fire('bind');
+};
+
+/**
+ * @return {EventTarget}
+ */
+Keyboard.prototype.getBinding = function() {
+  return this._node;
+};
+
+Keyboard.prototype.unbind = function() {
+  var node = this._node;
+
+  if (node) {
+    this._fire('unbind');
+
+    // unbind key events
+    min_dom__WEBPACK_IMPORTED_MODULE_1__.event.unbind(node, 'keydown', this._keydownHandler);
+    min_dom__WEBPACK_IMPORTED_MODULE_1__.event.unbind(node, 'keyup', this._keyupHandler);
+  }
+
+  this._node = null;
+};
+
+/**
+ * @param {string} event
+ */
+Keyboard.prototype._fire = function(event) {
+  this._eventBus.fire('keyboard.' + event, { node: this._node });
+};
+
+/**
+ * Add a listener function that is notified with `KeyboardEvent` whenever
+ * the keyboard is bound and the user presses a key. If no priority is
+ * provided, the default value of 1000 is used.
+ *
+ * @param {number} [priority]
+ * @param {Listener} listener
+ * @param {string} [type='keyboard.keydown']
+ */
+Keyboard.prototype.addListener = function(priority, listener, type) {
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_2__.isFunction)(priority)) {
+    type = listener;
+    listener = priority;
+    priority = DEFAULT_PRIORITY;
+  }
+
+  this._eventBus.on(type || KEYDOWN_EVENT, priority, listener);
+};
+
+/**
+ * Remove a listener function.
+ *
+ * @param {Listener} listener
+ * @param {string} [type='keyboard.keydown']
+ */
+Keyboard.prototype.removeListener = function(listener, type) {
+  this._eventBus.off(type || KEYDOWN_EVENT, listener);
+};
+
+Keyboard.prototype.hasModifier = _KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.hasModifier;
+Keyboard.prototype.isCmd = _KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isCmd;
+Keyboard.prototype.isShift = _KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isShift;
+Keyboard.prototype.isKey = _KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isKey;
+
+
+
+// helpers ///////
+
+function isInput(target) {
+  return target && ((0,min_dom__WEBPACK_IMPORTED_MODULE_1__.matches)(target, 'input, textarea') || target.contentEditable === 'true');
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/keyboard/KeyboardBindings.js":
+/*!****************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/keyboard/KeyboardBindings.js ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   KEYS_COPY: () => (/* reexport safe */ _KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.KEYS_COPY),
+/* harmony export */   KEYS_PASTE: () => (/* reexport safe */ _KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.KEYS_PASTE),
+/* harmony export */   KEYS_REDO: () => (/* reexport safe */ _KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.KEYS_REDO),
+/* harmony export */   KEYS_UNDO: () => (/* reexport safe */ _KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.KEYS_UNDO),
+/* harmony export */   "default": () => (/* binding */ KeyboardBindings)
+/* harmony export */ });
+/* harmony import */ var _KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./KeyboardUtil */ "../node_modules/diagram-js/lib/features/keyboard/KeyboardUtil.js");
+
+
+/**
+ * @typedef {import('../editor-actions/EditorActions').default} EditorActions
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('./Keyboard').default} Keyboard
+ */
+
+
+
+
+var LOW_PRIORITY = 500;
+
+
+/**
+ * Adds default keyboard bindings.
+ *
+ * This does not pull in any features will bind only actions that
+ * have previously been registered against the editorActions component.
+ *
+ * @param {EventBus} eventBus
+ * @param {Keyboard} keyboard
+ */
+function KeyboardBindings(eventBus, keyboard) {
+
+  var self = this;
+
+  eventBus.on('editorActions.init', LOW_PRIORITY, function(event) {
+
+    var editorActions = event.editorActions;
+
+    self.registerBindings(keyboard, editorActions);
+  });
+}
+
+KeyboardBindings.$inject = [
+  'eventBus',
+  'keyboard'
+];
+
+
+/**
+ * Register available keyboard bindings.
+ *
+ * @param {Keyboard} keyboard
+ * @param {EditorActions} editorActions
+ */
+KeyboardBindings.prototype.registerBindings = function(keyboard, editorActions) {
+
+  /**
+   * Add keyboard binding if respective editor action
+   * is registered.
+   *
+   * @param {string} action name
+   * @param {Function} fn that implements the key binding
+   */
+  function addListener(action, fn) {
+
+    if (editorActions.isRegistered(action)) {
+      keyboard.addListener(fn);
+    }
+  }
+
+
+  // undo
+  // (CTRL|CMD) + Z
+  addListener('undo', function(context) {
+
+    var event = context.keyEvent;
+
+    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isUndo)(event)) {
+      editorActions.trigger('undo');
+
+      return true;
+    }
+  });
+
+  // redo
+  // CTRL + Y
+  // CMD + SHIFT + Z
+  addListener('redo', function(context) {
+
+    var event = context.keyEvent;
+
+    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isRedo)(event)) {
+      editorActions.trigger('redo');
+
+      return true;
+    }
+  });
+
+  // copy
+  // CTRL/CMD + C
+  addListener('copy', function(context) {
+
+    var event = context.keyEvent;
+
+    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isCopy)(event)) {
+      editorActions.trigger('copy');
+
+      return true;
+    }
+  });
+
+  // paste
+  // CTRL/CMD + V
+  addListener('paste', function(context) {
+
+    var event = context.keyEvent;
+
+    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isPaste)(event)) {
+      editorActions.trigger('paste');
+
+      return true;
+    }
+  });
+
+  // zoom in one step
+  // CTRL/CMD + +
+  addListener('stepZoom', function(context) {
+
+    var event = context.keyEvent;
+
+    // quirk: it has to be triggered by `=` as well to work on international keyboard layout
+    // cf: https://github.com/bpmn-io/bpmn-js/issues/1362#issuecomment-722989754
+    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isKey)([ '+', 'Add', '=' ], event) && (0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isCmd)(event)) {
+      editorActions.trigger('stepZoom', { value: 1 });
+
+      return true;
+    }
+  });
+
+  // zoom out one step
+  // CTRL + -
+  addListener('stepZoom', function(context) {
+
+    var event = context.keyEvent;
+
+    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isKey)([ '-', 'Subtract' ], event) && (0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isCmd)(event)) {
+      editorActions.trigger('stepZoom', { value: -1 });
+
+      return true;
+    }
+  });
+
+  // zoom to the default level
+  // CTRL + 0
+  addListener('zoom', function(context) {
+
+    var event = context.keyEvent;
+
+    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isKey)('0', event) && (0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isCmd)(event)) {
+      editorActions.trigger('zoom', { value: 1 });
+
+      return true;
+    }
+  });
+
+  // delete selected element
+  // DEL
+  addListener('removeSelection', function(context) {
+
+    var event = context.keyEvent;
+
+    if ((0,_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isKey)([ 'Backspace', 'Delete', 'Del' ], event)) {
+      editorActions.trigger('removeSelection');
+
+      return true;
+    }
+  });
+};
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/keyboard/KeyboardUtil.js":
+/*!************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/keyboard/KeyboardUtil.js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   KEYS_COPY: () => (/* binding */ KEYS_COPY),
+/* harmony export */   KEYS_PASTE: () => (/* binding */ KEYS_PASTE),
+/* harmony export */   KEYS_REDO: () => (/* binding */ KEYS_REDO),
+/* harmony export */   KEYS_UNDO: () => (/* binding */ KEYS_UNDO),
+/* harmony export */   hasModifier: () => (/* binding */ hasModifier),
+/* harmony export */   isCmd: () => (/* binding */ isCmd),
+/* harmony export */   isCopy: () => (/* binding */ isCopy),
+/* harmony export */   isKey: () => (/* binding */ isKey),
+/* harmony export */   isPaste: () => (/* binding */ isPaste),
+/* harmony export */   isRedo: () => (/* binding */ isRedo),
+/* harmony export */   isShift: () => (/* binding */ isShift),
+/* harmony export */   isUndo: () => (/* binding */ isUndo)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+var KEYS_COPY = [ 'c', 'C' ];
+var KEYS_PASTE = [ 'v', 'V' ];
+var KEYS_REDO = [ 'y', 'Y' ];
+var KEYS_UNDO = [ 'z', 'Z' ];
+
+/**
+ * Returns true if event was triggered with any modifier
+ * @param {KeyboardEvent} event
+ */
+function hasModifier(event) {
+  return (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey);
+}
+
+/**
+ * @param {KeyboardEvent} event
+ * @return {boolean}
+ */
+function isCmd(event) {
+
+  // ensure we don't react to AltGr
+  // (mapped to CTRL + ALT)
+  if (event.altKey) {
+    return false;
+  }
+
+  return event.ctrlKey || event.metaKey;
+}
+
+/**
+ * Checks if key pressed is one of provided keys.
+ *
+ * @param {string|string[]} keys
+ * @param {KeyboardEvent} event
+ * @return {boolean}
+ */
+function isKey(keys, event) {
+  keys = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(keys) ? keys : [ keys ];
+
+  return keys.indexOf(event.key) !== -1 || keys.indexOf(event.code) !== -1;
+}
+
+/**
+ * @param {KeyboardEvent} event
+ */
+function isShift(event) {
+  return event.shiftKey;
+}
+
+/**
+ * @param {KeyboardEvent} event
+ */
+function isCopy(event) {
+  return isCmd(event) && isKey(KEYS_COPY, event);
+}
+
+/**
+ * @param {KeyboardEvent} event
+ */
+function isPaste(event) {
+  return isCmd(event) && isKey(KEYS_PASTE, event);
+}
+
+/**
+ * @param {KeyboardEvent} event
+ */
+function isUndo(event) {
+  return isCmd(event) && !isShift(event) && isKey(KEYS_UNDO, event);
+}
+
+/**
+ * @param {KeyboardEvent} event
+ */
+function isRedo(event) {
+  return isCmd(event) && (
+    isKey(KEYS_REDO, event) || (
+      isKey(KEYS_UNDO, event) && isShift(event)
+    )
+  );
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/keyboard/index.js":
+/*!*****************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/keyboard/index.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Keyboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Keyboard */ "../node_modules/diagram-js/lib/features/keyboard/Keyboard.js");
+/* harmony import */ var _KeyboardBindings__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./KeyboardBindings */ "../node_modules/diagram-js/lib/features/keyboard/KeyboardBindings.js");
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [ 'keyboard', 'keyboardBindings' ],
+  keyboard: [ 'type', _Keyboard__WEBPACK_IMPORTED_MODULE_0__["default"] ],
+  keyboardBindings: [ 'type', _KeyboardBindings__WEBPACK_IMPORTED_MODULE_1__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/label-support/LabelSupport.js":
+/*!*****************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/label-support/LabelSupport.js ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ LabelSupport)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _util_Collections__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Collections */ "../node_modules/diagram-js/lib/util/Collections.js");
+/* harmony import */ var _util_Removal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Removal */ "../node_modules/diagram-js/lib/util/Removal.js");
+/* harmony import */ var _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+
+
+
+
+var LOW_PRIORITY = 250,
+    HIGH_PRIORITY = 1400;
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../model/Types').Element} Element
+ *
+ * @typedef {import('didi').Injector} Injector
+ *
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../modeling/Modeling').default} Modeling
+ */
+
+/**
+ * A handler that makes sure labels are properly moved with
+ * their label targets.
+ *
+ * @param {Injector} injector
+ * @param {EventBus} eventBus
+ * @param {Modeling} modeling
+ */
+function LabelSupport(injector, eventBus, modeling) {
+
+  _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
+
+  var movePreview = injector.get('movePreview', false);
+
+  // remove labels from the collection that are being
+  // moved with other elements anyway
+  eventBus.on('shape.move.start', HIGH_PRIORITY, function(e) {
+
+    var context = e.context,
+        shapes = context.shapes,
+        validatedShapes = context.validatedShapes;
+
+    context.shapes = removeLabels(shapes);
+    context.validatedShapes = removeLabels(validatedShapes);
+  });
+
+  // add labels to visual's group
+  movePreview && eventBus.on('shape.move.start', LOW_PRIORITY, function(e) {
+
+    var context = e.context,
+        shapes = context.shapes;
+
+    var labels = [];
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(shapes, function(element) {
+
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(element.labels, function(label) {
+
+        if (!label.hidden && context.shapes.indexOf(label) === -1) {
+          labels.push(label);
+        }
+
+        if (element.labelTarget) {
+          labels.push(element);
+        }
+      });
+    });
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(labels, function(label) {
+      movePreview.makeDraggable(context, label, true);
+    });
+
+  });
+
+  // add all labels to move closure
+  this.preExecuted('elements.move', HIGH_PRIORITY, function(e) {
+    var context = e.context,
+        closure = context.closure,
+        enclosedElements = closure.enclosedElements;
+
+    var enclosedLabels = [];
+
+    // find labels that are not part of
+    // move closure yet and add them
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(enclosedElements, function(element) {
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(element.labels, function(label) {
+
+        if (!enclosedElements[label.id]) {
+          enclosedLabels.push(label);
+        }
+      });
+    });
+
+    closure.addAll(enclosedLabels);
+  });
+
+
+  this.preExecute([
+    'connection.delete',
+    'shape.delete'
+  ], function(e) {
+
+    var context = e.context,
+        element = context.connection || context.shape;
+
+    (0,_util_Removal__WEBPACK_IMPORTED_MODULE_2__.saveClear)(element.labels, function(label) {
+      modeling.removeShape(label, { nested: true });
+    });
+  });
+
+
+  this.execute('shape.delete', function(e) {
+
+    var context = e.context,
+        shape = context.shape,
+        labelTarget = shape.labelTarget;
+
+    // unset labelTarget
+    if (labelTarget) {
+      context.labelTargetIndex = (0,_util_Collections__WEBPACK_IMPORTED_MODULE_3__.indexOf)(labelTarget.labels, shape);
+      context.labelTarget = labelTarget;
+
+      shape.labelTarget = null;
+    }
+  });
+
+  this.revert('shape.delete', function(e) {
+
+    var context = e.context,
+        shape = context.shape,
+        labelTarget = context.labelTarget,
+        labelTargetIndex = context.labelTargetIndex;
+
+    // restore labelTarget
+    if (labelTarget) {
+      (0,_util_Collections__WEBPACK_IMPORTED_MODULE_3__.add)(labelTarget.labels, shape, labelTargetIndex);
+
+      shape.labelTarget = labelTarget;
+    }
+  });
+
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_4__["default"])(LabelSupport, _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+LabelSupport.$inject = [
+  'injector',
+  'eventBus',
+  'modeling'
+];
+
+
+/**
+ * Return a filtered list of elements that do not
+ * contain attached elements with hosts being part
+ * of the selection.
+ *
+ * @param {Element[]} elements
+ *
+ * @return {Element[]} filtered
+ */
+function removeLabels(elements) {
+
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.filter)(elements, function(element) {
+
+    // filter out labels that are move together
+    // with their label targets
+    return elements.indexOf(element.labelTarget) === -1;
+  });
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/label-support/index.js":
+/*!**********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/label-support/index.js ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _LabelSupport__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LabelSupport */ "../node_modules/diagram-js/lib/features/label-support/LabelSupport.js");
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [ 'labelSupport' ],
+  labelSupport: [ 'type', _LabelSupport__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/lasso-tool/LassoTool.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/lasso-tool/LassoTool.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ LassoTool)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
+/* harmony import */ var _util_Mouse__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/Mouse */ "../node_modules/diagram-js/lib/util/Mouse.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../dragging/Dragging').default} Dragging
+ * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../mouse/Mouse').default} Mouse
+ * @typedef {import('../selection/Selection').default} Selection
+ * @typedef {import('../tool-manager/ToolManager').default} ToolManager
+ */
+
+var LASSO_TOOL_CURSOR = 'crosshair';
+
+/**
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ * @param {Dragging} dragging
+ * @param {ElementRegistry} elementRegistry
+ * @param {Selection} selection
+ * @param {ToolManager} toolManager
+ * @param {Mouse} mouse
+ */
+function LassoTool(
+    eventBus, canvas, dragging,
+    elementRegistry, selection, toolManager,
+    mouse) {
+
+  this._selection = selection;
+  this._dragging = dragging;
+  this._mouse = mouse;
+
+  var self = this;
+
+  // lasso visuals implementation
+
+  /**
+  * A helper that realizes the selection box visual
+  */
+  var visuals = {
+
+    create: function(context) {
+      var container = canvas.getActiveLayer(),
+          frame;
+
+      frame = context.frame = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.create)('rect');
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(frame, {
+        class: 'djs-lasso-overlay',
+        width:  1,
+        height: 1,
+        x: 0,
+        y: 0
+      });
+
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.append)(container, frame);
+    },
+
+    update: function(context) {
+      var frame = context.frame,
+          bbox = context.bbox;
+
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(frame, {
+        x: bbox.x,
+        y: bbox.y,
+        width: bbox.width,
+        height: bbox.height
+      });
+    },
+
+    remove: function(context) {
+
+      if (context.frame) {
+        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.remove)(context.frame);
+      }
+    }
+  };
+
+  toolManager.registerTool('lasso', {
+    tool: 'lasso.selection',
+    dragging: 'lasso'
+  });
+
+  eventBus.on('lasso.selection.end', function(event) {
+    var target = event.originalEvent.target;
+
+    // only reactive on diagram click
+    // on some occasions, event.hover is not set and we have to check if the target is an svg
+    if (!event.hover && !(target instanceof SVGElement)) {
+      return;
+    }
+
+    eventBus.once('lasso.selection.ended', function() {
+      self.activateLasso(event.originalEvent, true);
+    });
+  });
+
+  // lasso interaction implementation
+
+  eventBus.on('lasso.end', function(event) {
+
+    var bbox = toBBox(event);
+
+    var elements = elementRegistry.filter(function(element) {
+      return element;
+    });
+
+    self.select(elements, bbox);
+  });
+
+  eventBus.on('lasso.start', function(event) {
+
+    var context = event.context;
+
+    context.bbox = toBBox(event);
+    visuals.create(context);
+  });
+
+  eventBus.on('lasso.move', function(event) {
+
+    var context = event.context;
+
+    context.bbox = toBBox(event);
+    visuals.update(context);
+  });
+
+  eventBus.on('lasso.cleanup', function(event) {
+
+    var context = event.context;
+
+    visuals.remove(context);
+  });
+
+
+  // event integration
+
+  eventBus.on('element.mousedown', 1500, function(event) {
+
+    if (!(0,_util_Mouse__WEBPACK_IMPORTED_MODULE_1__.hasSecondaryModifier)(event)) {
+      return;
+    }
+
+    self.activateLasso(event.originalEvent);
+
+    // we've handled the event
+    return true;
+  });
+}
+
+LassoTool.$inject = [
+  'eventBus',
+  'canvas',
+  'dragging',
+  'elementRegistry',
+  'selection',
+  'toolManager',
+  'mouse'
+];
+
+
+LassoTool.prototype.activateLasso = function(event, autoActivate) {
+
+  this._dragging.init(event, 'lasso', {
+    autoActivate: autoActivate,
+    cursor: LASSO_TOOL_CURSOR,
+    data: {
+      context: {}
+    }
+  });
+};
+
+LassoTool.prototype.activateSelection = function(event, autoActivate) {
+
+  this._dragging.init(event, 'lasso.selection', {
+    trapClick: false,
+    autoActivate: autoActivate,
+    cursor: LASSO_TOOL_CURSOR,
+    data: {
+      context: {}
+    }
+  });
+};
+
+LassoTool.prototype.select = function(elements, bbox) {
+  var selectedElements = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getEnclosedElements)(elements, bbox);
+
+  this._selection.select((0,min_dash__WEBPACK_IMPORTED_MODULE_3__.values)(selectedElements));
+};
+
+LassoTool.prototype.toggle = function() {
+  if (this.isActive()) {
+    return this._dragging.cancel();
+  }
+
+  var mouseEvent = this._mouse.getLastMoveEvent();
+
+  this.activateSelection(mouseEvent, !!mouseEvent);
+};
+
+LassoTool.prototype.isActive = function() {
+  var context = this._dragging.context();
+
+  return context && /^lasso/.test(context.prefix);
+};
+
+
+
+function toBBox(event) {
+
+  var start = {
+
+    x: event.x - event.dx,
+    y: event.y - event.dy
+  };
+
+  var end = {
+    x: event.x,
+    y: event.y
+  };
+
+  var bbox;
+
+  if ((start.x <= end.x && start.y < end.y) ||
+      (start.x < end.x && start.y <= end.y)) {
+
+    bbox = {
+      x: start.x,
+      y: start.y,
+      width:  end.x - start.x,
+      height: end.y - start.y
+    };
+  } else if ((start.x >= end.x && start.y < end.y) ||
+             (start.x > end.x && start.y <= end.y)) {
+
+    bbox = {
+      x: end.x,
+      y: start.y,
+      width:  start.x - end.x,
+      height: end.y - start.y
+    };
+  } else if ((start.x <= end.x && start.y > end.y) ||
+             (start.x < end.x && start.y >= end.y)) {
+
+    bbox = {
+      x: start.x,
+      y: end.y,
+      width:  end.x - start.x,
+      height: start.y - end.y
+    };
+  } else if ((start.x >= end.x && start.y > end.y) ||
+             (start.x > end.x && start.y >= end.y)) {
+
+    bbox = {
+      x: end.x,
+      y: end.y,
+      width:  start.x - end.x,
+      height: start.y - end.y
+    };
+  } else {
+
+    bbox = {
+      x: end.x,
+      y: end.y,
+      width:  0,
+      height: 0
+    };
+  }
+  return bbox;
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/lasso-tool/index.js":
+/*!*******************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/lasso-tool/index.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _tool_manager__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../tool-manager */ "../node_modules/diagram-js/lib/features/tool-manager/index.js");
+/* harmony import */ var _mouse__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../mouse */ "../node_modules/diagram-js/lib/features/mouse/index.js");
+/* harmony import */ var _LassoTool__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./LassoTool */ "../node_modules/diagram-js/lib/features/lasso-tool/LassoTool.js");
+
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _tool_manager__WEBPACK_IMPORTED_MODULE_0__["default"],
+    _mouse__WEBPACK_IMPORTED_MODULE_1__["default"]
+  ],
+  __init__: [ 'lassoTool' ],
+  lassoTool: [ 'type', _LassoTool__WEBPACK_IMPORTED_MODULE_2__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/Modeling.js":
+/*!********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/Modeling.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Modeling)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _cmd_AlignElementsHandler__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./cmd/AlignElementsHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/AlignElementsHandler.js");
+/* harmony import */ var _cmd_AppendShapeHandler__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./cmd/AppendShapeHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/AppendShapeHandler.js");
+/* harmony import */ var _cmd_CreateConnectionHandler__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./cmd/CreateConnectionHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/CreateConnectionHandler.js");
+/* harmony import */ var _cmd_CreateElementsHandler__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./cmd/CreateElementsHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/CreateElementsHandler.js");
+/* harmony import */ var _cmd_CreateLabelHandler__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./cmd/CreateLabelHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/CreateLabelHandler.js");
+/* harmony import */ var _cmd_CreateShapeHandler__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./cmd/CreateShapeHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/CreateShapeHandler.js");
+/* harmony import */ var _cmd_DeleteConnectionHandler__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./cmd/DeleteConnectionHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/DeleteConnectionHandler.js");
+/* harmony import */ var _cmd_DeleteElementsHandler__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./cmd/DeleteElementsHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/DeleteElementsHandler.js");
+/* harmony import */ var _cmd_DeleteShapeHandler__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./cmd/DeleteShapeHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/DeleteShapeHandler.js");
+/* harmony import */ var _cmd_DistributeElementsHandler__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./cmd/DistributeElementsHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/DistributeElementsHandler.js");
+/* harmony import */ var _cmd_LayoutConnectionHandler__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./cmd/LayoutConnectionHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/LayoutConnectionHandler.js");
+/* harmony import */ var _cmd_MoveConnectionHandler__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./cmd/MoveConnectionHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/MoveConnectionHandler.js");
+/* harmony import */ var _cmd_MoveElementsHandler__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./cmd/MoveElementsHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/MoveElementsHandler.js");
+/* harmony import */ var _cmd_MoveShapeHandler__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./cmd/MoveShapeHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/MoveShapeHandler.js");
+/* harmony import */ var _cmd_ReconnectConnectionHandler__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./cmd/ReconnectConnectionHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/ReconnectConnectionHandler.js");
+/* harmony import */ var _cmd_ReplaceShapeHandler__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./cmd/ReplaceShapeHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/ReplaceShapeHandler.js");
+/* harmony import */ var _cmd_ResizeShapeHandler__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./cmd/ResizeShapeHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/ResizeShapeHandler.js");
+/* harmony import */ var _cmd_SpaceToolHandler__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./cmd/SpaceToolHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/SpaceToolHandler.js");
+/* harmony import */ var _cmd_ToggleShapeCollapseHandler__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./cmd/ToggleShapeCollapseHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/ToggleShapeCollapseHandler.js");
+/* harmony import */ var _cmd_UpdateAttachmentHandler__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./cmd/UpdateAttachmentHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/UpdateAttachmentHandler.js");
+/* harmony import */ var _cmd_UpdateWaypointsHandler__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./cmd/UpdateWaypointsHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/UpdateWaypointsHandler.js");
+/* harmony import */ var _model__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../../model */ "../node_modules/diagram-js/lib/model/index.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../model/Types').Element} Element
+ * @typedef {import('../../model/Types').Connection} Connection
+ * @typedef {import('../../model/Types').Parent} Parent
+ * @typedef {import('../../model/Types').Shape} Shape
+ * @typedef {import('../../model/Types').Label} Label
+ *
+ * @typedef {import('../../command/CommandStack').default} CommandStack
+ * @typedef {import('../../core/ElementFactory').default} ElementFactory
+ * @typedef {import('../../core/EventBus').default} EventBus
+ *
+ * @typedef {import('../../command/CommandStack').CommandHandlerConstructor} CommandHandlerConstructor
+ *
+ * @typedef {import('../../util/Types').Dimensions} Dimensions
+ * @typedef {import('../../util/Types').Direction} Direction
+ * @typedef {import('../../util/Types').Point} Point
+ * @typedef {import('../../util/Types').Rect} Rect
+ *
+ * @typedef { 'x' | 'y' } ModelingDistributeAxis
+ *
+ * @typedef { 'width' | 'height' } ModelingDistributeDimension
+ *
+ * @typedef { {
+ *   bottom?: number;
+ *   center?: number;
+ *   left?: number;
+ *   middle?: number;
+ *   right?: number;
+ *   top?: number;
+ * } } ModelingAlignAlignment
+ *
+ * @typedef { {
+ *   [key: string]: any;
+ * } } ModelingHints
+ *
+ * @typedef { {
+ *   attach?: boolean;
+ * } & ModelingHints } ModelingMoveElementsHints
+ *
+ * @typedef { {
+ *   attach?: boolean;
+ * } & ModelingHints } ModelingCreateShapeHints
+ */
+
+/**
+ * @template {Element} U
+ *
+ * @typedef { {
+ *   elements: U[],
+ *   range: {
+ *     min: number;
+ *     max: number;
+ *   } }
+ * } ModelingDistributeGroup
+ */
+
+/**
+ * The basic modeling entry point.
+ *
+ * @template {Connection} [T=Connection]
+ * @template {Element} [U=Element]
+ * @template {Label} [V=Label]
+ * @template {Parent} [W=Parent]
+ * @template {Shape} [X=Shape]
+ *
+ * @param {EventBus} eventBus
+ * @param {ElementFactory} elementFactory
+ * @param {CommandStack} commandStack
+ */
+function Modeling(eventBus, elementFactory, commandStack) {
+  this._eventBus = eventBus;
+  this._elementFactory = elementFactory;
+  this._commandStack = commandStack;
+
+  var self = this;
+
+  eventBus.on('diagram.init', function() {
+
+    // register modeling handlers
+    self.registerHandlers(commandStack);
+  });
+}
+
+Modeling.$inject = [ 'eventBus', 'elementFactory', 'commandStack' ];
+
+/**
+ * Get a map of all command handlers.
+ *
+ * @return {Map<string, CommandHandlerConstructor>}
+ */
+Modeling.prototype.getHandlers = function() {
+  return {
+    'shape.append': _cmd_AppendShapeHandler__WEBPACK_IMPORTED_MODULE_0__["default"],
+    'shape.create': _cmd_CreateShapeHandler__WEBPACK_IMPORTED_MODULE_1__["default"],
+    'shape.delete': _cmd_DeleteShapeHandler__WEBPACK_IMPORTED_MODULE_2__["default"],
+    'shape.move': _cmd_MoveShapeHandler__WEBPACK_IMPORTED_MODULE_3__["default"],
+    'shape.resize': _cmd_ResizeShapeHandler__WEBPACK_IMPORTED_MODULE_4__["default"],
+    'shape.replace': _cmd_ReplaceShapeHandler__WEBPACK_IMPORTED_MODULE_5__["default"],
+    'shape.toggleCollapse': _cmd_ToggleShapeCollapseHandler__WEBPACK_IMPORTED_MODULE_6__["default"],
+
+    'spaceTool': _cmd_SpaceToolHandler__WEBPACK_IMPORTED_MODULE_7__["default"],
+
+    'label.create': _cmd_CreateLabelHandler__WEBPACK_IMPORTED_MODULE_8__["default"],
+
+    'connection.create': _cmd_CreateConnectionHandler__WEBPACK_IMPORTED_MODULE_9__["default"],
+    'connection.delete': _cmd_DeleteConnectionHandler__WEBPACK_IMPORTED_MODULE_10__["default"],
+    'connection.move': _cmd_MoveConnectionHandler__WEBPACK_IMPORTED_MODULE_11__["default"],
+    'connection.layout': _cmd_LayoutConnectionHandler__WEBPACK_IMPORTED_MODULE_12__["default"],
+
+    'connection.updateWaypoints': _cmd_UpdateWaypointsHandler__WEBPACK_IMPORTED_MODULE_13__["default"],
+
+    'connection.reconnect': _cmd_ReconnectConnectionHandler__WEBPACK_IMPORTED_MODULE_14__["default"],
+
+    'elements.create': _cmd_CreateElementsHandler__WEBPACK_IMPORTED_MODULE_15__["default"],
+    'elements.move': _cmd_MoveElementsHandler__WEBPACK_IMPORTED_MODULE_16__["default"],
+    'elements.delete': _cmd_DeleteElementsHandler__WEBPACK_IMPORTED_MODULE_17__["default"],
+
+    'elements.distribute': _cmd_DistributeElementsHandler__WEBPACK_IMPORTED_MODULE_18__["default"],
+    'elements.align': _cmd_AlignElementsHandler__WEBPACK_IMPORTED_MODULE_19__["default"],
+
+    'element.updateAttachment': _cmd_UpdateAttachmentHandler__WEBPACK_IMPORTED_MODULE_20__["default"]
+  };
+};
+
+/**
+ * Register handlers with the command stack
+ *
+ * @param {CommandStack} commandStack
+ */
+Modeling.prototype.registerHandlers = function(commandStack) {
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_21__.forEach)(this.getHandlers(), function(handler, id) {
+    commandStack.registerHandler(id, handler);
+  });
+};
+
+
+/**
+ * Move a shape by the given delta and optionally to a new parent.
+ *
+ * @param {X} shape
+ * @param {Point} delta
+ * @param {W} [newParent]
+ * @param {number} [newParentIndex]
+ * @param {ModelingHints} [hints]
+ */
+Modeling.prototype.moveShape = function(shape, delta, newParent, newParentIndex, hints) {
+
+  if (typeof newParentIndex === 'object') {
+    hints = newParentIndex;
+    newParentIndex = null;
+  }
+
+  var context = {
+    shape: shape,
+    delta:  delta,
+    newParent: newParent,
+    newParentIndex: newParentIndex,
+    hints: hints || {}
+  };
+
+  this._commandStack.execute('shape.move', context);
+};
+
+
+/**
+ * Update the attachment of a shape.
+ *
+ * @param {X} shape
+ * @param {X} [newHost=undefined]
+ */
+Modeling.prototype.updateAttachment = function(shape, newHost) {
+  var context = {
+    shape: shape,
+    newHost: newHost
+  };
+
+  this._commandStack.execute('element.updateAttachment', context);
+};
+
+
+/**
+ * Move elements by a given delta and optionally to a new parent.
+ *
+ * @param {U[]} shapes
+ * @param {Point} delta
+ * @param {W} [target]
+ * @param {ModelingMoveElementsHints} [hints]
+ */
+Modeling.prototype.moveElements = function(shapes, delta, target, hints) {
+
+  hints = hints || {};
+
+  var attach = hints.attach;
+
+  var newParent = target,
+      newHost;
+
+  if (attach === true) {
+    newHost = target;
+    newParent = target.parent;
+  } else
+
+  if (attach === false) {
+    newHost = null;
+  }
+
+  var context = {
+    shapes: shapes,
+    delta: delta,
+    newParent: newParent,
+    newHost: newHost,
+    hints: hints
+  };
+
+  this._commandStack.execute('elements.move', context);
+};
+
+/**
+ * Move a shape by the given delta and optionally to a new parent.
+ *
+ * @param {T} connection
+ * @param {Point} delta
+ * @param {W} [newParent]
+ * @param {number} [newParentIndex]
+ * @param {ModelingHints} [hints]
+ */
+Modeling.prototype.moveConnection = function(connection, delta, newParent, newParentIndex, hints) {
+
+  if (typeof newParentIndex === 'object') {
+    hints = newParentIndex;
+    newParentIndex = undefined;
+  }
+
+  var context = {
+    connection: connection,
+    delta: delta,
+    newParent: newParent,
+    newParentIndex: newParentIndex,
+    hints: hints || {}
+  };
+
+  this._commandStack.execute('connection.move', context);
+};
+
+/**
+ * Layout a connection.
+ *
+ * @param {T} connection
+ * @param {ModelingHints} [hints]
+ */
+Modeling.prototype.layoutConnection = function(connection, hints) {
+  var context = {
+    connection: connection,
+    hints: hints || {}
+  };
+
+  this._commandStack.execute('connection.layout', context);
+};
+
+/**
+ * Create a connection.
+ *
+ * @overlord
+ *
+ * @param {U} source
+ * @param {U} target
+ * @param {Partial<T>} connection
+ * @param {W} parent
+ * @param {ModelingHints} [hints]
+ *
+ * @return {T}
+ */
+
+/**
+ * Create a connection.
+ *
+ * @param {U} source
+ * @param {U} target
+ * @param {number} parentIndex
+ * @param {Partial<T>} connection
+ * @param {W} parent
+ * @param {ModelingHints} [hints]
+ *
+ * @return {T}
+ */
+Modeling.prototype.createConnection = function(source, target, parentIndex, connection, parent, hints) {
+
+  if (typeof parentIndex === 'object') {
+    hints = parent;
+    parent = connection;
+    connection = parentIndex;
+    parentIndex = undefined;
+  }
+
+  connection = this._create('connection', connection);
+
+  var context = {
+    source: source,
+    target: target,
+    parent: parent,
+    parentIndex: parentIndex,
+    connection: connection,
+    hints: hints
+  };
+
+  this._commandStack.execute('connection.create', context);
+
+  return context.connection;
+};
+
+
+/**
+ * Create a shape.
+ *
+ * @overlord
+ *
+ * @param {Partial<X>} shape
+ * @param {Point} position
+ * @param {W} target
+ * @param {ModelingCreateShapeHints} [hints]
+ *
+ * @return {X}
+ */
+
+/**
+ * Create a shape.
+ *
+ * @param {Partial<X>} shape
+ * @param {Point} position
+ * @param {W} target
+ * @param {number} parentIndex
+ * @param {ModelingCreateShapeHints} [hints]
+ *
+ * @return {X}
+ */
+Modeling.prototype.createShape = function(shape, position, target, parentIndex, hints) {
+
+  if (typeof parentIndex !== 'number') {
+    hints = parentIndex;
+    parentIndex = undefined;
+  }
+
+  hints = hints || {};
+
+  var attach = hints.attach,
+      parent,
+      host;
+
+  shape = this._create('shape', shape);
+
+  if (attach) {
+    parent = target.parent;
+    host = target;
+  } else {
+    parent = target;
+  }
+
+  var context = {
+    position: position,
+    shape: shape,
+    parent: parent,
+    parentIndex: parentIndex,
+    host: host,
+    hints: hints
+  };
+
+  this._commandStack.execute('shape.create', context);
+
+  return context.shape;
+};
+
+/**
+ * Create elements.
+ *
+ * @param {Partial<U>[]} elements
+ * @param {Point} position
+ * @param {W} parent
+ * @param {number} [parentIndex]
+ * @param {ModelingHints} [hints]
+ *
+ * @return {U[]}
+ */
+Modeling.prototype.createElements = function(elements, position, parent, parentIndex, hints) {
+  if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_21__.isArray)(elements)) {
+    elements = [ elements ];
+  }
+
+  if (typeof parentIndex !== 'number') {
+    hints = parentIndex;
+    parentIndex = undefined;
+  }
+
+  hints = hints || {};
+
+  var context = {
+    position: position,
+    elements: elements,
+    parent: parent,
+    parentIndex: parentIndex,
+    hints: hints
+  };
+
+  this._commandStack.execute('elements.create', context);
+
+  return context.elements;
+};
+
+/**
+ * Create a label.
+ *
+ * @param {U} labelTarget
+ * @param {Point} position
+ * @param {Partial<V>} label
+ * @param {W} [parent]
+ *
+ * @return {V}
+ */
+Modeling.prototype.createLabel = function(labelTarget, position, label, parent) {
+
+  label = this._create('label', label);
+
+  var context = {
+    labelTarget: labelTarget,
+    position: position,
+    parent: parent || labelTarget.parent,
+    shape: label
+  };
+
+  this._commandStack.execute('label.create', context);
+
+  return context.shape;
+};
+
+
+/**
+ * Create and connect a shape to a source.
+ *
+ * @param {U} source
+ * @param {Partial<X>} shape
+ * @param {Point} position
+ * @param {W} target
+ * @param {ModelingHints} [hints]
+ *
+ * @return {X}
+ */
+Modeling.prototype.appendShape = function(source, shape, position, target, hints) {
+
+  hints = hints || {};
+
+  shape = this._create('shape', shape);
+
+  var context = {
+    source: source,
+    position: position,
+    target: target,
+    shape: shape,
+    connection: hints.connection,
+    connectionParent: hints.connectionParent,
+    hints: hints
+  };
+
+  this._commandStack.execute('shape.append', context);
+
+  return context.shape;
+};
+
+/**
+ * Remove elements.
+ *
+ * @param {U[]} elements
+ */
+Modeling.prototype.removeElements = function(elements) {
+  var context = {
+    elements: elements
+  };
+
+  this._commandStack.execute('elements.delete', context);
+};
+
+/**
+ * Distribute elements along a given axis.
+ *
+ * @param {ModelingDistributeGroup<U>[]} groups
+ * @param {ModelingDistributeAxis} axis
+ * @param {ModelingDistributeDimension} dimension
+ */
+Modeling.prototype.distributeElements = function(groups, axis, dimension) {
+  var context = {
+    groups: groups,
+    axis: axis,
+    dimension: dimension
+  };
+
+  this._commandStack.execute('elements.distribute', context);
+};
+
+/**
+ * Remove a shape.
+ *
+ * @param {X} shape
+ * @param {ModelingHints} [hints]
+ */
+Modeling.prototype.removeShape = function(shape, hints) {
+  var context = {
+    shape: shape,
+    hints: hints || {}
+  };
+
+  this._commandStack.execute('shape.delete', context);
+};
+
+/**
+ * Remove a connection.
+ *
+ * @param {T} connection
+ * @param {ModelingHints} [hints]
+ */
+Modeling.prototype.removeConnection = function(connection, hints) {
+  var context = {
+    connection: connection,
+    hints: hints || {}
+  };
+
+  this._commandStack.execute('connection.delete', context);
+};
+
+/**
+ * Replace a shape.
+ *
+ * @param {X} oldShape
+ * @param {Partial<X>} newShape
+ * @param {ModelingHints} [hints]
+ *
+ * @return {X}
+ */
+Modeling.prototype.replaceShape = function(oldShape, newShape, hints) {
+  var context = {
+    oldShape: oldShape,
+    newData: newShape,
+    hints: hints || {}
+  };
+
+  this._commandStack.execute('shape.replace', context);
+
+  return context.newShape;
+};
+
+/**
+ * Align elements.
+ *
+ * @param {U[]} elements
+ * @param {ModelingAlignAlignment} alignment
+ */
+Modeling.prototype.alignElements = function(elements, alignment) {
+  var context = {
+    elements: elements,
+    alignment: alignment
+  };
+
+  this._commandStack.execute('elements.align', context);
+};
+
+/**
+ * Resize a shape.
+ *
+ * @param {X} shape
+ * @param {Rect} newBounds
+ * @param {Dimensions} [minBounds]
+ * @param {ModelingHints} [hints]
+ */
+Modeling.prototype.resizeShape = function(shape, newBounds, minBounds, hints) {
+  var context = {
+    shape: shape,
+    newBounds: newBounds,
+    minBounds: minBounds,
+    hints: hints
+  };
+
+  this._commandStack.execute('shape.resize', context);
+};
+
+/**
+ * Create space along an horizontally or vertically.
+ *
+ * @param {X[]} movingShapes
+ * @param {X[]} resizingShapes
+ * @param {Point} delta
+ * @param {Direction} direction
+ * @param {number} start
+ */
+Modeling.prototype.createSpace = function(movingShapes, resizingShapes, delta, direction, start) {
+  var context = {
+    delta: delta,
+    direction: direction,
+    movingShapes: movingShapes,
+    resizingShapes: resizingShapes,
+    start: start
+  };
+
+  this._commandStack.execute('spaceTool', context);
+};
+
+/**
+ * Update a connetions waypoints.
+ *
+ * @param {T} connection
+ * @param {Point[]} newWaypoints
+ * @param {ModelingHints} [hints]
+ */
+Modeling.prototype.updateWaypoints = function(connection, newWaypoints, hints) {
+  var context = {
+    connection: connection,
+    newWaypoints: newWaypoints,
+    hints: hints || {}
+  };
+
+  this._commandStack.execute('connection.updateWaypoints', context);
+};
+
+/**
+ * Reconnect a connections source and/or target.
+ *
+ * @param {T} connection
+ * @param {U} source
+ * @param {U} target
+ * @param {Point|Point[]} dockingOrPoints
+ * @param {ModelingHints} [hints]
+ */
+Modeling.prototype.reconnect = function(connection, source, target, dockingOrPoints, hints) {
+  var context = {
+    connection: connection,
+    newSource: source,
+    newTarget: target,
+    dockingOrPoints: dockingOrPoints,
+    hints: hints || {}
+  };
+
+  this._commandStack.execute('connection.reconnect', context);
+};
+
+/**
+ * Reconnect a connections source.
+ *
+ * @param {T} connection
+ * @param {U} newSource
+ * @param {Point|Point[]} dockingOrPoints
+ * @param {ModelingHints} [hints]
+ */
+Modeling.prototype.reconnectStart = function(connection, newSource, dockingOrPoints, hints) {
+  if (!hints) {
+    hints = {};
+  }
+
+  this.reconnect(connection, newSource, connection.target, dockingOrPoints, (0,min_dash__WEBPACK_IMPORTED_MODULE_21__.assign)(hints, {
+    docking: 'source'
+  }));
+};
+
+/**
+ * Reconnect a connections target.
+ *
+ * @param {T} connection
+ * @param {U} newTarget
+ * @param {Point|Point[]} dockingOrPoints
+ * @param {ModelingHints} [hints]
+ */
+Modeling.prototype.reconnectEnd = function(connection, newTarget, dockingOrPoints, hints) {
+  if (!hints) {
+    hints = {};
+  }
+
+  this.reconnect(connection, connection.source, newTarget, dockingOrPoints, (0,min_dash__WEBPACK_IMPORTED_MODULE_21__.assign)(hints, {
+    docking: 'target'
+  }));
+};
+
+/**
+ * Connect two elements.
+ *
+ * @param {U} source
+ * @param {U} target
+ * @param {Partial<T>} [attrs]
+ * @param {ModelingHints} [hints]
+ *
+ * @return {T}
+ */
+Modeling.prototype.connect = function(source, target, attrs, hints) {
+  return this.createConnection(source, target, attrs || {}, source.parent, hints);
+};
+
+Modeling.prototype._create = function(type, attrs) {
+  if ((0,_model__WEBPACK_IMPORTED_MODULE_22__.isModelElement)(attrs)) {
+    return attrs;
+  } else {
+    return this._elementFactory.create(type, attrs);
+  }
+};
+
+/**
+ * Collapse or expand a shape.
+ *
+ * @param {X} shape
+ * @param {ModelingHints} [hints]
+ */
+Modeling.prototype.toggleCollapse = function(shape, hints) {
+  var context = {
+    shape: shape,
+    hints: hints || {}
+  };
+
+  this._commandStack.execute('shape.toggleCollapse', context);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/AlignElementsHandler.js":
+/*!************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/AlignElementsHandler.js ***!
+  \************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ AlignElements)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * @typedef {import('../../../core/Canvas').default} Canvas
+ * @typedef {import('../Modeling').default} Modeling
+ */
+
+/**
+ * A handler that align elements in a certain way.
+ *
+ * @param {Modeling} modeling
+ * @param {Canvas} canvas
+ */
+function AlignElements(modeling, canvas) {
+  this._modeling = modeling;
+  this._canvas = canvas;
+}
+
+AlignElements.$inject = [ 'modeling', 'canvas' ];
+
+
+AlignElements.prototype.preExecute = function(context) {
+  var modeling = this._modeling;
+
+  var elements = context.elements,
+      alignment = context.alignment;
+
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(elements, function(element) {
+    var delta = {
+      x: 0,
+      y: 0
+    };
+
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isDefined)(alignment.left)) {
+      delta.x = alignment.left - element.x;
+
+    } else if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isDefined)(alignment.right)) {
+      delta.x = (alignment.right - element.width) - element.x;
+
+    } else if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isDefined)(alignment.center)) {
+      delta.x = (alignment.center - Math.round(element.width / 2)) - element.x;
+
+    } else if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isDefined)(alignment.top)) {
+      delta.y = alignment.top - element.y;
+
+    } else if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isDefined)(alignment.bottom)) {
+      delta.y = (alignment.bottom - element.height) - element.y;
+
+    } else if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isDefined)(alignment.middle)) {
+      delta.y = (alignment.middle - Math.round(element.height / 2)) - element.y;
+    }
+
+    modeling.moveElements([ element ], delta, element.parent);
+  });
+};
+
+AlignElements.prototype.postExecute = function(context) {
+
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/AppendShapeHandler.js":
+/*!**********************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/AppendShapeHandler.js ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ AppendShapeHandler)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * @typedef {import('../../../model/Types').Element} Element
+ * @typedef {import('../../../model/Types').Parent} Parent
+ * @typedef {import('../../../model/Types').Shape} Shape
+ *
+ * @typedef {import('../../../util/Types').Point} Point
+ *
+ * @typedef {import('../Modeling').default} Modeling
+ */
+
+/**
+ * A handler that implements reversible appending of shapes
+ * to a source shape.
+ *
+ * @param {Modeling} modeling
+ */
+function AppendShapeHandler(modeling) {
+  this._modeling = modeling;
+}
+
+AppendShapeHandler.$inject = [ 'modeling' ];
+
+
+// api //////////////////////
+
+
+/**
+ * Creates a new shape.
+ *
+ * @param {Object} context
+ * @param {Partial<Shape>} context.shape The new shape.
+ * @param {Element} context.source The element to which to append the new shape to.
+ * @param {Parent} context.parent The parent.
+ * @param {Point} context.position The position at which to create the new shape.
+ */
+AppendShapeHandler.prototype.preExecute = function(context) {
+
+  var source = context.source;
+
+  if (!source) {
+    throw new Error('source required');
+  }
+
+  var target = context.target || source.parent,
+      shape = context.shape,
+      hints = context.hints || {};
+
+  shape = context.shape =
+    this._modeling.createShape(
+      shape,
+      context.position,
+      target, { attach: hints.attach });
+
+  context.shape = shape;
+};
+
+AppendShapeHandler.prototype.postExecute = function(context) {
+  var hints = context.hints || {};
+
+  if (!existsConnection(context.source, context.shape)) {
+
+    // create connection
+    if (hints.connectionTarget === context.source) {
+      this._modeling.connect(context.shape, context.source, context.connection);
+    } else {
+      this._modeling.connect(context.source, context.shape, context.connection);
+    }
+  }
+};
+
+
+function existsConnection(source, target) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.some)(source.outgoing, function(c) {
+    return c.target === target;
+  });
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/CreateConnectionHandler.js":
+/*!***************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/CreateConnectionHandler.js ***!
+  \***************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ CreateConnectionHandler)
+/* harmony export */ });
+/**
+ * @typedef {import('../../../model/Types').Element} Element
+ * @typedef {import('../../../model/Types').Shape} Shape
+ *
+ * @typedef {import('../../../util/Types').Point} Point
+ *
+ * @typedef {import('../Modeling').ModelingHints} ModelingHints
+ *
+ * @typedef {import('../../../core/Canvas').default} Canvas
+ * @typedef {import('../../../layout/BaseLayouter').default} Layouter
+ */
+
+/**
+ * @param {Canvas} canvas
+ * @param {Layouter} layouter
+ */
+function CreateConnectionHandler(canvas, layouter) {
+  this._canvas = canvas;
+  this._layouter = layouter;
+}
+
+CreateConnectionHandler.$inject = [ 'canvas', 'layouter' ];
+
+
+// api //////////////////////
+
+
+/**
+ * Creates a new connection between two elements.
+ *
+ * @param {Object} context
+ * @param {Element} context.source The source.
+ * @param {Element} context.target The target.
+ * @param {Shape} context.parent The parent.
+ * @param {number} [context.parentIndex] The optional index at which to add the
+ * connection to the parent's children.
+ * @param {ModelingHints} [context.hints] The optional hints.
+ */
+CreateConnectionHandler.prototype.execute = function(context) {
+
+  var connection = context.connection,
+      source = context.source,
+      target = context.target,
+      parent = context.parent,
+      parentIndex = context.parentIndex,
+      hints = context.hints;
+
+  if (!source || !target) {
+    throw new Error('source and target required');
+  }
+
+  if (!parent) {
+    throw new Error('parent required');
+  }
+
+  connection.source = source;
+  connection.target = target;
+
+  if (!connection.waypoints) {
+    connection.waypoints = this._layouter.layoutConnection(connection, hints);
+  }
+
+  // add connection
+  this._canvas.addConnection(connection, parent, parentIndex);
+
+  return connection;
+};
+
+CreateConnectionHandler.prototype.revert = function(context) {
+  var connection = context.connection;
+
+  this._canvas.removeConnection(connection);
+
+  connection.source = null;
+  connection.target = null;
+
+  return connection;
+};
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/CreateElementsHandler.js":
+/*!*************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/CreateElementsHandler.js ***!
+  \*************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ CreateElementsHandler)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../util/ModelUtil */ "../node_modules/diagram-js/lib/util/ModelUtil.js");
+
+
+
+
+
+
+/**
+ * @typedef {import('../Modeling').default} Modeling
+ */
+
+var round = Math.round;
+
+/**
+ * @param {Modeling} modeling
+ */
+function CreateElementsHandler(modeling) {
+  this._modeling = modeling;
+}
+
+CreateElementsHandler.$inject = [
+  'modeling'
+];
+
+CreateElementsHandler.prototype.preExecute = function(context) {
+  var elements = context.elements,
+      parent = context.parent,
+      parentIndex = context.parentIndex,
+      position = context.position,
+      hints = context.hints;
+
+  var modeling = this._modeling;
+
+  // make sure each element has x and y
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(elements, function(element) {
+    if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(element.x)) {
+      element.x = 0;
+    }
+
+    if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(element.y)) {
+      element.y = 0;
+    }
+  });
+
+  var visibleElements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.filter)(elements, function(element) {
+    return !element.hidden;
+  });
+
+  var bbox = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_1__.getBBox)(visibleElements);
+
+  // center elements around position
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(elements, function(element) {
+    if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__.isConnection)(element)) {
+      element.waypoints = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.map)(element.waypoints, function(waypoint) {
+        return {
+          x: round(waypoint.x - bbox.x - bbox.width / 2 + position.x),
+          y: round(waypoint.y - bbox.y - bbox.height / 2 + position.y)
+        };
+      });
+    }
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(element, {
+      x: round(element.x - bbox.x - bbox.width / 2 + position.x),
+      y: round(element.y - bbox.y - bbox.height / 2 + position.y)
+    });
+  });
+
+  var parents = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_1__.getParents)(elements);
+
+  var cache = {};
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(elements, function(element) {
+    if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__.isConnection)(element)) {
+      cache[ element.id ] = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(parentIndex) ?
+        modeling.createConnection(
+          cache[ element.source.id ],
+          cache[ element.target.id ],
+          parentIndex,
+          element,
+          element.parent || parent,
+          hints
+        ) :
+        modeling.createConnection(
+          cache[ element.source.id ],
+          cache[ element.target.id ],
+          element,
+          element.parent || parent,
+          hints
+        );
+
+      return;
+    }
+
+    var createShapeHints = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, hints);
+
+    if (parents.indexOf(element) === -1) {
+      createShapeHints.autoResize = false;
+    }
+
+    if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_2__.isLabel)(element)) {
+      createShapeHints = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.omit)(createShapeHints, [ 'attach' ]);
+    }
+
+    cache[ element.id ] = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(parentIndex) ?
+      modeling.createShape(
+        element,
+        (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.pick)(element, [ 'x', 'y', 'width', 'height' ]),
+        element.parent || parent,
+        parentIndex,
+        createShapeHints
+      ) :
+      modeling.createShape(
+        element,
+        (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.pick)(element, [ 'x', 'y', 'width', 'height' ]),
+        element.parent || parent,
+        createShapeHints
+      );
+  });
+
+  context.elements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.values)(cache);
+};
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/CreateLabelHandler.js":
+/*!**********************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/CreateLabelHandler.js ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ CreateLabelHandler)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _CreateShapeHandler__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CreateShapeHandler */ "../node_modules/diagram-js/lib/features/modeling/cmd/CreateShapeHandler.js");
+
+
+
+
+/**
+ * @typedef {import('../../../core/Canvas').default} Canvas
+ *
+ * @typedef {import('../../../model/Types').Element} Element
+ * @typedef {import('../../../model/Types').Parent} Parent
+ * @typedef {import('../../../model/Types').Shape} Shape
+ * @typedef {import('../../../util/Types').Point} Point
+ */
+
+/**
+ * A handler that attaches a label to a given target shape.
+ *
+ * @param {Canvas} canvas
+ */
+function CreateLabelHandler(canvas) {
+  _CreateShapeHandler__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, canvas);
+}
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(CreateLabelHandler, _CreateShapeHandler__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+CreateLabelHandler.$inject = [ 'canvas' ];
+
+
+// api //////////////////////
+
+
+var originalExecute = _CreateShapeHandler__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.execute;
+
+/**
+ * Append label to element.
+ *
+ * @param { {
+ *   parent: Parent;
+ *   position: Point;
+ *   shape: Shape;
+ *   target: Element;
+ * } } context
+ */
+CreateLabelHandler.prototype.execute = function(context) {
+
+  var label = context.shape;
+
+  ensureValidDimensions(label);
+
+  label.labelTarget = context.labelTarget;
+
+  return originalExecute.call(this, context);
+};
+
+var originalRevert = _CreateShapeHandler__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.revert;
+
+/**
+ * Revert appending by removing label.
+ */
+CreateLabelHandler.prototype.revert = function(context) {
+  context.shape.labelTarget = null;
+
+  return originalRevert.call(this, context);
+};
+
+
+// helpers //////////////////////
+
+function ensureValidDimensions(label) {
+
+  // make sure a label has valid { width, height } dimensions
+  [ 'width', 'height' ].forEach(function(prop) {
+    if (typeof label[prop] === 'undefined') {
+      label[prop] = 0;
+    }
+  });
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/CreateShapeHandler.js":
+/*!**********************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/CreateShapeHandler.js ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ CreateShapeHandler)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * @typedef {import('../../../model/Types').Element} Element
+ * @typedef {import('../../../util/Types').Point} Point
+ *
+ * @typedef {import('../../../core/Canvas').default} Canvas
+ */
+
+var round = Math.round;
+
+
+/**
+ * A handler that implements reversible addition of shapes.
+ *
+ * @param {Canvas} canvas
+ */
+function CreateShapeHandler(canvas) {
+  this._canvas = canvas;
+}
+
+CreateShapeHandler.$inject = [ 'canvas' ];
+
+
+// api //////////////////////
+
+
+/**
+ * Appends a shape to a target shape
+ *
+ * @param {Object} context
+ * @param {Element} context.parent The parent.
+ * @param {Point} context.position The position at which to create the new shape.
+ * @param {number} [context.parentIndex] The optional index at which to add the
+ * shape to the parent's children.
+ */
+CreateShapeHandler.prototype.execute = function(context) {
+
+  var shape = context.shape,
+      positionOrBounds = context.position,
+      parent = context.parent,
+      parentIndex = context.parentIndex;
+
+  if (!parent) {
+    throw new Error('parent required');
+  }
+
+  if (!positionOrBounds) {
+    throw new Error('position required');
+  }
+
+  // (1) add at event center position _or_ at given bounds
+  if (positionOrBounds.width !== undefined) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(shape, positionOrBounds);
+  } else {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(shape, {
+      x: positionOrBounds.x - round(shape.width / 2),
+      y: positionOrBounds.y - round(shape.height / 2)
+    });
+  }
+
+  // (2) add to canvas
+  this._canvas.addShape(shape, parent, parentIndex);
+
+  return shape;
+};
+
+
+/**
+ * Undo append by removing the shape
+ */
+CreateShapeHandler.prototype.revert = function(context) {
+
+  var shape = context.shape;
+
+  // (3) remove form canvas
+  this._canvas.removeShape(shape);
+
+  return shape;
+};
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/DeleteConnectionHandler.js":
+/*!***************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/DeleteConnectionHandler.js ***!
+  \***************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ DeleteConnectionHandler)
+/* harmony export */ });
+/* harmony import */ var _util_Collections__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../util/Collections */ "../node_modules/diagram-js/lib/util/Collections.js");
+/* harmony import */ var _util_Removal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../util/Removal */ "../node_modules/diagram-js/lib/util/Removal.js");
+
+
+
+
+/**
+ * @typedef {import('../../../core/Canvas').default} Canvas
+ * @typedef {import('../Modeling').default} Modeling
+ */
+
+/**
+ * A handler that implements reversible deletion of Connections.
+ */
+function DeleteConnectionHandler(canvas, modeling) {
+  this._canvas = canvas;
+  this._modeling = modeling;
+}
+
+DeleteConnectionHandler.$inject = [
+  'canvas',
+  'modeling'
+];
+
+
+/**
+ * - Remove connections
+ */
+DeleteConnectionHandler.prototype.preExecute = function(context) {
+
+  var modeling = this._modeling;
+
+  var connection = context.connection;
+
+  // remove connections
+  (0,_util_Removal__WEBPACK_IMPORTED_MODULE_0__.saveClear)(connection.incoming, function(connection) {
+
+    // To make sure that the connection isn't removed twice
+    // For example if a container is removed
+    modeling.removeConnection(connection, { nested: true });
+  });
+
+  (0,_util_Removal__WEBPACK_IMPORTED_MODULE_0__.saveClear)(connection.outgoing, function(connection) {
+    modeling.removeConnection(connection, { nested: true });
+  });
+
+};
+
+
+DeleteConnectionHandler.prototype.execute = function(context) {
+
+  var connection = context.connection,
+      parent = connection.parent;
+
+  context.parent = parent;
+
+  // remember containment
+  context.parentIndex = (0,_util_Collections__WEBPACK_IMPORTED_MODULE_1__.indexOf)(parent.children, connection);
+
+  context.source = connection.source;
+  context.target = connection.target;
+
+  this._canvas.removeConnection(connection);
+
+  connection.source = null;
+  connection.target = null;
+
+  return connection;
+};
+
+/**
+ * Command revert implementation.
+ */
+DeleteConnectionHandler.prototype.revert = function(context) {
+
+  var connection = context.connection,
+      parent = context.parent,
+      parentIndex = context.parentIndex;
+
+  connection.source = context.source;
+  connection.target = context.target;
+
+  // restore containment
+  (0,_util_Collections__WEBPACK_IMPORTED_MODULE_1__.add)(parent.children, connection, parentIndex);
+
+  this._canvas.addConnection(connection, parent);
+
+  return connection;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/DeleteElementsHandler.js":
+/*!*************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/DeleteElementsHandler.js ***!
+  \*************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ DeleteElementsHandler)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * @typedef {import('../../../core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('../Modeling').default} Modeling
+ */
+
+/**
+ * @param {Modeling} modeling
+ * @param {ElementRegistry} elementRegistry
+ */
+function DeleteElementsHandler(modeling, elementRegistry) {
+  this._modeling = modeling;
+  this._elementRegistry = elementRegistry;
+}
+
+DeleteElementsHandler.$inject = [
+  'modeling',
+  'elementRegistry'
+];
+
+
+DeleteElementsHandler.prototype.postExecute = function(context) {
+
+  var modeling = this._modeling,
+      elementRegistry = this._elementRegistry,
+      elements = context.elements;
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(elements, function(element) {
+
+    // element may have been removed with previous
+    // remove operations already (e.g. in case of nesting)
+    if (!elementRegistry.get(element.id)) {
+      return;
+    }
+
+    if (element.waypoints) {
+      modeling.removeConnection(element);
+    } else {
+      modeling.removeShape(element);
+    }
+  });
+};
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/DeleteShapeHandler.js":
+/*!**********************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/DeleteShapeHandler.js ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ DeleteShapeHandler)
+/* harmony export */ });
+/* harmony import */ var _util_Collections__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../util/Collections */ "../node_modules/diagram-js/lib/util/Collections.js");
+/* harmony import */ var _util_Removal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../util/Removal */ "../node_modules/diagram-js/lib/util/Removal.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../util/ModelUtil */ "../node_modules/diagram-js/lib/util/ModelUtil.js");
+
+
+
+
+
+
+/**
+ * @typedef {import('../../../core/Canvas').default} Canvas
+ * @typedef {import('../Modeling').default} Modeling
+ */
+
+/**
+ * A handler that implements reversible deletion of shapes.
+ *
+ * @param {Canvas} canvas
+ * @param {Modeling} modeling
+ */
+function DeleteShapeHandler(canvas, modeling) {
+  this._canvas = canvas;
+  this._modeling = modeling;
+}
+
+DeleteShapeHandler.$inject = [ 'canvas', 'modeling' ];
+
+
+/**
+ * - Remove connections
+ * - Remove all direct children
+ */
+DeleteShapeHandler.prototype.preExecute = function(context) {
+
+  var modeling = this._modeling;
+
+  var shape = context.shape;
+
+  // remove connections
+  (0,_util_Removal__WEBPACK_IMPORTED_MODULE_0__.saveClear)(shape.incoming, function(connection) {
+
+    // To make sure that the connection isn't removed twice
+    // For example if a container is removed
+    modeling.removeConnection(connection, { nested: true });
+  });
+
+  (0,_util_Removal__WEBPACK_IMPORTED_MODULE_0__.saveClear)(shape.outgoing, function(connection) {
+    modeling.removeConnection(connection, { nested: true });
+  });
+
+  // remove child shapes and connections
+  (0,_util_Removal__WEBPACK_IMPORTED_MODULE_0__.saveClear)(shape.children, function(child) {
+    if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.isConnection)(child)) {
+      modeling.removeConnection(child, { nested: true });
+    } else {
+      modeling.removeShape(child, { nested: true });
+    }
+  });
+};
+
+/**
+ * Remove shape and remember the parent
+ */
+DeleteShapeHandler.prototype.execute = function(context) {
+  var canvas = this._canvas;
+
+  var shape = context.shape,
+      oldParent = shape.parent;
+
+  context.oldParent = oldParent;
+
+  // remove containment
+  context.oldParentIndex = (0,_util_Collections__WEBPACK_IMPORTED_MODULE_2__.indexOf)(oldParent.children, shape);
+
+  // remove shape
+  canvas.removeShape(shape);
+
+  return shape;
+};
+
+
+/**
+ * Command revert implementation
+ */
+DeleteShapeHandler.prototype.revert = function(context) {
+
+  var canvas = this._canvas;
+
+  var shape = context.shape,
+      oldParent = context.oldParent,
+      oldParentIndex = context.oldParentIndex;
+
+  // restore containment
+  (0,_util_Collections__WEBPACK_IMPORTED_MODULE_2__.add)(oldParent.children, shape, oldParentIndex);
+
+  canvas.addShape(shape, oldParent);
+
+  return shape;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/DistributeElementsHandler.js":
+/*!*****************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/DistributeElementsHandler.js ***!
+  \*****************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ DistributeElements)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * @typedef {import('../Modeling').default} Modeling
+ */
+
+/**
+ * A handler that distributes elements evenly.
+ *
+ * @param {Modeling} modeling
+ */
+function DistributeElements(modeling) {
+  this._modeling = modeling;
+}
+
+DistributeElements.$inject = [ 'modeling' ];
+
+var OFF_AXIS = {
+  x: 'y',
+  y: 'x'
+};
+
+DistributeElements.prototype.preExecute = function(context) {
+  var modeling = this._modeling;
+
+  var groups = context.groups,
+      axis = context.axis,
+      dimension = context.dimension;
+
+  function updateRange(group, element) {
+    group.range.min = Math.min(element[axis], group.range.min);
+    group.range.max = Math.max(element[axis] + element[dimension], group.range.max);
+  }
+
+  function center(element) {
+    return element[axis] + element[dimension] / 2;
+  }
+
+  function lastIdx(arr) {
+    return arr.length - 1;
+  }
+
+  function rangeDiff(range) {
+    return range.max - range.min;
+  }
+
+  function centerElement(refCenter, element) {
+    var delta = { y: 0 };
+
+    delta[axis] = refCenter - center(element);
+
+    if (delta[axis]) {
+
+      delta[OFF_AXIS[axis]] = 0;
+
+      modeling.moveElements([ element ], delta, element.parent);
+    }
+  }
+
+  var firstGroup = groups[0],
+      lastGroupIdx = lastIdx(groups),
+      lastGroup = groups[ lastGroupIdx ];
+
+  var margin,
+      spaceInBetween,
+      groupsSize = 0; // the size of each range
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(groups, function(group, idx) {
+    var sortedElements,
+        refElem,
+        refCenter;
+
+    if (group.elements.length < 2) {
+      if (idx && idx !== groups.length - 1) {
+        updateRange(group, group.elements[0]);
+
+        groupsSize += rangeDiff(group.range);
+      }
+      return;
+    }
+
+    sortedElements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.sortBy)(group.elements, axis);
+
+    refElem = sortedElements[0];
+
+    if (idx === lastGroupIdx) {
+      refElem = sortedElements[lastIdx(sortedElements)];
+    }
+
+    refCenter = center(refElem);
+
+    // wanna update the ranges after the shapes have been centered
+    group.range = null;
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(sortedElements, function(element) {
+
+      centerElement(refCenter, element);
+
+      if (group.range === null) {
+        group.range = {
+          min: element[axis],
+          max: element[axis] + element[dimension]
+        };
+
+        return;
+      }
+
+      // update group's range after centering the range elements
+      updateRange(group, element);
+    });
+
+    if (idx && idx !== groups.length - 1) {
+      groupsSize += rangeDiff(group.range);
+    }
+  });
+
+  spaceInBetween = Math.abs(lastGroup.range.min - firstGroup.range.max);
+
+  margin = Math.round((spaceInBetween - groupsSize) / (groups.length - 1));
+
+  if (margin < groups.length - 1) {
+    return;
+  }
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(groups, function(group, groupIdx) {
+    var delta = {},
+        prevGroup;
+
+    if (group === firstGroup || group === lastGroup) {
+      return;
+    }
+
+    prevGroup = groups[groupIdx - 1];
+
+    group.range.max = 0;
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(group.elements, function(element, idx) {
+      delta[OFF_AXIS[axis]] = 0;
+      delta[axis] = (prevGroup.range.max - element[axis]) + margin;
+
+      if (group.range.min !== element[axis]) {
+        delta[axis] += element[axis] - group.range.min;
+      }
+
+      if (delta[axis]) {
+        modeling.moveElements([ element ], delta, element.parent);
+      }
+
+      group.range.max = Math.max(element[axis] + element[dimension], idx ? group.range.max : 0);
+    });
+  });
+};
+
+DistributeElements.prototype.postExecute = function(context) {
+
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/LayoutConnectionHandler.js":
+/*!***************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/LayoutConnectionHandler.js ***!
+  \***************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ LayoutConnectionHandler)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * @typedef {import('../../../core/Canvas').default} Canvas
+ * @typedef {import('../../../layout/BaseLayouter').default} Layouter
+ */
+
+/**
+ * A handler that implements reversible moving of shapes.
+ *
+ * @param {Layouter} layouter
+ * @param {Canvas} canvas
+ */
+function LayoutConnectionHandler(layouter, canvas) {
+  this._layouter = layouter;
+  this._canvas = canvas;
+}
+
+LayoutConnectionHandler.$inject = [ 'layouter', 'canvas' ];
+
+LayoutConnectionHandler.prototype.execute = function(context) {
+
+  var connection = context.connection;
+
+  var oldWaypoints = connection.waypoints;
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(context, {
+    oldWaypoints: oldWaypoints
+  });
+
+  connection.waypoints = this._layouter.layoutConnection(connection, context.hints);
+
+  return connection;
+};
+
+LayoutConnectionHandler.prototype.revert = function(context) {
+
+  var connection = context.connection;
+
+  connection.waypoints = context.oldWaypoints;
+
+  return connection;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/MoveConnectionHandler.js":
+/*!*************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/MoveConnectionHandler.js ***!
+  \*************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ MoveConnectionHandler)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _util_Collections__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../util/Collections */ "../node_modules/diagram-js/lib/util/Collections.js");
+
+
+
+
+
+
+/**
+ * A handler that implements reversible moving of connections.
+ *
+ * The handler differs from the layout connection handler in a sense
+ * that it preserves the connection layout.
+ */
+function MoveConnectionHandler() { }
+
+
+MoveConnectionHandler.prototype.execute = function(context) {
+
+  var connection = context.connection,
+      delta = context.delta;
+
+  var newParent = context.newParent || connection.parent,
+      newParentIndex = context.newParentIndex,
+      oldParent = connection.parent;
+
+  // save old parent in context
+  context.oldParent = oldParent;
+  context.oldParentIndex = (0,_util_Collections__WEBPACK_IMPORTED_MODULE_0__.remove)(oldParent.children, connection);
+
+  // add to new parent at position
+  (0,_util_Collections__WEBPACK_IMPORTED_MODULE_0__.add)(newParent.children, connection, newParentIndex);
+
+  // update parent
+  connection.parent = newParent;
+
+  // update waypoint positions
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(connection.waypoints, function(p) {
+    p.x += delta.x;
+    p.y += delta.y;
+
+    if (p.original) {
+      p.original.x += delta.x;
+      p.original.y += delta.y;
+    }
+  });
+
+  return connection;
+};
+
+MoveConnectionHandler.prototype.revert = function(context) {
+
+  var connection = context.connection,
+      newParent = connection.parent,
+      oldParent = context.oldParent,
+      oldParentIndex = context.oldParentIndex,
+      delta = context.delta;
+
+  // remove from newParent
+  (0,_util_Collections__WEBPACK_IMPORTED_MODULE_0__.remove)(newParent.children, connection);
+
+  // restore previous location in old parent
+  (0,_util_Collections__WEBPACK_IMPORTED_MODULE_0__.add)(oldParent.children, connection, oldParentIndex);
+
+  // restore parent
+  connection.parent = oldParent;
+
+  // revert to old waypoint positions
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(connection.waypoints, function(p) {
+    p.x -= delta.x;
+    p.y -= delta.y;
+
+    if (p.original) {
+      p.original.x -= delta.x;
+      p.original.y -= delta.y;
+    }
+  });
+
+  return connection;
+};
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/MoveElementsHandler.js":
+/*!***********************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/MoveElementsHandler.js ***!
+  \***********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ MoveElementsHandler)
+/* harmony export */ });
+/* harmony import */ var _helper_MoveHelper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./helper/MoveHelper */ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/MoveHelper.js");
+
+
+/**
+ * @typedef {import('../Modeling').default} Modeling
+ */
+
+/**
+ * A handler that implements reversible moving of shapes.
+ *
+ * @param {Modeling} modeling
+ */
+function MoveElementsHandler(modeling) {
+  this._helper = new _helper_MoveHelper__WEBPACK_IMPORTED_MODULE_0__["default"](modeling);
+}
+
+MoveElementsHandler.$inject = [ 'modeling' ];
+
+MoveElementsHandler.prototype.preExecute = function(context) {
+  context.closure = this._helper.getClosure(context.shapes);
+};
+
+MoveElementsHandler.prototype.postExecute = function(context) {
+
+  var hints = context.hints,
+      primaryShape;
+
+  if (hints && hints.primaryShape) {
+    primaryShape = hints.primaryShape;
+    hints.oldParent = primaryShape.parent;
+  }
+
+  this._helper.moveClosure(
+    context.closure,
+    context.delta,
+    context.newParent,
+    context.newHost,
+    primaryShape
+  );
+};
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/MoveShapeHandler.js":
+/*!********************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/MoveShapeHandler.js ***!
+  \********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ MoveShapeHandler)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _helper_MoveHelper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./helper/MoveHelper */ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/MoveHelper.js");
+/* harmony import */ var _util_Collections__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../util/Collections */ "../node_modules/diagram-js/lib/util/Collections.js");
+/* harmony import */ var _helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./helper/AnchorsHelper */ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/AnchorsHelper.js");
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../Modeling').default} Modeling
+ */
+
+/**
+ * A handler that implements reversible moving of shapes.
+ *
+ * @param {Modeling} modeling
+ */
+function MoveShapeHandler(modeling) {
+  this._modeling = modeling;
+
+  this._helper = new _helper_MoveHelper__WEBPACK_IMPORTED_MODULE_0__["default"](modeling);
+}
+
+MoveShapeHandler.$inject = [ 'modeling' ];
+
+
+MoveShapeHandler.prototype.execute = function(context) {
+
+  var shape = context.shape,
+      delta = context.delta,
+      newParent = context.newParent || shape.parent,
+      newParentIndex = context.newParentIndex,
+      oldParent = shape.parent;
+
+  context.oldBounds = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.pick)(shape, [ 'x', 'y', 'width', 'height' ]);
+
+  // save old parent in context
+  context.oldParent = oldParent;
+  context.oldParentIndex = (0,_util_Collections__WEBPACK_IMPORTED_MODULE_2__.remove)(oldParent.children, shape);
+
+  // add to new parent at position
+  (0,_util_Collections__WEBPACK_IMPORTED_MODULE_2__.add)(newParent.children, shape, newParentIndex);
+
+  // update shape parent + position
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(shape, {
+    parent: newParent,
+    x: shape.x + delta.x,
+    y: shape.y + delta.y
+  });
+
+  return shape;
+};
+
+MoveShapeHandler.prototype.postExecute = function(context) {
+
+  var shape = context.shape,
+      delta = context.delta,
+      hints = context.hints;
+
+  var modeling = this._modeling;
+
+  if (hints.layout !== false) {
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(shape.incoming, function(c) {
+      modeling.layoutConnection(c, {
+        connectionEnd: (0,_helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_3__.getMovedTargetAnchor)(c, shape, delta)
+      });
+    });
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(shape.outgoing, function(c) {
+      modeling.layoutConnection(c, {
+        connectionStart: (0,_helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_3__.getMovedSourceAnchor)(c, shape, delta)
+      });
+    });
+  }
+
+  if (hints.recurse !== false) {
+    this.moveChildren(context);
+  }
+};
+
+MoveShapeHandler.prototype.revert = function(context) {
+
+  var shape = context.shape,
+      oldParent = context.oldParent,
+      oldParentIndex = context.oldParentIndex,
+      delta = context.delta;
+
+  // restore previous location in old parent
+  (0,_util_Collections__WEBPACK_IMPORTED_MODULE_2__.add)(oldParent.children, shape, oldParentIndex);
+
+  // revert to old position and parent
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(shape, {
+    parent: oldParent,
+    x: shape.x - delta.x,
+    y: shape.y - delta.y
+  });
+
+  return shape;
+};
+
+MoveShapeHandler.prototype.moveChildren = function(context) {
+
+  var delta = context.delta,
+      shape = context.shape;
+
+  this._helper.moveRecursive(shape.children, delta, null);
+};
+
+MoveShapeHandler.prototype.getNewParent = function(context) {
+  return context.newParent || context.shape.parent;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/ReconnectConnectionHandler.js":
+/*!******************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/ReconnectConnectionHandler.js ***!
+  \******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ReconnectConnectionHandler)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * @typedef {import('../Modeling').default} Modeling
+ */
+
+/**
+ * Reconnect connection handler.
+ *
+ * @param {Modeling} modeling
+ */
+function ReconnectConnectionHandler(modeling) {
+  this._modeling = modeling;
+}
+
+ReconnectConnectionHandler.$inject = [ 'modeling' ];
+
+ReconnectConnectionHandler.prototype.execute = function(context) {
+  var newSource = context.newSource,
+      newTarget = context.newTarget,
+      connection = context.connection,
+      dockingOrPoints = context.dockingOrPoints;
+
+  if (!newSource && !newTarget) {
+    throw new Error('newSource or newTarget required');
+  }
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(dockingOrPoints)) {
+    context.oldWaypoints = connection.waypoints;
+    connection.waypoints = dockingOrPoints;
+  }
+
+  if (newSource) {
+    context.oldSource = connection.source;
+    connection.source = newSource;
+  }
+
+  if (newTarget) {
+    context.oldTarget = connection.target;
+    connection.target = newTarget;
+  }
+
+  return connection;
+};
+
+ReconnectConnectionHandler.prototype.postExecute = function(context) {
+  var connection = context.connection,
+      newSource = context.newSource,
+      newTarget = context.newTarget,
+      dockingOrPoints = context.dockingOrPoints,
+      hints = context.hints || {};
+
+  var layoutConnectionHints = {};
+
+  if (hints.connectionStart) {
+    layoutConnectionHints.connectionStart = hints.connectionStart;
+  }
+
+  if (hints.connectionEnd) {
+    layoutConnectionHints.connectionEnd = hints.connectionEnd;
+  }
+
+  if (hints.layoutConnection === false) {
+    return;
+  }
+
+  if (newSource && (!newTarget || hints.docking === 'source')) {
+    layoutConnectionHints.connectionStart = layoutConnectionHints.connectionStart
+      || getDocking((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(dockingOrPoints) ? dockingOrPoints[ 0 ] : dockingOrPoints);
+  }
+
+  if (newTarget && (!newSource || hints.docking === 'target')) {
+    layoutConnectionHints.connectionEnd = layoutConnectionHints.connectionEnd
+      || getDocking((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isArray)(dockingOrPoints) ? dockingOrPoints[ dockingOrPoints.length - 1 ] : dockingOrPoints);
+  }
+
+  if (hints.newWaypoints) {
+    layoutConnectionHints.waypoints = hints.newWaypoints;
+  }
+
+  this._modeling.layoutConnection(connection, layoutConnectionHints);
+};
+
+ReconnectConnectionHandler.prototype.revert = function(context) {
+  var oldSource = context.oldSource,
+      oldTarget = context.oldTarget,
+      oldWaypoints = context.oldWaypoints,
+      connection = context.connection;
+
+  if (oldSource) {
+    connection.source = oldSource;
+  }
+
+  if (oldTarget) {
+    connection.target = oldTarget;
+  }
+
+  if (oldWaypoints) {
+    connection.waypoints = oldWaypoints;
+  }
+
+  return connection;
+};
+
+
+
+// helpers //////////
+
+function getDocking(point) {
+  return point.original || point;
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/ReplaceShapeHandler.js":
+/*!***********************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/ReplaceShapeHandler.js ***!
+  \***********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ReplaceShapeHandler)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./helper/AnchorsHelper */ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/AnchorsHelper.js");
+
+
+
+
+/**
+ * @typedef {import('../../model/Types').Shape} Shape
+ *
+ * @typedef {import('../Modeling').default} Modeling
+ * @typedef {import('../../rules/Rules').default} Rules
+ */
+
+/**
+ * Replace shape by adding new shape and removing old shape. Incoming and outgoing connections will
+ * be kept if possible.
+ *
+ * @class
+ * @constructor
+ *
+ * @param {Modeling} modeling
+ * @param {Rules} rules
+ */
+function ReplaceShapeHandler(modeling, rules) {
+  this._modeling = modeling;
+  this._rules = rules;
+}
+
+ReplaceShapeHandler.$inject = [ 'modeling', 'rules' ];
+
+
+/**
+ * Add new shape.
+ *
+ * @param {Object} context
+ * @param {Shape} context.oldShape
+ * @param {Object} context.newData
+ * @param {string} context.newData.type
+ * @param {number} context.newData.x
+ * @param {number} context.newData.y
+ * @param {Object} [context.hints]
+ */
+ReplaceShapeHandler.prototype.preExecute = function(context) {
+  var self = this,
+      modeling = this._modeling,
+      rules = this._rules;
+
+  var oldShape = context.oldShape,
+      newData = context.newData,
+      hints = context.hints || {},
+      newShape;
+
+  function canReconnect(source, target, connection) {
+    return rules.allowed('connection.reconnect', {
+      connection: connection,
+      source: source,
+      target: target
+    });
+  }
+
+  // (1) add new shape at given position
+  var position = {
+    x: newData.x,
+    y: newData.y
+  };
+
+  var oldBounds = {
+    x: oldShape.x,
+    y: oldShape.y,
+    width: oldShape.width,
+    height: oldShape.height
+  };
+
+  newShape = context.newShape =
+    context.newShape ||
+    self.createShape(newData, position, oldShape.parent, hints);
+
+  // (2) update host
+  if (oldShape.host) {
+    modeling.updateAttachment(newShape, oldShape.host);
+  }
+
+  // (3) adopt all children from old shape
+  var children;
+
+  if (hints.moveChildren !== false) {
+    children = oldShape.children.slice();
+
+    modeling.moveElements(children, { x: 0, y: 0 }, newShape, hints);
+  }
+
+  // (4) reconnect connections to new shape if possible
+  var incoming = oldShape.incoming.slice(),
+      outgoing = oldShape.outgoing.slice();
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(incoming, function(connection) {
+    var source = connection.source,
+        allowed = canReconnect(source, newShape, connection);
+
+    if (allowed) {
+      self.reconnectEnd(
+        connection, newShape,
+        (0,_helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_1__.getResizedTargetAnchor)(connection, newShape, oldBounds),
+        hints
+      );
+    }
+  });
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(outgoing, function(connection) {
+    var target = connection.target,
+        allowed = canReconnect(newShape, target, connection);
+
+    if (allowed) {
+      self.reconnectStart(
+        connection, newShape,
+        (0,_helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_1__.getResizedSourceAnchor)(connection, newShape, oldBounds),
+        hints
+      );
+    }
+  });
+};
+
+
+/**
+ * Remove old shape.
+ */
+ReplaceShapeHandler.prototype.postExecute = function(context) {
+  var oldShape = context.oldShape;
+
+  this._modeling.removeShape(oldShape);
+};
+
+
+ReplaceShapeHandler.prototype.execute = function(context) {};
+
+
+ReplaceShapeHandler.prototype.revert = function(context) {};
+
+
+ReplaceShapeHandler.prototype.createShape = function(shape, position, target, hints) {
+  return this._modeling.createShape(shape, position, target, hints);
+};
+
+
+ReplaceShapeHandler.prototype.reconnectStart = function(connection, newSource, dockingPoint, hints) {
+  this._modeling.reconnectStart(connection, newSource, dockingPoint, hints);
+};
+
+
+ReplaceShapeHandler.prototype.reconnectEnd = function(connection, newTarget, dockingPoint, hints) {
+  this._modeling.reconnectEnd(connection, newTarget, dockingPoint, hints);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/ResizeShapeHandler.js":
+/*!**********************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/ResizeShapeHandler.js ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ResizeShapeHandler)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./helper/AnchorsHelper */ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/AnchorsHelper.js");
+
+
+
+
+/**
+ * @typedef {import('../Modeling').default} Modeling
+ */
+
+/**
+ * A handler that implements reversible resizing of shapes.
+ *
+ * @param {Modeling} modeling
+ */
+function ResizeShapeHandler(modeling) {
+  this._modeling = modeling;
+}
+
+ResizeShapeHandler.$inject = [ 'modeling' ];
+
+/**
+ * {
+ *   shape: {....}
+ *   newBounds: {
+ *     width:  20,
+ *     height: 40,
+ *     x:       5,
+ *     y:      10
+ *   }
+ *
+ * }
+ */
+ResizeShapeHandler.prototype.execute = function(context) {
+  var shape = context.shape,
+      newBounds = context.newBounds,
+      minBounds = context.minBounds;
+
+  if (newBounds.x === undefined || newBounds.y === undefined ||
+      newBounds.width === undefined || newBounds.height === undefined) {
+    throw new Error('newBounds must have {x, y, width, height} properties');
+  }
+
+  if (minBounds && (newBounds.width < minBounds.width
+    || newBounds.height < minBounds.height)) {
+    throw new Error('width and height cannot be less than minimum height and width');
+  } else if (!minBounds
+    && newBounds.width < 10 || newBounds.height < 10) {
+    throw new Error('width and height cannot be less than 10px');
+  }
+
+  // save old bbox in context
+  context.oldBounds = {
+    width:  shape.width,
+    height: shape.height,
+    x:      shape.x,
+    y:      shape.y
+  };
+
+  // update shape
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(shape, {
+    width:  newBounds.width,
+    height: newBounds.height,
+    x:      newBounds.x,
+    y:      newBounds.y
+  });
+
+  return shape;
+};
+
+ResizeShapeHandler.prototype.postExecute = function(context) {
+  var modeling = this._modeling;
+
+  var shape = context.shape,
+      oldBounds = context.oldBounds,
+      hints = context.hints || {};
+
+  if (hints.layout === false) {
+    return;
+  }
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(shape.incoming, function(c) {
+    modeling.layoutConnection(c, {
+      connectionEnd: (0,_helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_1__.getResizedTargetAnchor)(c, shape, oldBounds)
+    });
+  });
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(shape.outgoing, function(c) {
+    modeling.layoutConnection(c, {
+      connectionStart: (0,_helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_1__.getResizedSourceAnchor)(c, shape, oldBounds)
+    });
+  });
+
+};
+
+ResizeShapeHandler.prototype.revert = function(context) {
+
+  var shape = context.shape,
+      oldBounds = context.oldBounds;
+
+  // restore previous bbox
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(shape, {
+    width:  oldBounds.width,
+    height: oldBounds.height,
+    x:      oldBounds.x,
+    y:      oldBounds.y
+  });
+
+  return shape;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/SpaceToolHandler.js":
+/*!********************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/SpaceToolHandler.js ***!
+  \********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ SpaceToolHandler)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _space_tool_SpaceUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../space-tool/SpaceUtil */ "../node_modules/diagram-js/lib/features/space-tool/SpaceUtil.js");
+/* harmony import */ var _helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./helper/AnchorsHelper */ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/AnchorsHelper.js");
+
+
+
+
+
+
+/**
+ * @typedef {import('../Modeling').default} Modeling
+ */
+
+/**
+ * Add or remove space by moving and resizing shapes and updating connection waypoints.
+ *
+ * @param {Modeling} modeling
+ */
+function SpaceToolHandler(modeling) {
+  this._modeling = modeling;
+}
+
+SpaceToolHandler.$inject = [ 'modeling' ];
+
+SpaceToolHandler.prototype.preExecute = function(context) {
+  var delta = context.delta,
+      direction = context.direction,
+      movingShapes = context.movingShapes,
+      resizingShapes = context.resizingShapes,
+      start = context.start,
+      oldBounds = {};
+
+  // (1) move shapes
+  this.moveShapes(movingShapes, delta);
+
+  // (2a) save old bounds of resized shapes
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(resizingShapes, function(shape) {
+    oldBounds[shape.id] = getBounds(shape);
+  });
+
+  // (2b) resize shapes
+  this.resizeShapes(resizingShapes, delta, direction);
+
+  // (3) update connection waypoints
+  this.updateConnectionWaypoints(
+    (0,_space_tool_SpaceUtil__WEBPACK_IMPORTED_MODULE_1__.getWaypointsUpdatingConnections)(movingShapes, resizingShapes),
+    delta,
+    direction,
+    start,
+    movingShapes,
+    resizingShapes,
+    oldBounds
+  );
+};
+
+SpaceToolHandler.prototype.execute = function() {};
+SpaceToolHandler.prototype.revert = function() {};
+
+SpaceToolHandler.prototype.moveShapes = function(shapes, delta) {
+  var self = this;
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(shapes, function(element) {
+    self._modeling.moveShape(element, delta, null, {
+      autoResize: false,
+      layout: false,
+      recurse: false
+    });
+  });
+};
+
+SpaceToolHandler.prototype.resizeShapes = function(shapes, delta, direction) {
+  var self = this;
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(shapes, function(shape) {
+    var newBounds = (0,_space_tool_SpaceUtil__WEBPACK_IMPORTED_MODULE_1__.resizeBounds)(shape, direction, delta);
+
+    self._modeling.resizeShape(shape, newBounds, null, {
+      attachSupport: false,
+      autoResize: false,
+      layout: false
+    });
+  });
+};
+
+/**
+ * Update connections waypoints according to the rules:
+ *   1. Both source and target are moved/resized => move waypoints by the delta
+ *   2. Only one of source and target is moved/resized => re-layout connection with moved start/end
+ */
+SpaceToolHandler.prototype.updateConnectionWaypoints = function(
+    connections,
+    delta,
+    direction,
+    start,
+    movingShapes,
+    resizingShapes,
+    oldBounds
+) {
+  var self = this,
+      affectedShapes = movingShapes.concat(resizingShapes);
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(connections, function(connection) {
+    var source = connection.source,
+        target = connection.target,
+        waypoints = copyWaypoints(connection),
+        axis = getAxisFromDirection(direction),
+        layoutHints = {};
+
+    if (includes(affectedShapes, source) && includes(affectedShapes, target)) {
+
+      // move waypoints
+      waypoints = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.map)(waypoints, function(waypoint) {
+        if (shouldMoveWaypoint(waypoint, start, direction)) {
+
+          // move waypoint
+          waypoint[ axis ] = waypoint[ axis ] + delta[ axis ];
+        }
+
+        if (waypoint.original && shouldMoveWaypoint(waypoint.original, start, direction)) {
+
+          // move waypoint original
+          waypoint.original[ axis ] = waypoint.original[ axis ] + delta[ axis ];
+        }
+
+        return waypoint;
+      });
+
+      self._modeling.updateWaypoints(connection, waypoints, {
+        labelBehavior: false
+      });
+    } else if (includes(affectedShapes, source) || includes(affectedShapes, target)) {
+
+      // re-layout connection with moved start/end
+      if (includes(movingShapes, source)) {
+        layoutHints.connectionStart = (0,_helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_2__.getMovedSourceAnchor)(connection, source, delta);
+      } else if (includes(movingShapes, target)) {
+        layoutHints.connectionEnd = (0,_helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_2__.getMovedTargetAnchor)(connection, target, delta);
+      } else if (includes(resizingShapes, source)) {
+        layoutHints.connectionStart = (0,_helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_2__.getResizedSourceAnchor)(
+          connection, source, oldBounds[source.id]
+        );
+      } else if (includes(resizingShapes, target)) {
+        layoutHints.connectionEnd = (0,_helper_AnchorsHelper__WEBPACK_IMPORTED_MODULE_2__.getResizedTargetAnchor)(
+          connection, target, oldBounds[target.id]
+        );
+      }
+
+      self._modeling.layoutConnection(connection, layoutHints);
+    }
+  });
+};
+
+
+// helpers //////////
+
+function copyWaypoint(waypoint) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, waypoint);
+}
+
+function copyWaypoints(connection) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.map)(connection.waypoints, function(waypoint) {
+
+    waypoint = copyWaypoint(waypoint);
+
+    if (waypoint.original) {
+      waypoint.original = copyWaypoint(waypoint.original);
+    }
+
+    return waypoint;
+  });
+}
+
+function getAxisFromDirection(direction) {
+  switch (direction) {
+  case 'n':
+    return 'y';
+  case 'w':
+    return 'x';
+  case 's':
+    return 'y';
+  case 'e':
+    return 'x';
+  }
+}
+
+function shouldMoveWaypoint(waypoint, start, direction) {
+  var relevantAxis = getAxisFromDirection(direction);
+
+  if (/e|s/.test(direction)) {
+    return waypoint[ relevantAxis ] > start;
+  } else if (/n|w/.test(direction)) {
+    return waypoint[ relevantAxis ] < start;
+  }
+}
+
+function includes(array, item) {
+  return array.indexOf(item) !== -1;
+}
+
+function getBounds(shape) {
+  return {
+    x: shape.x,
+    y: shape.y,
+    height: shape.height,
+    width: shape.width
+  };
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/ToggleShapeCollapseHandler.js":
+/*!******************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/ToggleShapeCollapseHandler.js ***!
+  \******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ToggleShapeCollapseHandler)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * @typedef {import('../../model/Types').Shape} Shape
+ *
+ * @typedef {import('../Modeling').default} Modeling
+ */
+
+/**
+ * A handler that toggles the collapsed state of an element
+ * and the visibility of all its children.
+ *
+ * @param {Modeling} modeling
+ */
+function ToggleShapeCollapseHandler(modeling) {
+  this._modeling = modeling;
+}
+
+ToggleShapeCollapseHandler.$inject = [ 'modeling' ];
+
+
+ToggleShapeCollapseHandler.prototype.execute = function(context) {
+
+  var shape = context.shape,
+      children = shape.children;
+
+  // recursively remember previous visibility of children
+  context.oldChildrenVisibility = getElementsVisibilityRecursive(children);
+
+  // toggle state
+  shape.collapsed = !shape.collapsed;
+
+  // recursively hide/show children
+  var result = setHiddenRecursive(children, shape.collapsed);
+
+  return [ shape ].concat(result);
+};
+
+
+ToggleShapeCollapseHandler.prototype.revert = function(context) {
+
+  var shape = context.shape,
+      oldChildrenVisibility = context.oldChildrenVisibility;
+
+  var children = shape.children;
+
+  // recursively set old visability of children
+  var result = restoreVisibilityRecursive(children, oldChildrenVisibility);
+
+  // retoggle state
+  shape.collapsed = !shape.collapsed;
+
+  return [ shape ].concat(result);
+};
+
+
+// helpers //////////////////////
+
+/**
+ * Return a map { elementId -> hiddenState}.
+ *
+ * @param {Shape[]} elements
+ *
+ * @return {Object}
+ */
+function getElementsVisibilityRecursive(elements) {
+
+  var result = {};
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(elements, function(element) {
+    result[element.id] = element.hidden;
+
+    if (element.children) {
+      result = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, result, getElementsVisibilityRecursive(element.children));
+    }
+  });
+
+  return result;
+}
+
+
+function setHiddenRecursive(elements, newHidden) {
+  var result = [];
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(elements, function(element) {
+    element.hidden = newHidden;
+
+    result = result.concat(element);
+
+    if (element.children) {
+      result = result.concat(setHiddenRecursive(element.children, element.collapsed || newHidden));
+    }
+  });
+
+  return result;
+}
+
+function restoreVisibilityRecursive(elements, lastState) {
+  var result = [];
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(elements, function(element) {
+    element.hidden = lastState[element.id];
+
+    result = result.concat(element);
+
+    if (element.children) {
+      result = result.concat(restoreVisibilityRecursive(element.children, lastState));
+    }
+  });
+
+  return result;
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/UpdateAttachmentHandler.js":
+/*!***************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/UpdateAttachmentHandler.js ***!
+  \***************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ UpdateAttachmentHandler)
+/* harmony export */ });
+/* harmony import */ var _util_Collections__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../util/Collections */ "../node_modules/diagram-js/lib/util/Collections.js");
+
+
+/**
+ * @typedef {import('../Modeling').default} Modeling
+ */
+
+/**
+ * A handler that implements reversible attaching/detaching of shapes.
+ *
+ * @param {Modeling} modeling
+ */
+function UpdateAttachmentHandler(modeling) {
+  this._modeling = modeling;
+}
+
+UpdateAttachmentHandler.$inject = [ 'modeling' ];
+
+
+UpdateAttachmentHandler.prototype.execute = function(context) {
+  var shape = context.shape,
+      newHost = context.newHost,
+      oldHost = shape.host;
+
+  // (0) detach from old host
+  context.oldHost = oldHost;
+  context.attacherIdx = removeAttacher(oldHost, shape);
+
+  // (1) attach to new host
+  addAttacher(newHost, shape);
+
+  // (2) update host
+  shape.host = newHost;
+
+  return shape;
+};
+
+UpdateAttachmentHandler.prototype.revert = function(context) {
+  var shape = context.shape,
+      newHost = context.newHost,
+      oldHost = context.oldHost,
+      attacherIdx = context.attacherIdx;
+
+  // (2) update host
+  shape.host = oldHost;
+
+  // (1) attach to new host
+  removeAttacher(newHost, shape);
+
+  // (0) detach from old host
+  addAttacher(oldHost, shape, attacherIdx);
+
+  return shape;
+};
+
+
+function removeAttacher(host, attacher) {
+
+  // remove attacher from host
+  return (0,_util_Collections__WEBPACK_IMPORTED_MODULE_0__.remove)(host && host.attachers, attacher);
+}
+
+function addAttacher(host, attacher, idx) {
+
+  if (!host) {
+    return;
+  }
+
+  var attachers = host.attachers;
+
+  if (!attachers) {
+    host.attachers = attachers = [];
+  }
+
+  (0,_util_Collections__WEBPACK_IMPORTED_MODULE_0__.add)(attachers, attacher, idx);
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/UpdateWaypointsHandler.js":
+/*!**************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/UpdateWaypointsHandler.js ***!
+  \**************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ UpdateWaypointsHandler)
+/* harmony export */ });
+function UpdateWaypointsHandler() { }
+
+UpdateWaypointsHandler.prototype.execute = function(context) {
+
+  var connection = context.connection,
+      newWaypoints = context.newWaypoints;
+
+  context.oldWaypoints = connection.waypoints;
+
+  connection.waypoints = newWaypoints;
+
+  return connection;
+};
+
+UpdateWaypointsHandler.prototype.revert = function(context) {
+
+  var connection = context.connection,
+      oldWaypoints = context.oldWaypoints;
+
+  connection.waypoints = oldWaypoints;
+
+  return connection;
+};
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/AnchorsHelper.js":
+/*!************************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/helper/AnchorsHelper.js ***!
+  \************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getMovedSourceAnchor: () => (/* binding */ getMovedSourceAnchor),
+/* harmony export */   getMovedTargetAnchor: () => (/* binding */ getMovedTargetAnchor),
+/* harmony export */   getResizedSourceAnchor: () => (/* binding */ getResizedSourceAnchor),
+/* harmony export */   getResizedTargetAnchor: () => (/* binding */ getResizedTargetAnchor)
+/* harmony export */ });
+/* harmony import */ var _util_AttachUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../util/AttachUtil */ "../node_modules/diagram-js/lib/util/AttachUtil.js");
+/* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+
+
+
+
+/**
+ * @typedef {import('../../../../core/Types').ConnectionLike} Connection
+ * @typedef {import('../../../../core/Types').ShapeLike} Shape
+ *
+ * @typedef {import('../../../../util/Types').Point} Point
+ * @typedef {import('../../../../util/Types').Rect} Rect
+ */
+
+/**
+ * @param {Connection} connection
+ * @param {Shape} shape
+ * @param {Rect} oldBounds
+ * @return {Point}
+ */
+function getResizedSourceAnchor(connection, shape, oldBounds) {
+
+  var waypoints = safeGetWaypoints(connection),
+      waypointsInsideNewBounds = getWaypointsInsideBounds(waypoints, shape),
+      oldAnchor = waypoints[0];
+
+  // new anchor is the last waypoint enclosed be resized source
+  if (waypointsInsideNewBounds.length) {
+    return waypointsInsideNewBounds[ waypointsInsideNewBounds.length - 1 ];
+  }
+
+  return (0,_util_AttachUtil__WEBPACK_IMPORTED_MODULE_0__.getNewAttachPoint)(oldAnchor.original || oldAnchor, oldBounds, shape);
+}
+
+
+function getResizedTargetAnchor(connection, shape, oldBounds) {
+
+  var waypoints = safeGetWaypoints(connection),
+      waypointsInsideNewBounds = getWaypointsInsideBounds(waypoints, shape),
+      oldAnchor = waypoints[waypoints.length - 1];
+
+  // new anchor is the first waypoint enclosed be resized target
+  if (waypointsInsideNewBounds.length) {
+    return waypointsInsideNewBounds[ 0 ];
+  }
+
+  return (0,_util_AttachUtil__WEBPACK_IMPORTED_MODULE_0__.getNewAttachPoint)(oldAnchor.original || oldAnchor, oldBounds, shape);
+}
+
+
+function getMovedSourceAnchor(connection, source, moveDelta) {
+
+  var waypoints = safeGetWaypoints(connection),
+      oldBounds = subtract(source, moveDelta),
+      oldAnchor = waypoints[ 0 ];
+
+  return (0,_util_AttachUtil__WEBPACK_IMPORTED_MODULE_0__.getNewAttachPoint)(oldAnchor.original || oldAnchor, oldBounds, source);
+}
+
+
+function getMovedTargetAnchor(connection, target, moveDelta) {
+
+  var waypoints = safeGetWaypoints(connection),
+      oldBounds = subtract(target, moveDelta),
+      oldAnchor = waypoints[ waypoints.length - 1 ];
+
+  return (0,_util_AttachUtil__WEBPACK_IMPORTED_MODULE_0__.getNewAttachPoint)(oldAnchor.original || oldAnchor, oldBounds, target);
+}
+
+
+// helpers //////////////////////
+
+function subtract(bounds, delta) {
+  return {
+    x: bounds.x - delta.x,
+    y: bounds.y - delta.y,
+    width: bounds.width,
+    height: bounds.height
+  };
+}
+
+
+/**
+ * Return waypoints of given connection; throw if non exists (should not happen!!).
+ *
+ * @param {Connection} connection
+ *
+ * @return {Point[]}
+ */
+function safeGetWaypoints(connection) {
+
+  var waypoints = connection.waypoints;
+
+  if (!waypoints.length) {
+    throw new Error('connection#' + connection.id + ': no waypoints');
+  }
+
+  return waypoints;
+}
+
+function getWaypointsInsideBounds(waypoints, bounds) {
+  var originalWaypoints = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.map)(waypoints, getOriginal);
+
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.filter)(originalWaypoints, function(waypoint) {
+    return isInsideBounds(waypoint, bounds);
+  });
+}
+
+/**
+ * Checks if point is inside bounds, incl. edges.
+ *
+ * @param {Point} point
+ * @param {Rect} bounds
+ */
+function isInsideBounds(point, bounds) {
+  return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_2__.getOrientation)(bounds, point, 1) === 'intersect';
+}
+
+function getOriginal(point) {
+  return point.original || point;
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/MoveClosure.js":
+/*!**********************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/helper/MoveClosure.js ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ MoveClosure)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
+
+
+
+
+/**
+ * @typedef {import('../../../../model/Types').Connection} Connection
+ * @typedef {import('../../../../model/Types').Element} Element
+ * @typedef {import('../../../../model/Types').Shape} Shape
+ */
+
+function MoveClosure() {
+
+  /**
+   * @type {Record<string, Shape>}
+   */
+  this.allShapes = {};
+
+  /**
+   * @type {Record<string, Connection>}
+   */
+  this.allConnections = {};
+
+  /**
+   * @type {Record<string, Element>}
+   */
+  this.enclosedElements = {};
+
+  /**
+   * @type {Record<string, Connection>}
+   */
+  this.enclosedConnections = {};
+
+  /**
+   * @type {Record<string, Element>}
+   */
+  this.topLevel = {};
+}
+
+/**
+ * @param {Element} element
+ * @param {boolean} [isTopLevel]
+ *
+ * @return {MoveClosure}
+ */
+MoveClosure.prototype.add = function(element, isTopLevel) {
+  return this.addAll([ element ], isTopLevel);
+};
+
+/**
+ * @param {Element[]} elements
+ * @param {boolean} [isTopLevel]
+ *
+ * @return {MoveClosure}
+ */
+MoveClosure.prototype.addAll = function(elements, isTopLevel) {
+
+  var newClosure = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_0__.getClosure)(elements, !!isTopLevel, this);
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)(this, newClosure);
+
+  return this;
+};
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/MoveHelper.js":
+/*!*********************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/modeling/cmd/helper/MoveHelper.js ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ MoveHelper)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _AnchorsHelper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AnchorsHelper */ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/AnchorsHelper.js");
+/* harmony import */ var _MoveClosure__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./MoveClosure */ "../node_modules/diagram-js/lib/features/modeling/cmd/helper/MoveClosure.js");
+
+
+
+
+
+
+/**
+ * @typedef {import('../../../../core/Types').ElementLike} Element
+ * @typedef {import('../../../../core/Types').ShapeLike} Shape
+ *
+ * @typedef {import('../../../../util/Types').Point} Point
+ *
+ * @typedef {import('../../Modeling').default} Modeling
+ */
+
+/**
+ * A helper that is able to carry out serialized move
+ * operations on multiple elements.
+ *
+ * @param {Modeling} modeling
+ */
+function MoveHelper(modeling) {
+  this._modeling = modeling;
+}
+
+/**
+ * Move the specified elements and all children by the given delta.
+ *
+ * This moves all enclosed connections, too and layouts all affected
+ * external connections.
+ *
+ * @template {Element} T
+ *
+ * @param {T[]} elements
+ * @param {Point} delta
+ * @param {Shape} newParent The new parent of all elements that are not nested.
+ *
+ * @return {T[]}
+ */
+MoveHelper.prototype.moveRecursive = function(elements, delta, newParent) {
+  if (!elements) {
+    return [];
+  } else {
+    return this.moveClosure(this.getClosure(elements), delta, newParent);
+  }
+};
+
+/**
+ * Move the given closure of elmements.
+ *
+ * @param {Object} closure
+ * @param {Point} delta
+ * @param {Shape} [newParent]
+ * @param {Shape} [newHost]
+ */
+MoveHelper.prototype.moveClosure = function(closure, delta, newParent, newHost, primaryShape) {
+  var modeling = this._modeling;
+
+  var allShapes = closure.allShapes,
+      allConnections = closure.allConnections,
+      enclosedConnections = closure.enclosedConnections,
+      topLevel = closure.topLevel,
+      keepParent = false;
+
+  if (primaryShape && primaryShape.parent === newParent) {
+    keepParent = true;
+  }
+
+  // move all shapes
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(allShapes, function(shape) {
+
+    // move the element according to the given delta
+    modeling.moveShape(shape, delta, topLevel[shape.id] && !keepParent && newParent, {
+      recurse: false,
+      layout: false
+    });
+  });
+
+  // move all child connections / layout external connections
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(allConnections, function(c) {
+
+    var sourceMoved = !!allShapes[c.source.id],
+        targetMoved = !!allShapes[c.target.id];
+
+    if (enclosedConnections[c.id] && sourceMoved && targetMoved) {
+      modeling.moveConnection(c, delta, topLevel[c.id] && !keepParent && newParent);
+    } else {
+      modeling.layoutConnection(c, {
+        connectionStart: sourceMoved && (0,_AnchorsHelper__WEBPACK_IMPORTED_MODULE_1__.getMovedSourceAnchor)(c, c.source, delta),
+        connectionEnd: targetMoved && (0,_AnchorsHelper__WEBPACK_IMPORTED_MODULE_1__.getMovedTargetAnchor)(c, c.target, delta)
+      });
+    }
+  });
+};
+
+/**
+ * Returns the closure for the selected elements
+ *
+ * @param {Element[]} elements
+ *
+ * @return {MoveClosure}
+ */
+MoveHelper.prototype.getClosure = function(elements) {
+  return new _MoveClosure__WEBPACK_IMPORTED_MODULE_2__["default"]().addAll(elements, true);
+};
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/mouse/Mouse.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/mouse/Mouse.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   createMoveEvent: () => (/* binding */ createMoveEvent),
+/* harmony export */   "default": () => (/* binding */ Mouse)
+/* harmony export */ });
+/**
+ * @typedef {import('../../core/EventBus').default} EventBus
+ */
+
+/**
+ * @param {EventBus} eventBus
+ */
+function Mouse(eventBus) {
+  var self = this;
+
+  this._lastMoveEvent = null;
+
+  function setLastMoveEvent(mousemoveEvent) {
+    self._lastMoveEvent = mousemoveEvent;
+  }
+
+  eventBus.on('canvas.init', function(context) {
+    var svg = self._svg = context.svg;
+
+    svg.addEventListener('mousemove', setLastMoveEvent);
+  });
+
+  eventBus.on('canvas.destroy', function() {
+    self._lastMouseEvent = null;
+
+    self._svg.removeEventListener('mousemove', setLastMoveEvent);
+  });
+}
+
+Mouse.$inject = [ 'eventBus' ];
+
+Mouse.prototype.getLastMoveEvent = function() {
+  return this._lastMoveEvent || createMoveEvent(0, 0);
+};
+
+// helpers //////////
+
+function createMoveEvent(x, y) {
+  var event = document.createEvent('MouseEvent');
+
+  var screenX = x,
+      screenY = y,
+      clientX = x,
+      clientY = y;
+
+  if (event.initMouseEvent) {
+    event.initMouseEvent(
+      'mousemove',
+      true,
+      true,
+      window,
+      0,
+      screenX,
+      screenY,
+      clientX,
+      clientY,
+      false,
+      false,
+      false,
+      false,
+      0,
+      null
+    );
+  }
+
+  return event;
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/mouse/index.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/mouse/index.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Mouse__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Mouse */ "../node_modules/diagram-js/lib/features/mouse/Mouse.js");
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [ 'mouse' ],
+  mouse: [ 'type', _Mouse__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/move/Move.js":
+/*!************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/move/Move.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ MoveEvents)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var _util_Event__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Event */ "../node_modules/diagram-js/lib/util/Event.js");
+/* harmony import */ var _util_Mouse__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/Mouse */ "../node_modules/diagram-js/lib/util/Mouse.js");
+
+
+
+
+/**
+ * @typedef {import('../../core/Types').ElementLike} Element
+ * @typedef {import('../../core/Types').ShapeLike} Shape
+ *
+ * @typedef {import('../dragging/Dragging').default} Dragging
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../modeling/Modeling').default} Modeling
+ * @typedef {import('../rules/Rules').default} Rules
+ * @typedef {import('../selection/Selection').default} Selection
+ */
+
+var LOW_PRIORITY = 500,
+    MEDIUM_PRIORITY = 1250,
+    HIGH_PRIORITY = 1500;
+
+
+
+
+
+var round = Math.round;
+
+function mid(element) {
+  return {
+    x: element.x + round(element.width / 2),
+    y: element.y + round(element.height / 2)
+  };
+}
+
+/**
+ * A plugin that makes shapes draggable / droppable.
+ *
+ * @param {EventBus} eventBus
+ * @param {Dragging} dragging
+ * @param {Modeling} modeling
+ * @param {Selection} selection
+ * @param {Rules} rules
+ */
+function MoveEvents(
+    eventBus, dragging, modeling,
+    selection, rules) {
+
+  // rules
+
+  function canMove(shapes, delta, position, target) {
+
+    return rules.allowed('elements.move', {
+      shapes: shapes,
+      delta: delta,
+      position: position,
+      target: target
+    });
+  }
+
+
+  // move events
+
+  // assign a high priority to this handler to setup the environment
+  // others may hook up later, e.g. at default priority and modify
+  // the move environment.
+  //
+  // This sets up the context with
+  //
+  // * shape: the primary shape being moved
+  // * shapes: a list of shapes to be moved
+  // * validatedShapes: a list of shapes that are being checked
+  //                    against the rules before and during move
+  //
+  eventBus.on('shape.move.start', HIGH_PRIORITY, function(event) {
+
+    var context = event.context,
+        shape = event.shape,
+        shapes = selection.get().slice();
+
+    // move only single shape if the dragged element
+    // is not part of the current selection
+    if (shapes.indexOf(shape) === -1) {
+      shapes = [ shape ];
+    }
+
+    // ensure we remove nested elements in the collection
+    // and add attachers for a proper dragger
+    shapes = removeNested(shapes);
+
+    // attach shapes to drag context
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)(context, {
+      shapes: shapes,
+      validatedShapes: shapes,
+      shape: shape
+    });
+  });
+
+
+  // assign a high priority to this handler to setup the environment
+  // others may hook up later, e.g. at default priority and modify
+  // the move environment
+  //
+  eventBus.on('shape.move.start', MEDIUM_PRIORITY, function(event) {
+
+    var context = event.context,
+        validatedShapes = context.validatedShapes,
+        canExecute;
+
+    canExecute = context.canExecute = canMove(validatedShapes);
+
+    // check if we can move the elements
+    if (!canExecute) {
+      return false;
+    }
+  });
+
+  // assign a low priority to this handler
+  // to let others modify the move event before we update
+  // the context
+  //
+  eventBus.on('shape.move.move', LOW_PRIORITY, function(event) {
+
+    var context = event.context,
+        validatedShapes = context.validatedShapes,
+        hover = event.hover,
+        delta = { x: event.dx, y: event.dy },
+        position = { x: event.x, y: event.y },
+        canExecute;
+
+    // check if we can move the elements
+    canExecute = canMove(validatedShapes, delta, position, hover);
+
+    context.delta = delta;
+    context.canExecute = canExecute;
+
+    // simply ignore move over
+    if (canExecute === null) {
+      context.target = null;
+
+      return;
+    }
+
+    context.target = hover;
+  });
+
+  eventBus.on('shape.move.end', function(event) {
+
+    var context = event.context;
+
+    var delta = context.delta,
+        canExecute = context.canExecute,
+        isAttach = canExecute === 'attach',
+        shapes = context.shapes;
+
+    if (canExecute === false) {
+      return false;
+    }
+
+    // ensure we have actual pixel values deltas
+    // (important when zoom level was > 1 during move)
+    delta.x = round(delta.x);
+    delta.y = round(delta.y);
+
+    if (delta.x === 0 && delta.y === 0) {
+
+      // didn't move
+      return;
+    }
+
+    modeling.moveElements(shapes, delta, context.target, {
+      primaryShape: context.shape,
+      attach: isAttach
+    });
+  });
+
+
+  // move activation
+
+  eventBus.on('element.mousedown', function(event) {
+
+    if (!(0,_util_Mouse__WEBPACK_IMPORTED_MODULE_1__.isPrimaryButton)(event)) {
+      return;
+    }
+
+    var originalEvent = (0,_util_Event__WEBPACK_IMPORTED_MODULE_2__.getOriginal)(event);
+
+    if (!originalEvent) {
+      throw new Error('must supply DOM mousedown event');
+    }
+
+    return start(originalEvent, event.element);
+  });
+
+  /**
+   * Start move.
+   *
+   * @param {MouseEvent|TouchEvent} event
+   * @param {Shape} element
+   * @param {boolean} [activate]
+   * @param {Object} [context]
+   */
+  function start(event, element, activate, context) {
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isObject)(activate)) {
+      context = activate;
+      activate = false;
+    }
+
+    // do not move connections or the root element
+    if (element.waypoints || !element.parent) {
+      return;
+    }
+
+    // ignore non-draggable hits
+    if ((0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.classes)(event.target).has('djs-hit-no-move')) {
+      return;
+    }
+
+    var referencePoint = mid(element);
+
+    dragging.init(event, referencePoint, 'shape.move', {
+      cursor: 'grabbing',
+      autoActivate: activate,
+      data: {
+        shape: element,
+        context: context || {}
+      }
+    });
+
+    // we've handled the event
+    return true;
+  }
+
+  // API
+
+  this.start = start;
+}
+
+MoveEvents.$inject = [
+  'eventBus',
+  'dragging',
+  'modeling',
+  'selection',
+  'rules'
+];
+
+
+/**
+ * Return a filtered list of elements that do not contain
+ * those nested into others.
+ *
+ * @param {Element[]} elements
+ *
+ * @return {Element[]} filtered
+ */
+function removeNested(elements) {
+
+  var ids = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.groupBy)(elements, 'id');
+
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.filter)(elements, function(element) {
+    while ((element = element.parent)) {
+
+      // parent in selection
+      if (ids[element.id]) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/move/MovePreview.js":
+/*!*******************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/move/MovePreview.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ MovePreview)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/ModelUtil */ "../node_modules/diagram-js/lib/util/ModelUtil.js");
+
+
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../model/Types').Element} Element
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../preview-support/PreviewSupport').default} PreviewSupport
+ * @typedef {import('../../draw/Styles').default} Styles
+ */
+
+var LOW_PRIORITY = 499;
+
+var MARKER_DRAGGING = 'djs-dragging',
+    MARKER_OK = 'drop-ok',
+    MARKER_NOT_OK = 'drop-not-ok',
+    MARKER_NEW_PARENT = 'new-parent',
+    MARKER_ATTACH = 'attach-ok';
+
+
+/**
+ * Provides previews for moving shapes when moving.
+ *
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ * @param {Styles} styles
+ * @param {PreviewSupport} previewSupport
+ */
+function MovePreview(
+    eventBus, canvas, styles, previewSupport) {
+
+  function getVisualDragShapes(shapes) {
+    var elements = getAllDraggedElements(shapes);
+
+    var filteredElements = removeEdges(elements);
+
+    return filteredElements;
+  }
+
+  function getAllDraggedElements(shapes) {
+    var allShapes = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_0__.selfAndAllChildren)(shapes, true);
+
+    var allConnections = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.map)(allShapes, function(shape) {
+      return (shape.incoming || []).concat(shape.outgoing || []);
+    });
+
+    return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.flatten)(allShapes.concat(allConnections));
+  }
+
+  /**
+   * Sets drop marker on an element.
+   */
+  function setMarker(element, marker) {
+
+    [ MARKER_ATTACH, MARKER_OK, MARKER_NOT_OK, MARKER_NEW_PARENT ].forEach(function(m) {
+
+      if (m === marker) {
+        canvas.addMarker(element, m);
+      } else {
+        canvas.removeMarker(element, m);
+      }
+    });
+  }
+
+  /**
+   * Make an element draggable.
+   *
+   * @param {Object} context
+   * @param {Element} element
+   * @param {boolean} addMarker
+   */
+  function makeDraggable(context, element, addMarker) {
+
+    previewSupport.addDragger(element, context.dragGroup);
+
+    if (addMarker) {
+      canvas.addMarker(element, MARKER_DRAGGING);
+    }
+
+    if (context.allDraggedElements) {
+      context.allDraggedElements.push(element);
+    } else {
+      context.allDraggedElements = [ element ];
+    }
+  }
+
+  // assign a low priority to this handler
+  // to let others modify the move context before
+  // we draw things
+  eventBus.on('shape.move.start', LOW_PRIORITY, function(event) {
+    var context = event.context,
+        dragShapes = context.shapes,
+        allDraggedElements = context.allDraggedElements;
+
+    var visuallyDraggedShapes = getVisualDragShapes(dragShapes);
+
+    if (!context.dragGroup) {
+      var dragGroup = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('g');
+
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(dragGroup, styles.cls('djs-drag-group', [ 'no-events' ]));
+
+      var activeLayer = canvas.getActiveLayer();
+
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.append)(activeLayer, dragGroup);
+
+      context.dragGroup = dragGroup;
+    }
+
+    // add previews
+    visuallyDraggedShapes.forEach(function(shape) {
+      previewSupport.addDragger(shape, context.dragGroup);
+    });
+
+    // cache all dragged elements / gfx
+    // so that we can quickly undo their state changes later
+    if (!allDraggedElements) {
+      allDraggedElements = getAllDraggedElements(dragShapes);
+    } else {
+      allDraggedElements = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.flatten)([
+        allDraggedElements,
+        getAllDraggedElements(dragShapes)
+      ]);
+    }
+
+    // add dragging marker
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(allDraggedElements, function(e) {
+      canvas.addMarker(e, MARKER_DRAGGING);
+    });
+
+    context.allDraggedElements = allDraggedElements;
+
+    // determine, if any of the dragged elements have different parents
+    context.differentParents = haveDifferentParents(dragShapes);
+  });
+
+  // update previews
+  eventBus.on('shape.move.move', LOW_PRIORITY, function(event) {
+
+    var context = event.context,
+        dragGroup = context.dragGroup,
+        target = context.target,
+        parent = context.shape.parent,
+        canExecute = context.canExecute;
+
+    if (target) {
+      if (canExecute === 'attach') {
+        setMarker(target, MARKER_ATTACH);
+      } else if (context.canExecute && target && target.id !== parent.id) {
+        setMarker(target, MARKER_NEW_PARENT);
+      } else {
+        setMarker(target, context.canExecute ? MARKER_OK : MARKER_NOT_OK);
+      }
+    }
+
+    (0,_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_3__.translate)(dragGroup, event.dx, event.dy);
+  });
+
+  eventBus.on([ 'shape.move.out', 'shape.move.cleanup' ], function(event) {
+    var context = event.context,
+        target = context.target;
+
+    if (target) {
+      setMarker(target, null);
+    }
+  });
+
+  // remove previews
+  eventBus.on('shape.move.cleanup', function(event) {
+
+    var context = event.context,
+        allDraggedElements = context.allDraggedElements,
+        dragGroup = context.dragGroup;
+
+
+    // remove dragging marker
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(allDraggedElements, function(e) {
+      canvas.removeMarker(e, MARKER_DRAGGING);
+    });
+
+    if (dragGroup) {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.remove)(dragGroup);
+    }
+  });
+
+
+  // API //////////////////////
+
+  /**
+   * Make an element draggable.
+   *
+   * @param {Object} context
+   * @param {Element} element
+   * @param {boolean} addMarker
+   */
+  this.makeDraggable = makeDraggable;
+}
+
+MovePreview.$inject = [
+  'eventBus',
+  'canvas',
+  'styles',
+  'previewSupport'
+];
+
+
+// helpers //////////////////////
+
+/**
+ * returns elements minus all connections
+ * where source or target is not elements
+ */
+function removeEdges(elements) {
+
+  var filteredElements = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.filter)(elements, function(element) {
+
+    if (!(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_4__.isConnection)(element)) {
+      return true;
+    } else {
+
+      return (
+        (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.find)(elements, (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.matchPattern)({ id: element.source.id })) &&
+        (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.find)(elements, (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.matchPattern)({ id: element.target.id }))
+      );
+    }
+  });
+
+  return filteredElements;
+}
+
+function haveDifferentParents(elements) {
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.size)((0,min_dash__WEBPACK_IMPORTED_MODULE_1__.groupBy)(elements, function(e) { return e.parent && e.parent.id; })) !== 1;
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/move/index.js":
+/*!*************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/move/index.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _interaction_events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../interaction-events */ "../node_modules/diagram-js/lib/features/interaction-events/index.js");
+/* harmony import */ var _selection__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../selection */ "../node_modules/diagram-js/lib/features/selection/index.js");
+/* harmony import */ var _outline__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../outline */ "../node_modules/diagram-js/lib/features/outline/index.js");
+/* harmony import */ var _rules__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../rules */ "../node_modules/diagram-js/lib/features/rules/index.js");
+/* harmony import */ var _dragging__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../dragging */ "../node_modules/diagram-js/lib/features/dragging/index.js");
+/* harmony import */ var _preview_support__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../preview-support */ "../node_modules/diagram-js/lib/features/preview-support/index.js");
+/* harmony import */ var _Move__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Move */ "../node_modules/diagram-js/lib/features/move/Move.js");
+/* harmony import */ var _MovePreview__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./MovePreview */ "../node_modules/diagram-js/lib/features/move/MovePreview.js");
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _interaction_events__WEBPACK_IMPORTED_MODULE_0__["default"],
+    _selection__WEBPACK_IMPORTED_MODULE_1__["default"],
+    _outline__WEBPACK_IMPORTED_MODULE_2__["default"],
+    _rules__WEBPACK_IMPORTED_MODULE_3__["default"],
+    _dragging__WEBPACK_IMPORTED_MODULE_4__["default"],
+    _preview_support__WEBPACK_IMPORTED_MODULE_5__["default"]
+  ],
+  __init__: [
+    'move',
+    'movePreview'
+  ],
+  move: [ 'type', _Move__WEBPACK_IMPORTED_MODULE_6__["default"] ],
+  movePreview: [ 'type', _MovePreview__WEBPACK_IMPORTED_MODULE_7__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/ordering/OrderingProvider.js":
+/*!****************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/ordering/OrderingProvider.js ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ OrderingProvider)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+
+
+
+
+/**
+ * @typedef {import('../../core/Types').ElementLike} Element
+ * @typedef {import('../../core/Types').ShapeLike} Shape
+ *
+ * @typedef {import('../../core/EventBus').default} EventBus
+ */
+
+/**
+ * An abstract provider that allows modelers to implement a custom
+ * ordering of diagram elements on the canvas.
+ *
+ * It makes sure that the order is always preserved during element
+ * creation and move operations.
+ *
+ * In order to use this behavior, inherit from it and override
+ * the method {@link OrderingProvider#getOrdering}.
+ *
+ * @example
+ *
+ * ```javascript
+ * function CustomOrderingProvider(eventBus) {
+ *   OrderingProvider.call(this, eventBus);
+ *
+ *   this.getOrdering = function(element, newParent) {
+ *     // always insert elements at the front
+ *     // when moving
+ *     return {
+ *       index: 0,
+ *       parent: newParent
+ *     };
+ *   };
+ * }
+ * ```
+ *
+ * @param {EventBus} eventBus
+ */
+function OrderingProvider(eventBus) {
+
+  _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
+
+
+  var self = this;
+
+  this.preExecute([ 'shape.create', 'connection.create' ], function(event) {
+
+    var context = event.context,
+        element = context.shape || context.connection,
+        parent = context.parent;
+
+    var ordering = self.getOrdering(element, parent);
+
+    if (ordering) {
+
+      if (ordering.parent !== undefined) {
+        context.parent = ordering.parent;
+      }
+
+      context.parentIndex = ordering.index;
+    }
+  });
+
+  this.preExecute([ 'shape.move', 'connection.move' ], function(event) {
+
+    var context = event.context,
+        element = context.shape || context.connection,
+        parent = context.newParent || element.parent;
+
+    var ordering = self.getOrdering(element, parent);
+
+    if (ordering) {
+
+      if (ordering.parent !== undefined) {
+        context.newParent = ordering.parent;
+      }
+
+      context.newParentIndex = ordering.index;
+    }
+  });
+}
+
+/**
+ * Return a custom ordering of the element, both in terms
+ * of parent element and index in the new parent.
+ *
+ * Implementors of this method must return an object with
+ * `parent` _and_ `index` in it.
+ *
+ * @param {Element} element
+ * @param {Shape} newParent
+ *
+ * @return {Object} ordering descriptor
+ */
+OrderingProvider.prototype.getOrdering = function(element, newParent) {
+  return null;
+};
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(OrderingProvider, _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 /***/ }),
 
@@ -7619,6 +29420,1986 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "../node_modules/diagram-js/lib/features/palette/Palette.js":
+/*!******************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/palette/Palette.js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Palette)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var _util_EscapeUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/EscapeUtil */ "../node_modules/diagram-js/lib/util/EscapeUtil.js");
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ *
+ * @typedef {import('./PaletteProvider').PaletteEntries} PaletteEntries
+ * @typedef {import('./PaletteProvider').default} PaletteProvider
+ */
+
+var TOGGLE_SELECTOR = '.djs-palette-toggle',
+    ENTRY_SELECTOR = '.entry',
+    ELEMENT_SELECTOR = TOGGLE_SELECTOR + ', ' + ENTRY_SELECTOR;
+
+var PALETTE_PREFIX = 'djs-palette-',
+    PALETTE_SHOWN_CLS = 'shown',
+    PALETTE_OPEN_CLS = 'open',
+    PALETTE_TWO_COLUMN_CLS = 'two-column';
+
+var DEFAULT_PRIORITY = 1000;
+
+
+/**
+ * A palette containing modeling elements.
+ *
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ */
+function Palette(eventBus, canvas) {
+
+  this._eventBus = eventBus;
+  this._canvas = canvas;
+
+  var self = this;
+
+  eventBus.on('tool-manager.update', function(event) {
+    var tool = event.tool;
+
+    self.updateToolHighlight(tool);
+  });
+
+  eventBus.on('i18n.changed', function() {
+    self._update();
+  });
+
+  eventBus.on('diagram.init', function() {
+
+    self._diagramInitialized = true;
+
+    self._rebuild();
+  });
+}
+
+Palette.$inject = [ 'eventBus', 'canvas' ];
+
+/**
+ * @overlord
+ *
+ * Register a palette provider with default priority. See
+ * {@link PaletteProvider} for examples.
+ *
+ * @param {PaletteProvider} provider
+ */
+
+/**
+ * Register a palette provider with the given priority. See
+ * {@link PaletteProvider} for examples.
+ *
+ * @param {number} priority
+ * @param {PaletteProvider} provider
+ */
+Palette.prototype.registerProvider = function(priority, provider) {
+  if (!provider) {
+    provider = priority;
+    priority = DEFAULT_PRIORITY;
+  }
+
+  this._eventBus.on('palette.getProviders', priority, function(event) {
+    event.providers.push(provider);
+  });
+
+  this._rebuild();
+};
+
+
+/**
+ * Returns the palette entries.
+ *
+ * @return {PaletteEntries}
+ */
+Palette.prototype.getEntries = function() {
+  var providers = this._getProviders();
+
+  return providers.reduce(addPaletteEntries, {});
+};
+
+Palette.prototype._rebuild = function() {
+
+  if (!this._diagramInitialized) {
+    return;
+  }
+
+  var providers = this._getProviders();
+
+  if (!providers.length) {
+    return;
+  }
+
+  if (!this._container) {
+    this._init();
+  }
+
+  this._update();
+};
+
+/**
+ * Initialize palette.
+ */
+Palette.prototype._init = function() {
+
+  var self = this;
+
+  var eventBus = this._eventBus;
+
+  var parentContainer = this._getParentContainer();
+
+  var container = this._container = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(Palette.HTML_MARKUP);
+
+  parentContainer.appendChild(container);
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(parentContainer).add(PALETTE_PREFIX + PALETTE_SHOWN_CLS);
+
+  min_dom__WEBPACK_IMPORTED_MODULE_0__.delegate.bind(container, ELEMENT_SELECTOR, 'click', function(event) {
+
+    var target = event.delegateTarget;
+
+    if ((0,min_dom__WEBPACK_IMPORTED_MODULE_0__.matches)(target, TOGGLE_SELECTOR)) {
+      return self.toggle();
+    }
+
+    self.trigger('click', event);
+  });
+
+  // prevent drag propagation
+  min_dom__WEBPACK_IMPORTED_MODULE_0__.event.bind(container, 'mousedown', function(event) {
+    event.stopPropagation();
+  });
+
+  // prevent drag propagation
+  min_dom__WEBPACK_IMPORTED_MODULE_0__.delegate.bind(container, ENTRY_SELECTOR, 'dragstart', function(event) {
+    self.trigger('dragstart', event);
+  });
+
+  eventBus.on('canvas.resized', this._layoutChanged, this);
+
+  eventBus.fire('palette.create', {
+    container: container
+  });
+};
+
+Palette.prototype._getProviders = function(id) {
+
+  var event = this._eventBus.createEvent({
+    type: 'palette.getProviders',
+    providers: []
+  });
+
+  this._eventBus.fire(event);
+
+  return event.providers;
+};
+
+/**
+ * Update palette state.
+ *
+ * @param { {
+ *   open?: boolean;
+ *   twoColumn?: boolean;
+ * } } [state]
+ */
+Palette.prototype._toggleState = function(state) {
+
+  state = state || {};
+
+  var parent = this._getParentContainer(),
+      container = this._container;
+
+  var eventBus = this._eventBus;
+
+  var twoColumn;
+
+  var cls = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(container),
+      parentCls = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(parent);
+
+  if ('twoColumn' in state) {
+    twoColumn = state.twoColumn;
+  } else {
+    twoColumn = this._needsCollapse(parent.clientHeight, this._entries || {});
+  }
+
+  // always update two column
+  cls.toggle(PALETTE_TWO_COLUMN_CLS, twoColumn);
+  parentCls.toggle(PALETTE_PREFIX + PALETTE_TWO_COLUMN_CLS, twoColumn);
+
+  if ('open' in state) {
+    cls.toggle(PALETTE_OPEN_CLS, state.open);
+    parentCls.toggle(PALETTE_PREFIX + PALETTE_OPEN_CLS, state.open);
+  }
+
+  eventBus.fire('palette.changed', {
+    twoColumn: twoColumn,
+    open: this.isOpen()
+  });
+};
+
+Palette.prototype._update = function() {
+
+  var entriesContainer = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('.djs-palette-entries', this._container),
+      entries = this._entries = this.getEntries();
+
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.clear)(entriesContainer);
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(entries, function(entry, id) {
+
+    var grouping = entry.group || 'default';
+
+    var container = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('[data-group=' + (0,_util_EscapeUtil__WEBPACK_IMPORTED_MODULE_2__.escapeCSS)(grouping) + ']', entriesContainer);
+    if (!container) {
+      container = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<div class="group"></div>');
+      (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.attr)(container, 'data-group', grouping);
+
+      entriesContainer.appendChild(container);
+    }
+
+    var html = entry.html || (
+      entry.separator ?
+        '<hr class="separator" />' :
+        '<div class="entry" draggable="true"></div>');
+
+
+    var control = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)(html);
+    container.appendChild(control);
+
+    if (!entry.separator) {
+      (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.attr)(control, 'data-action', id);
+
+      if (entry.title) {
+        (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.attr)(control, 'title', entry.title);
+      }
+
+      if (entry.className) {
+        addClasses(control, entry.className);
+      }
+
+      if (entry.imageUrl) {
+        var image = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.domify)('<img>');
+        (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.attr)(image, 'src', entry.imageUrl);
+
+        control.appendChild(image);
+      }
+    }
+  });
+
+  // open after update
+  this.open();
+};
+
+
+/**
+ * Trigger an action available on the palette
+ *
+ * @param {string} action
+ * @param {Event} event
+ * @param {boolean} [autoActivate=false]
+ */
+Palette.prototype.trigger = function(action, event, autoActivate) {
+  var entry,
+      originalEvent,
+      button = event.delegateTarget || event.target;
+
+  if (!button) {
+    return event.preventDefault();
+  }
+
+  entry = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.attr)(button, 'data-action');
+  originalEvent = event.originalEvent || event;
+
+  return this.triggerEntry(entry, action, originalEvent, autoActivate);
+};
+
+/**
+ * @param {string} entryId
+ * @param {string} action
+ * @param {Event} event
+ * @param {boolean} [autoActivate=false]
+ */
+Palette.prototype.triggerEntry = function(entryId, action, event, autoActivate) {
+  var entries = this._entries,
+      entry,
+      handler;
+
+  entry = entries[entryId];
+
+  // when user clicks on the palette and not on an action
+  if (!entry) {
+    return;
+  }
+
+  handler = entry.action;
+
+  if (this._eventBus.fire('palette.trigger', { entry, event }) === false) {
+    return;
+  }
+
+  // simple action (via callback function)
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isFunction)(handler)) {
+    if (action === 'click') {
+      return handler(event, autoActivate);
+    }
+  } else {
+    if (handler[action]) {
+      return handler[action](event, autoActivate);
+    }
+  }
+
+  // silence other actions
+  event.preventDefault();
+};
+
+Palette.prototype._layoutChanged = function() {
+  this._toggleState({});
+};
+
+/**
+ * Do we need to collapse to two columns?
+ *
+ * @param {number} availableHeight
+ * @param {PaletteEntries} entries
+ *
+ * @return {boolean}
+ */
+Palette.prototype._needsCollapse = function(availableHeight, entries) {
+
+  // top margin + bottom toggle + bottom margin
+  // implementors must override this method if they
+  // change the palette styles
+  var margin = 20 + 10 + 20;
+
+  var entriesHeight = Object.keys(entries).length * 46;
+
+  return availableHeight < entriesHeight + margin;
+};
+
+/**
+ * Close the palette.
+ */
+Palette.prototype.close = function() {
+  this._toggleState({
+    open: false,
+    twoColumn: false
+  });
+};
+
+/**
+ * Open the palette.
+ */
+Palette.prototype.open = function() {
+  this._toggleState({ open: true });
+};
+
+/**
+ * Toggle the palette.
+ */
+Palette.prototype.toggle = function() {
+  if (this.isOpen()) {
+    this.close();
+  } else {
+    this.open();
+  }
+};
+
+/**
+ * @param {string} tool
+ *
+ * @return {boolean}
+ */
+Palette.prototype.isActiveTool = function(tool) {
+  return tool && this._activeTool === tool;
+};
+
+/**
+ * @param {string} name
+ */
+Palette.prototype.updateToolHighlight = function(name) {
+  var entriesContainer,
+      toolsContainer;
+
+  if (!this._toolsContainer) {
+    entriesContainer = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('.djs-palette-entries', this._container);
+
+    this._toolsContainer = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.query)('[data-group=tools]', entriesContainer);
+  }
+
+  toolsContainer = this._toolsContainer;
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(toolsContainer.children, function(tool) {
+    var actionName = tool.getAttribute('data-action');
+
+    if (!actionName) {
+      return;
+    }
+
+    var toolClasses = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(tool);
+
+    actionName = actionName.replace('-tool', '');
+
+    if (toolClasses.contains('entry') && actionName === name) {
+      toolClasses.add('highlighted-entry');
+    } else {
+      toolClasses.remove('highlighted-entry');
+    }
+  });
+};
+
+
+/**
+ * Return `true` if the palette is opened.
+ *
+ * @example
+ *
+ * ```javascript
+ * palette.open();
+ *
+ * if (palette.isOpen()) {
+ *   // yes, we are open
+ * }
+ * ```
+ *
+ * @return {boolean}
+ */
+Palette.prototype.isOpen = function() {
+  return (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(this._container).has(PALETTE_OPEN_CLS);
+};
+
+/**
+ * Get parent element of palette.
+ *
+ * @return {HTMLElement}
+ */
+Palette.prototype._getParentContainer = function() {
+  return this._canvas.getContainer();
+};
+
+
+/* markup definition */
+
+Palette.HTML_MARKUP =
+  '<div class="djs-palette">' +
+    '<div class="djs-palette-entries"></div>' +
+    '<div class="djs-palette-toggle"></div>' +
+  '</div>';
+
+
+// helpers //////////////////////
+
+function addClasses(element, classNames) {
+
+  var classes = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(element);
+
+  var actualClassNames = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isArray)(classNames) ? classNames : classNames.split(/\s+/g);
+  actualClassNames.forEach(function(cls) {
+    classes.add(cls);
+  });
+}
+
+function addPaletteEntries(entries, provider) {
+
+  var entriesOrUpdater = provider.getPaletteEntries();
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isFunction)(entriesOrUpdater)) {
+    return entriesOrUpdater(entries);
+  }
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(entriesOrUpdater, function(entry, id) {
+    entries[id] = entry;
+  });
+
+  return entries;
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/palette/index.js":
+/*!****************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/palette/index.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Palette__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Palette */ "../node_modules/diagram-js/lib/features/palette/Palette.js");
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [ 'palette' ],
+  palette: [ 'type', _Palette__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/preview-support/PreviewSupport.js":
+/*!*********************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/preview-support/PreviewSupport.js ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ PreviewSupport)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var _util_GraphicsUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/GraphicsUtil */ "../node_modules/diagram-js/lib/util/GraphicsUtil.js");
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/Types').ElementLike} Element
+ * @typedef {import('../../core/Types').ShapeLike} Shape
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../../draw/Styles').default} Styles
+ */
+
+var MARKER_TYPES = [
+  'marker-start',
+  'marker-mid',
+  'marker-end'
+];
+
+var NODES_CAN_HAVE_MARKER = [
+  'circle',
+  'ellipse',
+  'line',
+  'path',
+  'polygon',
+  'polyline',
+  'path',
+  'rect'
+];
+
+
+/**
+ * Adds support for previews of moving/resizing elements.
+ *
+ * @param {ElementRegistry} elementRegistry
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ * @param {Styles} styles
+ */
+function PreviewSupport(elementRegistry, eventBus, canvas, styles) {
+  this._elementRegistry = elementRegistry;
+  this._canvas = canvas;
+  this._styles = styles;
+
+  this._clonedMarkers = {};
+
+  var self = this;
+
+  eventBus.on('drag.cleanup', function() {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(self._clonedMarkers, function(clonedMarker) {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.remove)(clonedMarker);
+    });
+
+    self._clonedMarkers = {};
+  });
+}
+
+PreviewSupport.$inject = [
+  'elementRegistry',
+  'eventBus',
+  'canvas',
+  'styles'
+];
+
+
+/**
+ * Returns graphics of an element.
+ *
+ * @param {Element} element
+ *
+ * @return {SVGElement}
+ */
+PreviewSupport.prototype.getGfx = function(element) {
+  return this._elementRegistry.getGraphics(element);
+};
+
+/**
+ * Adds a move preview of a given shape to a given SVG group.
+ *
+ * @param {Element} element The element to be moved.
+ * @param {SVGElement} group The SVG group to add the preview to.
+ * @param {SVGElement} [gfx] The optional graphical element of the element.
+ *
+ * @return {SVGElement} The preview.
+ */
+PreviewSupport.prototype.addDragger = function(element, group, gfx) {
+  gfx = gfx || this.getGfx(element);
+
+  var dragger = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.clone)(gfx);
+  var bbox = gfx.getBoundingClientRect();
+
+  this._cloneMarkers((0,_util_GraphicsUtil__WEBPACK_IMPORTED_MODULE_2__.getVisual)(dragger));
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(dragger, this._styles.cls('djs-dragger', [], {
+    x: bbox.top,
+    y: bbox.left
+  }));
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.append)(group, dragger);
+
+  return dragger;
+};
+
+/**
+ * Adds a resize preview of a given shape to a given SVG group.
+ *
+ * @param {Shape} shape The element to be resized.
+ * @param {SVGElement} group The SVG group to add the preview to.
+ *
+ * @return {SVGElement} The preview.
+ */
+PreviewSupport.prototype.addFrame = function(shape, group) {
+
+  var frame = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.create)('rect', {
+    class: 'djs-resize-overlay',
+    width:  shape.width,
+    height: shape.height,
+    x: shape.x,
+    y: shape.y
+  });
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.append)(group, frame);
+
+  return frame;
+};
+
+/**
+ * Clone all markers referenced by a node and its child nodes.
+ *
+ * @param {SVGElement} gfx
+ */
+PreviewSupport.prototype._cloneMarkers = function(gfx) {
+  var self = this;
+
+  if (gfx.childNodes) {
+
+    // TODO: use forEach once we drop PhantomJS
+    for (var i = 0; i < gfx.childNodes.length; i++) {
+
+      // recursively clone markers of child nodes
+      self._cloneMarkers(gfx.childNodes[ i ]);
+    }
+  }
+
+  if (!canHaveMarker(gfx)) {
+    return;
+  }
+
+  MARKER_TYPES.forEach(function(markerType) {
+    if ((0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(gfx, markerType)) {
+      var marker = getMarker(gfx, markerType, self._canvas.getContainer());
+
+      self._cloneMarker(gfx, marker, markerType);
+    }
+  });
+};
+
+/**
+ * Clone marker referenced by an element.
+ *
+ * @param {SVGElement} gfx
+ * @param {SVGElement} marker
+ * @param {string} markerType
+ */
+PreviewSupport.prototype._cloneMarker = function(gfx, marker, markerType) {
+  var markerId = marker.id;
+
+  var clonedMarker = this._clonedMarkers[ markerId ];
+
+  if (!clonedMarker) {
+    clonedMarker = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.clone)(marker);
+
+    var clonedMarkerId = markerId + '-clone';
+
+    clonedMarker.id = clonedMarkerId;
+
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.classes)(clonedMarker)
+      .add('djs-dragger')
+      .add('djs-dragger-marker');
+
+    this._clonedMarkers[ markerId ] = clonedMarker;
+
+    var defs = (0,min_dom__WEBPACK_IMPORTED_MODULE_3__.query)('defs', this._canvas._svg);
+
+    if (!defs) {
+      defs = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.create)('defs');
+
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.append)(this._canvas._svg, defs);
+    }
+
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.append)(defs, clonedMarker);
+  }
+
+  var reference = idToReference(this._clonedMarkers[ markerId ].id);
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(gfx, markerType, reference);
+};
+
+// helpers //////////
+
+/**
+ * Get marker of given type referenced by node.
+ *
+ * @param {HTMLElement} node
+ * @param {string} markerType
+ * @param {HTMLElement} [parentNode]
+ *
+ * @param {HTMLElement}
+ */
+function getMarker(node, markerType, parentNode) {
+  var id = referenceToId((0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(node, markerType));
+
+  return (0,min_dom__WEBPACK_IMPORTED_MODULE_3__.query)('marker#' + id, parentNode || document);
+}
+
+/**
+ * Get ID of fragment within current document from its functional IRI reference.
+ * References may use single or double quotes.
+ *
+ * @param {string} reference
+ *
+ * @return {string}
+ */
+function referenceToId(reference) {
+  return reference.match(/url\(['"]?#([^'"]*)['"]?\)/)[1];
+}
+
+/**
+ * Get functional IRI reference for given ID of fragment within current document.
+ *
+ * @param {string} id
+ *
+ * @return {string}
+ */
+function idToReference(id) {
+  return 'url(#' + id + ')';
+}
+
+/**
+ * Check wether node type can have marker attributes.
+ *
+ * @param {HTMLElement} node
+ *
+ * @return {boolean}
+ */
+function canHaveMarker(node) {
+  return NODES_CAN_HAVE_MARKER.indexOf(node.nodeName) !== -1;
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/preview-support/index.js":
+/*!************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/preview-support/index.js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _PreviewSupport__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PreviewSupport */ "../node_modules/diagram-js/lib/features/preview-support/PreviewSupport.js");
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [ 'previewSupport' ],
+  previewSupport: [ 'type', _PreviewSupport__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/resize/Resize.js":
+/*!****************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/resize/Resize.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Resize),
+/* harmony export */   getReferencePoint: () => (/* binding */ getReferencePoint)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _ResizeUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ResizeUtil */ "../node_modules/diagram-js/lib/features/resize/ResizeUtil.js");
+/* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/Types').ShapeLike} Shape
+ *
+ * @typedef {import('../../util/Types').Direction} Direction
+ * @typedef {import('../../util/Types').Point} Point
+ *
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../dragging/Dragging').default} Dragging
+ * @typedef {import('../modeling/Modeling').default} Modeling
+ * @typedef {import('../rules/Rules').default} Rules
+ */
+
+var DEFAULT_MIN_WIDTH = 10;
+
+
+/**
+ * A component that provides resizing of shapes on the canvas.
+ *
+ * The following components are part of shape resize:
+ *
+ *  * adding resize handles,
+ *  * creating a visual during resize
+ *  * checking resize rules
+ *  * committing a change once finished
+ *
+ *
+ * ## Customizing
+ *
+ * It's possible to customize the resizing behaviour by intercepting 'resize.start'
+ * and providing the following parameters through the 'context':
+ *
+ *   * minDimensions ({ width, height }): minimum shape dimensions
+ *
+ *   * childrenBoxPadding ({ left, top, bottom, right } || number):
+ *     gap between the minimum bounding box and the container
+ *
+ * f.ex:
+ *
+ * ```javascript
+ * eventBus.on('resize.start', 1500, function(event) {
+ *   var context = event.context,
+ *
+ *  context.minDimensions = { width: 140, height: 120 };
+ *
+ *  // Passing general padding
+ *  context.childrenBoxPadding = 30;
+ *
+ *  // Passing padding to a specific side
+ *  context.childrenBoxPadding.left = 20;
+ * });
+ * ```
+ *
+ * @param {EventBus} eventBus
+ * @param {Rules} rules
+ * @param {Modeling} modeling
+ * @param {Dragging} dragging
+ */
+function Resize(eventBus, rules, modeling, dragging) {
+
+  this._dragging = dragging;
+  this._rules = rules;
+
+  var self = this;
+
+
+  /**
+   * Handle resize move by specified delta.
+   *
+   * @param {Object} context
+   * @param {Point} delta
+   */
+  function handleMove(context, delta) {
+
+    var shape = context.shape,
+        direction = context.direction,
+        resizeConstraints = context.resizeConstraints,
+        newBounds;
+
+    context.delta = delta;
+
+    newBounds = (0,_ResizeUtil__WEBPACK_IMPORTED_MODULE_0__.resizeBounds)(shape, direction, delta);
+
+    // ensure constraints during resize
+    context.newBounds = (0,_ResizeUtil__WEBPACK_IMPORTED_MODULE_0__.ensureConstraints)(newBounds, resizeConstraints);
+
+    // update + cache executable state
+    context.canExecute = self.canResize(context);
+  }
+
+  /**
+   * Handle resize start.
+   *
+   * @param {Object} context
+   */
+  function handleStart(context) {
+
+    var resizeConstraints = context.resizeConstraints,
+
+        // evaluate minBounds for backwards compatibility
+        minBounds = context.minBounds;
+
+    if (resizeConstraints !== undefined) {
+      return;
+    }
+
+    if (minBounds === undefined) {
+      minBounds = self.computeMinResizeBox(context);
+    }
+
+    context.resizeConstraints = {
+      min: (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(minBounds)
+    };
+  }
+
+  /**
+   * Handle resize end.
+   *
+   * @param {Object} context
+   */
+  function handleEnd(context) {
+    var shape = context.shape,
+        canExecute = context.canExecute,
+        newBounds = context.newBounds;
+
+    if (canExecute) {
+
+      // ensure we have actual pixel values for new bounds
+      // (important when zoom level was > 1 during move)
+      newBounds = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.roundBounds)(newBounds);
+
+      if (!boundsChanged(shape, newBounds)) {
+
+        // no resize necessary
+        return;
+      }
+
+      // perform the actual resize
+      modeling.resizeShape(shape, newBounds);
+    }
+  }
+
+
+  eventBus.on('resize.start', function(event) {
+    handleStart(event.context);
+  });
+
+  eventBus.on('resize.move', function(event) {
+    var delta = {
+      x: event.dx,
+      y: event.dy
+    };
+
+    handleMove(event.context, delta);
+  });
+
+  eventBus.on('resize.end', function(event) {
+    handleEnd(event.context);
+  });
+
+}
+
+
+Resize.prototype.canResize = function(context) {
+  var rules = this._rules;
+
+  var ctx = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.pick)(context, [ 'newBounds', 'shape', 'delta', 'direction' ]);
+
+  return rules.allowed('shape.resize', ctx);
+};
+
+/**
+ * Activate a resize operation.
+ *
+ * You may specify additional contextual information and must specify a
+ * resize direction during activation of the resize event.
+ *
+ * @param {MouseEvent|TouchEvent} event
+ * @param {Shape} shape
+ * @param {Object|Direction} contextOrDirection
+ */
+Resize.prototype.activate = function(event, shape, contextOrDirection) {
+  var dragging = this._dragging,
+      context,
+      direction;
+
+  if (typeof contextOrDirection === 'string') {
+    contextOrDirection = {
+      direction: contextOrDirection
+    };
+  }
+
+  context = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)({ shape: shape }, contextOrDirection);
+
+  direction = context.direction;
+
+  if (!direction) {
+    throw new Error('must provide a direction (n|w|s|e|nw|se|ne|sw)');
+  }
+
+  dragging.init(event, getReferencePoint(shape, direction), 'resize', {
+    autoActivate: true,
+    cursor: getCursor(direction),
+    data: {
+      shape: shape,
+      context: context
+    }
+  });
+};
+
+Resize.prototype.computeMinResizeBox = function(context) {
+  var shape = context.shape,
+      direction = context.direction,
+      minDimensions,
+      childrenBounds;
+
+  minDimensions = context.minDimensions || {
+    width: DEFAULT_MIN_WIDTH,
+    height: DEFAULT_MIN_WIDTH
+  };
+
+  // get children bounds
+  childrenBounds = (0,_ResizeUtil__WEBPACK_IMPORTED_MODULE_0__.computeChildrenBBox)(shape, context.childrenBoxPadding);
+
+  // get correct minimum bounds from given resize direction
+  // basically ensures that the minBounds is max(childrenBounds, minDimensions)
+  return (0,_ResizeUtil__WEBPACK_IMPORTED_MODULE_0__.getMinResizeBounds)(direction, shape, minDimensions, childrenBounds);
+};
+
+
+Resize.$inject = [
+  'eventBus',
+  'rules',
+  'modeling',
+  'dragging'
+];
+
+// helpers //////////
+
+function boundsChanged(shape, newBounds) {
+  return shape.x !== newBounds.x ||
+    shape.y !== newBounds.y ||
+    shape.width !== newBounds.width ||
+    shape.height !== newBounds.height;
+}
+
+function getReferencePoint(shape, direction) {
+  var mid = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getMid)(shape),
+      trbl = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(shape);
+
+  var referencePoint = {
+    x: mid.x,
+    y: mid.y
+  };
+
+  if (direction.indexOf('n') !== -1) {
+    referencePoint.y = trbl.top;
+  } else if (direction.indexOf('s') !== -1) {
+    referencePoint.y = trbl.bottom;
+  }
+
+  if (direction.indexOf('e') !== -1) {
+    referencePoint.x = trbl.right;
+  } else if (direction.indexOf('w') !== -1) {
+    referencePoint.x = trbl.left;
+  }
+
+  return referencePoint;
+}
+
+function getCursor(direction) {
+  var prefix = 'resize-';
+
+  if (direction === 'n' || direction === 's') {
+    return prefix + 'ns';
+  } else if (direction === 'e' || direction === 'w') {
+    return prefix + 'ew';
+  } else if (direction === 'nw' || direction === 'se') {
+    return prefix + 'nwse';
+  } else {
+    return prefix + 'nesw';
+  }
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/resize/ResizeHandles.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/resize/ResizeHandles.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ResizeHandles)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var _util_Mouse__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/Mouse */ "../node_modules/diagram-js/lib/util/Mouse.js");
+/* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
+/* harmony import */ var _Resize__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Resize */ "../node_modules/diagram-js/lib/features/resize/Resize.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../util/ModelUtil */ "../node_modules/diagram-js/lib/util/ModelUtil.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../model/Types').Element} Element
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../resize/Resize').default} Resize
+ * @typedef {import('../selection/Selection').default} Selection
+ */
+
+var HANDLE_OFFSET = -6,
+    HANDLE_SIZE = 8,
+    HANDLE_HIT_SIZE = 20;
+
+var CLS_RESIZER = 'djs-resizer';
+
+var directions = [ 'n', 'w', 's', 'e', 'nw', 'ne', 'se', 'sw' ];
+
+
+/**
+ * This component is responsible for adding resize handles.
+ *
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ * @param {Selection} selection
+ * @param {Resize} resize
+ */
+function ResizeHandles(eventBus, canvas, selection, resize) {
+
+  this._resize = resize;
+  this._canvas = canvas;
+
+  var self = this;
+
+  eventBus.on('selection.changed', function(e) {
+    var newSelection = e.newSelection;
+
+    // remove old selection markers
+    self.removeResizers();
+
+    // add new selection markers ONLY if single selection
+    if (newSelection.length === 1) {
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(newSelection, (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.bind)(self.addResizer, self));
+    }
+  });
+
+  eventBus.on('shape.changed', function(e) {
+    var shape = e.element;
+
+    if (selection.isSelected(shape)) {
+      self.removeResizers();
+
+      self.addResizer(shape);
+    }
+  });
+}
+
+
+ResizeHandles.prototype.makeDraggable = function(element, gfx, direction) {
+  var resize = this._resize;
+
+  function startResize(event) {
+
+    // only trigger on left mouse button
+    if ((0,_util_Mouse__WEBPACK_IMPORTED_MODULE_1__.isPrimaryButton)(event)) {
+      resize.activate(event, element, direction);
+    }
+  }
+
+  min_dom__WEBPACK_IMPORTED_MODULE_2__.event.bind(gfx, 'mousedown', startResize);
+  min_dom__WEBPACK_IMPORTED_MODULE_2__.event.bind(gfx, 'touchstart', startResize);
+};
+
+
+ResizeHandles.prototype._createResizer = function(element, x, y, direction) {
+  var resizersParent = this._getResizersParent();
+
+  var offset = getHandleOffset(direction);
+
+  var group = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('g');
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.classes)(group).add(CLS_RESIZER);
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.classes)(group).add(CLS_RESIZER + '-' + element.id);
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.classes)(group).add(CLS_RESIZER + '-' + direction);
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(resizersParent, group);
+
+  var visual = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('rect');
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(visual, {
+    x: -HANDLE_SIZE / 2 + offset.x,
+    y: -HANDLE_SIZE / 2 + offset.y,
+    width: HANDLE_SIZE,
+    height: HANDLE_SIZE
+  });
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.classes)(visual).add(CLS_RESIZER + '-visual');
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(group, visual);
+
+  var hit = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.create)('rect');
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.attr)(hit, {
+    x: -HANDLE_HIT_SIZE / 2 + offset.x,
+    y: -HANDLE_HIT_SIZE / 2 + offset.y,
+    width: HANDLE_HIT_SIZE,
+    height: HANDLE_HIT_SIZE
+  });
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.classes)(hit).add(CLS_RESIZER + '-hit');
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.append)(group, hit);
+
+  (0,_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_4__.transform)(group, x, y);
+
+  return group;
+};
+
+ResizeHandles.prototype.createResizer = function(element, direction) {
+  var point = (0,_Resize__WEBPACK_IMPORTED_MODULE_5__.getReferencePoint)(element, direction);
+
+  var resizer = this._createResizer(element, point.x, point.y, direction);
+
+  this.makeDraggable(element, resizer, direction);
+};
+
+// resize handles implementation ///////////////////////////////
+
+/**
+ * Add resizers for a given element.
+ *
+ * @param {Element} element
+ */
+ResizeHandles.prototype.addResizer = function(element) {
+  var self = this;
+
+  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_6__.isConnection)(element) || !this._resize.canResize({ shape: element })) {
+    return;
+  }
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(directions, function(direction) {
+    self.createResizer(element, direction);
+  });
+};
+
+/**
+ * Remove all resizers
+ */
+ResizeHandles.prototype.removeResizers = function() {
+  var resizersParent = this._getResizersParent();
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_3__.clear)(resizersParent);
+};
+
+ResizeHandles.prototype._getResizersParent = function() {
+  return this._canvas.getLayer('resizers');
+};
+
+ResizeHandles.$inject = [
+  'eventBus',
+  'canvas',
+  'selection',
+  'resize'
+];
+
+// helpers //////////
+
+function getHandleOffset(direction) {
+  var offset = {
+    x: 0,
+    y: 0
+  };
+
+  if (direction.indexOf('e') !== -1) {
+    offset.x = -HANDLE_OFFSET;
+  } else if (direction.indexOf('w') !== -1) {
+    offset.x = HANDLE_OFFSET;
+  }
+
+  if (direction.indexOf('s') !== -1) {
+    offset.y = -HANDLE_OFFSET;
+  } else if (direction.indexOf('n') !== -1) {
+    offset.y = HANDLE_OFFSET;
+  }
+
+  return offset;
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/resize/ResizePreview.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/resize/ResizePreview.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ResizePreview)
+/* harmony export */ });
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+var MARKER_RESIZING = 'djs-resizing',
+    MARKER_RESIZE_NOT_OK = 'resize-not-ok';
+
+var LOW_PRIORITY = 500;
+
+
+
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../preview-support/PreviewSupport').default} PreviewSupport
+ */
+
+/**
+ * Provides previews for resizing shapes when resizing.
+ *
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ * @param {PreviewSupport} previewSupport
+ */
+function ResizePreview(eventBus, canvas, previewSupport) {
+
+  /**
+   * Update resizer frame.
+   *
+   * @param {Object} context
+   */
+  function updateFrame(context) {
+
+    var shape = context.shape,
+        bounds = context.newBounds,
+        frame = context.frame;
+
+    if (!frame) {
+      frame = context.frame = previewSupport.addFrame(shape, canvas.getActiveLayer());
+
+      canvas.addMarker(shape, MARKER_RESIZING);
+    }
+
+    if (bounds.width > 5) {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(frame, { x: bounds.x, width: bounds.width });
+    }
+
+    if (bounds.height > 5) {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(frame, { y: bounds.y, height: bounds.height });
+    }
+
+    if (context.canExecute) {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.classes)(frame).remove(MARKER_RESIZE_NOT_OK);
+    } else {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.classes)(frame).add(MARKER_RESIZE_NOT_OK);
+    }
+  }
+
+  /**
+   * Remove resizer frame.
+   *
+   * @param {Object} context
+   */
+  function removeFrame(context) {
+    var shape = context.shape,
+        frame = context.frame;
+
+    if (frame) {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.remove)(context.frame);
+    }
+
+    canvas.removeMarker(shape, MARKER_RESIZING);
+  }
+
+  // add and update previews
+  eventBus.on('resize.move', LOW_PRIORITY, function(event) {
+    updateFrame(event.context);
+  });
+
+  // remove previews
+  eventBus.on('resize.cleanup', function(event) {
+    removeFrame(event.context);
+  });
+
+}
+
+ResizePreview.$inject = [
+  'eventBus',
+  'canvas',
+  'previewSupport'
+];
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/resize/ResizeUtil.js":
+/*!********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/resize/ResizeUtil.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   addPadding: () => (/* binding */ addPadding),
+/* harmony export */   computeChildrenBBox: () => (/* binding */ computeChildrenBBox),
+/* harmony export */   ensureConstraints: () => (/* binding */ ensureConstraints),
+/* harmony export */   getMinResizeBounds: () => (/* binding */ getMinResizeBounds),
+/* harmony export */   reattachPoint: () => (/* binding */ reattachPoint),
+/* harmony export */   resizeBounds: () => (/* binding */ resizeBounds),
+/* harmony export */   resizeTRBL: () => (/* binding */ resizeTRBL),
+/* harmony export */   substractTRBL: () => (/* binding */ substractTRBL)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
+/* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+
+
+var max = Math.max,
+    min = Math.min;
+
+var DEFAULT_CHILD_BOX_PADDING = 20;
+
+
+
+
+
+/**
+ * @typedef {import('../../core/Types').ElementLike} Element
+ * @typedef {import('../../core/Types').ShapeLike} Shape
+ *
+ * @typedef {import('../../util/Types').Direction} Direction
+ * @typedef {import('../../util/Types').Point} Point
+ * @typedef {import('../../util/Types').Rect} Rect
+ * @typedef {import('../../util/Types').RectTRBL} RectTRBL
+ */
+
+/**
+ * Substract a TRBL from another
+ *
+ * @param {RectTRBL} trblA
+ * @param {RectTRBL} trblB
+ *
+ * @return {RectTRBL}
+ */
+function substractTRBL(trblA, trblB) {
+  return {
+    top: trblA.top - trblB.top,
+    right: trblA.right - trblB.right,
+    bottom: trblA.bottom - trblB.bottom,
+    left: trblA.left - trblB.left
+  };
+}
+
+/**
+ * Resize the given bounds by the specified delta from a given anchor point.
+ *
+ * @param {Rect} bounds the bounding box that should be resized
+ * @param {Direction} direction in which the element is resized (nw, ne, se, sw)
+ * @param {Point} delta of the resize operation
+ *
+ * @return {Rect} resized bounding box
+ */
+function resizeBounds(bounds, direction, delta) {
+  var dx = delta.x,
+      dy = delta.y;
+
+  var newBounds = {
+    x: bounds.x,
+    y: bounds.y,
+    width: bounds.width,
+    height: bounds.height
+  };
+
+  if (direction.indexOf('n') !== -1) {
+    newBounds.y = bounds.y + dy;
+    newBounds.height = bounds.height - dy;
+  } else if (direction.indexOf('s') !== -1) {
+    newBounds.height = bounds.height + dy;
+  }
+
+  if (direction.indexOf('e') !== -1) {
+    newBounds.width = bounds.width + dx;
+  } else if (direction.indexOf('w') !== -1) {
+    newBounds.x = bounds.x + dx;
+    newBounds.width = bounds.width - dx;
+  }
+
+  return newBounds;
+}
+
+
+/**
+ * Resize the given bounds by applying the passed
+ * { top, right, bottom, left } delta.
+ *
+ * @param {Rect} bounds
+ * @param {RectTRBL} resize
+ *
+ * @return {Rect}
+ */
+function resizeTRBL(bounds, resize) {
+  return {
+    x: bounds.x + (resize.left || 0),
+    y: bounds.y + (resize.top || 0),
+    width: bounds.width - (resize.left || 0) + (resize.right || 0),
+    height: bounds.height - (resize.top || 0) + (resize.bottom || 0)
+  };
+}
+
+
+function reattachPoint(bounds, newBounds, point) {
+
+  var sx = bounds.width / newBounds.width,
+      sy = bounds.height / newBounds.height;
+
+  return {
+    x: Math.round((newBounds.x + newBounds.width / 2)) - Math.floor(((bounds.x + bounds.width / 2) - point.x) / sx),
+    y: Math.round((newBounds.y + newBounds.height / 2)) - Math.floor(((bounds.y + bounds.height / 2) - point.y) / sy)
+  };
+}
+
+
+function applyConstraints(attr, trbl, resizeConstraints) {
+
+  var value = trbl[attr],
+      minValue = resizeConstraints.min && resizeConstraints.min[attr],
+      maxValue = resizeConstraints.max && resizeConstraints.max[attr];
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(minValue)) {
+    value = (/top|left/.test(attr) ? min : max)(value, minValue);
+  }
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(maxValue)) {
+    value = (/top|left/.test(attr) ? max : min)(value, maxValue);
+  }
+
+  return value;
+}
+
+function ensureConstraints(currentBounds, resizeConstraints) {
+
+  if (!resizeConstraints) {
+    return currentBounds;
+  }
+
+  var currentTrbl = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(currentBounds);
+
+  return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asBounds)({
+    top: applyConstraints('top', currentTrbl, resizeConstraints),
+    right: applyConstraints('right', currentTrbl, resizeConstraints),
+    bottom: applyConstraints('bottom', currentTrbl, resizeConstraints),
+    left: applyConstraints('left', currentTrbl, resizeConstraints)
+  });
+}
+
+
+function getMinResizeBounds(direction, currentBounds, minDimensions, childrenBounds) {
+
+  var currentBox = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(currentBounds);
+
+  var minBox = {
+    top: /n/.test(direction) ? currentBox.bottom - minDimensions.height : currentBox.top,
+    left: /w/.test(direction) ? currentBox.right - minDimensions.width : currentBox.left,
+    bottom: /s/.test(direction) ? currentBox.top + minDimensions.height : currentBox.bottom,
+    right: /e/.test(direction) ? currentBox.left + minDimensions.width : currentBox.right
+  };
+
+  var childrenBox = childrenBounds ? (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(childrenBounds) : minBox;
+
+  var combinedBox = {
+    top: min(minBox.top, childrenBox.top),
+    left: min(minBox.left, childrenBox.left),
+    bottom: max(minBox.bottom, childrenBox.bottom),
+    right: max(minBox.right, childrenBox.right)
+  };
+
+  return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asBounds)(combinedBox);
+}
+
+function asPadding(mayBePadding, defaultValue) {
+  if (typeof mayBePadding !== 'undefined') {
+    return mayBePadding;
+  } else {
+    return DEFAULT_CHILD_BOX_PADDING;
+  }
+}
+
+function addPadding(bbox, padding) {
+  var left, right, top, bottom;
+
+  if (typeof padding === 'object') {
+    left = asPadding(padding.left);
+    right = asPadding(padding.right);
+    top = asPadding(padding.top);
+    bottom = asPadding(padding.bottom);
+  } else {
+    left = right = top = bottom = asPadding(padding);
+  }
+
+  return {
+    x: bbox.x - left,
+    y: bbox.y - top,
+    width: bbox.width + left + right,
+    height: bbox.height + top + bottom
+  };
+}
+
+
+/**
+ * Is the given element part of the resize
+ * targets min boundary box?
+ *
+ * This is the default implementation which excludes
+ * connections and labels.
+ *
+ * @param {Element} element
+ */
+function isBBoxChild(element) {
+
+  // exclude connections
+  if (element.waypoints) {
+    return false;
+  }
+
+  // exclude labels
+  if (element.type === 'label') {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Return children bounding computed from a shapes children
+ * or a list of prefiltered children.
+ *
+ * @param {Shape|Shape[]} shapeOrChildren
+ * @param {RectTRBL|number} padding
+ *
+ * @return {Rect}
+ */
+function computeChildrenBBox(shapeOrChildren, padding) {
+
+  var elements;
+
+  // compute based on shape
+  if (shapeOrChildren.length === undefined) {
+
+    // grab all the children that are part of the
+    // parents children box
+    elements = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.filter)(shapeOrChildren.children, isBBoxChild);
+
+  } else {
+    elements = shapeOrChildren;
+  }
+
+  if (elements.length) {
+    return addPadding((0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getBBox)(elements), padding);
+  }
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/resize/index.js":
+/*!***************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/resize/index.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _rules__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../rules */ "../node_modules/diagram-js/lib/features/rules/index.js");
+/* harmony import */ var _dragging__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../dragging */ "../node_modules/diagram-js/lib/features/dragging/index.js");
+/* harmony import */ var _preview_support__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../preview-support */ "../node_modules/diagram-js/lib/features/preview-support/index.js");
+/* harmony import */ var _Resize__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Resize */ "../node_modules/diagram-js/lib/features/resize/Resize.js");
+/* harmony import */ var _ResizePreview__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./ResizePreview */ "../node_modules/diagram-js/lib/features/resize/ResizePreview.js");
+/* harmony import */ var _ResizeHandles__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./ResizeHandles */ "../node_modules/diagram-js/lib/features/resize/ResizeHandles.js");
+
+
+
+
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _rules__WEBPACK_IMPORTED_MODULE_0__["default"],
+    _dragging__WEBPACK_IMPORTED_MODULE_1__["default"],
+    _preview_support__WEBPACK_IMPORTED_MODULE_2__["default"]
+  ],
+  __init__: [
+    'resize',
+    'resizePreview',
+    'resizeHandles'
+  ],
+  resize: [ 'type', _Resize__WEBPACK_IMPORTED_MODULE_3__["default"] ],
+  resizePreview: [ 'type', _ResizePreview__WEBPACK_IMPORTED_MODULE_4__["default"] ],
+  resizeHandles: [ 'type', _ResizeHandles__WEBPACK_IMPORTED_MODULE_5__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/rules/RuleProvider.js":
+/*!*********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/rules/RuleProvider.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ RuleProvider)
+/* harmony export */ });
+/* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
+/* harmony import */ var _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../command/CommandInterceptor */ "../node_modules/diagram-js/lib/command/CommandInterceptor.js");
+
+
+
+
+/**
+ * @typedef {import('../../core/EventBus').default} EventBus
+ */
+
+/**
+ * A basic provider that may be extended to implement modeling rules.
+ *
+ * Extensions should implement the init method to actually add their custom
+ * modeling checks. Checks may be added via the #addRule(action, fn) method.
+ *
+ * @class
+ *
+ * @param {EventBus} eventBus
+ */
+function RuleProvider(eventBus) {
+  _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"].call(this, eventBus);
+
+  this.init();
+}
+
+RuleProvider.$inject = [ 'eventBus' ];
+
+(0,inherits_browser__WEBPACK_IMPORTED_MODULE_1__["default"])(RuleProvider, _command_CommandInterceptor__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+
+/**
+ * Adds a modeling rule for the given action, implemented through
+ * a callback function.
+ *
+ * The callback receives a modeling specific action context
+ * to perform its check. It must return `false` to disallow the
+ * action from happening or `true` to allow the action. Usually returing
+ * `null` denotes that a particular interaction shall be ignored.
+ * By returning nothing or `undefined` you pass evaluation to lower
+ * priority rules.
+ *
+ * @example
+ *
+ * ```javascript
+ * ResizableRules.prototype.init = function() {
+ *
+ *   \/**
+ *    * Return `true`, `false` or nothing to denote
+ *    * _allowed_, _not allowed_ and _continue evaluating_.
+ *    *\/
+ *   this.addRule('shape.resize', function(context) {
+ *
+ *     var shape = context.shape;
+ *
+ *     if (!context.newBounds) {
+ *       // check general resizability
+ *       if (!shape.resizable) {
+ *         return false;
+ *       }
+ *
+ *       // not returning anything (read: undefined)
+ *       // will continue the evaluation of other rules
+ *       // (with lower priority)
+ *       return;
+ *     } else {
+ *       // element must have minimum size of 10*10 points
+ *       return context.newBounds.width > 10 && context.newBounds.height > 10;
+ *     }
+ *   });
+ * };
+ * ```
+ *
+ * @param {string|string[]} actions the identifier for the modeling action to check
+ * @param {number} [priority] the priority at which this rule is being applied
+ * @param {(any) => any} fn the callback function that performs the actual check
+ */
+RuleProvider.prototype.addRule = function(actions, priority, fn) {
+
+  var self = this;
+
+  if (typeof actions === 'string') {
+    actions = [ actions ];
+  }
+
+  actions.forEach(function(action) {
+
+    self.canExecute(action, priority, function(context, action, event) {
+      return fn(context);
+    }, true);
+  });
+};
+
+/**
+ * Implement this method to add new rules during provider initialization.
+ */
+RuleProvider.prototype.init = function() {};
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/rules/Rules.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/rules/Rules.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Rules)
+/* harmony export */ });
+/**
+ * @typedef {import('didi').Injector} Injector
+ */
+
+/**
+ * A service that provides rules for certain diagram actions.
+ *
+ * The default implementation will hook into the {@link CommandStack}
+ * to perform the actual rule evaluation. Make sure to provide the
+ * `commandStack` service with this module if you plan to use it.
+ *
+ * Together with this implementation you may use the {@link import('./RuleProvider').default}
+ * to implement your own rule checkers.
+ *
+ * This module is ment to be easily replaced, thus the tiny foot print.
+ *
+ * @param {Injector} injector
+ */
+function Rules(injector) {
+  this._commandStack = injector.get('commandStack', false);
+}
+
+Rules.$inject = [ 'injector' ];
+
+
+/**
+ * Returns whether or not a given modeling action can be executed
+ * in the specified context.
+ *
+ * This implementation will respond with allow unless anyone
+ * objects.
+ *
+ * @param {string} action The action to be allowed or disallowed.
+ * @param {Object} [context] The context for allowing or disallowing the action.
+ *
+ * @return {boolean|null} Wether the action is allowed. Returns `null` if the action
+ * is to be ignored.
+ */
+Rules.prototype.allowed = function(action, context) {
+  var allowed = true;
+
+  var commandStack = this._commandStack;
+
+  if (commandStack) {
+    allowed = commandStack.canExecute(action, context);
+  }
+
+  // map undefined to true, i.e. no rules
+  return allowed === undefined ? true : allowed;
+};
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/rules/index.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/rules/index.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Rules__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Rules */ "../node_modules/diagram-js/lib/features/rules/Rules.js");
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [ 'rules' ],
+  rules: [ 'type', _Rules__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+});
+
+
+/***/ }),
+
 /***/ "../node_modules/diagram-js/lib/features/selection/Selection.js":
 /*!**********************************************************************!*\
   !*** ../node_modules/diagram-js/lib/features/selection/Selection.js ***!
@@ -8086,6 +31867,3258 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "../node_modules/diagram-js/lib/features/snapping/CreateMoveSnapping.js":
+/*!******************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/snapping/CreateMoveSnapping.js ***!
+  \******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ CreateMoveSnapping)
+/* harmony export */ });
+/* harmony import */ var _SnapContext__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./SnapContext */ "../node_modules/diagram-js/lib/features/snapping/SnapContext.js");
+/* harmony import */ var _SnapUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SnapUtil */ "../node_modules/diagram-js/lib/features/snapping/SnapUtil.js");
+/* harmony import */ var _keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../keyboard/KeyboardUtil */ "../node_modules/diagram-js/lib/features/keyboard/KeyboardUtil.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/ModelUtil */ "../node_modules/diagram-js/lib/util/ModelUtil.js");
+
+
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('./Snapping').default} Snapping
+ */
+
+var HIGHER_PRIORITY = 1250;
+
+
+/**
+ * Snap during create and move.
+ *
+ * @param {ElementRegistry} elementRegistry
+ * @param {EventBus} eventBus
+ * @param {Snapping} snapping
+ */
+function CreateMoveSnapping(elementRegistry, eventBus, snapping) {
+  var self = this;
+
+  this._elementRegistry = elementRegistry;
+
+  eventBus.on([
+    'create.start',
+    'shape.move.start'
+  ], function(event) {
+    self.initSnap(event);
+  });
+
+  eventBus.on([
+    'create.move',
+    'create.end',
+    'shape.move.move',
+    'shape.move.end'
+  ], HIGHER_PRIORITY, function(event) {
+    var context = event.context,
+        shape = context.shape,
+        snapContext = context.snapContext,
+        target = context.target;
+
+    if (event.originalEvent && (0,_keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isCmd)(event.originalEvent)) {
+      return;
+    }
+
+    if ((0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.isSnapped)(event) || !target) {
+      return;
+    }
+
+    var snapPoints = snapContext.pointsForTarget(target);
+
+    if (!snapPoints.initialized) {
+      snapPoints = self.addSnapTargetPoints(snapPoints, shape, target);
+
+      snapPoints.initialized = true;
+    }
+
+    snapping.snap(event, snapPoints);
+  });
+
+  eventBus.on([
+    'create.cleanup',
+    'shape.move.cleanup'
+  ], function() {
+    snapping.hide();
+  });
+}
+
+CreateMoveSnapping.$inject = [
+  'elementRegistry',
+  'eventBus',
+  'snapping'
+];
+
+CreateMoveSnapping.prototype.initSnap = function(event) {
+  var elementRegistry = this._elementRegistry;
+
+  var context = event.context,
+      shape = context.shape,
+      snapContext = context.snapContext;
+
+  if (!snapContext) {
+    snapContext = context.snapContext = new _SnapContext__WEBPACK_IMPORTED_MODULE_2__["default"]();
+  }
+
+  var shapeMid;
+
+  if (elementRegistry.get(shape.id)) {
+
+    // move
+    shapeMid = (0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.mid)(shape, event);
+  } else {
+
+    // create
+    shapeMid = {
+      x: event.x + (0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.mid)(shape).x,
+      y: event.y + (0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.mid)(shape).y
+    };
+  }
+
+  var shapeTopLeft = {
+        x: shapeMid.x - shape.width / 2,
+        y: shapeMid.y - shape.height / 2
+      },
+      shapeBottomRight = {
+        x: shapeMid.x + shape.width / 2,
+        y: shapeMid.y + shape.height / 2
+      };
+
+  snapContext.setSnapOrigin('mid', {
+    x: shapeMid.x - event.x,
+    y: shapeMid.y - event.y
+  });
+
+  // snap labels to mid only
+  if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__.isLabel)(shape)) {
+    return snapContext;
+  }
+
+  snapContext.setSnapOrigin('top-left', {
+    x: shapeTopLeft.x - event.x,
+    y: shapeTopLeft.y - event.y
+  });
+
+  snapContext.setSnapOrigin('bottom-right', {
+    x: shapeBottomRight.x - event.x,
+    y: shapeBottomRight.y - event.y
+  });
+
+  return snapContext;
+};
+
+CreateMoveSnapping.prototype.addSnapTargetPoints = function(snapPoints, shape, target) {
+  var snapTargets = this.getSnapTargets(shape, target);
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_4__.forEach)(snapTargets, function(snapTarget) {
+
+    // handle labels
+    if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__.isLabel)(snapTarget)) {
+
+      if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__.isLabel)(shape)) {
+        snapPoints.add('mid', (0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.mid)(snapTarget));
+      }
+
+      return;
+    }
+
+    // handle connections
+    if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__.isConnection)(snapTarget)) {
+
+      // ignore single segment connections
+      if (snapTarget.waypoints.length < 3) {
+        return;
+      }
+
+      // ignore first and last waypoint
+      var waypoints = snapTarget.waypoints.slice(1, -1);
+
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_4__.forEach)(waypoints, function(waypoint) {
+        snapPoints.add('mid', waypoint);
+      });
+
+      return;
+    }
+
+    // handle shapes
+    snapPoints.add('mid', (0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.mid)(snapTarget));
+  });
+
+  if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_4__.isNumber)(shape.x) || !(0,min_dash__WEBPACK_IMPORTED_MODULE_4__.isNumber)(shape.y)) {
+    return snapPoints;
+  }
+
+  // snap to original position when moving
+  if (this._elementRegistry.get(shape.id)) {
+    snapPoints.add('mid', (0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.mid)(shape));
+  }
+
+  return snapPoints;
+};
+
+CreateMoveSnapping.prototype.getSnapTargets = function(shape, target) {
+  return (0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.getChildren)(target).filter(function(child) {
+    return !isHidden(child);
+  });
+};
+
+// helpers //////////
+
+function isHidden(element) {
+  return !!element.hidden;
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/snapping/ResizeSnapping.js":
+/*!**************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/snapping/ResizeSnapping.js ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ResizeSnapping)
+/* harmony export */ });
+/* harmony import */ var _SnapContext__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./SnapContext */ "../node_modules/diagram-js/lib/features/snapping/SnapContext.js");
+/* harmony import */ var _SnapUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SnapUtil */ "../node_modules/diagram-js/lib/features/snapping/SnapUtil.js");
+/* harmony import */ var _keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../keyboard/KeyboardUtil */ "../node_modules/diagram-js/lib/features/keyboard/KeyboardUtil.js");
+/* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/ModelUtil */ "../node_modules/diagram-js/lib/util/ModelUtil.js");
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('./Snapping').default} Snapping
+ */
+
+var HIGHER_PRIORITY = 1250;
+
+
+/**
+ * Snap during resize.
+ *
+ * @param {EventBus} eventBus
+ * @param {Snapping} snapping
+ */
+function ResizeSnapping(eventBus, snapping) {
+  var self = this;
+
+  eventBus.on([ 'resize.start' ], function(event) {
+    self.initSnap(event);
+  });
+
+  eventBus.on([
+    'resize.move',
+    'resize.end',
+  ], HIGHER_PRIORITY, function(event) {
+    var context = event.context,
+        shape = context.shape,
+        parent = shape.parent,
+        direction = context.direction,
+        snapContext = context.snapContext;
+
+    if (event.originalEvent && (0,_keyboard_KeyboardUtil__WEBPACK_IMPORTED_MODULE_0__.isCmd)(event.originalEvent)) {
+      return;
+    }
+
+    if ((0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.isSnapped)(event)) {
+      return;
+    }
+
+    var snapPoints = snapContext.pointsForTarget(parent);
+
+    if (!snapPoints.initialized) {
+      snapPoints = self.addSnapTargetPoints(snapPoints, shape, parent, direction);
+
+      snapPoints.initialized = true;
+    }
+
+    if (isHorizontal(direction)) {
+      (0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.setSnapped)(event, 'x', event.x);
+    }
+
+    if (isVertical(direction)) {
+      (0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.setSnapped)(event, 'y', event.y);
+    }
+
+    snapping.snap(event, snapPoints);
+  });
+
+  eventBus.on([ 'resize.cleanup' ], function() {
+    snapping.hide();
+  });
+}
+
+ResizeSnapping.prototype.initSnap = function(event) {
+  var context = event.context,
+      shape = context.shape,
+      direction = context.direction,
+      snapContext = context.snapContext;
+
+  if (!snapContext) {
+    snapContext = context.snapContext = new _SnapContext__WEBPACK_IMPORTED_MODULE_2__["default"]();
+  }
+
+  var snapOrigin = getSnapOrigin(shape, direction);
+
+  snapContext.setSnapOrigin('corner', {
+    x: snapOrigin.x - event.x,
+    y: snapOrigin.y - event.y
+  });
+
+  return snapContext;
+};
+
+ResizeSnapping.prototype.addSnapTargetPoints = function(snapPoints, shape, target, direction) {
+  var snapTargets = this.getSnapTargets(shape, target);
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.forEach)(snapTargets, function(snapTarget) {
+    snapPoints.add('corner', (0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.bottomRight)(snapTarget));
+    snapPoints.add('corner', (0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.topLeft)(snapTarget));
+  });
+
+  snapPoints.add('corner', getSnapOrigin(shape, direction));
+
+  return snapPoints;
+};
+
+ResizeSnapping.$inject = [
+  'eventBus',
+  'snapping'
+];
+
+ResizeSnapping.prototype.getSnapTargets = function(shape, target) {
+  return (0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.getChildren)(target).filter(function(child) {
+    return !isAttached(child, shape)
+      && !(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_4__.isConnection)(child)
+      && !isHidden(child)
+      && !(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_4__.isLabel)(child);
+  });
+};
+
+// helpers //////////
+
+function getSnapOrigin(shape, direction) {
+  var mid = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__.getMid)(shape),
+      trbl = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_5__.asTRBL)(shape);
+
+  var snapOrigin = {
+    x: mid.x,
+    y: mid.y
+  };
+
+  if (direction.indexOf('n') !== -1) {
+    snapOrigin.y = trbl.top;
+  } else if (direction.indexOf('s') !== -1) {
+    snapOrigin.y = trbl.bottom;
+  }
+
+  if (direction.indexOf('e') !== -1) {
+    snapOrigin.x = trbl.right;
+  } else if (direction.indexOf('w') !== -1) {
+    snapOrigin.x = trbl.left;
+  }
+
+  return snapOrigin;
+}
+
+function isAttached(element, host) {
+  return element.host === host;
+}
+
+function isHidden(element) {
+  return !!element.hidden;
+}
+
+function isHorizontal(direction) {
+  return direction === 'n' || direction === 's';
+}
+
+function isVertical(direction) {
+  return direction === 'e' || direction === 'w';
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/snapping/SnapContext.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/snapping/SnapContext.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SnapPoints: () => (/* binding */ SnapPoints),
+/* harmony export */   "default": () => (/* binding */ SnapContext)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _SnapUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SnapUtil */ "../node_modules/diagram-js/lib/features/snapping/SnapUtil.js");
+
+
+
+
+/**
+ * @typedef {import('../../model/Types').Element} Element
+ *
+ * @typedef {import('../../util/Types').Axis} Axis
+ * @typedef {import('../../util/Types').DirectionTRBL} DirectionTRBL
+ * @typedef {import('../../util/Types').Point} Point
+ *
+ * @typedef {DirectionTRBL & 'mid'} SnapLocation
+ */
+
+/**
+ * A snap context, containing the (possibly incomplete)
+ * mappings of drop targets (to identify the snapping)
+ * to computed snap points.
+ */
+function SnapContext() {
+
+  /**
+   * @type {Record<string, SnapPoints>}
+   */
+  this._targets = {};
+
+  /**
+   * @type {Record<SnapLocation, Point>}
+   */
+  this._snapOrigins = {};
+
+  /**
+   * @type {SnapLocation[]}
+   */
+  this._snapLocations = [];
+
+  /**
+   * @type {Record<SnapLocation, Point[]>}
+   */
+  this._defaultSnaps = {};
+}
+
+/**
+ * Get the snap origin for a given location.
+ *
+ * @param {SnapLocation} snapLocation
+ *
+ * @return {Point}
+ */
+SnapContext.prototype.getSnapOrigin = function(snapLocation) {
+  return this._snapOrigins[snapLocation];
+};
+
+/**
+ * Set the snap origin for a given location.
+ *
+ * @param {SnapLocation} snapLocation
+ * @param {Point} snapOrigin
+ */
+SnapContext.prototype.setSnapOrigin = function(snapLocation, snapOrigin) {
+  this._snapOrigins[snapLocation] = snapOrigin;
+
+  if (this._snapLocations.indexOf(snapLocation) === -1) {
+    this._snapLocations.push(snapLocation);
+  }
+};
+
+/**
+ * Add a default snap point.
+ *
+ * @param {SnapLocation} snapLocation
+ * @param {Point} point
+ */
+SnapContext.prototype.addDefaultSnap = function(snapLocation, point) {
+
+  var snapValues = this._defaultSnaps[snapLocation];
+
+  if (!snapValues) {
+    snapValues = this._defaultSnaps[snapLocation] = [];
+  }
+
+  snapValues.push(point);
+};
+
+/**
+ * Get the snap locations for this context.
+ *
+ * @return {SnapLocation[]}
+ */
+SnapContext.prototype.getSnapLocations = function() {
+  return this._snapLocations;
+};
+
+/**
+ * Set the snap locations for this context.
+ *
+ * The order of locations determines precedence.
+ *
+ * @param {SnapLocation[]} snapLocations
+ */
+SnapContext.prototype.setSnapLocations = function(snapLocations) {
+  this._snapLocations = snapLocations;
+};
+
+/**
+ * Get snap points for the given target.
+ *
+ * @param {Element|string} target
+ *
+ * @return {SnapPoints}
+ */
+SnapContext.prototype.pointsForTarget = function(target) {
+
+  var targetId = target.id || target;
+
+  var snapPoints = this._targets[targetId];
+
+  if (!snapPoints) {
+    snapPoints = this._targets[targetId] = new SnapPoints();
+    snapPoints.initDefaults(this._defaultSnaps);
+  }
+
+  return snapPoints;
+};
+
+
+/**
+ * Add points to snap to.
+ */
+function SnapPoints() {
+
+  /**
+   * Example:
+   *
+   * ```javascript
+   * {
+   *   'top-right': {
+   *     x: [ 100, 200, 300 ]
+   *     y: [ 100, 200, 300 ]
+   *   }
+   * }
+   * ```
+   *
+   * @type {Record<string, Record<Axis, number[]>>}
+   */
+  this._snapValues = {};
+}
+
+/**
+ * Add a snap point.
+ *
+ * @param {SnapLocation} snapLocation
+ * @param {Point} point
+ */
+SnapPoints.prototype.add = function(snapLocation, point) {
+
+  var snapValues = this._snapValues[snapLocation];
+
+  if (!snapValues) {
+    snapValues = this._snapValues[snapLocation] = { x: [], y: [] };
+  }
+
+  if (snapValues.x.indexOf(point.x) === -1) {
+    snapValues.x.push(point.x);
+  }
+
+  if (snapValues.y.indexOf(point.y) === -1) {
+    snapValues.y.push(point.y);
+  }
+};
+
+/**
+ * Snap a point's x or y value.
+ *
+ * @param {Point} point
+ * @param {SnapLocation} snapLocation
+ * @param {Axis} axis
+ * @param {number} tolerance
+ *
+ * @return {number}
+ */
+SnapPoints.prototype.snap = function(point, snapLocation, axis, tolerance) {
+  var snappingValues = this._snapValues[snapLocation];
+
+  return snappingValues && (0,_SnapUtil__WEBPACK_IMPORTED_MODULE_0__.snapTo)(point[axis], snappingValues[axis], tolerance);
+};
+
+/**
+ * Initialize default snap points.
+ *
+ * @param {Record<SnapLocation, Point[]>} defaultSnaps
+ */
+SnapPoints.prototype.initDefaults = function(defaultSnaps) {
+
+  var self = this;
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(defaultSnaps || {}, function(snapPoints, snapLocation) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(snapPoints, function(point) {
+      self.add(snapLocation, point);
+    });
+  });
+};
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/snapping/SnapUtil.js":
+/*!********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/snapping/SnapUtil.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   bottomLeft: () => (/* binding */ bottomLeft),
+/* harmony export */   bottomRight: () => (/* binding */ bottomRight),
+/* harmony export */   getChildren: () => (/* binding */ getChildren),
+/* harmony export */   isSnapped: () => (/* binding */ isSnapped),
+/* harmony export */   mid: () => (/* binding */ mid),
+/* harmony export */   setSnapped: () => (/* binding */ setSnapped),
+/* harmony export */   snapTo: () => (/* binding */ snapTo),
+/* harmony export */   topLeft: () => (/* binding */ topLeft),
+/* harmony export */   topRight: () => (/* binding */ topRight)
+/* harmony export */ });
+/**
+ * @typedef {import('../../core/Types').ConnectionLike} Connection
+ * @typedef {import('../../core/Types').ShapeLike} Shape
+ *
+ * @typedef {import('../../core/EventBus').Event} Event
+ *
+ * @typedef {import('../../util/Types').Axis} Axis
+ */
+
+var abs = Math.abs,
+    round = Math.round;
+
+
+/**
+ * Snap value to a collection of reference values.
+ *
+ * @param {number} value
+ * @param {Array<number>} values
+ * @param {number} [tolerance=10]
+ *
+ * @return {number} the value we snapped to or null, if none snapped
+ */
+function snapTo(value, values, tolerance) {
+  tolerance = tolerance === undefined ? 10 : tolerance;
+
+  var idx, snapValue;
+
+  for (idx = 0; idx < values.length; idx++) {
+    snapValue = values[idx];
+
+    if (abs(snapValue - value) <= tolerance) {
+      return snapValue;
+    }
+  }
+}
+
+
+function topLeft(bounds) {
+  return {
+    x: bounds.x,
+    y: bounds.y
+  };
+}
+
+function topRight(bounds) {
+  return {
+    x: bounds.x + bounds.width,
+    y: bounds.y
+  };
+}
+
+function bottomLeft(bounds) {
+  return {
+    x: bounds.x,
+    y: bounds.y + bounds.height
+  };
+}
+
+function bottomRight(bounds) {
+  return {
+    x: bounds.x + bounds.width,
+    y: bounds.y + bounds.height
+  };
+}
+
+function mid(bounds, defaultValue) {
+
+  if (!bounds || isNaN(bounds.x) || isNaN(bounds.y)) {
+    return defaultValue;
+  }
+
+  return {
+    x: round(bounds.x + bounds.width / 2),
+    y: round(bounds.y + bounds.height / 2)
+  };
+}
+
+
+/**
+ * Retrieve the snap state of the given event.
+ *
+ * @param {Event} event
+ * @param {Axis} axis
+ *
+ * @return {boolean} the snapped state
+ *
+ */
+function isSnapped(event, axis) {
+  var snapped = event.snapped;
+
+  if (!snapped) {
+    return false;
+  }
+
+  if (typeof axis === 'string') {
+    return snapped[axis];
+  }
+
+  return snapped.x && snapped.y;
+}
+
+
+/**
+ * Set the given event as snapped.
+ *
+ * This method may change the x and/or y position of the shape
+ * from the given event!
+ *
+ * @param {Event} event
+ * @param {Axis} axis
+ * @param {number|boolean} value
+ *
+ * @return {number} old value
+ */
+function setSnapped(event, axis, value) {
+  if (typeof axis !== 'string') {
+    throw new Error('axis must be in [x, y]');
+  }
+
+  if (typeof value !== 'number' && value !== false) {
+    throw new Error('value must be Number or false');
+  }
+
+  var delta,
+      previousValue = event[axis];
+
+  var snapped = event.snapped = (event.snapped || {});
+
+
+  if (value === false) {
+    snapped[axis] = false;
+  } else {
+    snapped[axis] = true;
+
+    delta = value - previousValue;
+
+    event[axis] += delta;
+    event['d' + axis] += delta;
+  }
+
+  return previousValue;
+}
+
+/**
+ * Get children of a shape.
+ *
+ * @param {Shape} parent
+ *
+ * @return {Array<Shape|Connection>}
+ */
+function getChildren(parent) {
+  return parent.children || [];
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/snapping/Snapping.js":
+/*!********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/snapping/Snapping.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SNAP_LINE_HIDE_DELAY: () => (/* binding */ SNAP_LINE_HIDE_DELAY),
+/* harmony export */   "default": () => (/* binding */ Snapping)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _SnapUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SnapUtil */ "../node_modules/diagram-js/lib/features/snapping/SnapUtil.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ *
+ * @typedef {import('../../core/EventBus').Event} Event
+ *
+ * @typedef {import('./SnapContext').SnapPoints} SnapPoints
+ */
+
+var SNAP_TOLERANCE = 7;
+
+var SNAP_LINE_HIDE_DELAY = 1000;
+
+
+/**
+ * Generic snapping feature.
+ *
+ * @param {Canvas} canvas
+ */
+function Snapping(canvas) {
+  this._canvas = canvas;
+
+  // delay hide by 1000 seconds since last snap
+  this._asyncHide = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.debounce)((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.bind)(this.hide, this), SNAP_LINE_HIDE_DELAY);
+}
+
+Snapping.$inject = [ 'canvas' ];
+
+/**
+ * Snap an event to given snap points.
+ *
+ * @param {Event} event
+ * @param {SnapPoints} snapPoints
+ */
+Snapping.prototype.snap = function(event, snapPoints) {
+  var context = event.context,
+      snapContext = context.snapContext,
+      snapLocations = snapContext.getSnapLocations();
+
+  var snapping = {
+    x: (0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.isSnapped)(event, 'x'),
+    y: (0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.isSnapped)(event, 'y')
+  };
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(snapLocations, function(location) {
+    var snapOrigin = snapContext.getSnapOrigin(location);
+
+    var snapCurrent = {
+      x: event.x + snapOrigin.x,
+      y: event.y + snapOrigin.y
+    };
+
+    // snap both axis if not snapped already
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)([ 'x', 'y' ], function(axis) {
+      var locationSnapping;
+
+      if (!snapping[axis]) {
+        locationSnapping = snapPoints.snap(snapCurrent, location, axis, SNAP_TOLERANCE);
+
+        if (locationSnapping !== undefined) {
+          snapping[axis] = {
+            value: locationSnapping,
+            originValue: locationSnapping - snapOrigin[axis]
+          };
+        }
+      }
+    });
+
+    // no need to continue snapping
+    if (snapping.x && snapping.y) {
+      return false;
+    }
+  });
+
+  // show snap lines
+  this.showSnapLine('vertical', snapping.x && snapping.x.value);
+  this.showSnapLine('horizontal', snapping.y && snapping.y.value);
+
+  // snap event
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)([ 'x', 'y' ], function(axis) {
+    var axisSnapping = snapping[axis];
+
+    if ((0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isObject)(axisSnapping)) {
+      (0,_SnapUtil__WEBPACK_IMPORTED_MODULE_1__.setSnapped)(event, axis, axisSnapping.originValue);
+    }
+  });
+};
+
+Snapping.prototype._createLine = function(orientation) {
+  var root = this._canvas.getLayer('snap');
+
+  var line = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.create)('path');
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(line, { d: 'M0,0 L0,0' });
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.classes)(line).add('djs-snap-line');
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.append)(root, line);
+
+  return {
+    update: function(position) {
+
+      if (!(0,min_dash__WEBPACK_IMPORTED_MODULE_0__.isNumber)(position)) {
+        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(line, { display: 'none' });
+      } else {
+        if (orientation === 'horizontal') {
+          (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(line, {
+            d: 'M-100000,' + position + ' L+100000,' + position,
+            display: ''
+          });
+        } else {
+          (0,tiny_svg__WEBPACK_IMPORTED_MODULE_2__.attr)(line, {
+            d: 'M ' + position + ',-100000 L ' + position + ', +100000',
+            display: ''
+          });
+        }
+      }
+    }
+  };
+};
+
+Snapping.prototype._createSnapLines = function() {
+  this._snapLines = {
+    horizontal: this._createLine('horizontal'),
+    vertical: this._createLine('vertical')
+  };
+};
+
+Snapping.prototype.showSnapLine = function(orientation, position) {
+
+  var line = this.getSnapLine(orientation);
+
+  if (line) {
+    line.update(position);
+  }
+
+  this._asyncHide();
+};
+
+Snapping.prototype.getSnapLine = function(orientation) {
+  if (!this._snapLines) {
+    this._createSnapLines();
+  }
+
+  return this._snapLines[orientation];
+};
+
+Snapping.prototype.hide = function() {
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(this._snapLines, function(snapLine) {
+    snapLine.update();
+  });
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/snapping/index.js":
+/*!*****************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/snapping/index.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _CreateMoveSnapping__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CreateMoveSnapping */ "../node_modules/diagram-js/lib/features/snapping/CreateMoveSnapping.js");
+/* harmony import */ var _ResizeSnapping__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ResizeSnapping */ "../node_modules/diagram-js/lib/features/snapping/ResizeSnapping.js");
+/* harmony import */ var _Snapping__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Snapping */ "../node_modules/diagram-js/lib/features/snapping/Snapping.js");
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [
+    'createMoveSnapping',
+    'resizeSnapping',
+    'snapping'
+  ],
+  createMoveSnapping: [ 'type', _CreateMoveSnapping__WEBPACK_IMPORTED_MODULE_0__["default"] ],
+  resizeSnapping: [ 'type', _ResizeSnapping__WEBPACK_IMPORTED_MODULE_1__["default"] ],
+  snapping: [ 'type', _Snapping__WEBPACK_IMPORTED_MODULE_2__["default"] ]
+});
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/space-tool/SpaceTool.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/space-tool/SpaceTool.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ SpaceTool)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var _util_Elements__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/Elements */ "../node_modules/diagram-js/lib/util/Elements.js");
+/* harmony import */ var _SpaceUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SpaceUtil */ "../node_modules/diagram-js/lib/features/space-tool/SpaceUtil.js");
+/* harmony import */ var _util_Mouse__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Mouse */ "../node_modules/diagram-js/lib/util/Mouse.js");
+/* harmony import */ var _util_Cursor__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../util/Cursor */ "../node_modules/diagram-js/lib/util/Cursor.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../util/ModelUtil */ "../node_modules/diagram-js/lib/util/ModelUtil.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/Types').ShapeLike} Shape
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../dragging/Dragging').default} Dragging
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../modeling/Modeling').default} Modeling
+ * @typedef {import('../mouse/Mouse').default} Mouse
+ * @typedef {import('../rules/Rules').default} Rules
+ * @typedef {import('../tool-manager/ToolManager').default} ToolManager
+ *
+ * @typedef {import('../../util/Types').Axis} Axis
+ * @typedef {import('../../util/Types').Direction} Direction
+ * @typedef {import('../../util/Types').Point} Point
+ */
+
+var abs = Math.abs,
+    round = Math.round;
+
+var AXIS_TO_DIMENSION = {
+  x: 'width',
+  y: 'height'
+};
+
+var CURSOR_CROSSHAIR = 'crosshair';
+
+var DIRECTION_TO_TRBL = {
+  n: 'top',
+  w: 'left',
+  s: 'bottom',
+  e: 'right'
+};
+
+var HIGH_PRIORITY = 1500;
+
+var DIRECTION_TO_OPPOSITE = {
+  n: 's',
+  w: 'e',
+  s: 'n',
+  e: 'w'
+};
+
+var PADDING = 20;
+
+
+/**
+ * Add or remove space by moving and resizing elements.
+ *
+ * @param {Canvas} canvas
+ * @param {Dragging} dragging
+ * @param {EventBus} eventBus
+ * @param {Modeling} modeling
+ * @param {Rules} rules
+ * @param {ToolManager} toolManager
+ * @param {Mouse} mouse
+ */
+function SpaceTool(
+    canvas, dragging, eventBus,
+    modeling, rules, toolManager,
+    mouse) {
+
+  this._canvas = canvas;
+  this._dragging = dragging;
+  this._eventBus = eventBus;
+  this._modeling = modeling;
+  this._rules = rules;
+  this._toolManager = toolManager;
+  this._mouse = mouse;
+
+  var self = this;
+
+  toolManager.registerTool('space', {
+    tool: 'spaceTool.selection',
+    dragging: 'spaceTool'
+  });
+
+  eventBus.on('spaceTool.selection.end', function(event) {
+    eventBus.once('spaceTool.selection.ended', function() {
+      self.activateMakeSpace(event.originalEvent);
+    });
+  });
+
+  eventBus.on('spaceTool.move', HIGH_PRIORITY , function(event) {
+    var context = event.context,
+        initialized = context.initialized;
+
+    if (!initialized) {
+      initialized = context.initialized = self.init(event, context);
+    }
+
+    if (initialized) {
+      ensureConstraints(event);
+    }
+  });
+
+  eventBus.on('spaceTool.end', function(event) {
+    var context = event.context,
+        axis = context.axis,
+        direction = context.direction,
+        movingShapes = context.movingShapes,
+        resizingShapes = context.resizingShapes,
+        start = context.start;
+
+    if (!context.initialized) {
+      return;
+    }
+
+    ensureConstraints(event);
+
+    var delta = {
+      x: 0,
+      y: 0
+    };
+
+    delta[ axis ] = round(event[ 'd' + axis ]);
+
+    self.makeSpace(movingShapes, resizingShapes, delta, direction, start);
+
+    eventBus.once('spaceTool.ended', function(event) {
+
+      // activate space tool selection after make space
+      self.activateSelection(event.originalEvent, true, true);
+    });
+  });
+}
+
+SpaceTool.$inject = [
+  'canvas',
+  'dragging',
+  'eventBus',
+  'modeling',
+  'rules',
+  'toolManager',
+  'mouse'
+];
+
+/**
+ * Activate space tool selection.
+ *
+ * @param {MouseEvent|TouchEvent} event
+ * @param {boolean} autoActivate
+ * @param {boolean} reactivate
+ */
+SpaceTool.prototype.activateSelection = function(event, autoActivate, reactivate) {
+  this._dragging.init(event, 'spaceTool.selection', {
+    autoActivate: autoActivate,
+    cursor: CURSOR_CROSSHAIR,
+    data: {
+      context: {
+        reactivate: reactivate
+      }
+    },
+    trapClick: false
+  });
+};
+
+/**
+ * Activate space tool make space.
+ *
+ * @param {MouseEvent|TouchEvent} event
+ */
+SpaceTool.prototype.activateMakeSpace = function(event) {
+  this._dragging.init(event, 'spaceTool', {
+    autoActivate: true,
+    cursor: CURSOR_CROSSHAIR,
+    data: {
+      context: {}
+    }
+  });
+};
+
+/**
+ * Make space.
+ *
+ * @param {Array<Shape>} movingShapes
+ * @param {Array<Shape>} resizingShapes
+ * @param {Point} delta
+ * @param {Direction} direction
+ * @param {number} start
+ */
+SpaceTool.prototype.makeSpace = function(movingShapes, resizingShapes, delta, direction, start) {
+  return this._modeling.createSpace(movingShapes, resizingShapes, delta, direction, start);
+};
+
+/**
+ * Initialize make space and return true if that was successful.
+ *
+ * @param {MouseEvent|TouchEvent} event
+ * @param {Object} context
+ *
+ * @return {boolean}
+ */
+SpaceTool.prototype.init = function(event, context) {
+  var axis = abs(event.dx) > abs(event.dy) ? 'x' : 'y',
+      delta = event[ 'd' + axis ],
+      start = event[ axis ] - delta;
+
+  if (abs(delta) < 5) {
+    return false;
+  }
+
+  // invert delta to remove space when moving left
+  if (delta < 0) {
+    delta *= -1;
+  }
+
+  // invert delta to add/remove space when removing/adding space if modifier key is pressed
+  if ((0,_util_Mouse__WEBPACK_IMPORTED_MODULE_0__.hasPrimaryModifier)(event)) {
+    delta *= -1;
+  }
+
+  var direction = (0,_SpaceUtil__WEBPACK_IMPORTED_MODULE_1__.getDirection)(axis, delta);
+
+  var root = this._canvas.getRootElement();
+
+  var children = (0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.selfAndAllChildren)(root, true);
+
+  var elements = this.calculateAdjustments(children, axis, delta, start);
+
+  var minDimensions = this._eventBus.fire('spaceTool.getMinDimensions', {
+    axis: axis,
+    direction: direction,
+    shapes: elements.resizingShapes,
+    start: start
+  });
+
+  var spaceToolConstraints = getSpaceToolConstraints(elements, axis, direction, start, minDimensions);
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)(
+    context,
+    elements,
+    {
+      axis: axis,
+      direction: direction,
+      spaceToolConstraints: spaceToolConstraints,
+      start: start
+    }
+  );
+
+  (0,_util_Cursor__WEBPACK_IMPORTED_MODULE_4__.set)('resize-' + (axis === 'x' ? 'ew' : 'ns'));
+
+  return true;
+};
+
+/**
+ * Get elements to be moved and resized.
+ *
+ * @param {Array<Shape>} elements
+ * @param {Axis} axis
+ * @param {Point} delta
+ * @param {number} start
+ *
+ * @return {Object}
+ */
+SpaceTool.prototype.calculateAdjustments = function(elements, axis, delta, start) {
+  var rules = this._rules;
+
+  var movingShapes = [],
+      resizingShapes = [];
+
+  var attachers = [],
+      connections = [];
+
+  function moveShape(shape) {
+    if (!movingShapes.includes(shape)) {
+      movingShapes.push(shape);
+    }
+
+    var label = shape.label;
+
+    // move external label if its label target is moving
+    if (label && !movingShapes.includes(label)) {
+      movingShapes.push(label);
+    }
+  }
+
+  function resizeShape(shape) {
+    if (!resizingShapes.includes(shape)) {
+      resizingShapes.push(shape);
+    }
+  }
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.forEach)(elements, function(element) {
+    if (!element.parent || (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_5__.isLabel)(element)) {
+      return;
+    }
+
+    // handle connections separately
+    if ((0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_5__.isConnection)(element)) {
+      connections.push(element);
+
+      return;
+    }
+
+    var shapeStart = element[ axis ],
+        shapeEnd = shapeStart + element[ AXIS_TO_DIMENSION[ axis ] ];
+
+    // handle attachers separately
+    if (isAttacher(element)
+      && ((delta > 0 && (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_6__.getMid)(element)[ axis ] > start)
+        || (delta < 0 && (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_6__.getMid)(element)[ axis ] < start))) {
+      attachers.push(element);
+
+      return;
+    }
+
+    // move shape if its start is after space tool
+    if ((delta > 0 && shapeStart > start)
+      || (delta < 0 && shapeEnd < start)) {
+      moveShape(element);
+
+      return;
+    }
+
+    // resize shape if it's resizable and its start is before and its end is after space tool
+    if (shapeStart < start
+      && shapeEnd > start
+      && rules.allowed('shape.resize', { shape: element })
+    ) {
+      resizeShape(element);
+
+      return;
+    }
+  });
+
+  // move attacher if its host is moving
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.forEach)(movingShapes, function(shape) {
+    var attachers = shape.attachers;
+
+    if (attachers) {
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.forEach)(attachers, function(attacher) {
+        moveShape(attacher);
+      });
+    }
+  });
+
+  var allShapes = movingShapes.concat(resizingShapes);
+
+  // move attacher if its mid is after space tool and its host is moving or resizing
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.forEach)(attachers, function(attacher) {
+    var host = attacher.host;
+
+    if (includes(allShapes, host)) {
+      moveShape(attacher);
+    }
+  });
+
+  allShapes = movingShapes.concat(resizingShapes);
+
+  // move external label if its label target's (connection) source and target are moving
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.forEach)(connections, function(connection) {
+    var source = connection.source,
+        target = connection.target,
+        label = connection.label;
+
+    if (includes(allShapes, source)
+      && includes(allShapes, target)
+      && label) {
+      moveShape(label);
+    }
+  });
+
+  return {
+    movingShapes: movingShapes,
+    resizingShapes: resizingShapes
+  };
+};
+
+SpaceTool.prototype.toggle = function() {
+
+  if (this.isActive()) {
+    return this._dragging.cancel();
+  }
+
+  var mouseEvent = this._mouse.getLastMoveEvent();
+
+  this.activateSelection(mouseEvent, !!mouseEvent);
+};
+
+SpaceTool.prototype.isActive = function() {
+  var context = this._dragging.context();
+
+  if (context) {
+    return /^spaceTool/.test(context.prefix);
+  }
+
+  return false;
+};
+
+// helpers //////////
+
+function addPadding(trbl) {
+  return {
+    top: trbl.top - PADDING,
+    right: trbl.right + PADDING,
+    bottom: trbl.bottom + PADDING,
+    left: trbl.left - PADDING
+  };
+}
+
+function ensureConstraints(event) {
+  var context = event.context,
+      spaceToolConstraints = context.spaceToolConstraints;
+
+  if (!spaceToolConstraints) {
+    return;
+  }
+
+  var x, y;
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(spaceToolConstraints.left)) {
+    x = Math.max(event.x, spaceToolConstraints.left);
+
+    event.dx = event.dx + x - event.x;
+    event.x = x;
+  }
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(spaceToolConstraints.right)) {
+    x = Math.min(event.x, spaceToolConstraints.right);
+
+    event.dx = event.dx + x - event.x;
+    event.x = x;
+  }
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(spaceToolConstraints.top)) {
+    y = Math.max(event.y, spaceToolConstraints.top);
+
+    event.dy = event.dy + y - event.y;
+    event.y = y;
+  }
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(spaceToolConstraints.bottom)) {
+    y = Math.min(event.y, spaceToolConstraints.bottom);
+
+    event.dy = event.dy + y - event.y;
+    event.y = y;
+  }
+}
+
+function getSpaceToolConstraints(elements, axis, direction, start, minDimensions) {
+  var movingShapes = elements.movingShapes,
+      resizingShapes = elements.resizingShapes;
+
+  if (!resizingShapes.length) {
+    return;
+  }
+
+  var spaceToolConstraints = {},
+      min,
+      max;
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.forEach)(resizingShapes, function(resizingShape) {
+    var attachers = resizingShape.attachers,
+        children = resizingShape.children;
+
+    var resizingShapeBBox = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_6__.asTRBL)(resizingShape);
+
+    // find children that are not moving or resizing
+    var nonMovingResizingChildren = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.filter)(children, function(child) {
+      return !(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_5__.isConnection)(child) &&
+        !(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_5__.isLabel)(child) &&
+        !includes(movingShapes, child) &&
+        !includes(resizingShapes, child);
+    });
+
+    // find children that are moving
+    var movingChildren = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.filter)(children, function(child) {
+      return !(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_5__.isConnection)(child) && !(0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_5__.isLabel)(child) && includes(movingShapes, child);
+    });
+
+    var minOrMax,
+        nonMovingResizingChildrenBBox,
+        movingChildrenBBox,
+        movingAttachers = [],
+        nonMovingAttachers = [],
+        movingAttachersBBox,
+        movingAttachersConstraint,
+        nonMovingAttachersBBox,
+        nonMovingAttachersConstraint;
+
+    if (nonMovingResizingChildren.length) {
+      nonMovingResizingChildrenBBox = addPadding((0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_6__.asTRBL)((0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getBBox)(nonMovingResizingChildren)));
+
+      minOrMax = start -
+        resizingShapeBBox[ DIRECTION_TO_TRBL[ direction ] ] +
+        nonMovingResizingChildrenBBox[ DIRECTION_TO_TRBL[ direction ] ];
+
+      if (direction === 'n') {
+        spaceToolConstraints.bottom = max = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(max) ? Math.min(max, minOrMax) : minOrMax;
+      } else if (direction === 'w') {
+        spaceToolConstraints.right = max = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(max) ? Math.min(max, minOrMax) : minOrMax;
+      } else if (direction === 's') {
+        spaceToolConstraints.top = min = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(min) ? Math.max(min, minOrMax) : minOrMax;
+      } else if (direction === 'e') {
+        spaceToolConstraints.left = min = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(min) ? Math.max(min, minOrMax) : minOrMax;
+      }
+    }
+
+    if (movingChildren.length) {
+      movingChildrenBBox = addPadding((0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_6__.asTRBL)((0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getBBox)(movingChildren)));
+
+      minOrMax = start -
+        movingChildrenBBox[ DIRECTION_TO_TRBL[ DIRECTION_TO_OPPOSITE[ direction ] ] ] +
+        resizingShapeBBox[ DIRECTION_TO_TRBL[ DIRECTION_TO_OPPOSITE[ direction ] ] ];
+
+      if (direction === 'n') {
+        spaceToolConstraints.bottom = max = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(max) ? Math.min(max, minOrMax) : minOrMax;
+      } else if (direction === 'w') {
+        spaceToolConstraints.right = max = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(max) ? Math.min(max, minOrMax) : minOrMax;
+      } else if (direction === 's') {
+        spaceToolConstraints.top = min = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(min) ? Math.max(min, minOrMax) : minOrMax;
+      } else if (direction === 'e') {
+        spaceToolConstraints.left = min = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(min) ? Math.max(min, minOrMax) : minOrMax;
+      }
+    }
+
+    if (attachers && attachers.length) {
+      attachers.forEach(function(attacher) {
+        if (includes(movingShapes, attacher)) {
+          movingAttachers.push(attacher);
+        } else {
+          nonMovingAttachers.push(attacher);
+        }
+      });
+
+      if (movingAttachers.length) {
+        movingAttachersBBox = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_6__.asTRBL)((0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getBBox)(movingAttachers.map(_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_6__.getMid)));
+
+        movingAttachersConstraint = resizingShapeBBox[ DIRECTION_TO_TRBL[ DIRECTION_TO_OPPOSITE[ direction ] ] ]
+              - (movingAttachersBBox[ DIRECTION_TO_TRBL[ DIRECTION_TO_OPPOSITE[ direction ] ] ] - start);
+      }
+
+      if (nonMovingAttachers.length) {
+        nonMovingAttachersBBox = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_6__.asTRBL)((0,_util_Elements__WEBPACK_IMPORTED_MODULE_2__.getBBox)(nonMovingAttachers.map(_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_6__.getMid)));
+
+        nonMovingAttachersConstraint = nonMovingAttachersBBox[ DIRECTION_TO_TRBL[ direction ] ]
+              - (resizingShapeBBox[ DIRECTION_TO_TRBL[ direction ] ] - start);
+      }
+
+      if (direction === 'n') {
+        minOrMax = Math.min(movingAttachersConstraint || Infinity, nonMovingAttachersConstraint || Infinity);
+
+        spaceToolConstraints.bottom = max = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(max) ? Math.min(max, minOrMax) : minOrMax;
+      } else if (direction === 'w') {
+        minOrMax = Math.min(movingAttachersConstraint || Infinity, nonMovingAttachersConstraint || Infinity);
+
+        spaceToolConstraints.right = max = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(max) ? Math.min(max, minOrMax) : minOrMax;
+      } else if (direction === 's') {
+        minOrMax = Math.max(movingAttachersConstraint || -Infinity, nonMovingAttachersConstraint || -Infinity);
+
+        spaceToolConstraints.top = min = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(min) ? Math.max(min, minOrMax) : minOrMax;
+      } else if (direction === 'e') {
+        minOrMax = Math.max(movingAttachersConstraint || -Infinity, nonMovingAttachersConstraint || -Infinity);
+
+        spaceToolConstraints.left = min = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(min) ? Math.max(min, minOrMax) : minOrMax;
+      }
+    }
+
+    var resizingShapeMinDimensions = minDimensions && minDimensions[ resizingShape.id ];
+
+    if (resizingShapeMinDimensions) {
+
+      if (direction === 'n') {
+        minOrMax = start +
+          resizingShape[ AXIS_TO_DIMENSION [ axis ] ] -
+          resizingShapeMinDimensions[ AXIS_TO_DIMENSION[ axis ] ];
+
+        spaceToolConstraints.bottom = max = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(max) ? Math.min(max, minOrMax) : minOrMax;
+      } else if (direction === 'w') {
+        minOrMax = start +
+          resizingShape[ AXIS_TO_DIMENSION [ axis ] ] -
+          resizingShapeMinDimensions[ AXIS_TO_DIMENSION[ axis ] ];
+
+        spaceToolConstraints.right = max = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(max) ? Math.min(max, minOrMax) : minOrMax;
+      } else if (direction === 's') {
+        minOrMax = start -
+          resizingShape[ AXIS_TO_DIMENSION [ axis ] ] +
+          resizingShapeMinDimensions[ AXIS_TO_DIMENSION[ axis ] ];
+
+        spaceToolConstraints.top = min = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(min) ? Math.max(min, minOrMax) : minOrMax;
+      } else if (direction === 'e') {
+        minOrMax = start -
+          resizingShape[ AXIS_TO_DIMENSION [ axis ] ] +
+          resizingShapeMinDimensions[ AXIS_TO_DIMENSION[ axis ] ];
+
+        spaceToolConstraints.left = min = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.isNumber)(min) ? Math.max(min, minOrMax) : minOrMax;
+      }
+    }
+  });
+
+  return spaceToolConstraints;
+}
+
+function includes(array, item) {
+  return array.indexOf(item) !== -1;
+}
+
+function isAttacher(element) {
+  return !!element.host;
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/space-tool/SpaceToolPreview.js":
+/*!******************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/space-tool/SpaceToolPreview.js ***!
+  \******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ SpaceToolPreview)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+/* harmony import */ var _util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/SvgTransformUtil */ "../node_modules/diagram-js/lib/util/SvgTransformUtil.js");
+/* harmony import */ var _util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/ModelUtil */ "../node_modules/diagram-js/lib/util/ModelUtil.js");
+
+
+var MARKER_DRAGGING = 'djs-dragging',
+    MARKER_RESIZING = 'djs-resizing';
+
+var LOW_PRIORITY = 250;
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../../draw/Styles').default} Styles
+ */
+
+var max = Math.max;
+
+
+/**
+ * Provides previews for selecting/moving/resizing shapes when creating/removing space.
+ *
+ * @param {EventBus} eventBus
+ * @param {ElementRegistry} elementRegistry
+ * @param {Canvas} canvas
+ * @param {Styles} styles
+ */
+function SpaceToolPreview(
+    eventBus, elementRegistry, canvas,
+    styles, previewSupport) {
+
+  function addPreviewGfx(collection, dragGroup) {
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(collection, function(element) {
+      previewSupport.addDragger(element, dragGroup);
+
+      canvas.addMarker(element, MARKER_DRAGGING);
+    });
+  }
+
+  // add crosshair
+  eventBus.on('spaceTool.selection.start', function(event) {
+    var space = canvas.getLayer('space'),
+        context = event.context;
+
+    var orientation = {
+      x: 'M 0,-10000 L 0,10000',
+      y: 'M -10000,0 L 10000,0'
+    };
+
+    var crosshairGroup = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.create)('g');
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(crosshairGroup, styles.cls('djs-crosshair-group', [ 'no-events' ]));
+
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.append)(space, crosshairGroup);
+
+    // horizontal path
+    var pathX = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.create)('path');
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(pathX, 'd', orientation.x);
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.classes)(pathX).add('djs-crosshair');
+
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.append)(crosshairGroup, pathX);
+
+    // vertical path
+    var pathY = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.create)('path');
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(pathY, 'd', orientation.y);
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.classes)(pathY).add('djs-crosshair');
+
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.append)(crosshairGroup, pathY);
+
+    context.crosshairGroup = crosshairGroup;
+  });
+
+  // update crosshair
+  eventBus.on('spaceTool.selection.move', function(event) {
+    var crosshairGroup = event.context.crosshairGroup;
+
+    (0,_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_2__.translate)(crosshairGroup, event.x, event.y);
+  });
+
+  // remove crosshair
+  eventBus.on('spaceTool.selection.cleanup', function(event) {
+    var context = event.context,
+        crosshairGroup = context.crosshairGroup;
+
+    if (crosshairGroup) {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.remove)(crosshairGroup);
+    }
+  });
+
+  // add and update move/resize previews
+  eventBus.on('spaceTool.move', LOW_PRIORITY, function(event) {
+
+    var context = event.context,
+        line = context.line,
+        axis = context.axis,
+        movingShapes = context.movingShapes,
+        resizingShapes = context.resizingShapes;
+
+    if (!context.initialized) {
+      return;
+    }
+
+    if (!context.dragGroup) {
+      var spaceLayer = canvas.getLayer('space');
+
+      line = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.create)('path');
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(line, 'd', 'M0,0 L0,0');
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.classes)(line).add('djs-crosshair');
+
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.append)(spaceLayer, line);
+
+      context.line = line;
+
+      var dragGroup = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.create)('g');
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(dragGroup, styles.cls('djs-drag-group', [ 'no-events' ]));
+
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.append)(canvas.getActiveLayer(), dragGroup);
+
+      // shapes
+      addPreviewGfx(movingShapes, dragGroup);
+
+      // connections
+      var movingConnections = context.movingConnections = elementRegistry.filter(function(element) {
+        var sourceIsMoving = false;
+
+        (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(movingShapes, function(shape) {
+          (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(shape.outgoing, function(connection) {
+            if (element === connection) {
+              sourceIsMoving = true;
+            }
+          });
+        });
+
+        var targetIsMoving = false;
+
+        (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(movingShapes, function(shape) {
+          (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(shape.incoming, function(connection) {
+            if (element === connection) {
+              targetIsMoving = true;
+            }
+          });
+        });
+
+        var sourceIsResizing = false;
+
+        (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(resizingShapes, function(shape) {
+          (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(shape.outgoing, function(connection) {
+            if (element === connection) {
+              sourceIsResizing = true;
+            }
+          });
+        });
+
+        var targetIsResizing = false;
+
+        (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(resizingShapes, function(shape) {
+          (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(shape.incoming, function(connection) {
+            if (element === connection) {
+              targetIsResizing = true;
+            }
+          });
+        });
+
+        return (0,_util_ModelUtil__WEBPACK_IMPORTED_MODULE_3__.isConnection)(element)
+          && (sourceIsMoving || sourceIsResizing)
+          && (targetIsMoving || targetIsResizing);
+      });
+
+
+      addPreviewGfx(movingConnections, dragGroup);
+
+      context.dragGroup = dragGroup;
+    }
+
+    if (!context.frameGroup) {
+      var frameGroup = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.create)('g');
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(frameGroup, styles.cls('djs-frame-group', [ 'no-events' ]));
+
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.append)(canvas.getActiveLayer(), frameGroup);
+
+      var frames = [];
+
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(resizingShapes, function(shape) {
+        var frame = previewSupport.addFrame(shape, frameGroup);
+
+        var initialBounds = frame.getBBox();
+
+        frames.push({
+          element: frame,
+          initialBounds: initialBounds
+        });
+
+        canvas.addMarker(shape, MARKER_RESIZING);
+      });
+
+      context.frameGroup = frameGroup;
+      context.frames = frames;
+    }
+
+    var orientation = {
+      x: 'M' + event.x + ', -10000 L' + event.x + ', 10000',
+      y: 'M -10000, ' + event.y + ' L 10000, ' + event.y
+    };
+
+    (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(line, { d: orientation[ axis ] });
+
+    var opposite = { x: 'y', y: 'x' };
+    var delta = { x: event.dx, y: event.dy };
+    delta[ opposite[ context.axis ] ] = 0;
+
+    // update move previews
+    (0,_util_SvgTransformUtil__WEBPACK_IMPORTED_MODULE_2__.translate)(context.dragGroup, delta.x, delta.y);
+
+    // update resize previews
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(context.frames, function(frame) {
+      var element = frame.element,
+          initialBounds = frame.initialBounds,
+          width,
+          height;
+
+      if (context.direction === 'e') {
+        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(element, {
+          width: max(initialBounds.width + delta.x, 5)
+        });
+      } else {
+        width = max(initialBounds.width - delta.x, 5);
+
+        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(element, {
+          width: width,
+          x: initialBounds.x + initialBounds.width - width
+        });
+      }
+
+      if (context.direction === 's') {
+        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(element, {
+          height: max(initialBounds.height + delta.y, 5)
+        });
+      } else {
+        height = max(initialBounds.height - delta.y, 5);
+
+        (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.attr)(element, {
+          height: height,
+          y: initialBounds.y + initialBounds.height - height
+        });
+      }
+    });
+
+  });
+
+  // remove move/resize previews
+  eventBus.on('spaceTool.cleanup', function(event) {
+
+    var context = event.context,
+        movingShapes = context.movingShapes,
+        movingConnections = context.movingConnections,
+        resizingShapes = context.resizingShapes,
+        line = context.line,
+        dragGroup = context.dragGroup,
+        frameGroup = context.frameGroup;
+
+    // moving shapes
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(movingShapes, function(shape) {
+      canvas.removeMarker(shape, MARKER_DRAGGING);
+    });
+
+    // moving connections
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(movingConnections, function(connection) {
+      canvas.removeMarker(connection, MARKER_DRAGGING);
+    });
+
+    if (dragGroup) {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.remove)(line);
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.remove)(dragGroup);
+    }
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(resizingShapes, function(shape) {
+      canvas.removeMarker(shape, MARKER_RESIZING);
+    });
+
+    if (frameGroup) {
+      (0,tiny_svg__WEBPACK_IMPORTED_MODULE_1__.remove)(frameGroup);
+    }
+  });
+}
+
+SpaceToolPreview.$inject = [
+  'eventBus',
+  'elementRegistry',
+  'canvas',
+  'styles',
+  'previewSupport'
+];
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/space-tool/SpaceUtil.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/space-tool/SpaceUtil.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getDirection: () => (/* binding */ getDirection),
+/* harmony export */   getWaypointsUpdatingConnections: () => (/* binding */ getWaypointsUpdatingConnections),
+/* harmony export */   resizeBounds: () => (/* binding */ resizeBounds)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/**
+ * @typedef {import('../../core/Types').ConnectionLike} Connection
+ * @typedef {import('../../core/Types').ShapeLike} Shape
+ *
+ * @typedef {import('../../util/Types').Axis} Axis
+ * @typedef {import('../../util/Types').Direction} Direction
+ * @typedef {import('../../util/Types').Point} Point
+ * @typedef {import('../../util/Types').Rect} Rect
+ */
+
+
+
+/**
+ * Return direction given axis and delta.
+ *
+ * @param {Axis} axis
+ * @param {number} delta
+ *
+ * @return {Direction}
+ */
+function getDirection(axis, delta) {
+
+  if (axis === 'x') {
+    if (delta > 0) {
+      return 'e';
+    }
+
+    if (delta < 0) {
+      return 'w';
+    }
+  }
+
+  if (axis === 'y') {
+    if (delta > 0) {
+      return 's';
+    }
+
+    if (delta < 0) {
+      return 'n';
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Returns connections whose waypoints are to be updated. Waypoints are to be updated if start
+ * or end is to be moved or resized.
+ *
+ * @param {Array<Shape>} movingShapes
+ * @param {Array<Shape>} resizingShapes
+ *
+ * @return {Array<Connection>}
+ */
+function getWaypointsUpdatingConnections(movingShapes, resizingShapes) {
+  var waypointsUpdatingConnections = [];
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(movingShapes.concat(resizingShapes), function(shape) {
+    var incoming = shape.incoming,
+        outgoing = shape.outgoing;
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(incoming.concat(outgoing), function(connection) {
+      var source = connection.source,
+          target = connection.target;
+
+      if (includes(movingShapes, source) ||
+        includes(movingShapes, target) ||
+        includes(resizingShapes, source) ||
+        includes(resizingShapes, target)) {
+
+        if (!includes(waypointsUpdatingConnections, connection)) {
+          waypointsUpdatingConnections.push(connection);
+        }
+      }
+    });
+  });
+
+  return waypointsUpdatingConnections;
+}
+
+function includes(array, item) {
+  return array.indexOf(item) !== -1;
+}
+
+/**
+ * Resize bounds.
+ *
+ * @param {Rect} bounds
+ * @param {Direction} direction
+ * @param {Point} delta
+ *
+ * @return {Rect}
+ */
+function resizeBounds(bounds, direction, delta) {
+  var x = bounds.x,
+      y = bounds.y,
+      width = bounds.width,
+      height = bounds.height,
+      dx = delta.x,
+      dy = delta.y;
+
+  switch (direction) {
+  case 'n':
+    return {
+      x: x,
+      y: y + dy,
+      width: width,
+      height: height - dy
+    };
+  case 's':
+    return {
+      x: x,
+      y: y,
+      width: width,
+      height: height + dy
+    };
+  case 'w':
+    return {
+      x: x + dx,
+      y: y,
+      width: width - dx,
+      height: height
+    };
+  case 'e':
+    return {
+      x: x,
+      y: y,
+      width: width + dx,
+      height: height
+    };
+  default:
+    throw new Error('unknown direction: ' + direction);
+  }
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/space-tool/index.js":
+/*!*******************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/space-tool/index.js ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _dragging__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../dragging */ "../node_modules/diagram-js/lib/features/dragging/index.js");
+/* harmony import */ var _rules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../rules */ "../node_modules/diagram-js/lib/features/rules/index.js");
+/* harmony import */ var _tool_manager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../tool-manager */ "../node_modules/diagram-js/lib/features/tool-manager/index.js");
+/* harmony import */ var _preview_support__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../preview-support */ "../node_modules/diagram-js/lib/features/preview-support/index.js");
+/* harmony import */ var _mouse__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../mouse */ "../node_modules/diagram-js/lib/features/mouse/index.js");
+/* harmony import */ var _SpaceTool__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./SpaceTool */ "../node_modules/diagram-js/lib/features/space-tool/SpaceTool.js");
+/* harmony import */ var _SpaceToolPreview__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./SpaceToolPreview */ "../node_modules/diagram-js/lib/features/space-tool/SpaceToolPreview.js");
+
+
+
+
+
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [ 'spaceToolPreview' ],
+  __depends__: [
+    _dragging__WEBPACK_IMPORTED_MODULE_0__["default"],
+    _rules__WEBPACK_IMPORTED_MODULE_1__["default"],
+    _tool_manager__WEBPACK_IMPORTED_MODULE_2__["default"],
+    _preview_support__WEBPACK_IMPORTED_MODULE_3__["default"],
+    _mouse__WEBPACK_IMPORTED_MODULE_4__["default"]
+  ],
+  spaceTool: [ 'type', _SpaceTool__WEBPACK_IMPORTED_MODULE_5__["default"] ],
+  spaceToolPreview: [ 'type', _SpaceToolPreview__WEBPACK_IMPORTED_MODULE_6__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/tool-manager/ToolManager.js":
+/*!***************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/tool-manager/ToolManager.js ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ToolManager)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+
+
+
+
+/**
+ * @typedef {import('../dragging/Dragging').default} Dragging
+ * @typedef {import('../../core/EventBus').default} EventBus
+ *
+ * @typedef {import('../../core/EventBus').Event} Event
+ */
+
+var LOW_PRIORITY = 250;
+
+/**
+ * The tool manager acts as middle-man between the available tool's and the Palette,
+ * it takes care of making sure that the correct active state is set.
+ *
+ * @param {EventBus} eventBus
+ * @param {Dragging} dragging
+ */
+function ToolManager(eventBus, dragging) {
+  this._eventBus = eventBus;
+  this._dragging = dragging;
+
+  this._tools = [];
+  this._active = null;
+}
+
+ToolManager.$inject = [ 'eventBus', 'dragging' ];
+
+/**
+ * Register a tool.
+ *
+ * @param {string} name
+ * @param { {
+ *   dragging: string;
+ *   tool: string;
+ * } } events
+ */
+ToolManager.prototype.registerTool = function(name, events) {
+  var tools = this._tools;
+
+  if (!events) {
+    throw new Error('A tool has to be registered with it\'s "events"');
+  }
+
+  tools.push(name);
+
+  this.bindEvents(name, events);
+};
+
+ToolManager.prototype.isActive = function(tool) {
+  return tool && this._active === tool;
+};
+
+ToolManager.prototype.length = function(tool) {
+  return this._tools.length;
+};
+
+ToolManager.prototype.setActive = function(tool) {
+  var eventBus = this._eventBus;
+
+  if (this._active !== tool) {
+    this._active = tool;
+
+    eventBus.fire('tool-manager.update', { tool: tool });
+  }
+};
+
+ToolManager.prototype.bindEvents = function(name, events) {
+  var eventBus = this._eventBus,
+      dragging = this._dragging;
+
+  var eventsToRegister = [];
+
+  eventBus.on(events.tool + '.init', function(event) {
+    var context = event.context;
+
+    // Active tools that want to reactivate themselves must do this explicitly
+    if (!context.reactivate && this.isActive(name)) {
+      this.setActive(null);
+
+      dragging.cancel();
+      return;
+    }
+
+    this.setActive(name);
+
+  }, this);
+
+  // TODO: add test cases
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.forEach)(events, function(event) {
+    eventsToRegister.push(event + '.ended');
+    eventsToRegister.push(event + '.canceled');
+  });
+
+  eventBus.on(eventsToRegister, LOW_PRIORITY, function(event) {
+
+    // We defer the de-activation of the tool to the .activate phase,
+    // so we're able to check if we want to toggle off the current
+    // active tool or switch to a new one
+    if (!this._active) {
+      return;
+    }
+
+    if (isPaletteClick(event)) {
+      return;
+    }
+
+    this.setActive(null);
+  }, this);
+
+};
+
+
+// helpers ///////////////
+
+/**
+ * Check if a given event is a palette click event.
+ *
+ * @param {Event} event
+ *
+ * @return {boolean}
+ */
+function isPaletteClick(event) {
+  var target = event.originalEvent && event.originalEvent.target;
+
+  return target && (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.closest)(target, '.group[data-group="tools"]');
+}
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/tool-manager/index.js":
+/*!*********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/tool-manager/index.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _dragging__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../dragging */ "../node_modules/diagram-js/lib/features/dragging/index.js");
+/* harmony import */ var _ToolManager__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ToolManager */ "../node_modules/diagram-js/lib/features/tool-manager/ToolManager.js");
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _dragging__WEBPACK_IMPORTED_MODULE_0__["default"]
+  ],
+  __init__: [ 'toolManager' ],
+  toolManager: [ 'type', _ToolManager__WEBPACK_IMPORTED_MODULE_1__["default"] ]
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/tooltips/Tooltips.js":
+/*!********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/tooltips/Tooltips.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Tooltips)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var _util_IdGenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/IdGenerator */ "../node_modules/diagram-js/lib/util/IdGenerator.js");
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ *
+ * @typedef {import('../../util/Types').RectTRBL} RectTRBL
+ *
+ * @typedef { {
+ *   html: string | HTMLElement;
+ *   position: RectTRBL;
+ *   show?: {
+ *     minZoom?: number;
+ *     maxZoom?: number;
+ *   };
+ *   timeout?: number;
+ * } } Tooltip
+ */
+
+// document wide unique tooltip ids
+var ids = new _util_IdGenerator__WEBPACK_IMPORTED_MODULE_0__["default"]('tt');
+
+
+function createRoot(parentNode) {
+  var root = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.domify)(
+    '<div class="djs-tooltip-container" />'
+  );
+
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.assignStyle)(root, {
+    position: 'absolute',
+    width: '0',
+    height: '0'
+  });
+
+  parentNode.insertBefore(root, parentNode.firstChild);
+
+  return root;
+}
+
+
+function setPosition(el, x, y) {
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.assignStyle)(el, { left: x + 'px', top: y + 'px' });
+}
+
+function setVisible(el, visible) {
+  el.style.display = visible === false ? 'none' : '';
+}
+
+
+var tooltipClass = 'djs-tooltip',
+    tooltipSelector = '.' + tooltipClass;
+
+/**
+ * A service that allows users to render tool tips on the diagram.
+ *
+ * The tooltip service will take care of updating the tooltip positioning
+ * during navigation + zooming.
+ *
+ * @example
+ *
+ * ```javascript
+ *
+ * // add a pink badge on the top left of the shape
+ * tooltips.add({
+ *   position: {
+ *     x: 50,
+ *     y: 100
+ *   },
+ *   html: '<div style="width: 10px; background: fuchsia; color: white;">0</div>'
+ * });
+ *
+ * // or with optional life span
+ * tooltips.add({
+ *   position: {
+ *     top: -5,
+ *     left: -5
+ *   },
+ *   html: '<div style="width: 10px; background: fuchsia; color: white;">0</div>',
+ *   ttl: 2000
+ * });
+ *
+ * // remove a tool tip
+ * var id = tooltips.add(...);
+ *
+ * tooltips.remove(id);
+ * ```
+ *
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ */
+function Tooltips(eventBus, canvas) {
+
+  this._eventBus = eventBus;
+  this._canvas = canvas;
+
+  this._ids = ids;
+
+  this._tooltipDefaults = {
+    show: {
+      minZoom: 0.7,
+      maxZoom: 5.0
+    }
+  };
+
+  /**
+   * @type {Record<string, Tooltip>}
+   */
+  this._tooltips = {};
+
+  // root html element for all tooltips
+  this._tooltipRoot = createRoot(canvas.getContainer());
+
+
+  var self = this;
+
+  min_dom__WEBPACK_IMPORTED_MODULE_1__.delegate.bind(this._tooltipRoot, tooltipSelector, 'mousedown', function(event) {
+    event.stopPropagation();
+  });
+
+  min_dom__WEBPACK_IMPORTED_MODULE_1__.delegate.bind(this._tooltipRoot, tooltipSelector, 'mouseover', function(event) {
+    self.trigger('mouseover', event);
+  });
+
+  min_dom__WEBPACK_IMPORTED_MODULE_1__.delegate.bind(this._tooltipRoot, tooltipSelector, 'mouseout', function(event) {
+    self.trigger('mouseout', event);
+  });
+
+  this._init();
+}
+
+
+Tooltips.$inject = [ 'eventBus', 'canvas' ];
+
+
+/**
+ * Adds an HTML tooltip to the diagram.
+ *
+ * @param {Tooltip} tooltip
+ *
+ * @return {string} ID of the tooltip.
+ */
+Tooltips.prototype.add = function(tooltip) {
+
+  if (!tooltip.position) {
+    throw new Error('must specifiy tooltip position');
+  }
+
+  if (!tooltip.html) {
+    throw new Error('must specifiy tooltip html');
+  }
+
+  var id = this._ids.next();
+
+  tooltip = (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.assign)({}, this._tooltipDefaults, tooltip, {
+    id: id
+  });
+
+  this._addTooltip(tooltip);
+
+  if (tooltip.timeout) {
+    this.setTimeout(tooltip);
+  }
+
+  return id;
+};
+
+/**
+ * @param {string} action
+ * @param {Event} event
+ */
+Tooltips.prototype.trigger = function(action, event) {
+
+  var node = event.delegateTarget || event.target;
+
+  var tooltip = this.get((0,min_dom__WEBPACK_IMPORTED_MODULE_1__.attr)(node, 'data-tooltip-id'));
+
+  if (!tooltip) {
+    return;
+  }
+
+  if (action === 'mouseover' && tooltip.timeout) {
+    this.clearTimeout(tooltip);
+  }
+
+  if (action === 'mouseout' && tooltip.timeout) {
+
+    // cut timeout after mouse out
+    tooltip.timeout = 1000;
+
+    this.setTimeout(tooltip);
+  }
+};
+
+/**
+ * Get tooltip with given ID.
+ *
+ * @param {Tooltip|string} id
+ *
+ * @return {Tooltip|undefined}
+ */
+Tooltips.prototype.get = function(id) {
+
+  if (typeof id !== 'string') {
+    id = id.id;
+  }
+
+  return this._tooltips[id];
+};
+
+/**
+ * @param {Tooltip} tooltip
+ */
+Tooltips.prototype.clearTimeout = function(tooltip) {
+
+  tooltip = this.get(tooltip);
+
+  if (!tooltip) {
+    return;
+  }
+
+  var removeTimer = tooltip.removeTimer;
+
+  if (removeTimer) {
+    clearTimeout(removeTimer);
+    tooltip.removeTimer = null;
+  }
+};
+
+/**
+ * @param {Tooltip} tooltip
+ */
+Tooltips.prototype.setTimeout = function(tooltip) {
+
+  tooltip = this.get(tooltip);
+
+  if (!tooltip) {
+    return;
+  }
+
+  this.clearTimeout(tooltip);
+
+  var self = this;
+
+  tooltip.removeTimer = setTimeout(function() {
+    self.remove(tooltip);
+  }, tooltip.timeout);
+};
+
+/**
+ * Remove tooltip with given ID.
+ *
+ * @param {string | Tooltip} id
+ */
+Tooltips.prototype.remove = function(id) {
+
+  var tooltip = this.get(id);
+
+  if (tooltip) {
+    (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.remove)(tooltip.html);
+    (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.remove)(tooltip.htmlContainer);
+
+    delete tooltip.htmlContainer;
+
+    delete this._tooltips[tooltip.id];
+  }
+};
+
+
+Tooltips.prototype.show = function() {
+  setVisible(this._tooltipRoot);
+};
+
+
+Tooltips.prototype.hide = function() {
+  setVisible(this._tooltipRoot, false);
+};
+
+
+Tooltips.prototype._updateRoot = function(viewbox) {
+  var a = viewbox.scale || 1;
+  var d = viewbox.scale || 1;
+
+  var matrix = 'matrix(' + a + ',0,0,' + d + ',' + (-1 * viewbox.x * a) + ',' + (-1 * viewbox.y * d) + ')';
+
+  this._tooltipRoot.style.transform = matrix;
+  this._tooltipRoot.style['-ms-transform'] = matrix;
+};
+
+
+Tooltips.prototype._addTooltip = function(tooltip) {
+
+  var id = tooltip.id,
+      html = tooltip.html,
+      htmlContainer,
+      tooltipRoot = this._tooltipRoot;
+
+  // unwrap jquery (for those who need it)
+  if (html.get && html.constructor.prototype.jquery) {
+    html = html.get(0);
+  }
+
+  // create proper html elements from
+  // tooltip HTML strings
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_2__.isString)(html)) {
+    html = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.domify)(html);
+  }
+
+  htmlContainer = (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.domify)('<div data-tooltip-id="' + id + '" class="' + tooltipClass + '">');
+  (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.assignStyle)(htmlContainer, { position: 'absolute' });
+
+  htmlContainer.appendChild(html);
+
+  if (tooltip.type) {
+    (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.classes)(htmlContainer).add('djs-tooltip-' + tooltip.type);
+  }
+
+  if (tooltip.className) {
+    (0,min_dom__WEBPACK_IMPORTED_MODULE_1__.classes)(htmlContainer).add(tooltip.className);
+  }
+
+  tooltip.htmlContainer = htmlContainer;
+
+  tooltipRoot.appendChild(htmlContainer);
+
+  this._tooltips[id] = tooltip;
+
+  this._updateTooltip(tooltip);
+};
+
+
+Tooltips.prototype._updateTooltip = function(tooltip) {
+
+  var position = tooltip.position,
+      htmlContainer = tooltip.htmlContainer;
+
+  // update overlay html based on tooltip x, y
+
+  setPosition(htmlContainer, position.x, position.y);
+};
+
+
+Tooltips.prototype._updateTooltipVisibilty = function(viewbox) {
+
+  (0,min_dash__WEBPACK_IMPORTED_MODULE_2__.forEach)(this._tooltips, function(tooltip) {
+    var show = tooltip.show,
+        htmlContainer = tooltip.htmlContainer,
+        visible = true;
+
+    if (show) {
+      if (show.minZoom > viewbox.scale ||
+          show.maxZoom < viewbox.scale) {
+        visible = false;
+      }
+
+      setVisible(htmlContainer, visible);
+    }
+  });
+};
+
+Tooltips.prototype._init = function() {
+
+  var self = this;
+
+  // scroll/zoom integration
+
+  function updateViewbox(viewbox) {
+    self._updateRoot(viewbox);
+    self._updateTooltipVisibilty(viewbox);
+
+    self.show();
+  }
+
+  this._eventBus.on('canvas.viewbox.changing', function(event) {
+    self.hide();
+  });
+
+  this._eventBus.on('canvas.viewbox.changed', function(event) {
+    updateViewbox(event.viewbox);
+  });
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/tooltips/index.js":
+/*!*****************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/tooltips/index.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Tooltips__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Tooltips */ "../node_modules/diagram-js/lib/features/tooltips/Tooltips.js");
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [ 'tooltips' ],
+  tooltips: [ 'type', _Tooltips__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+});
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/touch/TouchFix.js":
+/*!*****************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/touch/TouchFix.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ TouchFix)
+/* harmony export */ });
+/* harmony import */ var tiny_svg__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tiny-svg */ "../node_modules/tiny-svg/dist/index.esm.js");
+
+
+/**
+ * @typedef {import('../../core/EventBus').default} EventBus
+ */
+
+/**
+ * @param {EventBus} eventBus
+ */
+function TouchFix(eventBus) {
+
+  var self = this;
+
+  eventBus.on('canvas.init', function(e) {
+    self.addBBoxMarker(e.svg);
+  });
+}
+
+TouchFix.$inject = [ 'eventBus' ];
+
+
+/**
+ * Safari mobile (iOS 7) does not fire touchstart event in <SVG> element
+ * if there is no shape between 0,0 and viewport elements origin.
+ *
+ * So touchstart event is only fired when the <g class="viewport"> element was hit.
+ * Putting an element over and below the 'viewport' fixes that behavior.
+ *
+ * @param {SVGElement} svg
+ */
+TouchFix.prototype.addBBoxMarker = function(svg) {
+
+  var markerStyle = {
+    fill: 'none',
+    class: 'outer-bound-marker'
+  };
+
+  var rect1 = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.create)('rect');
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(rect1, {
+    x: -10000,
+    y: 10000,
+    width: 10,
+    height: 10
+  });
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(rect1, markerStyle);
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.append)(svg, rect1);
+
+  var rect2 = (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.create)('rect');
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(rect2, {
+    x: 10000,
+    y: 10000,
+    width: 10,
+    height: 10
+  });
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.attr)(rect2, markerStyle);
+
+  (0,tiny_svg__WEBPACK_IMPORTED_MODULE_0__.append)(svg, rect2);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/touch/TouchInteractionEvents.js":
+/*!*******************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/touch/TouchInteractionEvents.js ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ TouchInteractionEvents)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var hammerjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! hammerjs */ "../node_modules/hammerjs/hammer.js");
+/* harmony import */ var hammerjs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(hammerjs__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _util_Event__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Event */ "../node_modules/diagram-js/lib/util/Event.js");
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('didi').Injector} Injector
+ *
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('../../core/EventBus').default} EventBus
+ * @typedef {import('../interaction-events/InteractionEvents').default} InteractionEvents
+ */
+
+var MIN_ZOOM = 0.2,
+    MAX_ZOOM = 4;
+
+var mouseEvents = [
+  'mousedown',
+  'mouseup',
+  'mouseover',
+  'mouseout',
+  'click',
+  'dblclick'
+];
+
+function log() {
+
+  // console.log.apply(console, arguments);
+}
+
+function get(service, injector) {
+  return injector.get(service, false);
+}
+
+function stopEvent(event) {
+
+  event.preventDefault();
+
+  if (typeof event.stopPropagation === 'function') {
+    event.stopPropagation();
+  } else if (event.srcEvent && typeof event.srcEvent.stopPropagation === 'function') {
+
+    // iPhone & iPad
+    event.srcEvent.stopPropagation();
+  }
+
+  if (typeof event.stopImmediatePropagation === 'function') {
+    event.stopImmediatePropagation();
+  }
+}
+
+
+function createTouchRecognizer(node) {
+
+  function stopMouse(event) {
+
+    (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(mouseEvents, function(e) {
+      min_dom__WEBPACK_IMPORTED_MODULE_2__.event.bind(node, e, stopEvent, true);
+    });
+  }
+
+  function allowMouse(event) {
+    setTimeout(function() {
+      (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.forEach)(mouseEvents, function(e) {
+        min_dom__WEBPACK_IMPORTED_MODULE_2__.event.unbind(node, e, stopEvent, true);
+      });
+    }, 500);
+  }
+
+  min_dom__WEBPACK_IMPORTED_MODULE_2__.event.bind(node, 'touchstart', stopMouse, true);
+  min_dom__WEBPACK_IMPORTED_MODULE_2__.event.bind(node, 'touchend', allowMouse, true);
+  min_dom__WEBPACK_IMPORTED_MODULE_2__.event.bind(node, 'touchcancel', allowMouse, true);
+
+  // A touch event recognizer that handles
+  // touch events only (we know, we can already handle
+  // mouse events out of the box)
+
+  var recognizer = new (hammerjs__WEBPACK_IMPORTED_MODULE_0___default().Manager)(node, {
+    inputClass: (hammerjs__WEBPACK_IMPORTED_MODULE_0___default().TouchInput),
+    recognizers: [],
+    domEvents: true
+  });
+
+
+  var tap = new (hammerjs__WEBPACK_IMPORTED_MODULE_0___default().Tap)();
+  var pan = new (hammerjs__WEBPACK_IMPORTED_MODULE_0___default().Pan)({ threshold: 10 });
+  var press = new (hammerjs__WEBPACK_IMPORTED_MODULE_0___default().Press)();
+  var pinch = new (hammerjs__WEBPACK_IMPORTED_MODULE_0___default().Pinch)();
+
+  var doubleTap = new (hammerjs__WEBPACK_IMPORTED_MODULE_0___default().Tap)({ event: 'doubletap', taps: 2 });
+
+  pinch.requireFailure(pan);
+  pinch.requireFailure(press);
+
+  recognizer.add([ pan, press, pinch, doubleTap, tap ]);
+
+  recognizer.reset = function(force) {
+    var recognizers = this.recognizers,
+        session = this.session;
+
+    if (session.stopped) {
+      return;
+    }
+
+    log('recognizer', 'stop');
+
+    recognizer.stop(force);
+
+    setTimeout(function() {
+      var i, r;
+
+      log('recognizer', 'reset');
+      for (i = 0; (r = recognizers[i]); i++) {
+        r.reset();
+        r.state = 8; // FAILED STATE
+      }
+
+      session.curRecognizer = null;
+    }, 0);
+  };
+
+  recognizer.on('hammer.input', function(event) {
+    if (event.srcEvent.defaultPrevented) {
+      recognizer.reset(true);
+    }
+  });
+
+  return recognizer;
+}
+
+/**
+ * A plugin that provides touch events for elements.
+ *
+ * @param {Injector} injector
+ * @param {Canvas} canvas
+ * @param {EventBus} eventBus
+ * @param {ElementRegistry} elementRegistry
+ * @param {InteractionEvents} interactionEvents
+ */
+function TouchInteractionEvents(
+    injector, canvas, eventBus,
+    elementRegistry, interactionEvents) {
+
+  // optional integrations
+  var dragging = get('dragging', injector),
+      move = get('move', injector),
+      contextPad = get('contextPad', injector),
+      palette = get('palette', injector);
+
+  // the touch recognizer
+  var recognizer;
+
+  function handler(type, buttonType) {
+
+    return function(event) {
+      log('element', type, event);
+
+      var gfx = getGfx(event.target),
+          element = gfx && elementRegistry.get(gfx);
+
+      // translate into an actual mouse click event
+      if (buttonType) {
+        event.srcEvent.button = buttonType;
+      }
+
+      return interactionEvents.fire(type, event, element);
+    };
+  }
+
+
+  function getGfx(target) {
+    var node = (0,min_dom__WEBPACK_IMPORTED_MODULE_2__.closest)(target, 'svg, .djs-element', true);
+    return node;
+  }
+
+  function initEvents(svg) {
+
+    // touch recognizer
+    recognizer = createTouchRecognizer(svg);
+
+    function startGrabCanvas(event) {
+
+      log('canvas', 'grab start');
+
+      var lx = 0, ly = 0;
+
+      function update(e) {
+
+        var dx = e.deltaX - lx,
+            dy = e.deltaY - ly;
+
+        canvas.scroll({ dx: dx, dy: dy });
+
+        lx = e.deltaX;
+        ly = e.deltaY;
+      }
+
+      function end(e) {
+        recognizer.off('panmove', update);
+        recognizer.off('panend', end);
+        recognizer.off('pancancel', end);
+
+        log('canvas', 'grab end');
+      }
+
+      recognizer.on('panmove', update);
+      recognizer.on('panend', end);
+      recognizer.on('pancancel', end);
+    }
+
+    function startGrab(event) {
+
+      var gfx = getGfx(event.target),
+          element = gfx && elementRegistry.get(gfx);
+
+      // recognizer
+      if (move && canvas.getRootElement() !== element) {
+        log('element', 'move start', element, event, true);
+        return move.start(event, element, true);
+      } else {
+        startGrabCanvas(event);
+      }
+    }
+
+    function startZoom(e) {
+
+      log('canvas', 'zoom start');
+
+      var zoom = canvas.zoom(),
+          mid = e.center;
+
+      function update(e) {
+
+        var ratio = 1 - (1 - e.scale) / 1.50,
+            newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, ratio * zoom));
+
+        canvas.zoom(newZoom, mid);
+
+        stopEvent(e);
+      }
+
+      function end(e) {
+        recognizer.off('pinchmove', update);
+        recognizer.off('pinchend', end);
+        recognizer.off('pinchcancel', end);
+
+        recognizer.reset(true);
+
+        log('canvas', 'zoom end');
+      }
+
+      recognizer.on('pinchmove', update);
+      recognizer.on('pinchend', end);
+      recognizer.on('pinchcancel', end);
+    }
+
+    recognizer.on('tap', handler('element.click'));
+    recognizer.on('doubletap', handler('element.dblclick', 1));
+
+    recognizer.on('panstart', startGrab);
+    recognizer.on('press', startGrab);
+
+    recognizer.on('pinchstart', startZoom);
+  }
+
+  if (dragging) {
+
+    // simulate hover during dragging
+    eventBus.on('drag.move', function(event) {
+
+      var originalEvent = event.originalEvent;
+
+      if (!originalEvent || originalEvent instanceof MouseEvent) {
+        return;
+      }
+
+      var position = (0,_util_Event__WEBPACK_IMPORTED_MODULE_3__.toPoint)(originalEvent);
+
+      // this gets really expensive ...
+      var node = document.elementFromPoint(position.x, position.y),
+          gfx = getGfx(node),
+          element = gfx && elementRegistry.get(gfx);
+
+      if (element !== event.hover) {
+        if (event.hover) {
+          dragging.out(event);
+        }
+
+        if (element) {
+          dragging.hover({ element: element, gfx: gfx });
+
+          event.hover = element;
+          event.hoverGfx = gfx;
+        }
+      }
+    });
+  }
+
+  if (contextPad) {
+
+    eventBus.on('contextPad.create', function(event) {
+      var node = event.pad.html;
+
+      // touch recognizer
+      var padRecognizer = createTouchRecognizer(node);
+
+      padRecognizer.on('panstart', function(event) {
+        log('context-pad', 'panstart', event);
+        contextPad.trigger('dragstart', event, true);
+      });
+
+      padRecognizer.on('press', function(event) {
+        log('context-pad', 'press', event);
+        contextPad.trigger('dragstart', event, true);
+      });
+
+      padRecognizer.on('tap', function(event) {
+        log('context-pad', 'tap', event);
+        contextPad.trigger('click', event);
+      });
+    });
+  }
+
+  if (palette) {
+    eventBus.on('palette.create', function(event) {
+      var node = event.container;
+
+      // touch recognizer
+      var padRecognizer = createTouchRecognizer(node);
+
+      padRecognizer.on('panstart', function(event) {
+        log('palette', 'panstart', event);
+        palette.trigger('dragstart', event, true);
+      });
+
+      padRecognizer.on('press', function(event) {
+        log('palette', 'press', event);
+        palette.trigger('dragstart', event, true);
+      });
+
+      padRecognizer.on('tap', function(event) {
+        log('palette', 'tap', event);
+        palette.trigger('click', event);
+      });
+    });
+  }
+
+  eventBus.on('canvas.init', function(event) {
+    initEvents(event.svg);
+  });
+}
+
+
+TouchInteractionEvents.$inject = [
+  'injector',
+  'canvas',
+  'eventBus',
+  'elementRegistry',
+  'interactionEvents',
+  'touchFix'
+];
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/features/touch/index.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/features/touch/index.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _interaction_events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../interaction-events */ "../node_modules/diagram-js/lib/features/interaction-events/index.js");
+/* harmony import */ var _TouchInteractionEvents__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TouchInteractionEvents */ "../node_modules/diagram-js/lib/features/touch/TouchInteractionEvents.js");
+/* harmony import */ var _TouchFix__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./TouchFix */ "../node_modules/diagram-js/lib/features/touch/TouchFix.js");
+
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [ _interaction_events__WEBPACK_IMPORTED_MODULE_0__["default"] ],
+  __init__: [ 'touchInteractionEvents' ],
+  touchInteractionEvents: [ 'type', _TouchInteractionEvents__WEBPACK_IMPORTED_MODULE_1__["default"] ],
+  touchFix: [ 'type', _TouchFix__WEBPACK_IMPORTED_MODULE_2__["default"] ]
+});
+
+/***/ }),
+
 /***/ "../node_modules/diagram-js/lib/i18n/translate/index.js":
 /*!**************************************************************!*\
   !*** ../node_modules/diagram-js/lib/i18n/translate/index.js ***!
@@ -8155,6 +35188,181 @@ function translate(template, replacements) {
     return replacements[key] || '{' + key + '}';
   });
 }
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/layout/BaseLayouter.js":
+/*!*************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/layout/BaseLayouter.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ BaseLayouter)
+/* harmony export */ });
+/* harmony import */ var _LayoutUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/**
+ * @typedef {import('../core/Types').ElementLike} Element
+ * @typedef {import('../core/Types').ConnectionLike} Connection
+ *
+ * @typedef {import('../util').Point} Point
+ *
+ * @typedef { {
+ *   connectionStart?: Point;
+ *   connectionEnd?: Point;
+ *   source?: Element;
+ *   target?: Element;
+ * } } LayoutConnectionHints
+ */
+
+
+
+
+/**
+ * A base connection layouter implementation
+ * that layouts the connection by directly connecting
+ * mid(source) + mid(target).
+ */
+function BaseLayouter() {}
+
+
+/**
+ * Return the new layouted waypoints for the given connection.
+ *
+ * The connection passed is still unchanged; you may figure out about
+ * the new connection start / end via the layout hints provided.
+ *
+ * @param {Connection} connection
+ * @param {LayoutConnectionHints} [hints]
+ *
+ * @return {Point[]} The waypoints of the laid out connection.
+ */
+BaseLayouter.prototype.layoutConnection = function(connection, hints) {
+
+  hints = hints || {};
+
+  return [
+    hints.connectionStart || (0,_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__.getMid)(hints.source || connection.source),
+    hints.connectionEnd || (0,_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__.getMid)(hints.target || connection.target)
+  ];
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/layout/CroppingConnectionDocking.js":
+/*!**************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/layout/CroppingConnectionDocking.js ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ CroppingConnectionDocking)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+
+
+
+
+/**
+ * @typedef {import('../core/ElementRegistry').default} ElementRegistry
+ * @typedef {import('../core/GraphicsFactory').default} GraphicsFactory
+ */
+
+function dockingToPoint(docking) {
+
+  // use the dockings actual point and
+  // retain the original docking
+  return (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({ original: docking.point.original || docking.point }, docking.actual);
+}
+
+
+/**
+ * A {@link ConnectionDocking} that crops connection waypoints based on
+ * the path(s) of the connection source and target.
+ *
+ * @param {ElementRegistry} elementRegistry
+ * @param {GraphicsFactory} graphicsFactory
+ */
+function CroppingConnectionDocking(elementRegistry, graphicsFactory) {
+  this._elementRegistry = elementRegistry;
+  this._graphicsFactory = graphicsFactory;
+}
+
+CroppingConnectionDocking.$inject = [ 'elementRegistry', 'graphicsFactory' ];
+
+
+/**
+ * @inheritDoc ConnectionDocking#getCroppedWaypoints
+ */
+CroppingConnectionDocking.prototype.getCroppedWaypoints = function(connection, source, target) {
+
+  source = source || connection.source;
+  target = target || connection.target;
+
+  var sourceDocking = this.getDockingPoint(connection, source, true),
+      targetDocking = this.getDockingPoint(connection, target);
+
+  var croppedWaypoints = connection.waypoints.slice(sourceDocking.idx + 1, targetDocking.idx);
+
+  croppedWaypoints.unshift(dockingToPoint(sourceDocking));
+  croppedWaypoints.push(dockingToPoint(targetDocking));
+
+  return croppedWaypoints;
+};
+
+/**
+ * Return the connection docking point on the specified shape
+ *
+ * @inheritDoc ConnectionDocking#getDockingPoint
+ */
+CroppingConnectionDocking.prototype.getDockingPoint = function(connection, shape, dockStart) {
+
+  var waypoints = connection.waypoints,
+      dockingIdx,
+      dockingPoint,
+      croppedPoint;
+
+  dockingIdx = dockStart ? 0 : waypoints.length - 1;
+  dockingPoint = waypoints[dockingIdx];
+
+  croppedPoint = this._getIntersection(shape, connection, dockStart);
+
+  return {
+    point: dockingPoint,
+    actual: croppedPoint || dockingPoint,
+    idx: dockingIdx
+  };
+};
+
+
+// helpers //////////////////////
+
+CroppingConnectionDocking.prototype._getIntersection = function(shape, connection, takeFirst) {
+
+  var shapePath = this._getShapePath(shape),
+      connectionPath = this._getConnectionPath(connection);
+
+  return (0,_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getElementLineIntersection)(shapePath, connectionPath, takeFirst);
+};
+
+CroppingConnectionDocking.prototype._getConnectionPath = function(connection) {
+  return this._graphicsFactory.getConnectionPath(connection);
+};
+
+CroppingConnectionDocking.prototype._getShapePath = function(shape) {
+  return this._graphicsFactory.getShapePath(shape);
+};
+
+CroppingConnectionDocking.prototype._getGfx = function(element) {
+  return this._elementRegistry.getGraphics(element);
+};
+
 
 /***/ }),
 
@@ -8485,6 +35693,768 @@ function filterRedundantWaypoints(waypoints) {
 function distance(a, b) {
   return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 }
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/layout/ManhattanLayout.js":
+/*!****************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/layout/ManhattanLayout.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   connectPoints: () => (/* binding */ connectPoints),
+/* harmony export */   connectRectangles: () => (/* binding */ connectRectangles),
+/* harmony export */   repairConnection: () => (/* binding */ repairConnection),
+/* harmony export */   tryLayoutStraight: () => (/* binding */ tryLayoutStraight),
+/* harmony export */   withoutRedundantPoints: () => (/* binding */ withoutRedundantPoints)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _LayoutUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var _util_Geometry__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../util/Geometry */ "../node_modules/diagram-js/lib/util/Geometry.js");
+
+
+
+
+
+
+/**
+ * @typedef {import('../util/Types').Point} Point
+ * @typedef {import('../util/Types').Rect} Rect
+ */
+
+var MIN_SEGMENT_LENGTH = 20,
+    POINT_ORIENTATION_PADDING = 5;
+
+var round = Math.round;
+
+var INTERSECTION_THRESHOLD = 20,
+    ORIENTATION_THRESHOLD = {
+      'h:h': 20,
+      'v:v': 20,
+      'h:v': -10,
+      'v:h': -10
+    };
+
+function needsTurn(orientation, startDirection) {
+  return !{
+    t: /top/,
+    r: /right/,
+    b: /bottom/,
+    l: /left/,
+    h: /./,
+    v: /./
+  }[startDirection].test(orientation);
+}
+
+function canLayoutStraight(direction, targetOrientation) {
+  return {
+    t: /top/,
+    r: /right/,
+    b: /bottom/,
+    l: /left/,
+    h: /left|right/,
+    v: /top|bottom/
+  }[direction].test(targetOrientation);
+}
+
+function getSegmentBendpoints(a, b, directions) {
+  var orientation = (0,_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__.getOrientation)(b, a, POINT_ORIENTATION_PADDING);
+
+  var startDirection = directions.split(':')[0];
+
+  var xmid = round((b.x - a.x) / 2 + a.x),
+      ymid = round((b.y - a.y) / 2 + a.y);
+
+  var segmentEnd, segmentDirections;
+
+  var layoutStraight = canLayoutStraight(startDirection, orientation),
+      layoutHorizontal = /h|r|l/.test(startDirection),
+      layoutTurn = false;
+
+  var turnNextDirections = false;
+
+  if (layoutStraight) {
+    segmentEnd = layoutHorizontal ? { x: xmid, y: a.y } : { x: a.x, y: ymid };
+
+    segmentDirections = layoutHorizontal ? 'h:h' : 'v:v';
+  } else {
+    layoutTurn = needsTurn(orientation, startDirection);
+
+    segmentDirections = layoutHorizontal ? 'h:v' : 'v:h';
+
+    if (layoutTurn) {
+
+      if (layoutHorizontal) {
+        turnNextDirections = ymid === a.y;
+
+        segmentEnd = {
+          x: a.x + MIN_SEGMENT_LENGTH * (/l/.test(startDirection) ? -1 : 1),
+          y: turnNextDirections ? ymid + MIN_SEGMENT_LENGTH : ymid
+        };
+      } else {
+        turnNextDirections = xmid === a.x;
+
+        segmentEnd = {
+          x: turnNextDirections ? xmid + MIN_SEGMENT_LENGTH : xmid,
+          y: a.y + MIN_SEGMENT_LENGTH * (/t/.test(startDirection) ? -1 : 1)
+        };
+      }
+
+    } else {
+      segmentEnd = {
+        x: xmid,
+        y: ymid
+      };
+    }
+  }
+
+  return {
+    waypoints: getBendpoints(a, segmentEnd, segmentDirections).concat(segmentEnd),
+    directions:  segmentDirections,
+    turnNextDirections: turnNextDirections
+  };
+}
+
+function getStartSegment(a, b, directions) {
+  return getSegmentBendpoints(a, b, directions);
+}
+
+function getEndSegment(a, b, directions) {
+  var invertedSegment = getSegmentBendpoints(b, a, invertDirections(directions));
+
+  return {
+    waypoints: invertedSegment.waypoints.slice().reverse(),
+    directions: invertDirections(invertedSegment.directions),
+    turnNextDirections: invertedSegment.turnNextDirections
+  };
+}
+
+function getMidSegment(startSegment, endSegment) {
+
+  var startDirection = startSegment.directions.split(':')[1],
+      endDirection = endSegment.directions.split(':')[0];
+
+  if (startSegment.turnNextDirections) {
+    startDirection = startDirection == 'h' ? 'v' : 'h';
+  }
+
+  if (endSegment.turnNextDirections) {
+    endDirection = endDirection == 'h' ? 'v' : 'h';
+  }
+
+  var directions = startDirection + ':' + endDirection;
+
+  var bendpoints = getBendpoints(
+    startSegment.waypoints[startSegment.waypoints.length - 1],
+    endSegment.waypoints[0],
+    directions
+  );
+
+  return {
+    waypoints: bendpoints,
+    directions: directions
+  };
+}
+
+function invertDirections(directions) {
+  return directions.split(':').reverse().join(':');
+}
+
+/**
+ * Handle simple layouts with maximum two bendpoints.
+ */
+function getSimpleBendpoints(a, b, directions) {
+
+  var xmid = round((b.x - a.x) / 2 + a.x),
+      ymid = round((b.y - a.y) / 2 + a.y);
+
+  // one point, right or left from a
+  if (directions === 'h:v') {
+    return [ { x: b.x, y: a.y } ];
+  }
+
+  // one point, above or below a
+  if (directions === 'v:h') {
+    return [ { x: a.x, y: b.y } ];
+  }
+
+  // vertical segment between a and b
+  if (directions === 'h:h') {
+    return [
+      { x: xmid, y: a.y },
+      { x: xmid, y: b.y }
+    ];
+  }
+
+  // horizontal segment between a and b
+  if (directions === 'v:v') {
+    return [
+      { x: a.x, y: ymid },
+      { x: b.x, y: ymid }
+    ];
+  }
+
+  throw new Error('invalid directions: can only handle varians of [hv]:[hv]');
+}
+
+
+/**
+ * Returns the mid points for a manhattan connection between two points.
+ *
+ * @example h:h (horizontal:horizontal)
+ *
+ * [a]----[x]
+ *         |
+ *        [x]----[b]
+ *
+ * @example h:v (horizontal:vertical)
+ *
+ * [a]----[x]
+ *         |
+ *        [b]
+ *
+ * @example h:r (horizontal:right)
+ *
+ * [a]----[x]
+ *         |
+ *    [b]-[x]
+ *
+ * @param {Point} a
+ * @param {Point} b
+ * @param {string} directions
+ *
+ * @return {Point[]}
+ */
+function getBendpoints(a, b, directions) {
+  directions = directions || 'h:h';
+
+  if (!isValidDirections(directions)) {
+    throw new Error(
+      'unknown directions: <' + directions + '>: ' +
+      'must be specified as <start>:<end> ' +
+      'with start/end in { h,v,t,r,b,l }'
+    );
+  }
+
+  // compute explicit directions, involving trbl dockings
+  // using a three segmented layouting algorithm
+  if (isExplicitDirections(directions)) {
+    var startSegment = getStartSegment(a, b, directions),
+        endSegment = getEndSegment(a, b, directions),
+        midSegment = getMidSegment(startSegment, endSegment);
+
+    return [].concat(
+      startSegment.waypoints,
+      midSegment.waypoints,
+      endSegment.waypoints
+    );
+  }
+
+  // handle simple [hv]:[hv] cases that can be easily computed
+  return getSimpleBendpoints(a, b, directions);
+}
+
+/**
+ * Create a connection between the two points according
+ * to the manhattan layout (only horizontal and vertical) edges.
+ *
+ * @param {Point} a
+ * @param {Point} b
+ * @param {string} [directions='h:h'] Specifies manhattan directions for each
+ * point as {direction}:{direction}. A direction for a point is either
+ * `h` (horizontal) or `v` (vertical).
+ *
+ * @return {Point[]}
+ */
+function connectPoints(a, b, directions) {
+
+  var points = getBendpoints(a, b, directions);
+
+  points.unshift(a);
+  points.push(b);
+
+  return withoutRedundantPoints(points);
+}
+
+
+/**
+ * Connect two rectangles using a manhattan layouted connection.
+ *
+ * @param {Rect} source source rectangle
+ * @param {Rect} target target rectangle
+ * @param {Point} [start] source docking
+ * @param {Point} [end] target docking
+ * @param {Object} [hints]
+ * @param {string} [hints.preserveDocking=source] preserve docking on selected side
+ * @param {string[]} [hints.preferredLayouts]
+ * @param {Point|boolean} [hints.connectionStart] whether the start changed
+ * @param {Point|boolean} [hints.connectionEnd] whether the end changed
+ *
+ * @return {Point[]} connection points
+ */
+function connectRectangles(source, target, start, end, hints) {
+
+  var preferredLayouts = hints && hints.preferredLayouts || [];
+
+  var preferredLayout = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.without)(preferredLayouts, 'straight')[0] || 'h:h';
+
+  var threshold = ORIENTATION_THRESHOLD[preferredLayout] || 0;
+
+  var orientation = (0,_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__.getOrientation)(source, target, threshold);
+
+  var directions = getDirections(orientation, preferredLayout);
+
+  start = start || (0,_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__.getMid)(source);
+  end = end || (0,_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__.getMid)(target);
+
+  var directionSplit = directions.split(':');
+
+  // compute actual docking points for start / end
+  // this ensures we properly layout only parts of the
+  // connection that lies in between the two rectangles
+  var startDocking = getDockingPoint(start, source, directionSplit[0], invertOrientation(orientation)),
+      endDocking = getDockingPoint(end, target, directionSplit[1], orientation);
+
+  return connectPoints(startDocking, endDocking, directions);
+}
+
+
+/**
+ * Repair the connection between two rectangles, of which one has been updated.
+ *
+ * @param {Rect} source
+ * @param {Rect} target
+ * @param {Point} [start]
+ * @param {Point} [end]
+ * @param {Point[]} [waypoints]
+ * @param {Object} [hints]
+ * @param {string[]} [hints.preferredLayouts] The list of preferred layouts.
+ * @param {boolean} [hints.connectionStart]
+ * @param {boolean} [hints.connectionEnd]
+ *
+ * @return {Point[]} The waypoints of the repaired connection.
+ */
+function repairConnection(source, target, start, end, waypoints, hints) {
+
+  if ((0,min_dash__WEBPACK_IMPORTED_MODULE_1__.isArray)(start)) {
+    waypoints = start;
+    hints = end;
+
+    start = (0,_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__.getMid)(source);
+    end = (0,_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__.getMid)(target);
+  }
+
+  hints = (0,min_dash__WEBPACK_IMPORTED_MODULE_1__.assign)({ preferredLayouts: [] }, hints);
+  waypoints = waypoints || [];
+
+  var preferredLayouts = hints.preferredLayouts,
+      preferStraight = preferredLayouts.indexOf('straight') !== -1,
+      repairedWaypoints;
+
+  // just layout non-existing or simple connections
+  // attempt to render straight lines, if required
+
+  // attempt to layout a straight line
+  repairedWaypoints = preferStraight && tryLayoutStraight(source, target, start, end, hints);
+
+  if (repairedWaypoints) {
+    return repairedWaypoints;
+  }
+
+  // try to layout from end
+  repairedWaypoints = hints.connectionEnd && tryRepairConnectionEnd(target, source, end, waypoints);
+
+  if (repairedWaypoints) {
+    return repairedWaypoints;
+  }
+
+  // try to layout from start
+  repairedWaypoints = hints.connectionStart && tryRepairConnectionStart(source, target, start, waypoints);
+
+  if (repairedWaypoints) {
+    return repairedWaypoints;
+  }
+
+  // or whether nothing seems to have changed
+  if (!hints.connectionStart && !hints.connectionEnd && waypoints && waypoints.length) {
+    return waypoints;
+  }
+
+  // simply reconnect if nothing else worked
+  return connectRectangles(source, target, start, end, hints);
+}
+
+
+function inRange(a, start, end) {
+  return a >= start && a <= end;
+}
+
+function isInRange(axis, a, b) {
+  var size = {
+    x: 'width',
+    y: 'height'
+  };
+
+  return inRange(a[axis], b[axis], b[axis] + b[size[axis]]);
+}
+
+/**
+ * Lay out a straight connection.
+ *
+ * @param {Rect} source
+ * @param {Rect} target
+ * @param {Point} start
+ * @param {Point} end
+ * @param {Object} [hints]
+ * @param {string} [hints.preserveDocking]
+ *
+ * @return {Point[]|null} The waypoints or null if layout isn't possible.
+ */
+function tryLayoutStraight(source, target, start, end, hints) {
+  var axis = {},
+      primaryAxis,
+      orientation;
+
+  orientation = (0,_LayoutUtil__WEBPACK_IMPORTED_MODULE_0__.getOrientation)(source, target);
+
+  // only layout a straight connection if shapes are
+  // horizontally or vertically aligned
+  if (!/^(top|bottom|left|right)$/.test(orientation)) {
+    return null;
+  }
+
+  if (/top|bottom/.test(orientation)) {
+    primaryAxis = 'x';
+  }
+
+  if (/left|right/.test(orientation)) {
+    primaryAxis = 'y';
+  }
+
+  if (hints.preserveDocking === 'target') {
+
+    if (!isInRange(primaryAxis, end, source)) {
+      return null;
+    }
+
+    axis[primaryAxis] = end[primaryAxis];
+
+    return [
+      {
+        x: axis.x !== undefined ? axis.x : start.x,
+        y: axis.y !== undefined ? axis.y : start.y,
+        original: {
+          x: axis.x !== undefined ? axis.x : start.x,
+          y: axis.y !== undefined ? axis.y : start.y
+        }
+      },
+      {
+        x: end.x,
+        y: end.y
+      }
+    ];
+
+  } else {
+
+    if (!isInRange(primaryAxis, start, target)) {
+      return null;
+    }
+
+    axis[primaryAxis] = start[primaryAxis];
+
+    return [
+      {
+        x: start.x,
+        y: start.y
+      },
+      {
+        x: axis.x !== undefined ? axis.x : end.x,
+        y: axis.y !== undefined ? axis.y : end.y,
+        original: {
+          x: axis.x !== undefined ? axis.x : end.x,
+          y: axis.y !== undefined ? axis.y : end.y
+        }
+      }
+    ];
+  }
+
+}
+
+/**
+ * Repair a connection from start.
+ *
+ * @param {Rect} moved
+ * @param {Rect} other
+ * @param {Point} newDocking
+ * @param {Point[]} points originalPoints from moved to other
+ *
+ * @return {Point[]|null} The waypoints of the repaired connection.
+ */
+function tryRepairConnectionStart(moved, other, newDocking, points) {
+  return _tryRepairConnectionSide(moved, other, newDocking, points);
+}
+
+/**
+ * Repair a connection from end.
+ *
+ * @param {Rect} moved
+ * @param {Rect} other
+ * @param {Point} newDocking
+ * @param {Point[]} points originalPoints from moved to other
+ *
+ * @return {Point[]|null} The waypoints of the repaired connection.
+ */
+function tryRepairConnectionEnd(moved, other, newDocking, points) {
+  var waypoints = points.slice().reverse();
+
+  waypoints = _tryRepairConnectionSide(moved, other, newDocking, waypoints);
+
+  return waypoints ? waypoints.reverse() : null;
+}
+
+/**
+ * Repair a connection from one side that moved.
+ *
+ * @param {Rect} moved
+ * @param {Rect} other
+ * @param {Point} newDocking
+ * @param {Point[]} points originalPoints from moved to other
+ *
+ * @return {Point[]} The waypoints of the repaired connection.
+ */
+function _tryRepairConnectionSide(moved, other, newDocking, points) {
+
+  function needsRelayout(points) {
+    if (points.length < 3) {
+      return true;
+    }
+
+    if (points.length > 4) {
+      return false;
+    }
+
+    // relayout if two points overlap
+    // this is most likely due to
+    return !!(0,min_dash__WEBPACK_IMPORTED_MODULE_1__.find)(points, function(p, idx) {
+      var q = points[idx - 1];
+
+      return q && (0,_util_Geometry__WEBPACK_IMPORTED_MODULE_2__.pointDistance)(p, q) < 3;
+    });
+  }
+
+  function repairBendpoint(candidate, oldPeer, newPeer) {
+
+    var alignment = (0,_util_Geometry__WEBPACK_IMPORTED_MODULE_2__.pointsAligned)(oldPeer, candidate);
+
+    switch (alignment) {
+    case 'v':
+
+      // repair horizontal alignment
+      return { x: newPeer.x, y: candidate.y };
+    case 'h':
+
+      // repair vertical alignment
+      return { x: candidate.x, y: newPeer.y };
+    }
+
+    return { x: candidate.x, y: candidate. y };
+  }
+
+  function removeOverlapping(points, a, b) {
+    var i;
+
+    for (i = points.length - 2; i !== 0; i--) {
+
+      // intersects (?) break, remove all bendpoints up to this one and relayout
+      if ((0,_util_Geometry__WEBPACK_IMPORTED_MODULE_2__.pointInRect)(points[i], a, INTERSECTION_THRESHOLD) ||
+          (0,_util_Geometry__WEBPACK_IMPORTED_MODULE_2__.pointInRect)(points[i], b, INTERSECTION_THRESHOLD)) {
+
+        // return sliced old connection
+        return points.slice(i);
+      }
+    }
+
+    return points;
+  }
+
+  // (0) only repair what has layoutable bendpoints
+
+  // (1) if only one bendpoint and on shape moved onto other shapes axis
+  //     (horizontally / vertically), relayout
+
+  if (needsRelayout(points)) {
+    return null;
+  }
+
+  var oldDocking = points[0],
+      newPoints = points.slice(),
+      slicedPoints;
+
+  // (2) repair only last line segment and only if it was layouted before
+
+  newPoints[0] = newDocking;
+  newPoints[1] = repairBendpoint(newPoints[1], oldDocking, newDocking);
+
+
+  // (3) if shape intersects with any bendpoint after repair,
+  //     remove all segments up to this bendpoint and repair from there
+  slicedPoints = removeOverlapping(newPoints, moved, other);
+
+  if (slicedPoints !== newPoints) {
+    newPoints = _tryRepairConnectionSide(moved, other, newDocking, slicedPoints);
+  }
+
+  // (4) do NOT repair if repaired bendpoints are aligned
+  if (newPoints && (0,_util_Geometry__WEBPACK_IMPORTED_MODULE_2__.pointsAligned)(newPoints)) {
+    return null;
+  }
+
+  return newPoints;
+}
+
+
+/**
+ * Returns the manhattan directions connecting two rectangles
+ * with the given orientation.
+ *
+ * Will always return the default layout, if it is specific
+ * regarding sides already (trbl).
+ *
+ * @example
+ *
+ * ```javascript
+ * getDirections('top'); // -> 'v:v'
+ * getDirections('intersect'); // -> 't:t'
+ *
+ * getDirections('top-right', 'v:h'); // -> 'v:h'
+ * getDirections('top-right', 'h:h'); // -> 'h:h'
+ * ```
+ *
+ * @param {string} orientation
+ * @param {string} defaultLayout
+ *
+ * @return {string}
+ */
+function getDirections(orientation, defaultLayout) {
+
+  // don't override specific trbl directions
+  if (isExplicitDirections(defaultLayout)) {
+    return defaultLayout;
+  }
+
+  switch (orientation) {
+  case 'intersect':
+    return 't:t';
+
+  case 'top':
+  case 'bottom':
+    return 'v:v';
+
+  case 'left':
+  case 'right':
+    return 'h:h';
+
+  // 'top-left'
+  // 'top-right'
+  // 'bottom-left'
+  // 'bottom-right'
+  default:
+    return defaultLayout;
+  }
+}
+
+function isValidDirections(directions) {
+  return directions && /^h|v|t|r|b|l:h|v|t|r|b|l$/.test(directions);
+}
+
+function isExplicitDirections(directions) {
+  return directions && /t|r|b|l/.test(directions);
+}
+
+function invertOrientation(orientation) {
+  return {
+    'top': 'bottom',
+    'bottom': 'top',
+    'left': 'right',
+    'right': 'left',
+    'top-left': 'bottom-right',
+    'bottom-right': 'top-left',
+    'top-right': 'bottom-left',
+    'bottom-left': 'top-right',
+  }[orientation];
+}
+
+function getDockingPoint(point, rectangle, dockingDirection, targetOrientation) {
+
+  // ensure we end up with a specific docking direction
+  // based on the targetOrientation, if <h|v> is being passed
+
+  if (dockingDirection === 'h') {
+    dockingDirection = /left/.test(targetOrientation) ? 'l' : 'r';
+  }
+
+  if (dockingDirection === 'v') {
+    dockingDirection = /top/.test(targetOrientation) ? 't' : 'b';
+  }
+
+  if (dockingDirection === 't') {
+    return { original: point, x: point.x, y: rectangle.y };
+  }
+
+  if (dockingDirection === 'r') {
+    return { original: point, x: rectangle.x + rectangle.width, y: point.y };
+  }
+
+  if (dockingDirection === 'b') {
+    return { original: point, x: point.x, y: rectangle.y + rectangle.height };
+  }
+
+  if (dockingDirection === 'l') {
+    return { original: point, x: rectangle.x, y: point.y };
+  }
+
+  throw new Error('unexpected dockingDirection: <' + dockingDirection + '>');
+}
+
+
+/**
+ * Return list of waypoints with redundant ones filtered out.
+ *
+ * @example
+ *
+ * Original points:
+ *
+ *   [x] ----- [x] ------ [x]
+ *                         |
+ *                        [x] ----- [x] - [x]
+ *
+ * Filtered:
+ *
+ *   [x] ---------------- [x]
+ *                         |
+ *                        [x] ----------- [x]
+ *
+ * @param {Point[]} waypoints
+ *
+ * @return {Point[]}
+ */
+function withoutRedundantPoints(waypoints) {
+  return waypoints.reduce(function(points, p, idx) {
+
+    var previous = points[points.length - 1],
+        next = waypoints[idx + 1];
+
+    if (!(0,_util_Geometry__WEBPACK_IMPORTED_MODULE_2__.pointsOnLine)(previous, next, p, 0)) {
+      points.push(p);
+    }
+
+    return points;
+  }, []);
+}
+
 
 /***/ }),
 
@@ -8840,6 +36810,910 @@ function isModelElement(obj) {
 
 /***/ }),
 
+/***/ "../node_modules/diagram-js/lib/navigation/keyboard-move/KeyboardMove.js":
+/*!*******************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/navigation/keyboard-move/KeyboardMove.js ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ KeyboardMove)
+/* harmony export */ });
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../features/keyboard/Keyboard').default} Keyboard
+ */
+
+var DEFAULT_CONFIG = {
+  moveSpeed: 50,
+  moveSpeedAccelerated: 200
+};
+
+
+/**
+ * A feature that allows users to move the canvas using the keyboard.
+ *
+ * @param {Object} config
+ * @param {number} [config.moveSpeed=50]
+ * @param {number} [config.moveSpeedAccelerated=200]
+ * @param {Keyboard} keyboard
+ * @param {Canvas} canvas
+ */
+function KeyboardMove(
+    config,
+    keyboard,
+    canvas
+) {
+
+  var self = this;
+
+  this._config = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.assign)({}, DEFAULT_CONFIG, config || {});
+
+  keyboard.addListener(arrowsListener);
+
+
+  function arrowsListener(context) {
+
+    var event = context.keyEvent,
+        config = self._config;
+
+    if (!keyboard.isCmd(event)) {
+      return;
+    }
+
+    if (keyboard.isKey([
+      'ArrowLeft', 'Left',
+      'ArrowUp', 'Up',
+      'ArrowDown', 'Down',
+      'ArrowRight', 'Right'
+    ], event)) {
+
+      var speed = (
+        keyboard.isShift(event) ?
+          config.moveSpeedAccelerated :
+          config.moveSpeed
+      );
+
+      var direction;
+
+      switch (event.key) {
+      case 'ArrowLeft':
+      case 'Left':
+        direction = 'left';
+        break;
+      case 'ArrowUp':
+      case 'Up':
+        direction = 'up';
+        break;
+      case 'ArrowRight':
+      case 'Right':
+        direction = 'right';
+        break;
+      case 'ArrowDown':
+      case 'Down':
+        direction = 'down';
+        break;
+      }
+
+      self.moveCanvas({
+        speed: speed,
+        direction: direction
+      });
+
+      return true;
+    }
+  }
+
+  /**
+   * @param {{
+   *   direction: 'up' | 'down' | 'left' | 'right';
+   *   speed: number;
+   * }} options
+   */
+  this.moveCanvas = function(options) {
+
+    var dx = 0,
+        dy = 0,
+        speed = options.speed;
+
+    var actualSpeed = speed / Math.min(Math.sqrt(canvas.viewbox().scale), 1);
+
+    switch (options.direction) {
+    case 'left': // Left
+      dx = actualSpeed;
+      break;
+    case 'up': // Up
+      dy = actualSpeed;
+      break;
+    case 'right': // Right
+      dx = -actualSpeed;
+      break;
+    case 'down': // Down
+      dy = -actualSpeed;
+      break;
+    }
+
+    canvas.scroll({
+      dx: dx,
+      dy: dy
+    });
+  };
+
+}
+
+
+KeyboardMove.$inject = [
+  'config.keyboardMove',
+  'keyboard',
+  'canvas'
+];
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/navigation/keyboard-move/index.js":
+/*!************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/navigation/keyboard-move/index.js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _features_keyboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../features/keyboard */ "../node_modules/diagram-js/lib/features/keyboard/index.js");
+/* harmony import */ var _KeyboardMove__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./KeyboardMove */ "../node_modules/diagram-js/lib/navigation/keyboard-move/KeyboardMove.js");
+
+
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _features_keyboard__WEBPACK_IMPORTED_MODULE_0__["default"]
+  ],
+  __init__: [ 'keyboardMove' ],
+  keyboardMove: [ 'type', _KeyboardMove__WEBPACK_IMPORTED_MODULE_1__["default"] ]
+});
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/navigation/movecanvas/MoveCanvas.js":
+/*!**************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/navigation/movecanvas/MoveCanvas.js ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ MoveCanvas)
+/* harmony export */ });
+/* harmony import */ var _util_Cursor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Cursor */ "../node_modules/diagram-js/lib/util/Cursor.js");
+/* harmony import */ var _util_ClickTrap__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../util/ClickTrap */ "../node_modules/diagram-js/lib/util/ClickTrap.js");
+/* harmony import */ var _util_PositionUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../util/PositionUtil */ "../node_modules/diagram-js/lib/util/PositionUtil.js");
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var _util_Event__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Event */ "../node_modules/diagram-js/lib/util/Event.js");
+
+
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ */
+
+var THRESHOLD = 15;
+
+
+/**
+ * Move the canvas via mouse.
+ *
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ */
+function MoveCanvas(eventBus, canvas) {
+
+  var context;
+
+
+  // listen for move on element mouse down;
+  // allow others to hook into the event before us though
+  // (dragging / element moving will do this)
+  eventBus.on('element.mousedown', 500, function(e) {
+    return handleStart(e.originalEvent);
+  });
+
+
+  function handleMove(event) {
+
+    var start = context.start,
+        button = context.button,
+        position = (0,_util_Event__WEBPACK_IMPORTED_MODULE_0__.toPoint)(event),
+        delta = (0,_util_PositionUtil__WEBPACK_IMPORTED_MODULE_1__.delta)(position, start);
+
+    if (!context.dragging && length(delta) > THRESHOLD) {
+      context.dragging = true;
+
+      if (button === 0) {
+        (0,_util_ClickTrap__WEBPACK_IMPORTED_MODULE_2__.install)(eventBus);
+      }
+
+      (0,_util_Cursor__WEBPACK_IMPORTED_MODULE_3__.set)('grab');
+    }
+
+    if (context.dragging) {
+
+      var lastPosition = context.last || context.start;
+
+      delta = (0,_util_PositionUtil__WEBPACK_IMPORTED_MODULE_1__.delta)(position, lastPosition);
+
+      canvas.scroll({
+        dx: delta.x,
+        dy: delta.y
+      });
+
+      context.last = position;
+    }
+
+    // prevent select
+    event.preventDefault();
+  }
+
+
+  function handleEnd(event) {
+    min_dom__WEBPACK_IMPORTED_MODULE_4__.event.unbind(document, 'mousemove', handleMove);
+    min_dom__WEBPACK_IMPORTED_MODULE_4__.event.unbind(document, 'mouseup', handleEnd);
+
+    context = null;
+
+    (0,_util_Cursor__WEBPACK_IMPORTED_MODULE_3__.unset)();
+  }
+
+  function handleStart(event) {
+
+    // event is already handled by '.djs-draggable'
+    if ((0,min_dom__WEBPACK_IMPORTED_MODULE_4__.closest)(event.target, '.djs-draggable')) {
+      return;
+    }
+
+    var button = event.button;
+
+    // reject right mouse button or modifier key
+    if (button >= 2 || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+
+    context = {
+      button: button,
+      start: (0,_util_Event__WEBPACK_IMPORTED_MODULE_0__.toPoint)(event)
+    };
+
+    min_dom__WEBPACK_IMPORTED_MODULE_4__.event.bind(document, 'mousemove', handleMove);
+    min_dom__WEBPACK_IMPORTED_MODULE_4__.event.bind(document, 'mouseup', handleEnd);
+
+    // we've handled the event
+    return true;
+  }
+
+  this.isActive = function() {
+    return !!context;
+  };
+
+}
+
+
+MoveCanvas.$inject = [
+  'eventBus',
+  'canvas'
+];
+
+
+
+// helpers ///////
+
+function length(point) {
+  return Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.y, 2));
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/navigation/movecanvas/index.js":
+/*!*********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/navigation/movecanvas/index.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _MoveCanvas__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./MoveCanvas */ "../node_modules/diagram-js/lib/navigation/movecanvas/MoveCanvas.js");
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [ 'moveCanvas' ],
+  moveCanvas: [ 'type', _MoveCanvas__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+});
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/navigation/touch/index.js":
+/*!****************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/navigation/touch/index.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _features_touch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../features/touch */ "../node_modules/diagram-js/lib/features/touch/index.js");
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __depends__: [
+    _features_touch__WEBPACK_IMPORTED_MODULE_0__["default"]
+  ]
+});
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/navigation/zoomscroll/ZoomScroll.js":
+/*!**************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/navigation/zoomscroll/ZoomScroll.js ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ ZoomScroll)
+/* harmony export */ });
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+/* harmony import */ var _ZoomUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ZoomUtil */ "../node_modules/diagram-js/lib/navigation/zoomscroll/ZoomUtil.js");
+/* harmony import */ var _util_Math__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../util/Math */ "../node_modules/diagram-js/lib/util/Math.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+
+
+
+
+
+
+
+
+/**
+ * @typedef {import('../../core/Canvas').default} Canvas
+ * @typedef {import('../../core/EventBus').default} EventBus
+ *
+ * @typedef {import('../../util/Types').Point} Point
+ */
+
+var sign = Math.sign || function(n) {
+  return n >= 0 ? 1 : -1;
+};
+
+var RANGE = { min: 0.2, max: 4 },
+    NUM_STEPS = 10;
+
+var DELTA_THRESHOLD = 0.1;
+
+var DEFAULT_SCALE = 0.75;
+
+/**
+ * An implementation of zooming and scrolling within the
+ * {@link Canvas} via the mouse wheel.
+ *
+ * Mouse wheel zooming / scrolling may be disabled using
+ * the {@link toggle(enabled)} method.
+ *
+ * @param {Object} [config]
+ * @param {boolean} [config.enabled=true] default enabled state
+ * @param {number} [config.scale=.75] scroll sensivity
+ * @param {EventBus} eventBus
+ * @param {Canvas} canvas
+ */
+function ZoomScroll(config, eventBus, canvas) {
+
+  config = config || {};
+
+  this._enabled = false;
+
+  this._canvas = canvas;
+  this._container = canvas._container;
+
+  this._handleWheel = (0,min_dash__WEBPACK_IMPORTED_MODULE_0__.bind)(this._handleWheel, this);
+
+  this._totalDelta = 0;
+  this._scale = config.scale || DEFAULT_SCALE;
+
+  var self = this;
+
+  eventBus.on('canvas.init', function(e) {
+    self._init(config.enabled !== false);
+  });
+}
+
+ZoomScroll.$inject = [
+  'config.zoomScroll',
+  'eventBus',
+  'canvas'
+];
+
+/**
+ * @param {Point} delta
+ */
+ZoomScroll.prototype.scroll = function scroll(delta) {
+  this._canvas.scroll(delta);
+};
+
+
+ZoomScroll.prototype.reset = function reset() {
+  this._canvas.zoom('fit-viewport');
+};
+
+/**
+ * Zoom depending on delta.
+ *
+ * @param {number} delta
+ * @param {Point} position
+ */
+ZoomScroll.prototype.zoom = function zoom(delta, position) {
+
+  // zoom with half the step size of stepZoom
+  var stepSize = (0,_ZoomUtil__WEBPACK_IMPORTED_MODULE_1__.getStepSize)(RANGE, NUM_STEPS * 2);
+
+  // add until threshold reached
+  this._totalDelta += delta;
+
+  if (Math.abs(this._totalDelta) > DELTA_THRESHOLD) {
+    this._zoom(delta, position, stepSize);
+
+    // reset
+    this._totalDelta = 0;
+  }
+};
+
+
+ZoomScroll.prototype._handleWheel = function handleWheel(event) {
+
+  // event is already handled by '.djs-scrollable'
+  if ((0,min_dom__WEBPACK_IMPORTED_MODULE_2__.closest)(event.target, '.djs-scrollable', true)) {
+    return;
+  }
+
+  var element = this._container;
+
+  event.preventDefault();
+
+  // pinch to zoom is mapped to wheel + ctrlKey = true
+  // in modern browsers (!)
+
+  var isZoom = event.ctrlKey;
+
+  var isHorizontalScroll = event.shiftKey;
+
+  var factor = -1 * this._scale,
+      delta;
+
+  if (isZoom) {
+    factor *= event.deltaMode === 0 ? 0.020 : 0.32;
+  } else {
+    factor *= event.deltaMode === 0 ? 1.0 : 16.0;
+  }
+
+  if (isZoom) {
+    var elementRect = element.getBoundingClientRect();
+
+    var offset = {
+      x: event.clientX - elementRect.left,
+      y: event.clientY - elementRect.top
+    };
+
+    delta = (
+      Math.sqrt(
+        Math.pow(event.deltaY, 2) +
+        Math.pow(event.deltaX, 2)
+      ) * sign(event.deltaY) * factor
+    );
+
+    // zoom in relative to diagram {x,y} coordinates
+    this.zoom(delta, offset);
+  } else {
+
+    if (isHorizontalScroll) {
+      delta = {
+        dx: factor * event.deltaY,
+        dy: 0
+      };
+    } else {
+      delta = {
+        dx: factor * event.deltaX,
+        dy: factor * event.deltaY
+      };
+    }
+
+    this.scroll(delta);
+  }
+};
+
+/**
+ * Zoom with fixed step size.
+ *
+ * @param {number} delta Zoom delta (1 for zooming in, -1 for zooming out).
+ * @param {Point} position
+ */
+ZoomScroll.prototype.stepZoom = function stepZoom(delta, position) {
+
+  var stepSize = (0,_ZoomUtil__WEBPACK_IMPORTED_MODULE_1__.getStepSize)(RANGE, NUM_STEPS);
+
+  this._zoom(delta, position, stepSize);
+};
+
+
+/**
+ * Zoom in/out given a step size.
+ *
+ * @param {number} delta
+ * @param {Point} position
+ * @param {number} stepSize
+ */
+ZoomScroll.prototype._zoom = function(delta, position, stepSize) {
+  var canvas = this._canvas;
+
+  var direction = delta > 0 ? 1 : -1;
+
+  var currentLinearZoomLevel = (0,_util_Math__WEBPACK_IMPORTED_MODULE_3__.log10)(canvas.zoom());
+
+  // snap to a proximate zoom step
+  var newLinearZoomLevel = Math.round(currentLinearZoomLevel / stepSize) * stepSize;
+
+  // increase or decrease one zoom step in the given direction
+  newLinearZoomLevel += stepSize * direction;
+
+  // calculate the absolute logarithmic zoom level based on the linear zoom level
+  // (e.g. 2 for an absolute x2 zoom)
+  var newLogZoomLevel = Math.pow(10, newLinearZoomLevel);
+
+  canvas.zoom((0,_ZoomUtil__WEBPACK_IMPORTED_MODULE_1__.cap)(RANGE, newLogZoomLevel), position);
+};
+
+
+/**
+ * Toggle the zoom scroll ability via mouse wheel.
+ *
+ * @param {boolean} [newEnabled] new enabled state
+ */
+ZoomScroll.prototype.toggle = function toggle(newEnabled) {
+
+  var element = this._container;
+  var handleWheel = this._handleWheel;
+
+  var oldEnabled = this._enabled;
+
+  if (typeof newEnabled === 'undefined') {
+    newEnabled = !oldEnabled;
+  }
+
+  // only react on actual changes
+  if (oldEnabled !== newEnabled) {
+
+    // add or remove wheel listener based on
+    // changed enabled state
+    min_dom__WEBPACK_IMPORTED_MODULE_2__.event[newEnabled ? 'bind' : 'unbind'](element, 'wheel', handleWheel, false);
+  }
+
+  this._enabled = newEnabled;
+
+  return newEnabled;
+};
+
+
+ZoomScroll.prototype._init = function(newEnabled) {
+  this.toggle(newEnabled);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/navigation/zoomscroll/ZoomUtil.js":
+/*!************************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/navigation/zoomscroll/ZoomUtil.js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   cap: () => (/* binding */ cap),
+/* harmony export */   getStepSize: () => (/* binding */ getStepSize)
+/* harmony export */ });
+/* harmony import */ var _util_Math__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../util/Math */ "../node_modules/diagram-js/lib/util/Math.js");
+
+
+/**
+ * Get step size for given range and number of steps.
+ *
+ * @param {Object} range
+ * @param {number} range.min
+ * @param {number} range.max
+ * @param {number} steps
+ */
+function getStepSize(range, steps) {
+
+  var minLinearRange = (0,_util_Math__WEBPACK_IMPORTED_MODULE_0__.log10)(range.min),
+      maxLinearRange = (0,_util_Math__WEBPACK_IMPORTED_MODULE_0__.log10)(range.max);
+
+  var absoluteLinearRange = Math.abs(minLinearRange) + Math.abs(maxLinearRange);
+
+  return absoluteLinearRange / steps;
+}
+
+/**
+ * @param {Object} range
+ * @param {number} range.min
+ * @param {number} range.max
+ * @param {number} scale
+ */
+function cap(range, scale) {
+  return Math.max(range.min, Math.min(range.max, scale));
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/navigation/zoomscroll/index.js":
+/*!*********************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/navigation/zoomscroll/index.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ZoomScroll__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ZoomScroll */ "../node_modules/diagram-js/lib/navigation/zoomscroll/ZoomScroll.js");
+
+
+
+/**
+ * @type { import('didi').ModuleDeclaration }
+ */
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  __init__: [ 'zoomScroll' ],
+  zoomScroll: [ 'type', _ZoomScroll__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+});
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/util/AttachUtil.js":
+/*!*********************************************************!*\
+  !*** ../node_modules/diagram-js/lib/util/AttachUtil.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getNewAttachPoint: () => (/* binding */ getNewAttachPoint),
+/* harmony export */   getNewAttachShapeDelta: () => (/* binding */ getNewAttachShapeDelta)
+/* harmony export */ });
+/* harmony import */ var _layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../layout/LayoutUtil */ "../node_modules/diagram-js/lib/layout/LayoutUtil.js");
+/* harmony import */ var _PositionUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PositionUtil */ "../node_modules/diagram-js/lib/util/PositionUtil.js");
+
+
+
+
+/**
+ * @typedef {import('../model/Types').Shape} Shape
+ *
+ * @typedef {import('../util/Types').Point} Point
+ * @typedef {import('../util/Types').Rect} Rect
+ */
+
+/**
+ * Calculates the absolute point relative to the new element's position.
+ *
+ * @param {Point} point [absolute]
+ * @param {Rect} oldBounds
+ * @param {Rect} newBounds
+ *
+ * @return {Point} point [absolute]
+ */
+function getNewAttachPoint(point, oldBounds, newBounds) {
+  var oldCenter = (0,_PositionUtil__WEBPACK_IMPORTED_MODULE_0__.center)(oldBounds),
+      newCenter = (0,_PositionUtil__WEBPACK_IMPORTED_MODULE_0__.center)(newBounds),
+      oldDelta = (0,_PositionUtil__WEBPACK_IMPORTED_MODULE_0__.delta)(point, oldCenter);
+
+  var newDelta = {
+    x: oldDelta.x * (newBounds.width / oldBounds.width),
+    y: oldDelta.y * (newBounds.height / oldBounds.height)
+  };
+
+  return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.roundPoint)({
+    x: newCenter.x + newDelta.x,
+    y: newCenter.y + newDelta.y
+  });
+}
+
+
+/**
+ * Calculates the shape's delta relative to a new position
+ * of a certain element's bounds.
+ *
+ * @param {Shape} shape
+ * @param {Rect} oldBounds
+ * @param {Rect} newBounds
+ *
+ * @return {Point} delta
+ */
+function getNewAttachShapeDelta(shape, oldBounds, newBounds) {
+  var shapeCenter = (0,_PositionUtil__WEBPACK_IMPORTED_MODULE_0__.center)(shape),
+      oldCenter = (0,_PositionUtil__WEBPACK_IMPORTED_MODULE_0__.center)(oldBounds),
+      newCenter = (0,_PositionUtil__WEBPACK_IMPORTED_MODULE_0__.center)(newBounds),
+      shapeDelta = (0,_PositionUtil__WEBPACK_IMPORTED_MODULE_0__.delta)(shape, shapeCenter),
+      oldCenterDelta = (0,_PositionUtil__WEBPACK_IMPORTED_MODULE_0__.delta)(shapeCenter, oldCenter),
+      stickyPositionDelta = getStickyPositionDelta(shapeCenter, oldBounds, newBounds);
+
+  if (stickyPositionDelta) {
+    return stickyPositionDelta;
+  }
+
+  var newCenterDelta = {
+    x: oldCenterDelta.x * (newBounds.width / oldBounds.width),
+    y: oldCenterDelta.y * (newBounds.height / oldBounds.height)
+  };
+
+  var newShapeCenter = {
+    x: newCenter.x + newCenterDelta.x,
+    y: newCenter.y + newCenterDelta.y
+  };
+
+  return (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.roundPoint)({
+    x: newShapeCenter.x + shapeDelta.x - shape.x,
+    y: newShapeCenter.y + shapeDelta.y - shape.y
+  });
+}
+
+function getStickyPositionDelta(oldShapeCenter, oldBounds, newBounds) {
+  var oldTRBL = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(oldBounds),
+      newTRBL = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.asTRBL)(newBounds);
+
+  if (isMoved(oldTRBL, newTRBL)) {
+    return null;
+  }
+
+  var oldOrientation = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getOrientation)(oldBounds, oldShapeCenter),
+      stickyPositionDelta,
+      newShapeCenter,
+      newOrientation;
+
+  if (oldOrientation === 'top') {
+    stickyPositionDelta = {
+      x: 0,
+      y: newTRBL.bottom - oldTRBL.bottom
+    };
+  } else if (oldOrientation === 'bottom') {
+    stickyPositionDelta = {
+      x: 0,
+      y: newTRBL.top - oldTRBL.top
+    };
+  } else if (oldOrientation === 'right') {
+    stickyPositionDelta = {
+      x: newTRBL.left - oldTRBL.left,
+      y: 0
+    };
+  } else if (oldOrientation === 'left') {
+    stickyPositionDelta = {
+      x: newTRBL.right - oldTRBL.right,
+      y: 0
+    };
+  } else {
+
+    // fallback to proportional movement for corner-placed attachments
+    return null;
+  }
+
+  newShapeCenter = {
+    x: oldShapeCenter.x + stickyPositionDelta.x,
+    y: oldShapeCenter.y + stickyPositionDelta.y
+  };
+
+  newOrientation = (0,_layout_LayoutUtil__WEBPACK_IMPORTED_MODULE_1__.getOrientation)(newBounds, newShapeCenter);
+
+  if (newOrientation !== oldOrientation) {
+
+    // fallback to proportional movement if orientation would otherwise change
+    return null;
+  }
+
+  return stickyPositionDelta;
+}
+
+function isMoved(oldTRBL, newTRBL) {
+  return isHorizontallyMoved(oldTRBL, newTRBL) || isVerticallyMoved(oldTRBL, newTRBL);
+}
+
+function isHorizontallyMoved(oldTRBL, newTRBL) {
+  return oldTRBL.right !== newTRBL.right && oldTRBL.left !== newTRBL.left;
+}
+
+function isVerticallyMoved(oldTRBL, newTRBL) {
+  return oldTRBL.top !== newTRBL.top && oldTRBL.bottom !== newTRBL.bottom;
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/util/ClickTrap.js":
+/*!********************************************************!*\
+  !*** ../node_modules/diagram-js/lib/util/ClickTrap.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   install: () => (/* binding */ install)
+/* harmony export */ });
+/**
+ * @typedef {import('../core/EventBus').EventBus} EventBus
+ */
+
+var TRAP_PRIORITY = 5000;
+
+/**
+ * Installs a click trap that prevents a ghost click following a dragging operation.
+ *
+ * @param {EventBus} eventBus
+ * @param {string} [eventName='element.click']
+ *
+ * @return {() => void} a function to immediately remove the installed trap.
+ */
+function install(eventBus, eventName) {
+
+  eventName = eventName || 'element.click';
+
+  function trap() {
+    return false;
+  }
+
+  eventBus.once(eventName, TRAP_PRIORITY, trap);
+
+  return function() {
+    eventBus.off(eventName, trap);
+  };
+}
+
+/***/ }),
+
 /***/ "../node_modules/diagram-js/lib/util/Collections.js":
 /*!**********************************************************!*\
   !*** ../node_modules/diagram-js/lib/util/Collections.js ***!
@@ -8944,6 +37818,55 @@ function indexOf(collection, element) {
   }
 
   return collection.indexOf(element);
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/util/Cursor.js":
+/*!*****************************************************!*\
+  !*** ../node_modules/diagram-js/lib/util/Cursor.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   has: () => (/* binding */ has),
+/* harmony export */   set: () => (/* binding */ set),
+/* harmony export */   unset: () => (/* binding */ unset)
+/* harmony export */ });
+/* harmony import */ var min_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dom */ "../node_modules/min-dom/dist/index.esm.js");
+
+
+var CURSOR_CLS_PATTERN = /^djs-cursor-.*$/;
+
+/**
+ * @param {string} mode
+ */
+function set(mode) {
+  var classes = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(document.body);
+
+  classes.removeMatching(CURSOR_CLS_PATTERN);
+
+  if (mode) {
+    classes.add('djs-cursor-' + mode);
+  }
+}
+
+function unset() {
+  set(null);
+}
+
+/**
+ * @param {string} mode
+ *
+ * @return {boolean}
+ */
+function has(mode) {
+  var classes = (0,min_dom__WEBPACK_IMPORTED_MODULE_0__.classes)(document.body);
+
+  return classes.has('djs-cursor-' + mode);
 }
 
 
@@ -9353,6 +38276,51 @@ function copyObject(src1, src2) {
 
 /***/ }),
 
+/***/ "../node_modules/diagram-js/lib/util/EscapeUtil.js":
+/*!*********************************************************!*\
+  !*** ../node_modules/diagram-js/lib/util/EscapeUtil.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   escapeCSS: () => (/* binding */ escapeCSS),
+/* harmony export */   escapeHTML: () => (/* binding */ escapeHTML)
+/* harmony export */ });
+/**
+ * @param {string} str
+ *
+ * @return {string}
+ */
+function escapeCSS(str) {
+  return CSS.escape(str);
+}
+
+var HTML_ESCAPE_MAP = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  '\'': '&#39;'
+};
+
+/**
+ * @param {string} str
+ *
+ * @return {string}
+ */
+function escapeHTML(str) {
+  str = '' + str;
+
+  return str && str.replace(/[&<>"']/g, function(match) {
+    return HTML_ESCAPE_MAP[match];
+  });
+}
+
+
+/***/ }),
+
 /***/ "../node_modules/diagram-js/lib/util/Event.js":
 /*!****************************************************!*\
   !*** ../node_modules/diagram-js/lib/util/Event.js ***!
@@ -9649,6 +38617,184 @@ IdGenerator.prototype.next = function() {
 
 /***/ }),
 
+/***/ "../node_modules/diagram-js/lib/util/LineIntersection.js":
+/*!***************************************************************!*\
+  !*** ../node_modules/diagram-js/lib/util/LineIntersection.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getApproxIntersection: () => (/* binding */ getApproxIntersection)
+/* harmony export */ });
+/* harmony import */ var _Geometry__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Geometry */ "../node_modules/diagram-js/lib/util/Geometry.js");
+/* harmony import */ var path_intersection__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! path-intersection */ "../node_modules/path-intersection/intersect.js");
+/* harmony import */ var path_intersection__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path_intersection__WEBPACK_IMPORTED_MODULE_0__);
+
+
+
+
+/**
+ * @typedef {import('../util/Types').Point} Point
+ *
+ * @typedef { {
+ *   bendpoint?: boolean;
+ *   index: number;
+ *   point: Point;
+ * } } Intersection
+ */
+
+var round = Math.round,
+    max = Math.max;
+
+
+function circlePath(center, r) {
+  var x = center.x,
+      y = center.y;
+
+  return [
+    [ 'M', x, y ],
+    [ 'm', 0, -r ],
+    [ 'a', r, r, 0, 1, 1, 0, 2 * r ],
+    [ 'a', r, r, 0, 1, 1, 0, -2 * r ],
+    [ 'z' ]
+  ];
+}
+
+function linePath(points) {
+  var segments = [];
+
+  points.forEach(function(p, idx) {
+    segments.push([ idx === 0 ? 'M' : 'L', p.x, p.y ]);
+  });
+
+  return segments;
+}
+
+
+var INTERSECTION_THRESHOLD = 10;
+
+/**
+ * @param {Point[]} waypoints
+ * @param {Point} reference
+ *
+ * @return {Intersection|null}
+ */
+function getBendpointIntersection(waypoints, reference) {
+
+  var i, w;
+
+  for (i = 0; (w = waypoints[i]); i++) {
+
+    if ((0,_Geometry__WEBPACK_IMPORTED_MODULE_1__.pointDistance)(w, reference) <= INTERSECTION_THRESHOLD) {
+      return {
+        point: waypoints[i],
+        bendpoint: true,
+        index: i
+      };
+    }
+  }
+
+  return null;
+}
+
+/**
+ * @param {Point[]} waypoints
+ * @param {Point} reference
+ *
+ * @return {Intersection|null}
+ */
+function getPathIntersection(waypoints, reference) {
+
+  var intersections = path_intersection__WEBPACK_IMPORTED_MODULE_0___default()(circlePath(reference, INTERSECTION_THRESHOLD), linePath(waypoints));
+
+  var a = intersections[0],
+      b = intersections[intersections.length - 1],
+      idx;
+
+  if (!a) {
+
+    // no intersection
+    return null;
+  }
+
+  if (a !== b) {
+
+    if (a.segment2 !== b.segment2) {
+
+      // we use the bendpoint in between both segments
+      // as the intersection point
+
+      idx = max(a.segment2, b.segment2) - 1;
+
+      return {
+        point: waypoints[idx],
+        bendpoint: true,
+        index: idx
+      };
+    }
+
+    return {
+      point: {
+        x: (round(a.x + b.x) / 2),
+        y: (round(a.y + b.y) / 2)
+      },
+      index: a.segment2
+    };
+  }
+
+  return {
+    point: {
+      x: round(a.x),
+      y: round(a.y)
+    },
+    index: a.segment2
+  };
+}
+
+/**
+ * Returns the closest point on the connection towards a given reference point.
+ *
+ * @param {Point[]} waypoints
+ * @param {Point} reference
+ *
+ * @return {Intersection|null}
+ */
+function getApproxIntersection(waypoints, reference) {
+  return getBendpointIntersection(waypoints, reference) || getPathIntersection(waypoints, reference);
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/util/Math.js":
+/*!***************************************************!*\
+  !*** ../node_modules/diagram-js/lib/util/Math.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   log10: () => (/* binding */ log10),
+/* harmony export */   substract: () => (/* reexport safe */ _PositionUtil__WEBPACK_IMPORTED_MODULE_0__.delta)
+/* harmony export */ });
+/* harmony import */ var _PositionUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PositionUtil */ "../node_modules/diagram-js/lib/util/PositionUtil.js");
+/**
+ * Get the logarithm of x with base 10.
+ *
+ * @param {number} x
+ */
+function log10(x) {
+  return Math.log(x) / Math.log(10);
+}
+
+
+
+
+/***/ }),
+
 /***/ "../node_modules/diagram-js/lib/util/ModelUtil.js":
 /*!********************************************************!*\
   !*** ../node_modules/diagram-js/lib/util/ModelUtil.js ***!
@@ -9816,6 +38962,99 @@ __webpack_require__.r(__webpack_exports__);
 function isMac() {
   return (/mac/i).test(navigator.platform);
 }
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/util/PositionUtil.js":
+/*!***********************************************************!*\
+  !*** ../node_modules/diagram-js/lib/util/PositionUtil.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   center: () => (/* binding */ center),
+/* harmony export */   delta: () => (/* binding */ delta)
+/* harmony export */ });
+/**
+ * @typedef {import('../util/Types').Point} Point
+ * @typedef {import('../util/Types').Rect} Rect
+ */
+
+/**
+ * @param {Rect} bounds
+ * @return {Point}
+ */
+function center(bounds) {
+  return {
+    x: bounds.x + (bounds.width / 2),
+    y: bounds.y + (bounds.height / 2)
+  };
+}
+
+
+/**
+ * @param {Point} a
+ * @param {Point} b
+ * @return {Point}
+ */
+function delta(a, b) {
+  return {
+    x: a.x - b.x,
+    y: a.y - b.y
+  };
+}
+
+
+/***/ }),
+
+/***/ "../node_modules/diagram-js/lib/util/Removal.js":
+/*!******************************************************!*\
+  !*** ../node_modules/diagram-js/lib/util/Removal.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   saveClear: () => (/* binding */ saveClear)
+/* harmony export */ });
+/**
+ * Remove from the beginning of a collection until it is empty.
+ *
+ * This is a null-safe operation that ensures elements
+ * are being removed from the given collection until the
+ * collection is empty.
+ *
+ * The implementation deals with the fact that a remove operation
+ * may touch, i.e. remove multiple elements in the collection
+ * at a time.
+ *
+ * @param {Object[]} [collection]
+ * @param {(element: Object) => void} removeFn
+ *
+ * @return {Object[]} the cleared collection
+ */
+function saveClear(collection, removeFn) {
+
+  if (typeof removeFn !== 'function') {
+    throw new Error('removeFn iterator must be a function');
+  }
+
+  if (!collection) {
+    return;
+  }
+
+  var e;
+
+  while ((e = collection[0])) {
+    removeFn(e);
+  }
+
+  return collection;
+}
+
 
 /***/ }),
 
@@ -11026,6 +40265,2656 @@ function arrayUnwrap(type, value) {
 }
 
 
+
+
+/***/ }),
+
+/***/ "../node_modules/hammerjs/hammer.js":
+/*!******************************************!*\
+  !*** ../node_modules/hammerjs/hammer.js ***!
+  \******************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_RESULT__;/*! Hammer.JS - v2.0.7 - 2016-04-22
+ * http://hammerjs.github.io/
+ *
+ * Copyright (c) 2016 Jorik Tangelder;
+ * Licensed under the MIT license */
+(function(window, document, exportName, undefined) {
+  'use strict';
+
+var VENDOR_PREFIXES = ['', 'webkit', 'Moz', 'MS', 'ms', 'o'];
+var TEST_ELEMENT = document.createElement('div');
+
+var TYPE_FUNCTION = 'function';
+
+var round = Math.round;
+var abs = Math.abs;
+var now = Date.now;
+
+/**
+ * set a timeout with a given scope
+ * @param {Function} fn
+ * @param {Number} timeout
+ * @param {Object} context
+ * @returns {number}
+ */
+function setTimeoutContext(fn, timeout, context) {
+    return setTimeout(bindFn(fn, context), timeout);
+}
+
+/**
+ * if the argument is an array, we want to execute the fn on each entry
+ * if it aint an array we don't want to do a thing.
+ * this is used by all the methods that accept a single and array argument.
+ * @param {*|Array} arg
+ * @param {String} fn
+ * @param {Object} [context]
+ * @returns {Boolean}
+ */
+function invokeArrayArg(arg, fn, context) {
+    if (Array.isArray(arg)) {
+        each(arg, context[fn], context);
+        return true;
+    }
+    return false;
+}
+
+/**
+ * walk objects and arrays
+ * @param {Object} obj
+ * @param {Function} iterator
+ * @param {Object} context
+ */
+function each(obj, iterator, context) {
+    var i;
+
+    if (!obj) {
+        return;
+    }
+
+    if (obj.forEach) {
+        obj.forEach(iterator, context);
+    } else if (obj.length !== undefined) {
+        i = 0;
+        while (i < obj.length) {
+            iterator.call(context, obj[i], i, obj);
+            i++;
+        }
+    } else {
+        for (i in obj) {
+            obj.hasOwnProperty(i) && iterator.call(context, obj[i], i, obj);
+        }
+    }
+}
+
+/**
+ * wrap a method with a deprecation warning and stack trace
+ * @param {Function} method
+ * @param {String} name
+ * @param {String} message
+ * @returns {Function} A new function wrapping the supplied method.
+ */
+function deprecate(method, name, message) {
+    var deprecationMessage = 'DEPRECATED METHOD: ' + name + '\n' + message + ' AT \n';
+    return function() {
+        var e = new Error('get-stack-trace');
+        var stack = e && e.stack ? e.stack.replace(/^[^\(]+?[\n$]/gm, '')
+            .replace(/^\s+at\s+/gm, '')
+            .replace(/^Object.<anonymous>\s*\(/gm, '{anonymous}()@') : 'Unknown Stack Trace';
+
+        var log = window.console && (window.console.warn || window.console.log);
+        if (log) {
+            log.call(window.console, deprecationMessage, stack);
+        }
+        return method.apply(this, arguments);
+    };
+}
+
+/**
+ * extend object.
+ * means that properties in dest will be overwritten by the ones in src.
+ * @param {Object} target
+ * @param {...Object} objects_to_assign
+ * @returns {Object} target
+ */
+var assign;
+if (typeof Object.assign !== 'function') {
+    assign = function assign(target) {
+        if (target === undefined || target === null) {
+            throw new TypeError('Cannot convert undefined or null to object');
+        }
+
+        var output = Object(target);
+        for (var index = 1; index < arguments.length; index++) {
+            var source = arguments[index];
+            if (source !== undefined && source !== null) {
+                for (var nextKey in source) {
+                    if (source.hasOwnProperty(nextKey)) {
+                        output[nextKey] = source[nextKey];
+                    }
+                }
+            }
+        }
+        return output;
+    };
+} else {
+    assign = Object.assign;
+}
+
+/**
+ * extend object.
+ * means that properties in dest will be overwritten by the ones in src.
+ * @param {Object} dest
+ * @param {Object} src
+ * @param {Boolean} [merge=false]
+ * @returns {Object} dest
+ */
+var extend = deprecate(function extend(dest, src, merge) {
+    var keys = Object.keys(src);
+    var i = 0;
+    while (i < keys.length) {
+        if (!merge || (merge && dest[keys[i]] === undefined)) {
+            dest[keys[i]] = src[keys[i]];
+        }
+        i++;
+    }
+    return dest;
+}, 'extend', 'Use `assign`.');
+
+/**
+ * merge the values from src in the dest.
+ * means that properties that exist in dest will not be overwritten by src
+ * @param {Object} dest
+ * @param {Object} src
+ * @returns {Object} dest
+ */
+var merge = deprecate(function merge(dest, src) {
+    return extend(dest, src, true);
+}, 'merge', 'Use `assign`.');
+
+/**
+ * simple class inheritance
+ * @param {Function} child
+ * @param {Function} base
+ * @param {Object} [properties]
+ */
+function inherit(child, base, properties) {
+    var baseP = base.prototype,
+        childP;
+
+    childP = child.prototype = Object.create(baseP);
+    childP.constructor = child;
+    childP._super = baseP;
+
+    if (properties) {
+        assign(childP, properties);
+    }
+}
+
+/**
+ * simple function bind
+ * @param {Function} fn
+ * @param {Object} context
+ * @returns {Function}
+ */
+function bindFn(fn, context) {
+    return function boundFn() {
+        return fn.apply(context, arguments);
+    };
+}
+
+/**
+ * let a boolean value also be a function that must return a boolean
+ * this first item in args will be used as the context
+ * @param {Boolean|Function} val
+ * @param {Array} [args]
+ * @returns {Boolean}
+ */
+function boolOrFn(val, args) {
+    if (typeof val == TYPE_FUNCTION) {
+        return val.apply(args ? args[0] || undefined : undefined, args);
+    }
+    return val;
+}
+
+/**
+ * use the val2 when val1 is undefined
+ * @param {*} val1
+ * @param {*} val2
+ * @returns {*}
+ */
+function ifUndefined(val1, val2) {
+    return (val1 === undefined) ? val2 : val1;
+}
+
+/**
+ * addEventListener with multiple events at once
+ * @param {EventTarget} target
+ * @param {String} types
+ * @param {Function} handler
+ */
+function addEventListeners(target, types, handler) {
+    each(splitStr(types), function(type) {
+        target.addEventListener(type, handler, false);
+    });
+}
+
+/**
+ * removeEventListener with multiple events at once
+ * @param {EventTarget} target
+ * @param {String} types
+ * @param {Function} handler
+ */
+function removeEventListeners(target, types, handler) {
+    each(splitStr(types), function(type) {
+        target.removeEventListener(type, handler, false);
+    });
+}
+
+/**
+ * find if a node is in the given parent
+ * @method hasParent
+ * @param {HTMLElement} node
+ * @param {HTMLElement} parent
+ * @return {Boolean} found
+ */
+function hasParent(node, parent) {
+    while (node) {
+        if (node == parent) {
+            return true;
+        }
+        node = node.parentNode;
+    }
+    return false;
+}
+
+/**
+ * small indexOf wrapper
+ * @param {String} str
+ * @param {String} find
+ * @returns {Boolean} found
+ */
+function inStr(str, find) {
+    return str.indexOf(find) > -1;
+}
+
+/**
+ * split string on whitespace
+ * @param {String} str
+ * @returns {Array} words
+ */
+function splitStr(str) {
+    return str.trim().split(/\s+/g);
+}
+
+/**
+ * find if a array contains the object using indexOf or a simple polyFill
+ * @param {Array} src
+ * @param {String} find
+ * @param {String} [findByKey]
+ * @return {Boolean|Number} false when not found, or the index
+ */
+function inArray(src, find, findByKey) {
+    if (src.indexOf && !findByKey) {
+        return src.indexOf(find);
+    } else {
+        var i = 0;
+        while (i < src.length) {
+            if ((findByKey && src[i][findByKey] == find) || (!findByKey && src[i] === find)) {
+                return i;
+            }
+            i++;
+        }
+        return -1;
+    }
+}
+
+/**
+ * convert array-like objects to real arrays
+ * @param {Object} obj
+ * @returns {Array}
+ */
+function toArray(obj) {
+    return Array.prototype.slice.call(obj, 0);
+}
+
+/**
+ * unique array with objects based on a key (like 'id') or just by the array's value
+ * @param {Array} src [{id:1},{id:2},{id:1}]
+ * @param {String} [key]
+ * @param {Boolean} [sort=False]
+ * @returns {Array} [{id:1},{id:2}]
+ */
+function uniqueArray(src, key, sort) {
+    var results = [];
+    var values = [];
+    var i = 0;
+
+    while (i < src.length) {
+        var val = key ? src[i][key] : src[i];
+        if (inArray(values, val) < 0) {
+            results.push(src[i]);
+        }
+        values[i] = val;
+        i++;
+    }
+
+    if (sort) {
+        if (!key) {
+            results = results.sort();
+        } else {
+            results = results.sort(function sortUniqueArray(a, b) {
+                return a[key] > b[key];
+            });
+        }
+    }
+
+    return results;
+}
+
+/**
+ * get the prefixed property
+ * @param {Object} obj
+ * @param {String} property
+ * @returns {String|Undefined} prefixed
+ */
+function prefixed(obj, property) {
+    var prefix, prop;
+    var camelProp = property[0].toUpperCase() + property.slice(1);
+
+    var i = 0;
+    while (i < VENDOR_PREFIXES.length) {
+        prefix = VENDOR_PREFIXES[i];
+        prop = (prefix) ? prefix + camelProp : property;
+
+        if (prop in obj) {
+            return prop;
+        }
+        i++;
+    }
+    return undefined;
+}
+
+/**
+ * get a unique id
+ * @returns {number} uniqueId
+ */
+var _uniqueId = 1;
+function uniqueId() {
+    return _uniqueId++;
+}
+
+/**
+ * get the window object of an element
+ * @param {HTMLElement} element
+ * @returns {DocumentView|Window}
+ */
+function getWindowForElement(element) {
+    var doc = element.ownerDocument || element;
+    return (doc.defaultView || doc.parentWindow || window);
+}
+
+var MOBILE_REGEX = /mobile|tablet|ip(ad|hone|od)|android/i;
+
+var SUPPORT_TOUCH = ('ontouchstart' in window);
+var SUPPORT_POINTER_EVENTS = prefixed(window, 'PointerEvent') !== undefined;
+var SUPPORT_ONLY_TOUCH = SUPPORT_TOUCH && MOBILE_REGEX.test(navigator.userAgent);
+
+var INPUT_TYPE_TOUCH = 'touch';
+var INPUT_TYPE_PEN = 'pen';
+var INPUT_TYPE_MOUSE = 'mouse';
+var INPUT_TYPE_KINECT = 'kinect';
+
+var COMPUTE_INTERVAL = 25;
+
+var INPUT_START = 1;
+var INPUT_MOVE = 2;
+var INPUT_END = 4;
+var INPUT_CANCEL = 8;
+
+var DIRECTION_NONE = 1;
+var DIRECTION_LEFT = 2;
+var DIRECTION_RIGHT = 4;
+var DIRECTION_UP = 8;
+var DIRECTION_DOWN = 16;
+
+var DIRECTION_HORIZONTAL = DIRECTION_LEFT | DIRECTION_RIGHT;
+var DIRECTION_VERTICAL = DIRECTION_UP | DIRECTION_DOWN;
+var DIRECTION_ALL = DIRECTION_HORIZONTAL | DIRECTION_VERTICAL;
+
+var PROPS_XY = ['x', 'y'];
+var PROPS_CLIENT_XY = ['clientX', 'clientY'];
+
+/**
+ * create new input type manager
+ * @param {Manager} manager
+ * @param {Function} callback
+ * @returns {Input}
+ * @constructor
+ */
+function Input(manager, callback) {
+    var self = this;
+    this.manager = manager;
+    this.callback = callback;
+    this.element = manager.element;
+    this.target = manager.options.inputTarget;
+
+    // smaller wrapper around the handler, for the scope and the enabled state of the manager,
+    // so when disabled the input events are completely bypassed.
+    this.domHandler = function(ev) {
+        if (boolOrFn(manager.options.enable, [manager])) {
+            self.handler(ev);
+        }
+    };
+
+    this.init();
+
+}
+
+Input.prototype = {
+    /**
+     * should handle the inputEvent data and trigger the callback
+     * @virtual
+     */
+    handler: function() { },
+
+    /**
+     * bind the events
+     */
+    init: function() {
+        this.evEl && addEventListeners(this.element, this.evEl, this.domHandler);
+        this.evTarget && addEventListeners(this.target, this.evTarget, this.domHandler);
+        this.evWin && addEventListeners(getWindowForElement(this.element), this.evWin, this.domHandler);
+    },
+
+    /**
+     * unbind the events
+     */
+    destroy: function() {
+        this.evEl && removeEventListeners(this.element, this.evEl, this.domHandler);
+        this.evTarget && removeEventListeners(this.target, this.evTarget, this.domHandler);
+        this.evWin && removeEventListeners(getWindowForElement(this.element), this.evWin, this.domHandler);
+    }
+};
+
+/**
+ * create new input type manager
+ * called by the Manager constructor
+ * @param {Hammer} manager
+ * @returns {Input}
+ */
+function createInputInstance(manager) {
+    var Type;
+    var inputClass = manager.options.inputClass;
+
+    if (inputClass) {
+        Type = inputClass;
+    } else if (SUPPORT_POINTER_EVENTS) {
+        Type = PointerEventInput;
+    } else if (SUPPORT_ONLY_TOUCH) {
+        Type = TouchInput;
+    } else if (!SUPPORT_TOUCH) {
+        Type = MouseInput;
+    } else {
+        Type = TouchMouseInput;
+    }
+    return new (Type)(manager, inputHandler);
+}
+
+/**
+ * handle input events
+ * @param {Manager} manager
+ * @param {String} eventType
+ * @param {Object} input
+ */
+function inputHandler(manager, eventType, input) {
+    var pointersLen = input.pointers.length;
+    var changedPointersLen = input.changedPointers.length;
+    var isFirst = (eventType & INPUT_START && (pointersLen - changedPointersLen === 0));
+    var isFinal = (eventType & (INPUT_END | INPUT_CANCEL) && (pointersLen - changedPointersLen === 0));
+
+    input.isFirst = !!isFirst;
+    input.isFinal = !!isFinal;
+
+    if (isFirst) {
+        manager.session = {};
+    }
+
+    // source event is the normalized value of the domEvents
+    // like 'touchstart, mouseup, pointerdown'
+    input.eventType = eventType;
+
+    // compute scale, rotation etc
+    computeInputData(manager, input);
+
+    // emit secret event
+    manager.emit('hammer.input', input);
+
+    manager.recognize(input);
+    manager.session.prevInput = input;
+}
+
+/**
+ * extend the data with some usable properties like scale, rotate, velocity etc
+ * @param {Object} manager
+ * @param {Object} input
+ */
+function computeInputData(manager, input) {
+    var session = manager.session;
+    var pointers = input.pointers;
+    var pointersLength = pointers.length;
+
+    // store the first input to calculate the distance and direction
+    if (!session.firstInput) {
+        session.firstInput = simpleCloneInputData(input);
+    }
+
+    // to compute scale and rotation we need to store the multiple touches
+    if (pointersLength > 1 && !session.firstMultiple) {
+        session.firstMultiple = simpleCloneInputData(input);
+    } else if (pointersLength === 1) {
+        session.firstMultiple = false;
+    }
+
+    var firstInput = session.firstInput;
+    var firstMultiple = session.firstMultiple;
+    var offsetCenter = firstMultiple ? firstMultiple.center : firstInput.center;
+
+    var center = input.center = getCenter(pointers);
+    input.timeStamp = now();
+    input.deltaTime = input.timeStamp - firstInput.timeStamp;
+
+    input.angle = getAngle(offsetCenter, center);
+    input.distance = getDistance(offsetCenter, center);
+
+    computeDeltaXY(session, input);
+    input.offsetDirection = getDirection(input.deltaX, input.deltaY);
+
+    var overallVelocity = getVelocity(input.deltaTime, input.deltaX, input.deltaY);
+    input.overallVelocityX = overallVelocity.x;
+    input.overallVelocityY = overallVelocity.y;
+    input.overallVelocity = (abs(overallVelocity.x) > abs(overallVelocity.y)) ? overallVelocity.x : overallVelocity.y;
+
+    input.scale = firstMultiple ? getScale(firstMultiple.pointers, pointers) : 1;
+    input.rotation = firstMultiple ? getRotation(firstMultiple.pointers, pointers) : 0;
+
+    input.maxPointers = !session.prevInput ? input.pointers.length : ((input.pointers.length >
+        session.prevInput.maxPointers) ? input.pointers.length : session.prevInput.maxPointers);
+
+    computeIntervalInputData(session, input);
+
+    // find the correct target
+    var target = manager.element;
+    if (hasParent(input.srcEvent.target, target)) {
+        target = input.srcEvent.target;
+    }
+    input.target = target;
+}
+
+function computeDeltaXY(session, input) {
+    var center = input.center;
+    var offset = session.offsetDelta || {};
+    var prevDelta = session.prevDelta || {};
+    var prevInput = session.prevInput || {};
+
+    if (input.eventType === INPUT_START || prevInput.eventType === INPUT_END) {
+        prevDelta = session.prevDelta = {
+            x: prevInput.deltaX || 0,
+            y: prevInput.deltaY || 0
+        };
+
+        offset = session.offsetDelta = {
+            x: center.x,
+            y: center.y
+        };
+    }
+
+    input.deltaX = prevDelta.x + (center.x - offset.x);
+    input.deltaY = prevDelta.y + (center.y - offset.y);
+}
+
+/**
+ * velocity is calculated every x ms
+ * @param {Object} session
+ * @param {Object} input
+ */
+function computeIntervalInputData(session, input) {
+    var last = session.lastInterval || input,
+        deltaTime = input.timeStamp - last.timeStamp,
+        velocity, velocityX, velocityY, direction;
+
+    if (input.eventType != INPUT_CANCEL && (deltaTime > COMPUTE_INTERVAL || last.velocity === undefined)) {
+        var deltaX = input.deltaX - last.deltaX;
+        var deltaY = input.deltaY - last.deltaY;
+
+        var v = getVelocity(deltaTime, deltaX, deltaY);
+        velocityX = v.x;
+        velocityY = v.y;
+        velocity = (abs(v.x) > abs(v.y)) ? v.x : v.y;
+        direction = getDirection(deltaX, deltaY);
+
+        session.lastInterval = input;
+    } else {
+        // use latest velocity info if it doesn't overtake a minimum period
+        velocity = last.velocity;
+        velocityX = last.velocityX;
+        velocityY = last.velocityY;
+        direction = last.direction;
+    }
+
+    input.velocity = velocity;
+    input.velocityX = velocityX;
+    input.velocityY = velocityY;
+    input.direction = direction;
+}
+
+/**
+ * create a simple clone from the input used for storage of firstInput and firstMultiple
+ * @param {Object} input
+ * @returns {Object} clonedInputData
+ */
+function simpleCloneInputData(input) {
+    // make a simple copy of the pointers because we will get a reference if we don't
+    // we only need clientXY for the calculations
+    var pointers = [];
+    var i = 0;
+    while (i < input.pointers.length) {
+        pointers[i] = {
+            clientX: round(input.pointers[i].clientX),
+            clientY: round(input.pointers[i].clientY)
+        };
+        i++;
+    }
+
+    return {
+        timeStamp: now(),
+        pointers: pointers,
+        center: getCenter(pointers),
+        deltaX: input.deltaX,
+        deltaY: input.deltaY
+    };
+}
+
+/**
+ * get the center of all the pointers
+ * @param {Array} pointers
+ * @return {Object} center contains `x` and `y` properties
+ */
+function getCenter(pointers) {
+    var pointersLength = pointers.length;
+
+    // no need to loop when only one touch
+    if (pointersLength === 1) {
+        return {
+            x: round(pointers[0].clientX),
+            y: round(pointers[0].clientY)
+        };
+    }
+
+    var x = 0, y = 0, i = 0;
+    while (i < pointersLength) {
+        x += pointers[i].clientX;
+        y += pointers[i].clientY;
+        i++;
+    }
+
+    return {
+        x: round(x / pointersLength),
+        y: round(y / pointersLength)
+    };
+}
+
+/**
+ * calculate the velocity between two points. unit is in px per ms.
+ * @param {Number} deltaTime
+ * @param {Number} x
+ * @param {Number} y
+ * @return {Object} velocity `x` and `y`
+ */
+function getVelocity(deltaTime, x, y) {
+    return {
+        x: x / deltaTime || 0,
+        y: y / deltaTime || 0
+    };
+}
+
+/**
+ * get the direction between two points
+ * @param {Number} x
+ * @param {Number} y
+ * @return {Number} direction
+ */
+function getDirection(x, y) {
+    if (x === y) {
+        return DIRECTION_NONE;
+    }
+
+    if (abs(x) >= abs(y)) {
+        return x < 0 ? DIRECTION_LEFT : DIRECTION_RIGHT;
+    }
+    return y < 0 ? DIRECTION_UP : DIRECTION_DOWN;
+}
+
+/**
+ * calculate the absolute distance between two points
+ * @param {Object} p1 {x, y}
+ * @param {Object} p2 {x, y}
+ * @param {Array} [props] containing x and y keys
+ * @return {Number} distance
+ */
+function getDistance(p1, p2, props) {
+    if (!props) {
+        props = PROPS_XY;
+    }
+    var x = p2[props[0]] - p1[props[0]],
+        y = p2[props[1]] - p1[props[1]];
+
+    return Math.sqrt((x * x) + (y * y));
+}
+
+/**
+ * calculate the angle between two coordinates
+ * @param {Object} p1
+ * @param {Object} p2
+ * @param {Array} [props] containing x and y keys
+ * @return {Number} angle
+ */
+function getAngle(p1, p2, props) {
+    if (!props) {
+        props = PROPS_XY;
+    }
+    var x = p2[props[0]] - p1[props[0]],
+        y = p2[props[1]] - p1[props[1]];
+    return Math.atan2(y, x) * 180 / Math.PI;
+}
+
+/**
+ * calculate the rotation degrees between two pointersets
+ * @param {Array} start array of pointers
+ * @param {Array} end array of pointers
+ * @return {Number} rotation
+ */
+function getRotation(start, end) {
+    return getAngle(end[1], end[0], PROPS_CLIENT_XY) + getAngle(start[1], start[0], PROPS_CLIENT_XY);
+}
+
+/**
+ * calculate the scale factor between two pointersets
+ * no scale is 1, and goes down to 0 when pinched together, and bigger when pinched out
+ * @param {Array} start array of pointers
+ * @param {Array} end array of pointers
+ * @return {Number} scale
+ */
+function getScale(start, end) {
+    return getDistance(end[0], end[1], PROPS_CLIENT_XY) / getDistance(start[0], start[1], PROPS_CLIENT_XY);
+}
+
+var MOUSE_INPUT_MAP = {
+    mousedown: INPUT_START,
+    mousemove: INPUT_MOVE,
+    mouseup: INPUT_END
+};
+
+var MOUSE_ELEMENT_EVENTS = 'mousedown';
+var MOUSE_WINDOW_EVENTS = 'mousemove mouseup';
+
+/**
+ * Mouse events input
+ * @constructor
+ * @extends Input
+ */
+function MouseInput() {
+    this.evEl = MOUSE_ELEMENT_EVENTS;
+    this.evWin = MOUSE_WINDOW_EVENTS;
+
+    this.pressed = false; // mousedown state
+
+    Input.apply(this, arguments);
+}
+
+inherit(MouseInput, Input, {
+    /**
+     * handle mouse events
+     * @param {Object} ev
+     */
+    handler: function MEhandler(ev) {
+        var eventType = MOUSE_INPUT_MAP[ev.type];
+
+        // on start we want to have the left mouse button down
+        if (eventType & INPUT_START && ev.button === 0) {
+            this.pressed = true;
+        }
+
+        if (eventType & INPUT_MOVE && ev.which !== 1) {
+            eventType = INPUT_END;
+        }
+
+        // mouse must be down
+        if (!this.pressed) {
+            return;
+        }
+
+        if (eventType & INPUT_END) {
+            this.pressed = false;
+        }
+
+        this.callback(this.manager, eventType, {
+            pointers: [ev],
+            changedPointers: [ev],
+            pointerType: INPUT_TYPE_MOUSE,
+            srcEvent: ev
+        });
+    }
+});
+
+var POINTER_INPUT_MAP = {
+    pointerdown: INPUT_START,
+    pointermove: INPUT_MOVE,
+    pointerup: INPUT_END,
+    pointercancel: INPUT_CANCEL,
+    pointerout: INPUT_CANCEL
+};
+
+// in IE10 the pointer types is defined as an enum
+var IE10_POINTER_TYPE_ENUM = {
+    2: INPUT_TYPE_TOUCH,
+    3: INPUT_TYPE_PEN,
+    4: INPUT_TYPE_MOUSE,
+    5: INPUT_TYPE_KINECT // see https://twitter.com/jacobrossi/status/480596438489890816
+};
+
+var POINTER_ELEMENT_EVENTS = 'pointerdown';
+var POINTER_WINDOW_EVENTS = 'pointermove pointerup pointercancel';
+
+// IE10 has prefixed support, and case-sensitive
+if (window.MSPointerEvent && !window.PointerEvent) {
+    POINTER_ELEMENT_EVENTS = 'MSPointerDown';
+    POINTER_WINDOW_EVENTS = 'MSPointerMove MSPointerUp MSPointerCancel';
+}
+
+/**
+ * Pointer events input
+ * @constructor
+ * @extends Input
+ */
+function PointerEventInput() {
+    this.evEl = POINTER_ELEMENT_EVENTS;
+    this.evWin = POINTER_WINDOW_EVENTS;
+
+    Input.apply(this, arguments);
+
+    this.store = (this.manager.session.pointerEvents = []);
+}
+
+inherit(PointerEventInput, Input, {
+    /**
+     * handle mouse events
+     * @param {Object} ev
+     */
+    handler: function PEhandler(ev) {
+        var store = this.store;
+        var removePointer = false;
+
+        var eventTypeNormalized = ev.type.toLowerCase().replace('ms', '');
+        var eventType = POINTER_INPUT_MAP[eventTypeNormalized];
+        var pointerType = IE10_POINTER_TYPE_ENUM[ev.pointerType] || ev.pointerType;
+
+        var isTouch = (pointerType == INPUT_TYPE_TOUCH);
+
+        // get index of the event in the store
+        var storeIndex = inArray(store, ev.pointerId, 'pointerId');
+
+        // start and mouse must be down
+        if (eventType & INPUT_START && (ev.button === 0 || isTouch)) {
+            if (storeIndex < 0) {
+                store.push(ev);
+                storeIndex = store.length - 1;
+            }
+        } else if (eventType & (INPUT_END | INPUT_CANCEL)) {
+            removePointer = true;
+        }
+
+        // it not found, so the pointer hasn't been down (so it's probably a hover)
+        if (storeIndex < 0) {
+            return;
+        }
+
+        // update the event in the store
+        store[storeIndex] = ev;
+
+        this.callback(this.manager, eventType, {
+            pointers: store,
+            changedPointers: [ev],
+            pointerType: pointerType,
+            srcEvent: ev
+        });
+
+        if (removePointer) {
+            // remove from the store
+            store.splice(storeIndex, 1);
+        }
+    }
+});
+
+var SINGLE_TOUCH_INPUT_MAP = {
+    touchstart: INPUT_START,
+    touchmove: INPUT_MOVE,
+    touchend: INPUT_END,
+    touchcancel: INPUT_CANCEL
+};
+
+var SINGLE_TOUCH_TARGET_EVENTS = 'touchstart';
+var SINGLE_TOUCH_WINDOW_EVENTS = 'touchstart touchmove touchend touchcancel';
+
+/**
+ * Touch events input
+ * @constructor
+ * @extends Input
+ */
+function SingleTouchInput() {
+    this.evTarget = SINGLE_TOUCH_TARGET_EVENTS;
+    this.evWin = SINGLE_TOUCH_WINDOW_EVENTS;
+    this.started = false;
+
+    Input.apply(this, arguments);
+}
+
+inherit(SingleTouchInput, Input, {
+    handler: function TEhandler(ev) {
+        var type = SINGLE_TOUCH_INPUT_MAP[ev.type];
+
+        // should we handle the touch events?
+        if (type === INPUT_START) {
+            this.started = true;
+        }
+
+        if (!this.started) {
+            return;
+        }
+
+        var touches = normalizeSingleTouches.call(this, ev, type);
+
+        // when done, reset the started state
+        if (type & (INPUT_END | INPUT_CANCEL) && touches[0].length - touches[1].length === 0) {
+            this.started = false;
+        }
+
+        this.callback(this.manager, type, {
+            pointers: touches[0],
+            changedPointers: touches[1],
+            pointerType: INPUT_TYPE_TOUCH,
+            srcEvent: ev
+        });
+    }
+});
+
+/**
+ * @this {TouchInput}
+ * @param {Object} ev
+ * @param {Number} type flag
+ * @returns {undefined|Array} [all, changed]
+ */
+function normalizeSingleTouches(ev, type) {
+    var all = toArray(ev.touches);
+    var changed = toArray(ev.changedTouches);
+
+    if (type & (INPUT_END | INPUT_CANCEL)) {
+        all = uniqueArray(all.concat(changed), 'identifier', true);
+    }
+
+    return [all, changed];
+}
+
+var TOUCH_INPUT_MAP = {
+    touchstart: INPUT_START,
+    touchmove: INPUT_MOVE,
+    touchend: INPUT_END,
+    touchcancel: INPUT_CANCEL
+};
+
+var TOUCH_TARGET_EVENTS = 'touchstart touchmove touchend touchcancel';
+
+/**
+ * Multi-user touch events input
+ * @constructor
+ * @extends Input
+ */
+function TouchInput() {
+    this.evTarget = TOUCH_TARGET_EVENTS;
+    this.targetIds = {};
+
+    Input.apply(this, arguments);
+}
+
+inherit(TouchInput, Input, {
+    handler: function MTEhandler(ev) {
+        var type = TOUCH_INPUT_MAP[ev.type];
+        var touches = getTouches.call(this, ev, type);
+        if (!touches) {
+            return;
+        }
+
+        this.callback(this.manager, type, {
+            pointers: touches[0],
+            changedPointers: touches[1],
+            pointerType: INPUT_TYPE_TOUCH,
+            srcEvent: ev
+        });
+    }
+});
+
+/**
+ * @this {TouchInput}
+ * @param {Object} ev
+ * @param {Number} type flag
+ * @returns {undefined|Array} [all, changed]
+ */
+function getTouches(ev, type) {
+    var allTouches = toArray(ev.touches);
+    var targetIds = this.targetIds;
+
+    // when there is only one touch, the process can be simplified
+    if (type & (INPUT_START | INPUT_MOVE) && allTouches.length === 1) {
+        targetIds[allTouches[0].identifier] = true;
+        return [allTouches, allTouches];
+    }
+
+    var i,
+        targetTouches,
+        changedTouches = toArray(ev.changedTouches),
+        changedTargetTouches = [],
+        target = this.target;
+
+    // get target touches from touches
+    targetTouches = allTouches.filter(function(touch) {
+        return hasParent(touch.target, target);
+    });
+
+    // collect touches
+    if (type === INPUT_START) {
+        i = 0;
+        while (i < targetTouches.length) {
+            targetIds[targetTouches[i].identifier] = true;
+            i++;
+        }
+    }
+
+    // filter changed touches to only contain touches that exist in the collected target ids
+    i = 0;
+    while (i < changedTouches.length) {
+        if (targetIds[changedTouches[i].identifier]) {
+            changedTargetTouches.push(changedTouches[i]);
+        }
+
+        // cleanup removed touches
+        if (type & (INPUT_END | INPUT_CANCEL)) {
+            delete targetIds[changedTouches[i].identifier];
+        }
+        i++;
+    }
+
+    if (!changedTargetTouches.length) {
+        return;
+    }
+
+    return [
+        // merge targetTouches with changedTargetTouches so it contains ALL touches, including 'end' and 'cancel'
+        uniqueArray(targetTouches.concat(changedTargetTouches), 'identifier', true),
+        changedTargetTouches
+    ];
+}
+
+/**
+ * Combined touch and mouse input
+ *
+ * Touch has a higher priority then mouse, and while touching no mouse events are allowed.
+ * This because touch devices also emit mouse events while doing a touch.
+ *
+ * @constructor
+ * @extends Input
+ */
+
+var DEDUP_TIMEOUT = 2500;
+var DEDUP_DISTANCE = 25;
+
+function TouchMouseInput() {
+    Input.apply(this, arguments);
+
+    var handler = bindFn(this.handler, this);
+    this.touch = new TouchInput(this.manager, handler);
+    this.mouse = new MouseInput(this.manager, handler);
+
+    this.primaryTouch = null;
+    this.lastTouches = [];
+}
+
+inherit(TouchMouseInput, Input, {
+    /**
+     * handle mouse and touch events
+     * @param {Hammer} manager
+     * @param {String} inputEvent
+     * @param {Object} inputData
+     */
+    handler: function TMEhandler(manager, inputEvent, inputData) {
+        var isTouch = (inputData.pointerType == INPUT_TYPE_TOUCH),
+            isMouse = (inputData.pointerType == INPUT_TYPE_MOUSE);
+
+        if (isMouse && inputData.sourceCapabilities && inputData.sourceCapabilities.firesTouchEvents) {
+            return;
+        }
+
+        // when we're in a touch event, record touches to  de-dupe synthetic mouse event
+        if (isTouch) {
+            recordTouches.call(this, inputEvent, inputData);
+        } else if (isMouse && isSyntheticEvent.call(this, inputData)) {
+            return;
+        }
+
+        this.callback(manager, inputEvent, inputData);
+    },
+
+    /**
+     * remove the event listeners
+     */
+    destroy: function destroy() {
+        this.touch.destroy();
+        this.mouse.destroy();
+    }
+});
+
+function recordTouches(eventType, eventData) {
+    if (eventType & INPUT_START) {
+        this.primaryTouch = eventData.changedPointers[0].identifier;
+        setLastTouch.call(this, eventData);
+    } else if (eventType & (INPUT_END | INPUT_CANCEL)) {
+        setLastTouch.call(this, eventData);
+    }
+}
+
+function setLastTouch(eventData) {
+    var touch = eventData.changedPointers[0];
+
+    if (touch.identifier === this.primaryTouch) {
+        var lastTouch = {x: touch.clientX, y: touch.clientY};
+        this.lastTouches.push(lastTouch);
+        var lts = this.lastTouches;
+        var removeLastTouch = function() {
+            var i = lts.indexOf(lastTouch);
+            if (i > -1) {
+                lts.splice(i, 1);
+            }
+        };
+        setTimeout(removeLastTouch, DEDUP_TIMEOUT);
+    }
+}
+
+function isSyntheticEvent(eventData) {
+    var x = eventData.srcEvent.clientX, y = eventData.srcEvent.clientY;
+    for (var i = 0; i < this.lastTouches.length; i++) {
+        var t = this.lastTouches[i];
+        var dx = Math.abs(x - t.x), dy = Math.abs(y - t.y);
+        if (dx <= DEDUP_DISTANCE && dy <= DEDUP_DISTANCE) {
+            return true;
+        }
+    }
+    return false;
+}
+
+var PREFIXED_TOUCH_ACTION = prefixed(TEST_ELEMENT.style, 'touchAction');
+var NATIVE_TOUCH_ACTION = PREFIXED_TOUCH_ACTION !== undefined;
+
+// magical touchAction value
+var TOUCH_ACTION_COMPUTE = 'compute';
+var TOUCH_ACTION_AUTO = 'auto';
+var TOUCH_ACTION_MANIPULATION = 'manipulation'; // not implemented
+var TOUCH_ACTION_NONE = 'none';
+var TOUCH_ACTION_PAN_X = 'pan-x';
+var TOUCH_ACTION_PAN_Y = 'pan-y';
+var TOUCH_ACTION_MAP = getTouchActionProps();
+
+/**
+ * Touch Action
+ * sets the touchAction property or uses the js alternative
+ * @param {Manager} manager
+ * @param {String} value
+ * @constructor
+ */
+function TouchAction(manager, value) {
+    this.manager = manager;
+    this.set(value);
+}
+
+TouchAction.prototype = {
+    /**
+     * set the touchAction value on the element or enable the polyfill
+     * @param {String} value
+     */
+    set: function(value) {
+        // find out the touch-action by the event handlers
+        if (value == TOUCH_ACTION_COMPUTE) {
+            value = this.compute();
+        }
+
+        if (NATIVE_TOUCH_ACTION && this.manager.element.style && TOUCH_ACTION_MAP[value]) {
+            this.manager.element.style[PREFIXED_TOUCH_ACTION] = value;
+        }
+        this.actions = value.toLowerCase().trim();
+    },
+
+    /**
+     * just re-set the touchAction value
+     */
+    update: function() {
+        this.set(this.manager.options.touchAction);
+    },
+
+    /**
+     * compute the value for the touchAction property based on the recognizer's settings
+     * @returns {String} value
+     */
+    compute: function() {
+        var actions = [];
+        each(this.manager.recognizers, function(recognizer) {
+            if (boolOrFn(recognizer.options.enable, [recognizer])) {
+                actions = actions.concat(recognizer.getTouchAction());
+            }
+        });
+        return cleanTouchActions(actions.join(' '));
+    },
+
+    /**
+     * this method is called on each input cycle and provides the preventing of the browser behavior
+     * @param {Object} input
+     */
+    preventDefaults: function(input) {
+        var srcEvent = input.srcEvent;
+        var direction = input.offsetDirection;
+
+        // if the touch action did prevented once this session
+        if (this.manager.session.prevented) {
+            srcEvent.preventDefault();
+            return;
+        }
+
+        var actions = this.actions;
+        var hasNone = inStr(actions, TOUCH_ACTION_NONE) && !TOUCH_ACTION_MAP[TOUCH_ACTION_NONE];
+        var hasPanY = inStr(actions, TOUCH_ACTION_PAN_Y) && !TOUCH_ACTION_MAP[TOUCH_ACTION_PAN_Y];
+        var hasPanX = inStr(actions, TOUCH_ACTION_PAN_X) && !TOUCH_ACTION_MAP[TOUCH_ACTION_PAN_X];
+
+        if (hasNone) {
+            //do not prevent defaults if this is a tap gesture
+
+            var isTapPointer = input.pointers.length === 1;
+            var isTapMovement = input.distance < 2;
+            var isTapTouchTime = input.deltaTime < 250;
+
+            if (isTapPointer && isTapMovement && isTapTouchTime) {
+                return;
+            }
+        }
+
+        if (hasPanX && hasPanY) {
+            // `pan-x pan-y` means browser handles all scrolling/panning, do not prevent
+            return;
+        }
+
+        if (hasNone ||
+            (hasPanY && direction & DIRECTION_HORIZONTAL) ||
+            (hasPanX && direction & DIRECTION_VERTICAL)) {
+            return this.preventSrc(srcEvent);
+        }
+    },
+
+    /**
+     * call preventDefault to prevent the browser's default behavior (scrolling in most cases)
+     * @param {Object} srcEvent
+     */
+    preventSrc: function(srcEvent) {
+        this.manager.session.prevented = true;
+        srcEvent.preventDefault();
+    }
+};
+
+/**
+ * when the touchActions are collected they are not a valid value, so we need to clean things up. *
+ * @param {String} actions
+ * @returns {*}
+ */
+function cleanTouchActions(actions) {
+    // none
+    if (inStr(actions, TOUCH_ACTION_NONE)) {
+        return TOUCH_ACTION_NONE;
+    }
+
+    var hasPanX = inStr(actions, TOUCH_ACTION_PAN_X);
+    var hasPanY = inStr(actions, TOUCH_ACTION_PAN_Y);
+
+    // if both pan-x and pan-y are set (different recognizers
+    // for different directions, e.g. horizontal pan but vertical swipe?)
+    // we need none (as otherwise with pan-x pan-y combined none of these
+    // recognizers will work, since the browser would handle all panning
+    if (hasPanX && hasPanY) {
+        return TOUCH_ACTION_NONE;
+    }
+
+    // pan-x OR pan-y
+    if (hasPanX || hasPanY) {
+        return hasPanX ? TOUCH_ACTION_PAN_X : TOUCH_ACTION_PAN_Y;
+    }
+
+    // manipulation
+    if (inStr(actions, TOUCH_ACTION_MANIPULATION)) {
+        return TOUCH_ACTION_MANIPULATION;
+    }
+
+    return TOUCH_ACTION_AUTO;
+}
+
+function getTouchActionProps() {
+    if (!NATIVE_TOUCH_ACTION) {
+        return false;
+    }
+    var touchMap = {};
+    var cssSupports = window.CSS && window.CSS.supports;
+    ['auto', 'manipulation', 'pan-y', 'pan-x', 'pan-x pan-y', 'none'].forEach(function(val) {
+
+        // If css.supports is not supported but there is native touch-action assume it supports
+        // all values. This is the case for IE 10 and 11.
+        touchMap[val] = cssSupports ? window.CSS.supports('touch-action', val) : true;
+    });
+    return touchMap;
+}
+
+/**
+ * Recognizer flow explained; *
+ * All recognizers have the initial state of POSSIBLE when a input session starts.
+ * The definition of a input session is from the first input until the last input, with all it's movement in it. *
+ * Example session for mouse-input: mousedown -> mousemove -> mouseup
+ *
+ * On each recognizing cycle (see Manager.recognize) the .recognize() method is executed
+ * which determines with state it should be.
+ *
+ * If the recognizer has the state FAILED, CANCELLED or RECOGNIZED (equals ENDED), it is reset to
+ * POSSIBLE to give it another change on the next cycle.
+ *
+ *               Possible
+ *                  |
+ *            +-----+---------------+
+ *            |                     |
+ *      +-----+-----+               |
+ *      |           |               |
+ *   Failed      Cancelled          |
+ *                          +-------+------+
+ *                          |              |
+ *                      Recognized       Began
+ *                                         |
+ *                                      Changed
+ *                                         |
+ *                                  Ended/Recognized
+ */
+var STATE_POSSIBLE = 1;
+var STATE_BEGAN = 2;
+var STATE_CHANGED = 4;
+var STATE_ENDED = 8;
+var STATE_RECOGNIZED = STATE_ENDED;
+var STATE_CANCELLED = 16;
+var STATE_FAILED = 32;
+
+/**
+ * Recognizer
+ * Every recognizer needs to extend from this class.
+ * @constructor
+ * @param {Object} options
+ */
+function Recognizer(options) {
+    this.options = assign({}, this.defaults, options || {});
+
+    this.id = uniqueId();
+
+    this.manager = null;
+
+    // default is enable true
+    this.options.enable = ifUndefined(this.options.enable, true);
+
+    this.state = STATE_POSSIBLE;
+
+    this.simultaneous = {};
+    this.requireFail = [];
+}
+
+Recognizer.prototype = {
+    /**
+     * @virtual
+     * @type {Object}
+     */
+    defaults: {},
+
+    /**
+     * set options
+     * @param {Object} options
+     * @return {Recognizer}
+     */
+    set: function(options) {
+        assign(this.options, options);
+
+        // also update the touchAction, in case something changed about the directions/enabled state
+        this.manager && this.manager.touchAction.update();
+        return this;
+    },
+
+    /**
+     * recognize simultaneous with an other recognizer.
+     * @param {Recognizer} otherRecognizer
+     * @returns {Recognizer} this
+     */
+    recognizeWith: function(otherRecognizer) {
+        if (invokeArrayArg(otherRecognizer, 'recognizeWith', this)) {
+            return this;
+        }
+
+        var simultaneous = this.simultaneous;
+        otherRecognizer = getRecognizerByNameIfManager(otherRecognizer, this);
+        if (!simultaneous[otherRecognizer.id]) {
+            simultaneous[otherRecognizer.id] = otherRecognizer;
+            otherRecognizer.recognizeWith(this);
+        }
+        return this;
+    },
+
+    /**
+     * drop the simultaneous link. it doesnt remove the link on the other recognizer.
+     * @param {Recognizer} otherRecognizer
+     * @returns {Recognizer} this
+     */
+    dropRecognizeWith: function(otherRecognizer) {
+        if (invokeArrayArg(otherRecognizer, 'dropRecognizeWith', this)) {
+            return this;
+        }
+
+        otherRecognizer = getRecognizerByNameIfManager(otherRecognizer, this);
+        delete this.simultaneous[otherRecognizer.id];
+        return this;
+    },
+
+    /**
+     * recognizer can only run when an other is failing
+     * @param {Recognizer} otherRecognizer
+     * @returns {Recognizer} this
+     */
+    requireFailure: function(otherRecognizer) {
+        if (invokeArrayArg(otherRecognizer, 'requireFailure', this)) {
+            return this;
+        }
+
+        var requireFail = this.requireFail;
+        otherRecognizer = getRecognizerByNameIfManager(otherRecognizer, this);
+        if (inArray(requireFail, otherRecognizer) === -1) {
+            requireFail.push(otherRecognizer);
+            otherRecognizer.requireFailure(this);
+        }
+        return this;
+    },
+
+    /**
+     * drop the requireFailure link. it does not remove the link on the other recognizer.
+     * @param {Recognizer} otherRecognizer
+     * @returns {Recognizer} this
+     */
+    dropRequireFailure: function(otherRecognizer) {
+        if (invokeArrayArg(otherRecognizer, 'dropRequireFailure', this)) {
+            return this;
+        }
+
+        otherRecognizer = getRecognizerByNameIfManager(otherRecognizer, this);
+        var index = inArray(this.requireFail, otherRecognizer);
+        if (index > -1) {
+            this.requireFail.splice(index, 1);
+        }
+        return this;
+    },
+
+    /**
+     * has require failures boolean
+     * @returns {boolean}
+     */
+    hasRequireFailures: function() {
+        return this.requireFail.length > 0;
+    },
+
+    /**
+     * if the recognizer can recognize simultaneous with an other recognizer
+     * @param {Recognizer} otherRecognizer
+     * @returns {Boolean}
+     */
+    canRecognizeWith: function(otherRecognizer) {
+        return !!this.simultaneous[otherRecognizer.id];
+    },
+
+    /**
+     * You should use `tryEmit` instead of `emit` directly to check
+     * that all the needed recognizers has failed before emitting.
+     * @param {Object} input
+     */
+    emit: function(input) {
+        var self = this;
+        var state = this.state;
+
+        function emit(event) {
+            self.manager.emit(event, input);
+        }
+
+        // 'panstart' and 'panmove'
+        if (state < STATE_ENDED) {
+            emit(self.options.event + stateStr(state));
+        }
+
+        emit(self.options.event); // simple 'eventName' events
+
+        if (input.additionalEvent) { // additional event(panleft, panright, pinchin, pinchout...)
+            emit(input.additionalEvent);
+        }
+
+        // panend and pancancel
+        if (state >= STATE_ENDED) {
+            emit(self.options.event + stateStr(state));
+        }
+    },
+
+    /**
+     * Check that all the require failure recognizers has failed,
+     * if true, it emits a gesture event,
+     * otherwise, setup the state to FAILED.
+     * @param {Object} input
+     */
+    tryEmit: function(input) {
+        if (this.canEmit()) {
+            return this.emit(input);
+        }
+        // it's failing anyway
+        this.state = STATE_FAILED;
+    },
+
+    /**
+     * can we emit?
+     * @returns {boolean}
+     */
+    canEmit: function() {
+        var i = 0;
+        while (i < this.requireFail.length) {
+            if (!(this.requireFail[i].state & (STATE_FAILED | STATE_POSSIBLE))) {
+                return false;
+            }
+            i++;
+        }
+        return true;
+    },
+
+    /**
+     * update the recognizer
+     * @param {Object} inputData
+     */
+    recognize: function(inputData) {
+        // make a new copy of the inputData
+        // so we can change the inputData without messing up the other recognizers
+        var inputDataClone = assign({}, inputData);
+
+        // is is enabled and allow recognizing?
+        if (!boolOrFn(this.options.enable, [this, inputDataClone])) {
+            this.reset();
+            this.state = STATE_FAILED;
+            return;
+        }
+
+        // reset when we've reached the end
+        if (this.state & (STATE_RECOGNIZED | STATE_CANCELLED | STATE_FAILED)) {
+            this.state = STATE_POSSIBLE;
+        }
+
+        this.state = this.process(inputDataClone);
+
+        // the recognizer has recognized a gesture
+        // so trigger an event
+        if (this.state & (STATE_BEGAN | STATE_CHANGED | STATE_ENDED | STATE_CANCELLED)) {
+            this.tryEmit(inputDataClone);
+        }
+    },
+
+    /**
+     * return the state of the recognizer
+     * the actual recognizing happens in this method
+     * @virtual
+     * @param {Object} inputData
+     * @returns {Const} STATE
+     */
+    process: function(inputData) { }, // jshint ignore:line
+
+    /**
+     * return the preferred touch-action
+     * @virtual
+     * @returns {Array}
+     */
+    getTouchAction: function() { },
+
+    /**
+     * called when the gesture isn't allowed to recognize
+     * like when another is being recognized or it is disabled
+     * @virtual
+     */
+    reset: function() { }
+};
+
+/**
+ * get a usable string, used as event postfix
+ * @param {Const} state
+ * @returns {String} state
+ */
+function stateStr(state) {
+    if (state & STATE_CANCELLED) {
+        return 'cancel';
+    } else if (state & STATE_ENDED) {
+        return 'end';
+    } else if (state & STATE_CHANGED) {
+        return 'move';
+    } else if (state & STATE_BEGAN) {
+        return 'start';
+    }
+    return '';
+}
+
+/**
+ * direction cons to string
+ * @param {Const} direction
+ * @returns {String}
+ */
+function directionStr(direction) {
+    if (direction == DIRECTION_DOWN) {
+        return 'down';
+    } else if (direction == DIRECTION_UP) {
+        return 'up';
+    } else if (direction == DIRECTION_LEFT) {
+        return 'left';
+    } else if (direction == DIRECTION_RIGHT) {
+        return 'right';
+    }
+    return '';
+}
+
+/**
+ * get a recognizer by name if it is bound to a manager
+ * @param {Recognizer|String} otherRecognizer
+ * @param {Recognizer} recognizer
+ * @returns {Recognizer}
+ */
+function getRecognizerByNameIfManager(otherRecognizer, recognizer) {
+    var manager = recognizer.manager;
+    if (manager) {
+        return manager.get(otherRecognizer);
+    }
+    return otherRecognizer;
+}
+
+/**
+ * This recognizer is just used as a base for the simple attribute recognizers.
+ * @constructor
+ * @extends Recognizer
+ */
+function AttrRecognizer() {
+    Recognizer.apply(this, arguments);
+}
+
+inherit(AttrRecognizer, Recognizer, {
+    /**
+     * @namespace
+     * @memberof AttrRecognizer
+     */
+    defaults: {
+        /**
+         * @type {Number}
+         * @default 1
+         */
+        pointers: 1
+    },
+
+    /**
+     * Used to check if it the recognizer receives valid input, like input.distance > 10.
+     * @memberof AttrRecognizer
+     * @param {Object} input
+     * @returns {Boolean} recognized
+     */
+    attrTest: function(input) {
+        var optionPointers = this.options.pointers;
+        return optionPointers === 0 || input.pointers.length === optionPointers;
+    },
+
+    /**
+     * Process the input and return the state for the recognizer
+     * @memberof AttrRecognizer
+     * @param {Object} input
+     * @returns {*} State
+     */
+    process: function(input) {
+        var state = this.state;
+        var eventType = input.eventType;
+
+        var isRecognized = state & (STATE_BEGAN | STATE_CHANGED);
+        var isValid = this.attrTest(input);
+
+        // on cancel input and we've recognized before, return STATE_CANCELLED
+        if (isRecognized && (eventType & INPUT_CANCEL || !isValid)) {
+            return state | STATE_CANCELLED;
+        } else if (isRecognized || isValid) {
+            if (eventType & INPUT_END) {
+                return state | STATE_ENDED;
+            } else if (!(state & STATE_BEGAN)) {
+                return STATE_BEGAN;
+            }
+            return state | STATE_CHANGED;
+        }
+        return STATE_FAILED;
+    }
+});
+
+/**
+ * Pan
+ * Recognized when the pointer is down and moved in the allowed direction.
+ * @constructor
+ * @extends AttrRecognizer
+ */
+function PanRecognizer() {
+    AttrRecognizer.apply(this, arguments);
+
+    this.pX = null;
+    this.pY = null;
+}
+
+inherit(PanRecognizer, AttrRecognizer, {
+    /**
+     * @namespace
+     * @memberof PanRecognizer
+     */
+    defaults: {
+        event: 'pan',
+        threshold: 10,
+        pointers: 1,
+        direction: DIRECTION_ALL
+    },
+
+    getTouchAction: function() {
+        var direction = this.options.direction;
+        var actions = [];
+        if (direction & DIRECTION_HORIZONTAL) {
+            actions.push(TOUCH_ACTION_PAN_Y);
+        }
+        if (direction & DIRECTION_VERTICAL) {
+            actions.push(TOUCH_ACTION_PAN_X);
+        }
+        return actions;
+    },
+
+    directionTest: function(input) {
+        var options = this.options;
+        var hasMoved = true;
+        var distance = input.distance;
+        var direction = input.direction;
+        var x = input.deltaX;
+        var y = input.deltaY;
+
+        // lock to axis?
+        if (!(direction & options.direction)) {
+            if (options.direction & DIRECTION_HORIZONTAL) {
+                direction = (x === 0) ? DIRECTION_NONE : (x < 0) ? DIRECTION_LEFT : DIRECTION_RIGHT;
+                hasMoved = x != this.pX;
+                distance = Math.abs(input.deltaX);
+            } else {
+                direction = (y === 0) ? DIRECTION_NONE : (y < 0) ? DIRECTION_UP : DIRECTION_DOWN;
+                hasMoved = y != this.pY;
+                distance = Math.abs(input.deltaY);
+            }
+        }
+        input.direction = direction;
+        return hasMoved && distance > options.threshold && direction & options.direction;
+    },
+
+    attrTest: function(input) {
+        return AttrRecognizer.prototype.attrTest.call(this, input) &&
+            (this.state & STATE_BEGAN || (!(this.state & STATE_BEGAN) && this.directionTest(input)));
+    },
+
+    emit: function(input) {
+
+        this.pX = input.deltaX;
+        this.pY = input.deltaY;
+
+        var direction = directionStr(input.direction);
+
+        if (direction) {
+            input.additionalEvent = this.options.event + direction;
+        }
+        this._super.emit.call(this, input);
+    }
+});
+
+/**
+ * Pinch
+ * Recognized when two or more pointers are moving toward (zoom-in) or away from each other (zoom-out).
+ * @constructor
+ * @extends AttrRecognizer
+ */
+function PinchRecognizer() {
+    AttrRecognizer.apply(this, arguments);
+}
+
+inherit(PinchRecognizer, AttrRecognizer, {
+    /**
+     * @namespace
+     * @memberof PinchRecognizer
+     */
+    defaults: {
+        event: 'pinch',
+        threshold: 0,
+        pointers: 2
+    },
+
+    getTouchAction: function() {
+        return [TOUCH_ACTION_NONE];
+    },
+
+    attrTest: function(input) {
+        return this._super.attrTest.call(this, input) &&
+            (Math.abs(input.scale - 1) > this.options.threshold || this.state & STATE_BEGAN);
+    },
+
+    emit: function(input) {
+        if (input.scale !== 1) {
+            var inOut = input.scale < 1 ? 'in' : 'out';
+            input.additionalEvent = this.options.event + inOut;
+        }
+        this._super.emit.call(this, input);
+    }
+});
+
+/**
+ * Press
+ * Recognized when the pointer is down for x ms without any movement.
+ * @constructor
+ * @extends Recognizer
+ */
+function PressRecognizer() {
+    Recognizer.apply(this, arguments);
+
+    this._timer = null;
+    this._input = null;
+}
+
+inherit(PressRecognizer, Recognizer, {
+    /**
+     * @namespace
+     * @memberof PressRecognizer
+     */
+    defaults: {
+        event: 'press',
+        pointers: 1,
+        time: 251, // minimal time of the pointer to be pressed
+        threshold: 9 // a minimal movement is ok, but keep it low
+    },
+
+    getTouchAction: function() {
+        return [TOUCH_ACTION_AUTO];
+    },
+
+    process: function(input) {
+        var options = this.options;
+        var validPointers = input.pointers.length === options.pointers;
+        var validMovement = input.distance < options.threshold;
+        var validTime = input.deltaTime > options.time;
+
+        this._input = input;
+
+        // we only allow little movement
+        // and we've reached an end event, so a tap is possible
+        if (!validMovement || !validPointers || (input.eventType & (INPUT_END | INPUT_CANCEL) && !validTime)) {
+            this.reset();
+        } else if (input.eventType & INPUT_START) {
+            this.reset();
+            this._timer = setTimeoutContext(function() {
+                this.state = STATE_RECOGNIZED;
+                this.tryEmit();
+            }, options.time, this);
+        } else if (input.eventType & INPUT_END) {
+            return STATE_RECOGNIZED;
+        }
+        return STATE_FAILED;
+    },
+
+    reset: function() {
+        clearTimeout(this._timer);
+    },
+
+    emit: function(input) {
+        if (this.state !== STATE_RECOGNIZED) {
+            return;
+        }
+
+        if (input && (input.eventType & INPUT_END)) {
+            this.manager.emit(this.options.event + 'up', input);
+        } else {
+            this._input.timeStamp = now();
+            this.manager.emit(this.options.event, this._input);
+        }
+    }
+});
+
+/**
+ * Rotate
+ * Recognized when two or more pointer are moving in a circular motion.
+ * @constructor
+ * @extends AttrRecognizer
+ */
+function RotateRecognizer() {
+    AttrRecognizer.apply(this, arguments);
+}
+
+inherit(RotateRecognizer, AttrRecognizer, {
+    /**
+     * @namespace
+     * @memberof RotateRecognizer
+     */
+    defaults: {
+        event: 'rotate',
+        threshold: 0,
+        pointers: 2
+    },
+
+    getTouchAction: function() {
+        return [TOUCH_ACTION_NONE];
+    },
+
+    attrTest: function(input) {
+        return this._super.attrTest.call(this, input) &&
+            (Math.abs(input.rotation) > this.options.threshold || this.state & STATE_BEGAN);
+    }
+});
+
+/**
+ * Swipe
+ * Recognized when the pointer is moving fast (velocity), with enough distance in the allowed direction.
+ * @constructor
+ * @extends AttrRecognizer
+ */
+function SwipeRecognizer() {
+    AttrRecognizer.apply(this, arguments);
+}
+
+inherit(SwipeRecognizer, AttrRecognizer, {
+    /**
+     * @namespace
+     * @memberof SwipeRecognizer
+     */
+    defaults: {
+        event: 'swipe',
+        threshold: 10,
+        velocity: 0.3,
+        direction: DIRECTION_HORIZONTAL | DIRECTION_VERTICAL,
+        pointers: 1
+    },
+
+    getTouchAction: function() {
+        return PanRecognizer.prototype.getTouchAction.call(this);
+    },
+
+    attrTest: function(input) {
+        var direction = this.options.direction;
+        var velocity;
+
+        if (direction & (DIRECTION_HORIZONTAL | DIRECTION_VERTICAL)) {
+            velocity = input.overallVelocity;
+        } else if (direction & DIRECTION_HORIZONTAL) {
+            velocity = input.overallVelocityX;
+        } else if (direction & DIRECTION_VERTICAL) {
+            velocity = input.overallVelocityY;
+        }
+
+        return this._super.attrTest.call(this, input) &&
+            direction & input.offsetDirection &&
+            input.distance > this.options.threshold &&
+            input.maxPointers == this.options.pointers &&
+            abs(velocity) > this.options.velocity && input.eventType & INPUT_END;
+    },
+
+    emit: function(input) {
+        var direction = directionStr(input.offsetDirection);
+        if (direction) {
+            this.manager.emit(this.options.event + direction, input);
+        }
+
+        this.manager.emit(this.options.event, input);
+    }
+});
+
+/**
+ * A tap is ecognized when the pointer is doing a small tap/click. Multiple taps are recognized if they occur
+ * between the given interval and position. The delay option can be used to recognize multi-taps without firing
+ * a single tap.
+ *
+ * The eventData from the emitted event contains the property `tapCount`, which contains the amount of
+ * multi-taps being recognized.
+ * @constructor
+ * @extends Recognizer
+ */
+function TapRecognizer() {
+    Recognizer.apply(this, arguments);
+
+    // previous time and center,
+    // used for tap counting
+    this.pTime = false;
+    this.pCenter = false;
+
+    this._timer = null;
+    this._input = null;
+    this.count = 0;
+}
+
+inherit(TapRecognizer, Recognizer, {
+    /**
+     * @namespace
+     * @memberof PinchRecognizer
+     */
+    defaults: {
+        event: 'tap',
+        pointers: 1,
+        taps: 1,
+        interval: 300, // max time between the multi-tap taps
+        time: 250, // max time of the pointer to be down (like finger on the screen)
+        threshold: 9, // a minimal movement is ok, but keep it low
+        posThreshold: 10 // a multi-tap can be a bit off the initial position
+    },
+
+    getTouchAction: function() {
+        return [TOUCH_ACTION_MANIPULATION];
+    },
+
+    process: function(input) {
+        var options = this.options;
+
+        var validPointers = input.pointers.length === options.pointers;
+        var validMovement = input.distance < options.threshold;
+        var validTouchTime = input.deltaTime < options.time;
+
+        this.reset();
+
+        if ((input.eventType & INPUT_START) && (this.count === 0)) {
+            return this.failTimeout();
+        }
+
+        // we only allow little movement
+        // and we've reached an end event, so a tap is possible
+        if (validMovement && validTouchTime && validPointers) {
+            if (input.eventType != INPUT_END) {
+                return this.failTimeout();
+            }
+
+            var validInterval = this.pTime ? (input.timeStamp - this.pTime < options.interval) : true;
+            var validMultiTap = !this.pCenter || getDistance(this.pCenter, input.center) < options.posThreshold;
+
+            this.pTime = input.timeStamp;
+            this.pCenter = input.center;
+
+            if (!validMultiTap || !validInterval) {
+                this.count = 1;
+            } else {
+                this.count += 1;
+            }
+
+            this._input = input;
+
+            // if tap count matches we have recognized it,
+            // else it has began recognizing...
+            var tapCount = this.count % options.taps;
+            if (tapCount === 0) {
+                // no failing requirements, immediately trigger the tap event
+                // or wait as long as the multitap interval to trigger
+                if (!this.hasRequireFailures()) {
+                    return STATE_RECOGNIZED;
+                } else {
+                    this._timer = setTimeoutContext(function() {
+                        this.state = STATE_RECOGNIZED;
+                        this.tryEmit();
+                    }, options.interval, this);
+                    return STATE_BEGAN;
+                }
+            }
+        }
+        return STATE_FAILED;
+    },
+
+    failTimeout: function() {
+        this._timer = setTimeoutContext(function() {
+            this.state = STATE_FAILED;
+        }, this.options.interval, this);
+        return STATE_FAILED;
+    },
+
+    reset: function() {
+        clearTimeout(this._timer);
+    },
+
+    emit: function() {
+        if (this.state == STATE_RECOGNIZED) {
+            this._input.tapCount = this.count;
+            this.manager.emit(this.options.event, this._input);
+        }
+    }
+});
+
+/**
+ * Simple way to create a manager with a default set of recognizers.
+ * @param {HTMLElement} element
+ * @param {Object} [options]
+ * @constructor
+ */
+function Hammer(element, options) {
+    options = options || {};
+    options.recognizers = ifUndefined(options.recognizers, Hammer.defaults.preset);
+    return new Manager(element, options);
+}
+
+/**
+ * @const {string}
+ */
+Hammer.VERSION = '2.0.7';
+
+/**
+ * default settings
+ * @namespace
+ */
+Hammer.defaults = {
+    /**
+     * set if DOM events are being triggered.
+     * But this is slower and unused by simple implementations, so disabled by default.
+     * @type {Boolean}
+     * @default false
+     */
+    domEvents: false,
+
+    /**
+     * The value for the touchAction property/fallback.
+     * When set to `compute` it will magically set the correct value based on the added recognizers.
+     * @type {String}
+     * @default compute
+     */
+    touchAction: TOUCH_ACTION_COMPUTE,
+
+    /**
+     * @type {Boolean}
+     * @default true
+     */
+    enable: true,
+
+    /**
+     * EXPERIMENTAL FEATURE -- can be removed/changed
+     * Change the parent input target element.
+     * If Null, then it is being set the to main element.
+     * @type {Null|EventTarget}
+     * @default null
+     */
+    inputTarget: null,
+
+    /**
+     * force an input class
+     * @type {Null|Function}
+     * @default null
+     */
+    inputClass: null,
+
+    /**
+     * Default recognizer setup when calling `Hammer()`
+     * When creating a new Manager these will be skipped.
+     * @type {Array}
+     */
+    preset: [
+        // RecognizerClass, options, [recognizeWith, ...], [requireFailure, ...]
+        [RotateRecognizer, {enable: false}],
+        [PinchRecognizer, {enable: false}, ['rotate']],
+        [SwipeRecognizer, {direction: DIRECTION_HORIZONTAL}],
+        [PanRecognizer, {direction: DIRECTION_HORIZONTAL}, ['swipe']],
+        [TapRecognizer],
+        [TapRecognizer, {event: 'doubletap', taps: 2}, ['tap']],
+        [PressRecognizer]
+    ],
+
+    /**
+     * Some CSS properties can be used to improve the working of Hammer.
+     * Add them to this method and they will be set when creating a new Manager.
+     * @namespace
+     */
+    cssProps: {
+        /**
+         * Disables text selection to improve the dragging gesture. Mainly for desktop browsers.
+         * @type {String}
+         * @default 'none'
+         */
+        userSelect: 'none',
+
+        /**
+         * Disable the Windows Phone grippers when pressing an element.
+         * @type {String}
+         * @default 'none'
+         */
+        touchSelect: 'none',
+
+        /**
+         * Disables the default callout shown when you touch and hold a touch target.
+         * On iOS, when you touch and hold a touch target such as a link, Safari displays
+         * a callout containing information about the link. This property allows you to disable that callout.
+         * @type {String}
+         * @default 'none'
+         */
+        touchCallout: 'none',
+
+        /**
+         * Specifies whether zooming is enabled. Used by IE10>
+         * @type {String}
+         * @default 'none'
+         */
+        contentZooming: 'none',
+
+        /**
+         * Specifies that an entire element should be draggable instead of its contents. Mainly for desktop browsers.
+         * @type {String}
+         * @default 'none'
+         */
+        userDrag: 'none',
+
+        /**
+         * Overrides the highlight color shown when the user taps a link or a JavaScript
+         * clickable element in iOS. This property obeys the alpha value, if specified.
+         * @type {String}
+         * @default 'rgba(0,0,0,0)'
+         */
+        tapHighlightColor: 'rgba(0,0,0,0)'
+    }
+};
+
+var STOP = 1;
+var FORCED_STOP = 2;
+
+/**
+ * Manager
+ * @param {HTMLElement} element
+ * @param {Object} [options]
+ * @constructor
+ */
+function Manager(element, options) {
+    this.options = assign({}, Hammer.defaults, options || {});
+
+    this.options.inputTarget = this.options.inputTarget || element;
+
+    this.handlers = {};
+    this.session = {};
+    this.recognizers = [];
+    this.oldCssProps = {};
+
+    this.element = element;
+    this.input = createInputInstance(this);
+    this.touchAction = new TouchAction(this, this.options.touchAction);
+
+    toggleCssProps(this, true);
+
+    each(this.options.recognizers, function(item) {
+        var recognizer = this.add(new (item[0])(item[1]));
+        item[2] && recognizer.recognizeWith(item[2]);
+        item[3] && recognizer.requireFailure(item[3]);
+    }, this);
+}
+
+Manager.prototype = {
+    /**
+     * set options
+     * @param {Object} options
+     * @returns {Manager}
+     */
+    set: function(options) {
+        assign(this.options, options);
+
+        // Options that need a little more setup
+        if (options.touchAction) {
+            this.touchAction.update();
+        }
+        if (options.inputTarget) {
+            // Clean up existing event listeners and reinitialize
+            this.input.destroy();
+            this.input.target = options.inputTarget;
+            this.input.init();
+        }
+        return this;
+    },
+
+    /**
+     * stop recognizing for this session.
+     * This session will be discarded, when a new [input]start event is fired.
+     * When forced, the recognizer cycle is stopped immediately.
+     * @param {Boolean} [force]
+     */
+    stop: function(force) {
+        this.session.stopped = force ? FORCED_STOP : STOP;
+    },
+
+    /**
+     * run the recognizers!
+     * called by the inputHandler function on every movement of the pointers (touches)
+     * it walks through all the recognizers and tries to detect the gesture that is being made
+     * @param {Object} inputData
+     */
+    recognize: function(inputData) {
+        var session = this.session;
+        if (session.stopped) {
+            return;
+        }
+
+        // run the touch-action polyfill
+        this.touchAction.preventDefaults(inputData);
+
+        var recognizer;
+        var recognizers = this.recognizers;
+
+        // this holds the recognizer that is being recognized.
+        // so the recognizer's state needs to be BEGAN, CHANGED, ENDED or RECOGNIZED
+        // if no recognizer is detecting a thing, it is set to `null`
+        var curRecognizer = session.curRecognizer;
+
+        // reset when the last recognizer is recognized
+        // or when we're in a new session
+        if (!curRecognizer || (curRecognizer && curRecognizer.state & STATE_RECOGNIZED)) {
+            curRecognizer = session.curRecognizer = null;
+        }
+
+        var i = 0;
+        while (i < recognizers.length) {
+            recognizer = recognizers[i];
+
+            // find out if we are allowed try to recognize the input for this one.
+            // 1.   allow if the session is NOT forced stopped (see the .stop() method)
+            // 2.   allow if we still haven't recognized a gesture in this session, or the this recognizer is the one
+            //      that is being recognized.
+            // 3.   allow if the recognizer is allowed to run simultaneous with the current recognized recognizer.
+            //      this can be setup with the `recognizeWith()` method on the recognizer.
+            if (session.stopped !== FORCED_STOP && ( // 1
+                    !curRecognizer || recognizer == curRecognizer || // 2
+                    recognizer.canRecognizeWith(curRecognizer))) { // 3
+                recognizer.recognize(inputData);
+            } else {
+                recognizer.reset();
+            }
+
+            // if the recognizer has been recognizing the input as a valid gesture, we want to store this one as the
+            // current active recognizer. but only if we don't already have an active recognizer
+            if (!curRecognizer && recognizer.state & (STATE_BEGAN | STATE_CHANGED | STATE_ENDED)) {
+                curRecognizer = session.curRecognizer = recognizer;
+            }
+            i++;
+        }
+    },
+
+    /**
+     * get a recognizer by its event name.
+     * @param {Recognizer|String} recognizer
+     * @returns {Recognizer|Null}
+     */
+    get: function(recognizer) {
+        if (recognizer instanceof Recognizer) {
+            return recognizer;
+        }
+
+        var recognizers = this.recognizers;
+        for (var i = 0; i < recognizers.length; i++) {
+            if (recognizers[i].options.event == recognizer) {
+                return recognizers[i];
+            }
+        }
+        return null;
+    },
+
+    /**
+     * add a recognizer to the manager
+     * existing recognizers with the same event name will be removed
+     * @param {Recognizer} recognizer
+     * @returns {Recognizer|Manager}
+     */
+    add: function(recognizer) {
+        if (invokeArrayArg(recognizer, 'add', this)) {
+            return this;
+        }
+
+        // remove existing
+        var existing = this.get(recognizer.options.event);
+        if (existing) {
+            this.remove(existing);
+        }
+
+        this.recognizers.push(recognizer);
+        recognizer.manager = this;
+
+        this.touchAction.update();
+        return recognizer;
+    },
+
+    /**
+     * remove a recognizer by name or instance
+     * @param {Recognizer|String} recognizer
+     * @returns {Manager}
+     */
+    remove: function(recognizer) {
+        if (invokeArrayArg(recognizer, 'remove', this)) {
+            return this;
+        }
+
+        recognizer = this.get(recognizer);
+
+        // let's make sure this recognizer exists
+        if (recognizer) {
+            var recognizers = this.recognizers;
+            var index = inArray(recognizers, recognizer);
+
+            if (index !== -1) {
+                recognizers.splice(index, 1);
+                this.touchAction.update();
+            }
+        }
+
+        return this;
+    },
+
+    /**
+     * bind event
+     * @param {String} events
+     * @param {Function} handler
+     * @returns {EventEmitter} this
+     */
+    on: function(events, handler) {
+        if (events === undefined) {
+            return;
+        }
+        if (handler === undefined) {
+            return;
+        }
+
+        var handlers = this.handlers;
+        each(splitStr(events), function(event) {
+            handlers[event] = handlers[event] || [];
+            handlers[event].push(handler);
+        });
+        return this;
+    },
+
+    /**
+     * unbind event, leave emit blank to remove all handlers
+     * @param {String} events
+     * @param {Function} [handler]
+     * @returns {EventEmitter} this
+     */
+    off: function(events, handler) {
+        if (events === undefined) {
+            return;
+        }
+
+        var handlers = this.handlers;
+        each(splitStr(events), function(event) {
+            if (!handler) {
+                delete handlers[event];
+            } else {
+                handlers[event] && handlers[event].splice(inArray(handlers[event], handler), 1);
+            }
+        });
+        return this;
+    },
+
+    /**
+     * emit event to the listeners
+     * @param {String} event
+     * @param {Object} data
+     */
+    emit: function(event, data) {
+        // we also want to trigger dom events
+        if (this.options.domEvents) {
+            triggerDomEvent(event, data);
+        }
+
+        // no handlers, so skip it all
+        var handlers = this.handlers[event] && this.handlers[event].slice();
+        if (!handlers || !handlers.length) {
+            return;
+        }
+
+        data.type = event;
+        data.preventDefault = function() {
+            data.srcEvent.preventDefault();
+        };
+
+        var i = 0;
+        while (i < handlers.length) {
+            handlers[i](data);
+            i++;
+        }
+    },
+
+    /**
+     * destroy the manager and unbinds all events
+     * it doesn't unbind dom events, that is the user own responsibility
+     */
+    destroy: function() {
+        this.element && toggleCssProps(this, false);
+
+        this.handlers = {};
+        this.session = {};
+        this.input.destroy();
+        this.element = null;
+    }
+};
+
+/**
+ * add/remove the css properties as defined in manager.options.cssProps
+ * @param {Manager} manager
+ * @param {Boolean} add
+ */
+function toggleCssProps(manager, add) {
+    var element = manager.element;
+    if (!element.style) {
+        return;
+    }
+    var prop;
+    each(manager.options.cssProps, function(value, name) {
+        prop = prefixed(element.style, name);
+        if (add) {
+            manager.oldCssProps[prop] = element.style[prop];
+            element.style[prop] = value;
+        } else {
+            element.style[prop] = manager.oldCssProps[prop] || '';
+        }
+    });
+    if (!add) {
+        manager.oldCssProps = {};
+    }
+}
+
+/**
+ * trigger dom event
+ * @param {String} event
+ * @param {Object} data
+ */
+function triggerDomEvent(event, data) {
+    var gestureEvent = document.createEvent('Event');
+    gestureEvent.initEvent(event, true, true);
+    gestureEvent.gesture = data;
+    data.target.dispatchEvent(gestureEvent);
+}
+
+assign(Hammer, {
+    INPUT_START: INPUT_START,
+    INPUT_MOVE: INPUT_MOVE,
+    INPUT_END: INPUT_END,
+    INPUT_CANCEL: INPUT_CANCEL,
+
+    STATE_POSSIBLE: STATE_POSSIBLE,
+    STATE_BEGAN: STATE_BEGAN,
+    STATE_CHANGED: STATE_CHANGED,
+    STATE_ENDED: STATE_ENDED,
+    STATE_RECOGNIZED: STATE_RECOGNIZED,
+    STATE_CANCELLED: STATE_CANCELLED,
+    STATE_FAILED: STATE_FAILED,
+
+    DIRECTION_NONE: DIRECTION_NONE,
+    DIRECTION_LEFT: DIRECTION_LEFT,
+    DIRECTION_RIGHT: DIRECTION_RIGHT,
+    DIRECTION_UP: DIRECTION_UP,
+    DIRECTION_DOWN: DIRECTION_DOWN,
+    DIRECTION_HORIZONTAL: DIRECTION_HORIZONTAL,
+    DIRECTION_VERTICAL: DIRECTION_VERTICAL,
+    DIRECTION_ALL: DIRECTION_ALL,
+
+    Manager: Manager,
+    Input: Input,
+    TouchAction: TouchAction,
+
+    TouchInput: TouchInput,
+    MouseInput: MouseInput,
+    PointerEventInput: PointerEventInput,
+    TouchMouseInput: TouchMouseInput,
+    SingleTouchInput: SingleTouchInput,
+
+    Recognizer: Recognizer,
+    AttrRecognizer: AttrRecognizer,
+    Tap: TapRecognizer,
+    Pan: PanRecognizer,
+    Swipe: SwipeRecognizer,
+    Pinch: PinchRecognizer,
+    Rotate: RotateRecognizer,
+    Press: PressRecognizer,
+
+    on: addEventListeners,
+    off: removeEventListeners,
+    each: each,
+    merge: merge,
+    extend: extend,
+    assign: assign,
+    inherit: inherit,
+    bindFn: bindFn,
+    prefixed: prefixed
+});
+
+// this prevents errors when Hammer is loaded in the presence of an AMD
+//  style loader but by script tag, not by the loader.
+var freeGlobal = (typeof window !== 'undefined' ? window : (typeof self !== 'undefined' ? self : {})); // jshint ignore:line
+freeGlobal.Hammer = Hammer;
+
+if (true) {
+    !(__WEBPACK_AMD_DEFINE_RESULT__ = (function() {
+        return Hammer;
+    }).call(exports, __webpack_require__, exports, module),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+} else {}
+
+})(window, document, 'Hammer');
 
 
 /***/ }),
@@ -15017,12 +46906,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ Debugger)
 /* harmony export */ });
 /* harmony import */ var inherits_browser__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! inherits-browser */ "../node_modules/inherits-browser/dist/index.es.js");
-/* harmony import */ var object_diagram_modeler_lib_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! object-diagram-modeler/lib/core */ "../lib/core/index.js");
-/* harmony import */ var diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! diagram-js/lib/i18n/translate */ "../node_modules/diagram-js/lib/i18n/translate/index.js");
-/* harmony import */ var diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! diagram-js/lib/features/selection */ "../node_modules/diagram-js/lib/features/selection/index.js");
-/* harmony import */ var diagram_js_lib_features_overlays__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! diagram-js/lib/features/overlays */ "../node_modules/diagram-js/lib/features/overlays/index.js");
+/* harmony import */ var object_diagram_modeler_lib_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! object-diagram-modeler/lib/core */ "../lib/core/index.js");
+/* harmony import */ var diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! diagram-js/lib/i18n/translate */ "../node_modules/diagram-js/lib/i18n/translate/index.js");
+/* harmony import */ var diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! diagram-js/lib/features/selection */ "../node_modules/diagram-js/lib/features/selection/index.js");
+/* harmony import */ var diagram_js_lib_features_overlays__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! diagram-js/lib/features/overlays */ "../node_modules/diagram-js/lib/features/overlays/index.js");
 /* harmony import */ var _websocket__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./websocket */ "./debugger/websocket/index.js");
 /* harmony import */ var object_diagram_modeler_lib_BaseViewer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! object-diagram-modeler/lib/BaseViewer */ "../lib/BaseViewer.js");
+/* harmony import */ var _lib_Modeler__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../lib/Modeler */ "../lib/Modeler.js");
+
 
 
 
@@ -15040,13 +46931,14 @@ function Debugger(options) {
 (0,inherits_browser__WEBPACK_IMPORTED_MODULE_2__["default"])(Debugger, object_diagram_modeler_lib_BaseViewer__WEBPACK_IMPORTED_MODULE_1__["default"]);
 
 // modules the viewer is composed of
-Debugger.prototype._modules = [
-  object_diagram_modeler_lib_core__WEBPACK_IMPORTED_MODULE_3__["default"],
-  diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_4__["default"],
-  diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_5__["default"],
-  diagram_js_lib_features_overlays__WEBPACK_IMPORTED_MODULE_6__["default"],
-  _websocket__WEBPACK_IMPORTED_MODULE_0__["default"],
-];
+Debugger.prototype._modules =
+    _lib_Modeler__WEBPACK_IMPORTED_MODULE_3__["default"].prototype._interactionModules.concat([
+      object_diagram_modeler_lib_core__WEBPACK_IMPORTED_MODULE_4__["default"],
+      diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_5__["default"],
+      diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_6__["default"],
+      diagram_js_lib_features_overlays__WEBPACK_IMPORTED_MODULE_7__["default"],
+      _websocket__WEBPACK_IMPORTED_MODULE_0__["default"]
+    ]);
 
 // default moddle extensions the viewer is composed of
 Debugger.prototype._moddleExtensions = {};
