@@ -26,7 +26,7 @@ public class VisualDebuggerSettingsComponent {
             new ComboBox<>(DebuggingVisualizerOption.values());
 
 
-    public VisualDebuggerSettingsComponent(final VisualDebuggerSettingsConfigurable parent) {
+    public VisualDebuggerSettingsComponent(final Disposable disposable) {
         this.myMainPanel = FormBuilder.createFormBuilder()
                                          .addLabeledComponent(new JBLabel("Choose visualizer: "), this.visualizerOptionsCombobox, 1, false)
                                       .addLabeledComponent(new JBLabel("Initial visualization depth: "), this.visualizationDepthField, 0, false)
@@ -34,11 +34,11 @@ public class VisualDebuggerSettingsComponent {
                                       .addComponentFillVertically(new JPanel(), 0)
                                       .getPanel();
 
-        this.addInputFieldValidators(parent);
+        this.addInputFieldValidators(disposable);
     }
 
-    private void addInputFieldValidators(final Disposable parent) {
-        new ComponentValidator(parent).withValidator(() -> validateDepthField(VisualDebuggerSettingsComponent.this.visualizationDepthField)).installOn(this.visualizationDepthField);
+    private void addInputFieldValidators(final Disposable disposable) {
+        new ComponentValidator(disposable).withValidator(() -> validateDepthField(VisualDebuggerSettingsComponent.this.visualizationDepthField)).installOn(this.visualizationDepthField);
         this.visualizationDepthField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
             protected void textChanged(@NotNull final DocumentEvent e) {
@@ -47,7 +47,7 @@ public class VisualDebuggerSettingsComponent {
             }
         });
 
-        new ComponentValidator(parent).withValidator(() -> validateDepthField(VisualDebuggerSettingsComponent.this.loadingDepthField)).installOn(this.loadingDepthField);
+        new ComponentValidator(disposable).withValidator(() -> validateDepthField(VisualDebuggerSettingsComponent.this.loadingDepthField)).installOn(this.loadingDepthField);
         this.loadingDepthField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
             protected void textChanged(@NotNull final DocumentEvent e) {

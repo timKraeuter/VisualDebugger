@@ -1,16 +1,24 @@
 package no.hvl.tk.visual.debugger.settings;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.options.Configurable;
+import com.intellij.openapi.options.SearchableConfigurable;
+import com.intellij.openapi.util.Disposer;
 import no.hvl.tk.visual.debugger.SharedState;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class VisualDebuggerSettingsConfigurable implements Configurable, Disposable {
+public class VisualDebuggerSettingsConfigurable implements SearchableConfigurable {
 
   private VisualDebuggerSettingsComponent settingsComponent;
+  private @Nullable Disposable settingsDisposable = null;
+
+  @Override
+  public @NotNull String getId() {
+    return "no.hvl.tk.visualDebugger.settings";
+  }
 
   @Nls(capitalization = Nls.Capitalization.Title)
   @Override
@@ -26,7 +34,11 @@ public class VisualDebuggerSettingsConfigurable implements Configurable, Disposa
   @Nullable
   @Override
   public JComponent createComponent() {
-    this.settingsComponent = new VisualDebuggerSettingsComponent(this);
+    if (settingsDisposable != null) {
+      Disposer.dispose(settingsDisposable);
+    }
+    settingsDisposable = Disposer.newDisposable();
+    this.settingsComponent = new VisualDebuggerSettingsComponent(settingsDisposable);
     return this.settingsComponent.getPanel();
   }
 
@@ -89,11 +101,12 @@ public class VisualDebuggerSettingsConfigurable implements Configurable, Disposa
 
   @Override
   public void disposeUIResources() {
-    this.settingsComponent = null;
-  }
+    if (settingsDisposable == null) {
+      return;
+    }
+    Disposer.dispose(settingsDisposable);
+    settingsDisposable = null;
 
-  @Override
-  public void dispose() {
-    // Nothing to dispose here just creating the hierarchy.
+    this.settingsComponent = null;
   }
 }
