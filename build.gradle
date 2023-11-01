@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.9.7'
+version '1.9.8'
 
 repositories {
     mavenCentral()
@@ -51,7 +51,7 @@ intellij {
 }
 
 patchPluginXml {
-    changeNotes = """Fix movement of canvas during debugging."""
+    changeNotes = """Internal improvements."""
 }
 
 test {
