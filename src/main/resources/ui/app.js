@@ -847,7 +847,7 @@ function addProjectLogo(container) {
     'target="_blank" ' +
     'class="bjs-powered-by" ' +
     'title="Powered by bpmn.io" ' +
-    'style="position: absolute; bottom: 15px; right: 15px; z-index: 100">' +
+    'style="position: absolute; bottom: 0; right: 15px; z-index: 100">' +
     img +
     "</a>";
 
@@ -8830,13 +8830,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* export default binding */ __WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
-/* harmony import */ var _Moddle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Moddle */ "../lib/moddle/Moddle.js");
-/* harmony import */ var _resources_db_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./resources/db.json */ "../lib/moddle/resources/db.json");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! min-dash */ "../node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var _Moddle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Moddle */ "../lib/moddle/Moddle.js");
 /* harmony import */ var _resources_od_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./resources/od.json */ "../lib/moddle/resources/od.json");
 /* harmony import */ var _resources_odDi_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./resources/odDi.json */ "../lib/moddle/resources/odDi.json");
 /* harmony import */ var _resources_dc_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./resources/dc.json */ "../lib/moddle/resources/dc.json");
-
 
 
 
@@ -8849,15 +8847,12 @@ const packages = {
   od: _resources_od_json__WEBPACK_IMPORTED_MODULE_0__,
   odDi: _resources_odDi_json__WEBPACK_IMPORTED_MODULE_1__,
   dc: _resources_dc_json__WEBPACK_IMPORTED_MODULE_2__,
-
-  // TODO: Debug API should preferably not be loaded here.
-  db: _resources_db_json__WEBPACK_IMPORTED_MODULE_3__,
 };
 
 /* harmony default export */ function __WEBPACK_DEFAULT_EXPORT__(additionalPackages, options) {
-  const pks = (0,min_dash__WEBPACK_IMPORTED_MODULE_4__.assign)({}, packages, additionalPackages);
+  const pks = (0,min_dash__WEBPACK_IMPORTED_MODULE_3__.assign)({}, packages, additionalPackages);
 
-  return new _Moddle__WEBPACK_IMPORTED_MODULE_5__["default"](pks, options);
+  return new _Moddle__WEBPACK_IMPORTED_MODULE_4__["default"](pks, options);
 }
 
 
@@ -46931,41 +46926,39 @@ function Debugger(options) {
 (0,inherits_browser__WEBPACK_IMPORTED_MODULE_2__["default"])(Debugger, object_diagram_modeler_lib_BaseViewer__WEBPACK_IMPORTED_MODULE_1__["default"]);
 
 // modules the viewer is composed of
-Debugger.prototype._modules =
-    _lib_Modeler__WEBPACK_IMPORTED_MODULE_3__["default"].prototype._interactionModules.concat([
-      object_diagram_modeler_lib_core__WEBPACK_IMPORTED_MODULE_4__["default"],
-      diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_5__["default"],
-      diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_6__["default"],
-      diagram_js_lib_features_overlays__WEBPACK_IMPORTED_MODULE_7__["default"],
-      _websocket__WEBPACK_IMPORTED_MODULE_0__["default"]
-    ]);
-
-// default moddle extensions the viewer is composed of
-Debugger.prototype._moddleExtensions = {};
+Debugger.prototype._modules = _lib_Modeler__WEBPACK_IMPORTED_MODULE_3__["default"].prototype._interactionModules.concat([
+  object_diagram_modeler_lib_core__WEBPACK_IMPORTED_MODULE_4__["default"],
+  diagram_js_lib_i18n_translate__WEBPACK_IMPORTED_MODULE_5__["default"],
+  diagram_js_lib_features_selection__WEBPACK_IMPORTED_MODULE_6__["default"],
+  diagram_js_lib_features_overlays__WEBPACK_IMPORTED_MODULE_7__["default"],
+  _websocket__WEBPACK_IMPORTED_MODULE_0__["default"],
+]);
 
 
 /***/ }),
 
-/***/ "./debugger/websocket/WebsocketConnector.js":
-/*!**************************************************!*\
-  !*** ./debugger/websocket/WebsocketConnector.js ***!
-  \**************************************************/
+/***/ "./debugger/websocket/WebsocketDebugClient.js":
+/*!****************************************************!*\
+  !*** ./debugger/websocket/WebsocketDebugClient.js ***!
+  \****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ WebsocketConnector)
+/* harmony export */   "default": () => (/* binding */ WebsocketDebugClient)
 /* harmony export */ });
-/* harmony import */ var object_diagram_modeler_lib_moddle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! object-diagram-modeler/lib/moddle */ "../lib/moddle/index.js");
+/* harmony import */ var object_diagram_modeler_lib_moddle__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! object-diagram-modeler/lib/moddle */ "../lib/moddle/index.js");
 /* harmony import */ var elkjs_lib_elk_bundled_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! elkjs/lib/elk.bundled.js */ "./node_modules/elkjs/lib/elk.bundled.js");
 /* harmony import */ var elkjs_lib_elk_bundled_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(elkjs_lib_elk_bundled_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _db_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./db.json */ "./debugger/websocket/db.json");
 
 
 
-// Rename this to debug api client or something
+
 const websocket_url = "ws://localhost:8071/debug";
-function WebsocketConnector(eventBus) {
+
+function WebsocketDebugClient(eventBus) {
   // listen to dblclick on non-root elements
   eventBus.on("element.dblclick", (event) => {
     if (event.element && event.element.type === "od:Object") {
@@ -46988,15 +46981,34 @@ function WebsocketConnector(eventBus) {
   };
   this.setOnMessageHandler(eventBus, {});
 }
-WebsocketConnector.prototype.$inject = ["eventBus"];
+WebsocketDebugClient.prototype.$inject = ["eventBus"];
 
 const OBJECT_FONT_SIZE = "19.2px"; // 16px * 1.2 = 19.2px (Objects)
 const LINK_FONT_SIZE = "18px"; // 15px * 1.2 = 18px (Objects)
 
-WebsocketConnector.prototype.setOnMessageHandler = function (
+WebsocketDebugClient.prototype.setOnMessageHandler = function (
   eventBus,
   lastBoard,
 ) {
+  this.webSocket.onmessage = function (event) {
+    const data = JSON.parse(event.data);
+    if (data.type === "error") {
+      console.error("Websocket error message received:" + data.content);
+      return;
+    }
+    if (data.type === "config") {
+      eventBus.fire("debugger.config", data);
+      return;
+    }
+    if (data.type === "loadChildren") {
+      addLoadedChildrenToVisualization(data.content);
+      return;
+    }
+    if (data.type === "nextDebugStep") {
+      visualizeDebugData(data.content);
+    }
+  };
+
   function mapSemantic(moddle, apiData) {
     let board = moddle.create("od:OdBoard");
     board.id = "Board_debug";
@@ -47246,7 +47258,7 @@ WebsocketConnector.prototype.setOnMessageHandler = function (
   }
 
   function visualizeDebugData(xmlData) {
-    const moddle = new object_diagram_modeler_lib_moddle__WEBPACK_IMPORTED_MODULE_1__["default"]();
+    const moddle = new object_diagram_modeler_lib_moddle__WEBPACK_IMPORTED_MODULE_2__["default"]({ db: _db_json__WEBPACK_IMPORTED_MODULE_1__ });
 
     // Parse xml.
     moddle
@@ -47258,7 +47270,6 @@ WebsocketConnector.prototype.setOnMessageHandler = function (
         lastBoard = board;
 
         await addLayoutInformation(moddle, definitions, board);
-
         moddle.toXML(definitions).then((xml) => {
           eventBus.fire("debugger.data.new", xml);
         });
@@ -47267,7 +47278,7 @@ WebsocketConnector.prototype.setOnMessageHandler = function (
   }
 
   function addLoadedChildrenToVisualization(xmlData) {
-    const moddle = new object_diagram_modeler_lib_moddle__WEBPACK_IMPORTED_MODULE_1__["default"]();
+    const moddle = new object_diagram_modeler_lib_moddle__WEBPACK_IMPORTED_MODULE_2__["default"]();
 
     // Parse xml.
     moddle
@@ -47298,24 +47309,9 @@ WebsocketConnector.prototype.setOnMessageHandler = function (
       })
       .catch((reason) => console.log(reason));
   }
-
-  this.webSocket.onmessage = function (event) {
-    const data = JSON.parse(event.data);
-    if (data.type === "error") {
-      console.error("Websocket error message received:" + data.content);
-      return;
-    }
-    if (data.type === "loadChildren") {
-      addLoadedChildrenToVisualization(data.content);
-      return;
-    }
-    if (data.type === "nextDebugStep") {
-      visualizeDebugData(data.content);
-    }
-  };
 };
 
-WebsocketConnector.prototype.sendMessage = function (message) {
+WebsocketDebugClient.prototype.sendMessage = function (message) {
   this.webSocket.send(message);
 };
 
@@ -47333,12 +47329,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _WebsocketConnector__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./WebsocketConnector */ "./debugger/websocket/WebsocketConnector.js");
+/* harmony import */ var _WebsocketDebugClient__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./WebsocketDebugClient */ "./debugger/websocket/WebsocketDebugClient.js");
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  __init__: ["websocketConnector"],
-  websocketConnector: ["type", _WebsocketConnector__WEBPACK_IMPORTED_MODULE_0__["default"]],
+  __init__: ["websocketDebugClient"],
+  websocketDebugClient: ["type", _WebsocketDebugClient__WEBPACK_IMPORTED_MODULE_0__["default"]],
 });
 
 
@@ -55693,14 +55689,14 @@ module.exports = Worker;
 /***/ (function(module, exports) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
- * jQuery JavaScript Library v3.7.0
+ * jQuery JavaScript Library v3.7.1
  * https://jquery.com/
  *
  * Copyright OpenJS Foundation and other contributors
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2023-05-11T18:29Z
+ * Date: 2023-08-28T13:37Z
  */
 ( function( global, factory ) {
 
@@ -55841,7 +55837,7 @@ function toType( obj ) {
 
 
 
-var version = "3.7.0",
+var version = "3.7.1",
 
 	rhtmlSuffix = /HTML$/i,
 
@@ -56105,9 +56101,14 @@ jQuery.extend( {
 				// Do not traverse comment nodes
 				ret += jQuery.text( node );
 			}
-		} else if ( nodeType === 1 || nodeType === 9 || nodeType === 11 ) {
+		}
+		if ( nodeType === 1 || nodeType === 11 ) {
 			return elem.textContent;
-		} else if ( nodeType === 3 || nodeType === 4 ) {
+		}
+		if ( nodeType === 9 ) {
+			return elem.documentElement.textContent;
+		}
+		if ( nodeType === 3 || nodeType === 4 ) {
 			return elem.nodeValue;
 		}
 
@@ -56820,12 +56821,17 @@ function setDocument( node ) {
 		documentElement.msMatchesSelector;
 
 	// Support: IE 9 - 11+, Edge 12 - 18+
-	// Accessing iframe documents after unload throws "permission denied" errors (see trac-13936)
-	// Support: IE 11+, Edge 17 - 18+
-	// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
-	// two documents; shallow comparisons work.
-	// eslint-disable-next-line eqeqeq
-	if ( preferredDoc != document &&
+	// Accessing iframe documents after unload throws "permission denied" errors
+	// (see trac-13936).
+	// Limit the fix to IE & Edge Legacy; despite Edge 15+ implementing `matches`,
+	// all IE 9+ and Edge Legacy versions implement `msMatchesSelector` as well.
+	if ( documentElement.msMatchesSelector &&
+
+		// Support: IE 11+, Edge 17 - 18+
+		// IE/Edge sometimes throw a "Permission denied" error when strict-comparing
+		// two documents; shallow comparisons work.
+		// eslint-disable-next-line eqeqeq
+		preferredDoc != document &&
 		( subWindow = document.defaultView ) && subWindow.top !== subWindow ) {
 
 		// Support: IE 9 - 11+, Edge 12 - 18+
@@ -58388,12 +58394,12 @@ jQuery.find = find;
 jQuery.expr[ ":" ] = jQuery.expr.pseudos;
 jQuery.unique = jQuery.uniqueSort;
 
-// These have always been private, but they used to be documented
-// as part of Sizzle so let's maintain them in the 3.x line
-// for backwards compatibility purposes.
+// These have always been private, but they used to be documented as part of
+// Sizzle so let's maintain them for now for backwards compatibility purposes.
 find.compile = compile;
 find.select = select;
 find.setDocument = setDocument;
+find.tokenize = tokenize;
 
 find.escape = jQuery.escapeSelector;
 find.getText = jQuery.text;
@@ -61607,7 +61613,7 @@ function domManip( collection, args, callback, ignored ) {
 			if ( hasScripts ) {
 				doc = scripts[ scripts.length - 1 ].ownerDocument;
 
-				// Reenable scripts
+				// Re-enable scripts
 				jQuery.map( scripts, restoreScript );
 
 				// Evaluate executable scripts on first document insertion
@@ -62064,7 +62070,7 @@ var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
 				trChild = document.createElement( "div" );
 
 				table.style.cssText = "position:absolute;left:-11111px;border-collapse:separate";
-				tr.style.cssText = "border:1px solid";
+				tr.style.cssText = "box-sizing:content-box;border:1px solid";
 
 				// Support: Chrome 86+
 				// Height set through cssText does not get applied.
@@ -62076,7 +62082,7 @@ var rboxStyle = new RegExp( cssExpand.join( "|" ), "i" );
 				// In our bodyBackground.html iframe,
 				// display for all div elements is set to "inline",
 				// which causes a problem only in Android 8 Chrome 86.
-				// Ensuring the div is display: block
+				// Ensuring the div is `display: block`
 				// gets around this issue.
 				trChild.style.display = "block";
 
@@ -66244,7 +66250,9 @@ jQuery.fn.extend( {
 	},
 
 	hover: function( fnOver, fnOut ) {
-		return this.mouseenter( fnOver ).mouseleave( fnOut || fnOver );
+		return this
+			.on( "mouseenter", fnOver )
+			.on( "mouseleave", fnOut || fnOver );
 	}
 } );
 
@@ -70648,17 +70656,6 @@ Moddle.prototype.getTypeDescriptor = function(type) {
 
 /***/ }),
 
-/***/ "../lib/moddle/resources/db.json":
-/*!***************************************!*\
-  !*** ../lib/moddle/resources/db.json ***!
-  \***************************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = JSON.parse('{"name":"debug api","uri":"http://tk/schema/db","prefix":"db","xml":{"tagAlias":"lowerCase"},"types":[{"name":"ObjectDiagram","properties":[{"name":"object","isMany":true,"type":"Object"},{"name":"link","isMany":true,"type":"Link"},{"name":"primitiveRootValue","isMany":true,"type":"PrimitiveRootValue"}]},{"name":"Object","properties":[{"name":"id","isAttr":true,"isId":true,"type":"String"},{"name":"attributeValue","isMany":true,"type":"AttributeValue"},{"name":"link","isMany":true,"type":"Link","isReference":true},{"name":"variableName","isAttr":true,"type":"String"},{"name":"type","isAttr":true,"type":"String"}]},{"name":"AttributeValue","properties":[{"name":"name","isAttr":true,"type":"String"},{"name":"type","isAttr":true,"type":"String"},{"name":"value","isAttr":true,"type":"String"}]},{"name":"Link","properties":[{"name":"id","isAttr":true,"isId":true,"type":"String"},{"name":"type","isAttr":true,"type":"String"},{"name":"from","isAttr":true,"isReference":true,"type":"Object"},{"name":"to","isAttr":true,"isReference":true,"type":"Object"}]},{"name":"PrimitiveRootValue","properties":[{"name":"variableName","isAttr":true,"type":"String"},{"name":"type","isAttr":true,"type":"String"},{"name":"value","isAttr":true,"type":"String"}]}]}');
-
-/***/ }),
-
 /***/ "../lib/moddle/resources/dc.json":
 /*!***************************************!*\
   !*** ../lib/moddle/resources/dc.json ***!
@@ -70689,6 +70686,17 @@ module.exports = JSON.parse('{"name":"Object diagram","uri":"http://tk/schema/od
 
 "use strict";
 module.exports = JSON.parse('{"name":"ODDI","uri":"http://tk/schema/odDi","prefix":"odDi","xml":{"tagAlias":"lowerCase"},"types":[{"name":"OdRootBoard","properties":[{"name":"plane","type":"OdPlane","redefines":"Board#rootElement"},{"name":"labelStyle","type":"OdLabelStyle","isMany":true}],"superClass":["Board"]},{"name":"OdPlane","properties":[{"name":"boardElement","isAttr":true,"isReference":true,"type":"od:BoardElement","redefines":"BoardElement#modelElement"}],"superClass":["Plane"]},{"name":"OdShape","properties":[{"name":"boardElement","isAttr":true,"isReference":true,"type":"od:BoardElement","redefines":"BoardElement#modelElement"},{"name":"label","type":"OdLabel"}],"superClass":["LabeledShape"]},{"name":"Link","properties":[{"name":"label","type":"OdLabel"},{"name":"boardElement","isAttr":true,"isReference":true,"type":"od:BoardElement","redefines":"BoardElement#modelElement"},{"name":"sourceElement","isAttr":true,"isReference":true,"type":"od:BoardElement","redefines":"Edge#source"},{"name":"targetElement","isAttr":true,"isReference":true,"type":"od:BoardElement","redefines":"Edge#target"},{"name":"messageVisibleKind","type":"MessageVisibleKind","isAttr":true,"default":"initiating"}],"superClass":["LabeledEdge"]},{"name":"OdLabel","properties":[{"name":"labelStyle","type":"OdLabelStyle","isAttr":true,"isReference":true,"redefines":"BoardElement#style"}],"superClass":["Label"]},{"name":"OdLabelStyle","properties":[{"name":"font","type":"dc:Font"}],"superClass":["Style"]},{"name":"BoardElement","isAbstract":true,"properties":[{"name":"id","isAttr":true,"isId":true,"type":"String"},{"name":"owningBoard","type":"Board","isReadOnly":true,"isVirtual":true,"isReference":true},{"name":"owningElement","type":"BoardElement","isReadOnly":true,"isVirtual":true,"isReference":true},{"name":"modelElement","isReadOnly":true,"isVirtual":true,"isReference":true,"type":"Element"},{"name":"style","type":"Style","isReadOnly":true,"isVirtual":true,"isReference":true}]},{"name":"Node","isAbstract":true,"superClass":["BoardElement"]},{"name":"Edge","isAbstract":true,"superClass":["BoardElement"],"properties":[{"name":"source","type":"od:BoardElement","isReadOnly":true,"isVirtual":true,"isReference":true},{"name":"target","type":"od:BoardElement","isReadOnly":true,"isVirtual":true,"isReference":true},{"name":"waypoint","isUnique":false,"isMany":true,"type":"dc:Point","xml":{"serialize":"xsi:type"}}]},{"name":"Board","isAbstract":true,"properties":[{"name":"id","isAttr":true,"isId":true,"type":"String"},{"name":"rootElement","type":"BoardElement","isReadOnly":true,"isVirtual":true},{"name":"name","isAttr":true,"type":"String"},{"name":"resolution","isAttr":true,"type":"Real"},{"name":"ownedStyle","type":"Style","isReadOnly":true,"isMany":true,"isVirtual":true}]},{"name":"Shape","isAbstract":true,"superClass":["Node"],"properties":[{"name":"bounds","type":"dc:Bounds"}]},{"name":"Plane","isAbstract":true,"superClass":["Node"],"properties":[{"name":"planeElement","type":"BoardElement","subsettedProperty":"BoardElement-ownedElement","isMany":true}]},{"name":"LabeledEdge","isAbstract":true,"superClass":["Edge"],"properties":[{"name":"ownedLabel","type":"Label","isReadOnly":true,"subsettedProperty":"BoardElement-ownedElement","isMany":true,"isVirtual":true}]},{"name":"LabeledShape","isAbstract":true,"superClass":["Shape"],"properties":[{"name":"ownedLabel","type":"Label","isReadOnly":true,"subsettedProperty":"BoardElement-ownedElement","isMany":true,"isVirtual":true}]},{"name":"Label","isAbstract":true,"superClass":["Node"],"properties":[{"name":"bounds","type":"dc:Bounds"}]},{"name":"Style","isAbstract":true,"properties":[{"name":"id","isAttr":true,"isId":true,"type":"String"}]},{"name":"Extension","properties":[{"name":"values","isMany":true,"type":"Element"}]}],"enumerations":[],"associations":[]}');
+
+/***/ }),
+
+/***/ "./debugger/websocket/db.json":
+/*!************************************!*\
+  !*** ./debugger/websocket/db.json ***!
+  \************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = JSON.parse('{"name":"debug api","uri":"http://tk/schema/db","prefix":"db","xml":{"tagAlias":"lowerCase"},"types":[{"name":"ObjectDiagram","properties":[{"name":"object","isMany":true,"type":"Object"},{"name":"link","isMany":true,"type":"Link"},{"name":"primitiveRootValue","isMany":true,"type":"PrimitiveRootValue"}]},{"name":"Object","properties":[{"name":"id","isAttr":true,"isId":true,"type":"String"},{"name":"attributeValue","isMany":true,"type":"AttributeValue"},{"name":"link","isMany":true,"type":"Link","isReference":true},{"name":"variableName","isAttr":true,"type":"String"},{"name":"type","isAttr":true,"type":"String"}]},{"name":"AttributeValue","properties":[{"name":"name","isAttr":true,"type":"String"},{"name":"type","isAttr":true,"type":"String"},{"name":"value","isAttr":true,"type":"String"}]},{"name":"Link","properties":[{"name":"id","isAttr":true,"isId":true,"type":"String"},{"name":"type","isAttr":true,"type":"String"},{"name":"from","isAttr":true,"isReference":true,"type":"Object"},{"name":"to","isAttr":true,"isReference":true,"type":"Object"}]},{"name":"PrimitiveRootValue","properties":[{"name":"variableName","isAttr":true,"type":"String"},{"name":"type","isAttr":true,"type":"String"},{"name":"value","isAttr":true,"type":"String"}]}]}');
 
 /***/ })
 
@@ -70882,7 +70890,7 @@ function exitFullscreen() {
 const state = {
   fullScreen: false,
   keyboardHelp: false,
-  help: false
+  help: false,
 };
 document
   .getElementById("js-toggle-fullscreen")
@@ -70913,68 +70921,25 @@ document
       document.getElementById("io-dialog-main").style.display = displayProp;
     }
   });
-document.getElementById('js-toggle-help').addEventListener('click', function() {
-  state.help = !state.help;
-  let displayProp = 'none';
-  if (state.help) {
-    displayProp = 'block';
-  }
-  document.getElementById('help-dialog-main').style.display = displayProp;
-});
-document.getElementById('help-dialog-main').addEventListener('click', function() {
-  state.help = !state.help;
-  let displayProp = 'none';
-  if (!state.help) {
-    document.getElementById('help-dialog-main').style.display = displayProp;
-  }
-});
-
-/* file functions */
-function openFile(file, callback) {
-  // check file api availability
-  if (!window.FileReader) {
-    return window.alert(
-      "Looks like you use an older browser that does not support drag and drop. " +
-        "Try using a modern browser such as Chrome, Firefox or Internet Explorer > 10.",
-    );
-  }
-
-  // no file chosen
-  if (!file) {
-    return;
-  }
-
-  const reader = new FileReader();
-
-  reader.onload = function (e) {
-    const xml = e.target.result;
-
-    callback(xml);
-  };
-
-  reader.readAsText(file);
-}
-
-const fileInput = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<input type="file" />')
-  .appendTo(document.body)
-  .css({
-    width: 1,
-    height: 1,
-    display: "none",
-    overflow: "hidden",
-  })
-  .on("change", function (e) {
-    openFile(e.target.files[0], openBoard);
+document
+  .getElementById("js-toggle-help")
+  .addEventListener("click", function () {
+    state.help = !state.help;
+    let displayProp = "none";
+    if (state.help) {
+      displayProp = "block";
+    }
+    document.getElementById("help-dialog-main").style.display = displayProp;
   });
-
-function openBoard(xml) {
-  // import board
-  odDebugger.importXML(xml).catch(function (err) {
-    if (err) {
-      return console.error("could not import od board", err);
+document
+  .getElementById("help-dialog-main")
+  .addEventListener("click", function () {
+    state.help = !state.help;
+    let displayProp = "none";
+    if (!state.help) {
+      document.getElementById("help-dialog-main").style.display = displayProp;
     }
   });
-}
 
 function saveSVG() {
   return odDebugger.saveSVG();
@@ -70988,8 +70953,6 @@ function saveBoard() {
 jquery__WEBPACK_IMPORTED_MODULE_0___default()(function () {
   const downloadLink = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#js-download-board");
   const downloadSvgLink = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#js-download-svg");
-
-  const openExistingBoard = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#js-open-board");
 
   jquery__WEBPACK_IMPORTED_MODULE_0___default()(".buttons a").click(function (e) {
     if (!jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).is(".active")) {
@@ -71024,22 +70987,125 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(function () {
   odDebugger.on("commandStack.changed", exportArtifacts);
   odDebugger.on("import.done", exportArtifacts);
 
-  odDebugger.on(
-    "debugger.data.new",
-    function (event) {
-      odDebugger.importXML(event.xml);
-    },
-    this,
-  );
+  // Debugging specific
 
-  openExistingBoard.on("click", function () {
-    const input = jquery__WEBPACK_IMPORTED_MODULE_0___default()(fileInput);
-
-    // clear input so that previously selected file can be reopened
-    input.val("");
-    input.trigger("click");
+  odDebugger.on("debugger.data.new", (event) => {
+    odDebugger.importXML(event.xml);
+    saveDebugStep(event.xml);
   });
+
+  odDebugger.on("debugger.config", (event) => {
+    saveConfig(event);
+  });
+
+  previousDebugState.on("click", previous);
+  nextDebugState.on("click", next);
 });
+const previousDebugState = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#previous-state");
+const currentState = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#current-state");
+const nextDebugState = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#next-state");
+
+let config = {
+  savedDebugSteps: 0,
+};
+let savedDebugSteps = [];
+let currentStep = 0;
+
+function loadCurrentDebugStep() {
+  disableOrEnableNextAndPreviousButtons();
+  setCurrentStepCSSAndHTML();
+  let savedDebugStep = savedDebugSteps[currentStep];
+  odDebugger.importXML(savedDebugStep);
+}
+
+function setCurrentStepCSSAndHTML() {
+  if (currentStep === 0) {
+    currentState.text("Debug Data");
+    currentState.css("left", "49.5%");
+    return;
+  }
+  currentState.css("left", "48%");
+  if (currentStep === 1) {
+    currentState.text(`Debug Data -${currentStep.toString()} Step`);
+    return;
+  }
+  currentState.text(`Debug Data -${currentStep.toString()} Steps`);
+}
+
+function disableOrEnableNextAndPreviousButtons() {
+  const value = "disabled";
+  if (currentStep + 1 >= savedDebugSteps.length) {
+    previousDebugState.addClass(value);
+  } else {
+    previousDebugState.removeClass(value);
+  }
+  if (currentStep - 1 < 0) {
+    nextDebugState.addClass(value);
+  } else {
+    nextDebugState.removeClass(value);
+  }
+}
+
+function saveConfig(data) {
+  config = JSON.parse(data.content);
+  console.log("Configuration received:", config);
+  limitSavedDebugSteps();
+  resetCurrentStepIfNeeded();
+}
+
+function resetCurrentStepIfNeeded() {
+  if (currentStep !== 0) {
+    currentStep = 0;
+    loadCurrentDebugStep();
+  }
+}
+
+function saveDebugStep(xml) {
+  savedDebugSteps.unshift(xml);
+  limitSavedDebugSteps();
+
+  if (currentStep !== 0) {
+    currentStep = 0;
+    setCurrentStepCSSAndHTML();
+  }
+
+  disableOrEnableNextAndPreviousButtons();
+}
+
+function limitSavedDebugSteps() {
+  // + 1 to keep the current step
+  if (savedDebugSteps.length > config.savedDebugSteps + 1) {
+    // Setting length automatically throws away old debug steps
+    savedDebugSteps.length = config.savedDebugSteps + 1;
+  }
+}
+
+function previous() {
+  if (currentStep < savedDebugSteps.length - 1) {
+    currentStep++;
+    loadCurrentDebugStep();
+  }
+}
+
+function next() {
+  if (currentStep > 0) {
+    currentStep--;
+    loadCurrentDebugStep();
+  }
+}
+
+document.addEventListener(
+  "keyup",
+  (event) => {
+    if (event.code === "ArrowRight") {
+      next();
+    }
+    if (event.code === "ArrowLeft") {
+      previous();
+    }
+  },
+  false,
+);
 
 // helpers //////////////////////
 

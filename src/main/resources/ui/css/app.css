@@ -12,13 +12,38 @@ body,
   left: 20px;
 }
 
+.previous-state {
+  left: 40%;
+  bottom: 20px;
+}
+
+.current-state {
+  position: fixed;
+  left: 49.5%;
+  bottom: 25px;
+}
+
+.disabled {
+  opacity: 0.4;
+}
+
+.previous-state button:hover,
+.next-state button:hover {
+  background-color: #fbdbc0;
+}
+
+.next-state {
+  left: 60%;
+  bottom: 20px;
+}
+
 .bottom-buttons a:hover {
-  color: #555;
+  background-color: #fbdbc0;
 }
 
 .bottom-buttons a.active {
   opacity: 1;
-  box-shadow: 0px 2px 2px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
 }
 
 /* screen interaction helpers & modal */
@@ -27,15 +52,15 @@ body,
   display: none; /*default*/
 }
 
-#help-dialog-main{
-  display:none; /*default*/
+#help-dialog-main {
+  display: none; /*default*/
 }
 
 #io-editing-tools-buttons {
   display: block;
   position: fixed;
-  top: 0px;
-  right: 0px;
+  top: 0;
+  right: 0;
   list-style: none;
   padding: 5px;
   margin: 0;
@@ -78,7 +103,7 @@ body,
 }
 
 .icon-question::before {
-  content: '\e803';
+  content: "\e803";
   display: inline-block;
 }
 
