@@ -17,11 +17,12 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 
 public class VisualDebuggerSettingsComponent {
-    static final String NUMBER_GREATER_EQUALS_0 = "The depth must be 0 or higher.";
+    static final String NUMBER_GREATER_EQUALS_0 = "Must be a number greater or equal to 0.";
 
     private final JPanel myMainPanel;
     private final JBTextField visualizationDepthField = new JBTextField();
     private final JBTextField loadingDepthField = new JBTextField();
+    private final JBTextField savedDebugStepsField = new JBTextField();
     private final ComboBox<DebuggingVisualizerOption> visualizerOptionsCombobox =
             new ComboBox<>(DebuggingVisualizerOption.values());
 
@@ -31,6 +32,7 @@ public class VisualDebuggerSettingsComponent {
                                          .addLabeledComponent(new JBLabel("Choose visualizer: "), this.visualizerOptionsCombobox, 1, false)
                                       .addLabeledComponent(new JBLabel("Initial visualization depth: "), this.visualizationDepthField, 0, false)
                                       .addLabeledComponent(new JBLabel("Loading depth: "), this.loadingDepthField, 5, false)
+                                      .addLabeledComponent(new JBLabel("Number of debug history steps: "), this.savedDebugStepsField, 3, false)
                                       .addComponentFillVertically(new JPanel(), 0)
                                       .getPanel();
 
@@ -38,7 +40,7 @@ public class VisualDebuggerSettingsComponent {
     }
 
     private void addInputFieldValidators(final Disposable disposable) {
-        new ComponentValidator(disposable).withValidator(() -> validateDepthField(VisualDebuggerSettingsComponent.this.visualizationDepthField)).installOn(this.visualizationDepthField);
+        new ComponentValidator(disposable).withValidator(() -> validateNumberField(VisualDebuggerSettingsComponent.this.visualizationDepthField)).installOn(this.visualizationDepthField);
         this.visualizationDepthField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
             protected void textChanged(@NotNull final DocumentEvent e) {
@@ -47,7 +49,7 @@ public class VisualDebuggerSettingsComponent {
             }
         });
 
-        new ComponentValidator(disposable).withValidator(() -> validateDepthField(VisualDebuggerSettingsComponent.this.loadingDepthField)).installOn(this.loadingDepthField);
+        new ComponentValidator(disposable).withValidator(() -> validateNumberField(VisualDebuggerSettingsComponent.this.loadingDepthField)).installOn(this.loadingDepthField);
         this.loadingDepthField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
             protected void textChanged(@NotNull final DocumentEvent e) {
@@ -55,10 +57,19 @@ public class VisualDebuggerSettingsComponent {
                                   .ifPresent(ComponentValidator::revalidate);
             }
         });
+
+        new ComponentValidator(disposable).withValidator(() -> validateNumberField(VisualDebuggerSettingsComponent.this.savedDebugStepsField)).installOn(this.savedDebugStepsField);
+        this.savedDebugStepsField.getDocument().addDocumentListener(new DocumentAdapter() {
+            @Override
+            protected void textChanged(@NotNull final DocumentEvent e) {
+                ComponentValidator.getInstance(VisualDebuggerSettingsComponent.this.savedDebugStepsField)
+                        .ifPresent(ComponentValidator::revalidate);
+            }
+        });
     }
 
     @Nullable
-    static ValidationInfo validateDepthField(JBTextField depthField) {
+    static ValidationInfo validateNumberField(JBTextField depthField) {
         final String enteredDepth = depthField.getText();
         if (StringUtil.isEmpty(enteredDepth) || !StringUtils.isNumeric(enteredDepth)) {
             return new ValidationInfo(
@@ -107,5 +118,14 @@ public class VisualDebuggerSettingsComponent {
     @NotNull
     public String getLoadingDepthText() {
         return loadingDepthField.getText();
+    }
+
+    public void setSavedDebugStepsText(@NotNull final String loadingDepth) {
+        this.savedDebugStepsField.setText(loadingDepth);
+    }
+
+    @NotNull
+    public String getSavedDebugStepsText() {
+        return savedDebugStepsField.getText();
     }
 }

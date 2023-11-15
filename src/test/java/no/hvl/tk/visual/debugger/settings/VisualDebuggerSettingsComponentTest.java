@@ -16,7 +16,7 @@ class VisualDebuggerSettingsComponentTest {
     void validateDepthField(String input) {
         addJBTextFieldWorkaround();
         JBTextField textField = new JBTextField(input);
-        ValidationInfo validationInfo = VisualDebuggerSettingsComponent.validateDepthField(textField);
+        ValidationInfo validationInfo = VisualDebuggerSettingsComponent.validateNumberField(textField);
         assertNotNull(validationInfo);
         assertThat(validationInfo.message, is(VisualDebuggerSettingsComponent.NUMBER_GREATER_EQUALS_0));
     }

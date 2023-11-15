@@ -10,15 +10,15 @@ import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter;
-import no.hvl.tk.visual.debugger.server.endpoint.message.TypedWebsocketMessage;
-import no.hvl.tk.visual.debugger.server.endpoint.message.WebsocketMessageType;
+import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingWSMessage;
+import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingMessageType;
 import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
+
+import static no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter.sendUIConfig;
 
 @ServerEndpoint("/debug")
 public class VisualDebuggingAPIEndpoint {
     private static final Logger LOGGER = Logger.getInstance(VisualDebuggingAPIEndpoint.class);
-    // One gets one instance of this class per session/client.
-
 
     public VisualDebuggingAPIEndpoint() {
         // Needs public constructor.
@@ -29,11 +29,13 @@ public class VisualDebuggingAPIEndpoint {
         LOGGER.info(String.format("Websocket session with id \"%s\" opened.", session.getId()));
         SharedState.addWebsocketClient(session);
 
+        sendUIConfig(session);
+
         // Send the last diagram xml to the newly connected client.
-        final String message = new TypedWebsocketMessage(
-                WebsocketMessageType.NEXT_DEBUG_STEP,
-                SharedState.getLastDiagramXML()).serialize();
-        VisualDebuggingAPIServerStarter.sendMessageToClient(session, message);
+        final DebuggingWSMessage debugMessage = new DebuggingWSMessage(
+                DebuggingMessageType.NEXT_DEBUG_STEP,
+                SharedState.getLastDiagramXML());
+        VisualDebuggingAPIServerStarter.sendMessageToClient(session, debugMessage.serialize());
     }
 
     @OnClose
@@ -47,15 +49,15 @@ public class VisualDebuggingAPIEndpoint {
         LOGGER.debug(String.format("New websocket message with content \"%s\" received.", objectId));
 
         final DebuggingInfoVisualizer debuggingInfoVisualizer = SharedState.getDebugListener()
-                                                                           .getOrCreateDebuggingInfoVisualizer();
+                .getOrCreateDebuggingInfoVisualizer();
         try {
             final ObjectDiagram diagram = debuggingInfoVisualizer.getObjectWithChildrenFromPreviousDiagram(objectId);
-            return new TypedWebsocketMessage(
-                    WebsocketMessageType.LOAD_CHILDREN,
+            return new DebuggingWSMessage(
+                    DebuggingMessageType.LOAD_CHILDREN,
                     DiagramToXMLConverter.toXml(diagram)).serialize();
         } catch (NumberFormatException e) {
-            return new TypedWebsocketMessage(
-                    WebsocketMessageType.ERROR,
+            return new DebuggingWSMessage(
+                    DebuggingMessageType.ERROR,
                     String.format("Object id \"%s\" is not a number!", objectId)).serialize();
         }
     }

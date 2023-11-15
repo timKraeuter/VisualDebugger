@@ -4,14 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.diagnostic.Logger;
 
-public class TypedWebsocketMessage {
+public class DebuggingWSMessage {
 
-    private static final Logger LOGGER = Logger.getInstance(TypedWebsocketMessage.class);
+    private static final Logger LOGGER = Logger.getInstance(DebuggingWSMessage.class);
 
-    private final WebsocketMessageType type;
+    private final DebuggingMessageType type;
     private final String content;
 
-    public TypedWebsocketMessage(final WebsocketMessageType type, final String content) {
+    public DebuggingWSMessage(final DebuggingMessageType type, final String content) {
         this.type = type;
         this.content = content;
     }

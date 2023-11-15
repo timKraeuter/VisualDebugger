@@ -2,7 +2,11 @@ package no.hvl.tk.visual.debugger.server;
 
 import com.intellij.openapi.diagnostic.Logger;
 import jakarta.websocket.Session;
+import no.hvl.tk.visual.debugger.server.endpoint.UIConfig;
 import no.hvl.tk.visual.debugger.server.endpoint.VisualDebuggingAPIEndpoint;
+import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingWSMessage;
+import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingMessageType;
+import no.hvl.tk.visual.debugger.settings.PluginSettingsState;
 import org.glassfish.tyrus.server.Server;
 
 import java.io.IOException;
@@ -50,6 +54,19 @@ public class VisualDebuggingAPIServerStarter {
                 LOGGER.error(e);
             }
         }
+    }
+
+    /**
+     * Sends the configuration to the client.
+     * @param client client
+     */
+    public static void sendUIConfig(Session client) {
+        UIConfig uiConfig = PluginSettingsState.getInstance().getUIConfig();
+        final DebuggingWSMessage configMessage = new DebuggingWSMessage(
+                DebuggingMessageType.CONFIG,
+                uiConfig.serialize());
+
+        sendMessageToClient(client, configMessage.serialize());
     }
 
 }

@@ -5,6 +5,7 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import no.hvl.tk.visual.debugger.server.endpoint.UIConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,6 +21,7 @@ public class PluginSettingsState implements PersistentStateComponent<PluginSetti
     private DebuggingVisualizerOption visualizerOption = DebuggingVisualizerOption.WEB_UI;
     private Integer visualisationDepth = 0;
     private Integer loadingDepth = 5;
+    private Integer savedDebugSteps = 3;
 
     public static PluginSettingsState getInstance() {
         return ApplicationManager.getApplication().getService(PluginSettingsState.class);
@@ -58,5 +60,17 @@ public class PluginSettingsState implements PersistentStateComponent<PluginSetti
 
     public void setLoadingDepth(Integer loadingDepth) {
         this.loadingDepth = loadingDepth;
+    }
+
+    public Integer getSavedDebugSteps() {
+        return savedDebugSteps;
+    }
+
+    public void setSavedDebugSteps(Integer savedDebugSteps) {
+        this.savedDebugSteps = savedDebugSteps;
+    }
+
+    public UIConfig getUIConfig() {
+        return new UIConfig(this.savedDebugSteps);
     }
 }

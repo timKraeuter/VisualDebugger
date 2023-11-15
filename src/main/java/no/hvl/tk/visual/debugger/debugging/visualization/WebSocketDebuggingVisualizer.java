@@ -6,8 +6,8 @@ import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter;
 import no.hvl.tk.visual.debugger.server.ServerConstants;
 import no.hvl.tk.visual.debugger.server.UIServerStarter;
-import no.hvl.tk.visual.debugger.server.endpoint.message.TypedWebsocketMessage;
-import no.hvl.tk.visual.debugger.server.endpoint.message.WebsocketMessageType;
+import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingWSMessage;
+import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingMessageType;
 import no.hvl.tk.visual.debugger.util.ClassloaderUtil;
 import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -36,8 +36,8 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         }
         final String diagramXML = DiagramToXMLConverter.toXml(this.getDiagramWithDepth());
         SharedState.setLastDiagramXML(diagramXML);
-        final String message = new TypedWebsocketMessage(
-                WebsocketMessageType.NEXT_DEBUG_STEP,
+        final String message = new DebuggingWSMessage(
+                DebuggingMessageType.NEXT_DEBUG_STEP,
                 diagramXML).serialize();
         SharedState.getWebsocketClients().forEach(clientSession ->
                 // If one client fails no more messages are sent. We should change this.

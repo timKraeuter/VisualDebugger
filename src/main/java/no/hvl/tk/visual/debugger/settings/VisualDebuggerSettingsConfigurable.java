@@ -3,7 +3,9 @@ package no.hvl.tk.visual.debugger.settings;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.util.Disposer;
+import jakarta.websocket.Session;
 import no.hvl.tk.visual.debugger.SharedState;
+import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,9 +48,10 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
   public boolean isModified() {
     final PluginSettingsState settings = PluginSettingsState.getInstance();
     return this.visualizerOptionChanged(settings)
-        || isDepthModified(settingsComponent.getVisualizationDepthText(),
-        settings.getVisualisationDepth())
-        || isDepthModified(settingsComponent.getLoadingDepthText(), settings.getLoadingDepth());
+            || isModified(settingsComponent.getVisualizationDepthText(),
+            settings.getVisualisationDepth())
+            || isModified(settingsComponent.getLoadingDepthText(), settings.getLoadingDepth())
+            || isModified(settingsComponent.getSavedDebugStepsText(), settings.getSavedDebugSteps());
   }
 
   private boolean visualizerOptionChanged(final PluginSettingsState settings) {
@@ -56,17 +59,8 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
         != this.settingsComponent.getDebuggingVisualizerOptionChoice();
   }
 
-  private boolean isDepthModified(String newDepthText, Integer currentDepth) {
-    try {
-      final int newDepth = Integer.parseInt(newDepthText);
-      if (newDepth < 0) {
-        return false;
-      }
-      return newDepth != currentDepth;
-    } catch (final NumberFormatException nfe) {
-      // Ignore this exception and update since there is a validation error shown in the field!
-      return false;
-    }
+  private boolean isModified(String newDepthText, Integer currentDepth) {
+    return !newDepthText.equals(currentDepth.toString());
   }
 
   @Override
@@ -79,6 +73,16 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
 
     final int newLoadingDepth = Integer.parseInt(this.settingsComponent.getLoadingDepthText());
     settings.setLoadingDepth(newLoadingDepth);
+
+    final int newDebugSteps = Integer.parseInt(this.settingsComponent.getSavedDebugStepsText());
+    settings.setSavedDebugSteps(newDebugSteps);
+    sendUpdatedConfig();
+  }
+
+  private void sendUpdatedConfig() {
+    for (Session client : SharedState.getWebsocketClients()) {
+      VisualDebuggingAPIServerStarter.sendUIConfig(client);
+    }
   }
 
   private static void changedDepthAndRestartDebuggerIfNeeded(final PluginSettingsState settings,
@@ -96,6 +100,7 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
     final PluginSettingsState settings = PluginSettingsState.getInstance();
     this.settingsComponent.setVisualizationDepthText(settings.getVisualisationDepth().toString());
     this.settingsComponent.setLoadingDepthText(settings.getLoadingDepth().toString());
+    this.settingsComponent.setSavedDebugStepsText(settings.getSavedDebugSteps().toString());
     this.settingsComponent.chooseDebuggingVisualizerOption(settings.getVisualizerOption());
   }
 
