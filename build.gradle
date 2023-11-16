@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '1.9.8'
+version '1.10.1'
 
 repositories {
     mavenCentral()
@@ -51,7 +51,7 @@ intellij {
 }
 
 patchPluginXml {
-    changeNotes = """Internal improvements."""
+    changeNotes = """The visual debugger now saves previous debugging data and lets the user step back.."""
 }
 
 test {
