@@ -26,4 +26,10 @@ class TypedWebsocketMessageTest {
         String serializedMessage = new DebuggingWSMessage(DebuggingMessageType.NEXT_DEBUG_STEP, content).serialize();
         assertThat(serializedMessage, is("{\"type\":\"nextDebugStep\",\"content\":\"content\"}"));
     }
+
+    @Test
+    void serializeNextDebugStepWithMetadata() {
+        String serializedMessage = new DebuggingWSMessage(DebuggingMessageType.NEXT_DEBUG_STEP, content, "Test", 1).serialize();
+        assertThat(serializedMessage, is("{\"type\":\"nextDebugStep\",\"content\":\"content\",\"fileName\":\"Test\",\"line\":1}"));
+    }
 }

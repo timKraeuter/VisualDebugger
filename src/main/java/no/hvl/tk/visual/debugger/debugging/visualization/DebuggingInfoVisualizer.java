@@ -5,13 +5,15 @@ import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 
 public interface DebuggingInfoVisualizer {
 
-    DebuggingInfoVisualizer addObject(ODObject object, boolean root);
+    void addMetadata(String fileName, Integer line);
+
+    void addObject(ODObject object, boolean root);
 
     ObjectDiagram getObjectWithChildrenFromPreviousDiagram(String objectId);
 
-    DebuggingInfoVisualizer addAttributeToObject(ODObject object, String fieldName, String fieldValue, String fieldType);
+    void addAttributeToObject(ODObject object, String fieldName, String fieldValue, String fieldType);
 
-    DebuggingInfoVisualizer addLinkToObject(ODObject from, ODObject to, String linkType);
+    void addLinkToObject(ODObject from, ODObject to, String linkType);
 
     void addPrimitiveRootValue(String variableName, String type, String value);
 
@@ -22,8 +24,6 @@ public interface DebuggingInfoVisualizer {
     void debuggingDeactivated();
 
     ObjectDiagram getCurrentDiagram();
-
-    ObjectDiagram getPreviousDiagram();
 
     /**
      * Saves the current diagram as the previous diagram.

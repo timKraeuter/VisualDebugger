@@ -93,10 +93,10 @@ public class StackFrameSessionListener implements XDebugSessionListener {
                 PluginSettingsState.getInstance().getLoadingDepth());
         stackFrameAnalyzer.analyze();
 
-        // TODO: Add this metadata to the visualization use it as filename in the web ui
         if (debugSession.getCurrentPosition() != null) {
-            System.out.println(debugSession.getCurrentPosition().getFile().getNameWithoutExtension());
-            System.out.println(debugSession.getCurrentPosition().getLine() + 1);
+            String fileName = debugSession.getCurrentPosition().getFile().getNameWithoutExtension();
+            int line = debugSession.getCurrentPosition().getLine() + 1;
+            debuggingVisualizer.addMetadata(fileName, line);
         }
         this.debuggingVisualizer.finishVisualization();
     }

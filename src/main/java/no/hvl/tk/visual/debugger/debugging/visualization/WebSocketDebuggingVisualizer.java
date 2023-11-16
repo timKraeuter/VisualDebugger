@@ -35,10 +35,18 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
             return;
         }
         final String diagramXML = DiagramToXMLConverter.toXml(this.getDiagramWithDepth());
+
         SharedState.setLastDiagramXML(diagramXML);
+        String debugFileName = getFileNameIfExists();
+        SharedState.setDebugFileName(debugFileName);
+        int debugLine = getLineIfExists();
+        SharedState.setDebugLine(debugLine);
+
         final String message = new DebuggingWSMessage(
                 DebuggingMessageType.NEXT_DEBUG_STEP,
-                diagramXML).serialize();
+                diagramXML,
+                debugFileName,
+                debugLine).serialize();
         SharedState.getWebsocketClients().forEach(clientSession ->
                 // If one client fails no more messages are sent. We should change this.
                 VisualDebuggingAPIServerStarter.sendMessageToClient(clientSession, message)

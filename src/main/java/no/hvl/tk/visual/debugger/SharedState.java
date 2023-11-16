@@ -10,6 +10,7 @@ import java.util.Set;
 
 public class SharedState {
 
+
     private SharedState() {
     }
 
@@ -23,7 +24,9 @@ public class SharedState {
     /**
      * Last diagram XML for newly connecting clients.
      */
-    private static String diagramXML = "";
+    private static String lastDiagramXML = "";
+    private static String debugFileName;
+    private static Integer debugLine;
 
     private static boolean debuggingActive = false;
     private static StackFrameSessionListener debugSessionListener;
@@ -78,11 +81,11 @@ public class SharedState {
     }
 
     public static String getLastDiagramXML() {
-        return diagramXML;
+        return lastDiagramXML;
     }
 
     public static void setLastDiagramXML(final String diagramXML) {
-        SharedState.diagramXML = diagramXML;
+        SharedState.lastDiagramXML = diagramXML;
     }
 
     public static void setUIServer(final HttpServer server) {
@@ -91,5 +94,21 @@ public class SharedState {
 
     public static HttpServer getUiServer() {
         return uiServer;
+    }
+
+    public static String getDebugFileName() {
+        return debugFileName;
+    }
+
+    public static Integer getDebugLine() {
+        return debugLine;
+    }
+
+    public static void setDebugFileName(String lastDebugFileName) {
+        SharedState.debugFileName = lastDebugFileName;
+    }
+
+    public static void setDebugLine(Integer lastDebugLine) {
+        SharedState.debugLine = lastDebugLine;
     }
 }

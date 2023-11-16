@@ -43,13 +43,15 @@ From the point of view of the UI, the following messages are transferred.
 
 #### Incoming WebSocket messages
 
-The UI expects incoming messages to have a specific JSON format. It has a type (`nextDebugStep` or `loadChildren`) and a
+The UI expects incoming messages to have a specific JSON format. It has a type (`nextDebugStep`, `loadChildren`, or `config`) and a
 content which is a string conforming to the [XML schema for object diagrams](./api/objectDiagram.xsd).
 
 ```json
 {
   "type": "nextDebugStep",
-  "content": "xml data here..."
+  "content": "xml data here...",
+  "fileName": "PartsListTest",
+  "line": "12"
 }
 ```
 
@@ -58,6 +60,10 @@ discarding all previous information.
 
 `loadChildren` is the response to a call of the UI to load more details for a given object. The response should only
 contain the object and its children. The UI will merge this information with the currently shown object diagram.
+The fields `fileName` and `line` are not needed.
+
+`config` is expected after a connection has been initialized or the configuration has changed.
+It contains how many debugging steps should be saved in the history of the UI using the field `savedDebugSteps` inside `content`.  
 
 #### Outgoing WebSocket messages
 

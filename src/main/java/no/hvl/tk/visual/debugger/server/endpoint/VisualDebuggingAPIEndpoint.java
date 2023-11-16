@@ -34,7 +34,9 @@ public class VisualDebuggingAPIEndpoint {
         // Send the last diagram xml to the newly connected client.
         final DebuggingWSMessage debugMessage = new DebuggingWSMessage(
                 DebuggingMessageType.NEXT_DEBUG_STEP,
-                SharedState.getLastDiagramXML());
+                SharedState.getLastDiagramXML(),
+                SharedState.getDebugFileName(),
+                SharedState.getDebugLine());
         VisualDebuggingAPIServerStarter.sendMessageToClient(session, debugMessage.serialize());
     }
 

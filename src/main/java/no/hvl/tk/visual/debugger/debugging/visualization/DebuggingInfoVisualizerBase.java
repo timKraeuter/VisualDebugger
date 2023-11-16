@@ -20,6 +20,9 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
     protected ObjectDiagram diagram;
     private Set<ODObject> rootObjects;
 
+    private String fileName;
+    private Integer line;
+
     protected DebuggingInfoVisualizerBase() {
         this.diagram = new ObjectDiagram();
         this.previousDiagram = new ObjectDiagram();
@@ -28,19 +31,22 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
         manuallyExploredObjects = new HashSet<>();
     }
 
-
     @Override
-    public DebuggingInfoVisualizer addAttributeToObject(final ODObject object, final String fieldName, final String fieldValue, final String fieldType) {
-        object.addAttribute(new ODAttributeValue(fieldName, fieldType, fieldValue));
-        return this;
+    public void addMetadata(String fileName, Integer line) {
+        this.fileName = fileName;
+        this.line = line;
     }
 
     @Override
-    public DebuggingInfoVisualizer addLinkToObject(final ODObject from, final ODObject to, final String linkType) {
+    public void addAttributeToObject(final ODObject object, final String fieldName, final String fieldValue, final String fieldType) {
+        object.addAttribute(new ODAttributeValue(fieldName, fieldType, fieldValue));
+    }
+
+    @Override
+    public void addLinkToObject(final ODObject from, final ODObject to, final String linkType) {
         final ODLink linkToAdd = new ODLink(from, to, linkType);
         from.addLink(linkToAdd);
         this.diagram.addLink(linkToAdd);
-        return this;
     }
 
     @Override
@@ -49,22 +55,16 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
     }
 
     @Override
-    public DebuggingInfoVisualizer addObject(final ODObject object, boolean root) {
+    public void addObject(final ODObject object, boolean root) {
         this.diagram.addObject(object);
         if (root) {
             this.rootObjects.add(object);
         }
-        return this;
     }
 
     @Override
     public ObjectDiagram getCurrentDiagram() {
         return this.diagram;
-    }
-
-    @Override
-    public ObjectDiagram getPreviousDiagram() {
-        return this.previousDiagram;
     }
 
     @Override
@@ -143,5 +143,19 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
 
             this.addFurtherObjectsRespectingDepth(diagramWithDepth, depth - 1, to, seenObjects);
         });
+    }
+
+    /**
+     * Returns the file name of the file where the debugger has stopped or null.
+     */
+    public String getFileNameIfExists() {
+        return fileName;
+    }
+
+    /**
+     * Returns the line in the file where the debugger has stopped or null.
+     */
+    public int getLineIfExists() {
+        return line;
     }
 }
