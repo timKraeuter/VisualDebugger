@@ -5,8 +5,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class PrintAction extends AnAction {
-    @Override
-    public void actionPerformed(@NotNull final AnActionEvent e) {
-        new PrintDialog().show();
-    }
+  @Override
+  public void actionPerformed(@NotNull final AnActionEvent e) {
+    new PrintDialog().show();
+  }
 }

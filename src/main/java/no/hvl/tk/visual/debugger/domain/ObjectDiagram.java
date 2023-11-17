@@ -2,51 +2,52 @@ package no.hvl.tk.visual.debugger.domain;
 
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @XmlRootElement
 public class ObjectDiagram {
-    @XmlElement(name = "object")
-    private final Set<ODObject> objects;
-    @XmlElement(name = "link")
-    private final Set<ODLink> links;
-    @XmlElement(name = "primitiveRootValue")
-    private final Set<ODPrimitiveRootValue> primitiveRootValues;
+  @XmlElement(name = "object")
+  private final Set<ODObject> objects;
 
-    public ObjectDiagram() {
-        this.objects = new LinkedHashSet<>();
-        this.links = new LinkedHashSet<>();
-        this.primitiveRootValues = new LinkedHashSet<>();
-    }
+  @XmlElement(name = "link")
+  private final Set<ODLink> links;
 
-    public Set<ODObject> getObjects() {
-        return Collections.unmodifiableSet(this.objects);
-    }
+  @XmlElement(name = "primitiveRootValue")
+  private final Set<ODPrimitiveRootValue> primitiveRootValues;
 
-    public Set<ODLink> getLinks() {
-        return links;
-    }
+  public ObjectDiagram() {
+    this.objects = new LinkedHashSet<>();
+    this.links = new LinkedHashSet<>();
+    this.primitiveRootValues = new LinkedHashSet<>();
+  }
 
-    public Set<ODPrimitiveRootValue> getPrimitiveRootValues() {
-        return Collections.unmodifiableSet(this.primitiveRootValues);
-    }
+  public Set<ODObject> getObjects() {
+    return Collections.unmodifiableSet(this.objects);
+  }
 
-    public void addObject(final ODObject obj) {
-        this.objects.add(obj);
-    }
+  public Set<ODLink> getLinks() {
+    return links;
+  }
 
-    public void addLink(final ODLink link) {
-        this.links.add(link);
-    }
+  public Set<ODPrimitiveRootValue> getPrimitiveRootValues() {
+    return Collections.unmodifiableSet(this.primitiveRootValues);
+  }
 
-    public void addPrimitiveRootValue(final ODPrimitiveRootValue primitiveRootValue) {
-        this.primitiveRootValues.add(primitiveRootValue);
-    }
+  public void addObject(final ODObject obj) {
+    this.objects.add(obj);
+  }
 
-    public boolean isEmpty() {
-        return this.objects.isEmpty() && this.links.isEmpty() && this.primitiveRootValues.isEmpty();
-    }
+  public void addLink(final ODLink link) {
+    this.links.add(link);
+  }
+
+  public void addPrimitiveRootValue(final ODPrimitiveRootValue primitiveRootValue) {
+    this.primitiveRootValues.add(primitiveRootValue);
+  }
+
+  public boolean isEmpty() {
+    return this.objects.isEmpty() && this.links.isEmpty() && this.primitiveRootValues.isEmpty();
+  }
 }

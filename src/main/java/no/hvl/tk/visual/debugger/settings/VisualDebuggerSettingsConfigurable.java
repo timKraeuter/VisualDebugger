@@ -4,13 +4,12 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.util.Disposer;
 import jakarta.websocket.Session;
+import javax.swing.*;
 import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 public class VisualDebuggerSettingsConfigurable implements SearchableConfigurable {
 
@@ -33,8 +32,7 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
     return this.settingsComponent.getPreferredFocusedComponent();
   }
 
-  @Nullable
-  @Override
+  @Nullable @Override
   public JComponent createComponent() {
     if (settingsDisposable != null) {
       Disposer.dispose(settingsDisposable);
@@ -48,11 +46,11 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
   public boolean isModified() {
     final PluginSettingsState settings = PluginSettingsState.getInstance();
     return this.visualizerOptionChanged(settings)
-            || isModified(settingsComponent.getVisualizationDepthText(),
-            settings.getVisualisationDepth())
-            || isModified(settingsComponent.getLoadingDepthText(), settings.getLoadingDepth())
-            || isModified(settingsComponent.getSavedDebugStepsText(), settings.getSavedDebugSteps())
-            || settingsComponent.getColoredDiffValue() != settings.isColoredDiff();
+        || isModified(
+            settingsComponent.getVisualizationDepthText(), settings.getVisualisationDepth())
+        || isModified(settingsComponent.getLoadingDepthText(), settings.getLoadingDepth())
+        || isModified(settingsComponent.getSavedDebugStepsText(), settings.getSavedDebugSteps())
+        || settingsComponent.getColoredDiffValue() != settings.isColoredDiff();
   }
 
   private boolean visualizerOptionChanged(final PluginSettingsState settings) {
@@ -89,8 +87,8 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
     }
   }
 
-  private static void changedDepthAndRestartDebuggerIfNeeded(final PluginSettingsState settings,
-      final int newDepth) {
+  private static void changedDepthAndRestartDebuggerIfNeeded(
+      final PluginSettingsState settings, final int newDepth) {
     if (newDepth != settings.getVisualisationDepth()) {
       settings.setVisualisationDepth(newDepth);
       if (SharedState.getDebugListener() != null) {

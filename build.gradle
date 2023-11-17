@@ -3,7 +3,8 @@ plugins {
     id 'org.jetbrains.intellij' version '1.16.0'
     id "org.sonarqube" version "4.3.0.3225"
     id 'jacoco'
-    id ("net.ltgt.errorprone") version "3.0.1"
+    id "net.ltgt.errorprone" version "3.1.0"
+    id "com.diffplug.spotless" version "6.21.0"
 }
 
 group 'no.hvl.tk'
@@ -68,6 +69,13 @@ tasks.runIde {
 
 tasks.named('sonar').configure {
     dependsOn jacocoTestReport
+}
+
+spotless {
+    java {
+        googleJavaFormat()
+        formatAnnotations()
+    }
 }
 
 jacocoTestReport {

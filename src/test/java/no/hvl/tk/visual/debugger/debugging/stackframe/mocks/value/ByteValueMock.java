@@ -7,60 +7,60 @@ import org.jetbrains.annotations.NotNull;
 
 public record ByteValueMock(byte value) implements ByteValue {
 
-    @Override
-    public byte byteValue() {
-        return value;
-    }
+  @Override
+  public byte byteValue() {
+    return value;
+  }
 
-    // Below is irrelevant
+  // Below is irrelevant
 
-    @Override
-    public boolean booleanValue() {
-        return false;
-    }
+  @Override
+  public boolean booleanValue() {
+    return false;
+  }
 
-    @Override
-    public char charValue() {
-        return 0;
-    }
+  @Override
+  public char charValue() {
+    return 0;
+  }
 
-    @Override
-    public short shortValue() {
-        return 0;
-    }
+  @Override
+  public short shortValue() {
+    return 0;
+  }
 
-    @Override
-    public int intValue() {
-        return 0;
-    }
+  @Override
+  public int intValue() {
+    return 0;
+  }
 
-    @Override
-    public long longValue() {
-        return 0;
-    }
+  @Override
+  public long longValue() {
+    return 0;
+  }
 
-    @Override
-    public float floatValue() {
-        return 0;
-    }
+  @Override
+  public float floatValue() {
+    return 0;
+  }
 
-    @Override
-    public double doubleValue() {
-        return 0;
-    }
+  @Override
+  public double doubleValue() {
+    return 0;
+  }
 
-    @Override
-    public Type type() {
-        return null;
-    }
+  @Override
+  public Type type() {
+    return null;
+  }
 
-    @Override
-    public VirtualMachine virtualMachine() {
-        return null;
-    }
+  @Override
+  public VirtualMachine virtualMachine() {
+    return null;
+  }
 
-    @Override
-    public int compareTo(@NotNull ByteValue o) {
-        return 0;
-    }
+  @Override
+  public int compareTo(@NotNull ByteValue o) {
+    return 0;
+  }
 }

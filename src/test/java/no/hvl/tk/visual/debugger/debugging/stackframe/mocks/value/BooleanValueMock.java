@@ -6,55 +6,55 @@ import com.sun.jdi.VirtualMachine;
 
 public record BooleanValueMock(boolean value) implements BooleanValue {
 
-    @Override
-    public boolean booleanValue() {
-        return value;
-    }
+  @Override
+  public boolean booleanValue() {
+    return value;
+  }
 
-    // Below is irrelevant
+  // Below is irrelevant
 
-    @Override
-    public byte byteValue() {
-        return 0;
-    }
+  @Override
+  public byte byteValue() {
+    return 0;
+  }
 
-    @Override
-    public char charValue() {
-        return 0;
-    }
+  @Override
+  public char charValue() {
+    return 0;
+  }
 
-    @Override
-    public short shortValue() {
-        return 0;
-    }
+  @Override
+  public short shortValue() {
+    return 0;
+  }
 
-    @Override
-    public int intValue() {
-        return 0;
-    }
+  @Override
+  public int intValue() {
+    return 0;
+  }
 
-    @Override
-    public long longValue() {
-        return 0;
-    }
+  @Override
+  public long longValue() {
+    return 0;
+  }
 
-    @Override
-    public float floatValue() {
-        return 0;
-    }
+  @Override
+  public float floatValue() {
+    return 0;
+  }
 
-    @Override
-    public double doubleValue() {
-        return 0;
-    }
+  @Override
+  public double doubleValue() {
+    return 0;
+  }
 
-    @Override
-    public Type type() {
-        return null;
-    }
+  @Override
+  public Type type() {
+    return null;
+  }
 
-    @Override
-    public VirtualMachine virtualMachine() {
-        return null;
-    }
+  @Override
+  public VirtualMachine virtualMachine() {
+    return null;
+  }
 }

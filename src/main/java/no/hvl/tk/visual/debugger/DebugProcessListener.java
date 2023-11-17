@@ -8,9 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class DebugProcessListener implements XDebuggerManagerListener {
 
-    @Override
-    public void processStarted(@NotNull final XDebugProcess debugProcess) {
-        final XDebugSession debugSession = debugProcess.getSession();
-        debugSession.addSessionListener(new StackFrameSessionListener(debugProcess));
-    }
+  @Override
+  public void processStarted(@NotNull final XDebugProcess debugProcess) {
+    final XDebugSession debugSession = debugProcess.getSession();
+    debugSession.addSessionListener(new StackFrameSessionListener(debugProcess));
+  }
 }

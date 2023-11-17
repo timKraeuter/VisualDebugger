@@ -10,133 +10,154 @@ import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.FormBuilder;
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-
 public class VisualDebuggerSettingsComponent {
-    static final String NUMBER_GREATER_EQUALS_0 = "Must be a number greater or equal to 0.";
+  static final String NUMBER_GREATER_EQUALS_0 = "Must be a number greater or equal to 0.";
 
-    private final JPanel myMainPanel;
-    private final JBTextField visualizationDepthField = new JBTextField();
-    private final JBTextField loadingDepthField = new JBTextField();
-    private final JBTextField savedDebugStepsField = new JBTextField();
-    private final JBCheckBox coloredDiffCheckBox = new JBCheckBox();
-    private final ComboBox<DebuggingVisualizerOption> visualizerOptionsCombobox =
-            new ComboBox<>(DebuggingVisualizerOption.values());
+  private final JPanel myMainPanel;
+  private final JBTextField visualizationDepthField = new JBTextField();
+  private final JBTextField loadingDepthField = new JBTextField();
+  private final JBTextField savedDebugStepsField = new JBTextField();
+  private final JBCheckBox coloredDiffCheckBox = new JBCheckBox();
+  private final ComboBox<DebuggingVisualizerOption> visualizerOptionsCombobox =
+      new ComboBox<>(DebuggingVisualizerOption.values());
 
+  public VisualDebuggerSettingsComponent(final Disposable disposable) {
+    this.myMainPanel =
+        FormBuilder.createFormBuilder()
+            .addLabeledComponent(
+                new JBLabel("Choose visualizer: "), this.visualizerOptionsCombobox, 1, false)
+            .addLabeledComponent(
+                new JBLabel("Initial visualization depth: "),
+                this.visualizationDepthField,
+                2,
+                false)
+            .addLabeledComponent(new JBLabel("Loading depth: "), this.loadingDepthField, 3, false)
+            .addLabeledComponent(
+                new JBLabel("Number of debug history steps: "), this.savedDebugStepsField, 4, false)
+            .addLabeledComponent(
+                new JBLabel("Color debug changes: "), this.coloredDiffCheckBox, 5, false)
+            .addComponentFillVertically(new JPanel(), 0)
+            .getPanel();
 
-    public VisualDebuggerSettingsComponent(final Disposable disposable) {
-        this.myMainPanel = FormBuilder.createFormBuilder()
-                .addLabeledComponent(new JBLabel("Choose visualizer: "), this.visualizerOptionsCombobox, 1, false)
-                .addLabeledComponent(new JBLabel("Initial visualization depth: "), this.visualizationDepthField, 2, false)
-                .addLabeledComponent(new JBLabel("Loading depth: "), this.loadingDepthField, 3, false)
-                .addLabeledComponent(new JBLabel("Number of debug history steps: "), this.savedDebugStepsField, 4, false)
-                .addLabeledComponent(new JBLabel("Color debug changes: "), this.coloredDiffCheckBox, 5, false)
-                .addComponentFillVertically(new JPanel(), 0)
-                .getPanel();
+    this.addInputFieldValidators(disposable);
+  }
 
-        this.addInputFieldValidators(disposable);
+  private void addInputFieldValidators(final Disposable disposable) {
+    new ComponentValidator(disposable)
+        .withValidator(
+            () -> validateNumberField(VisualDebuggerSettingsComponent.this.visualizationDepthField))
+        .installOn(this.visualizationDepthField);
+    this.visualizationDepthField
+        .getDocument()
+        .addDocumentListener(
+            new DocumentAdapter() {
+              @Override
+              protected void textChanged(@NotNull final DocumentEvent e) {
+                ComponentValidator.getInstance(
+                        VisualDebuggerSettingsComponent.this.visualizationDepthField)
+                    .ifPresent(ComponentValidator::revalidate);
+              }
+            });
+
+    new ComponentValidator(disposable)
+        .withValidator(
+            () -> validateNumberField(VisualDebuggerSettingsComponent.this.loadingDepthField))
+        .installOn(this.loadingDepthField);
+    this.loadingDepthField
+        .getDocument()
+        .addDocumentListener(
+            new DocumentAdapter() {
+              @Override
+              protected void textChanged(@NotNull final DocumentEvent e) {
+                ComponentValidator.getInstance(
+                        VisualDebuggerSettingsComponent.this.loadingDepthField)
+                    .ifPresent(ComponentValidator::revalidate);
+              }
+            });
+
+    new ComponentValidator(disposable)
+        .withValidator(
+            () -> validateNumberField(VisualDebuggerSettingsComponent.this.savedDebugStepsField))
+        .installOn(this.savedDebugStepsField);
+    this.savedDebugStepsField
+        .getDocument()
+        .addDocumentListener(
+            new DocumentAdapter() {
+              @Override
+              protected void textChanged(@NotNull final DocumentEvent e) {
+                ComponentValidator.getInstance(
+                        VisualDebuggerSettingsComponent.this.savedDebugStepsField)
+                    .ifPresent(ComponentValidator::revalidate);
+              }
+            });
+  }
+
+  @Nullable static ValidationInfo validateNumberField(JBTextField depthField) {
+    final String enteredDepth = depthField.getText();
+    if (StringUtil.isEmpty(enteredDepth) || !StringUtils.isNumeric(enteredDepth)) {
+      return new ValidationInfo(
+          VisualDebuggerSettingsComponent.NUMBER_GREATER_EQUALS_0, depthField);
     }
-
-    private void addInputFieldValidators(final Disposable disposable) {
-        new ComponentValidator(disposable).withValidator(() -> validateNumberField(VisualDebuggerSettingsComponent.this.visualizationDepthField)).installOn(this.visualizationDepthField);
-        this.visualizationDepthField.getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(@NotNull final DocumentEvent e) {
-                ComponentValidator.getInstance(VisualDebuggerSettingsComponent.this.visualizationDepthField)
-                        .ifPresent(ComponentValidator::revalidate);
-            }
-        });
-
-        new ComponentValidator(disposable).withValidator(() -> validateNumberField(VisualDebuggerSettingsComponent.this.loadingDepthField)).installOn(this.loadingDepthField);
-        this.loadingDepthField.getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(@NotNull final DocumentEvent e) {
-                ComponentValidator.getInstance(VisualDebuggerSettingsComponent.this.loadingDepthField)
-                        .ifPresent(ComponentValidator::revalidate);
-            }
-        });
-
-        new ComponentValidator(disposable).withValidator(() -> validateNumberField(VisualDebuggerSettingsComponent.this.savedDebugStepsField)).installOn(this.savedDebugStepsField);
-        this.savedDebugStepsField.getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(@NotNull final DocumentEvent e) {
-                ComponentValidator.getInstance(VisualDebuggerSettingsComponent.this.savedDebugStepsField)
-                        .ifPresent(ComponentValidator::revalidate);
-            }
-        });
+    int depth = Integer.parseInt(enteredDepth);
+    if (depth < 0) {
+      return new ValidationInfo(
+          VisualDebuggerSettingsComponent.NUMBER_GREATER_EQUALS_0, depthField);
     }
+    // Means everything is ok.
+    return null;
+  }
 
-    @Nullable
-    static ValidationInfo validateNumberField(JBTextField depthField) {
-        final String enteredDepth = depthField.getText();
-        if (StringUtil.isEmpty(enteredDepth) || !StringUtils.isNumeric(enteredDepth)) {
-            return new ValidationInfo(
-                    VisualDebuggerSettingsComponent.NUMBER_GREATER_EQUALS_0,
-                    depthField);
-        }
-        int depth = Integer.parseInt(enteredDepth);
-        if (depth < 0) {
-            return new ValidationInfo(
-                    VisualDebuggerSettingsComponent.NUMBER_GREATER_EQUALS_0,
-                    depthField);
-        }
-        // Means everything is ok.
-        return null;
-    }
+  public JPanel getPanel() {
+    return this.myMainPanel;
+  }
 
-    public JPanel getPanel() {
-        return this.myMainPanel;
-    }
+  public JComponent getPreferredFocusedComponent() {
+    return this.visualizationDepthField;
+  }
 
-    public JComponent getPreferredFocusedComponent() {
-        return this.visualizationDepthField;
-    }
+  @NotNull public String getVisualizationDepthText() {
+    return this.visualizationDepthField.getText();
+  }
 
-    @NotNull
-    public String getVisualizationDepthText() {
-        return this.visualizationDepthField.getText();
-    }
+  public void setVisualizationDepthText(@NotNull final String visualizationDepth) {
+    this.visualizationDepthField.setText(visualizationDepth);
+  }
 
-    public void setVisualizationDepthText(@NotNull final String visualizationDepth) {
-        this.visualizationDepthField.setText(visualizationDepth);
-    }
+  public DebuggingVisualizerOption getDebuggingVisualizerOptionChoice() {
+    return this.visualizerOptionsCombobox.getItem();
+  }
 
-    public DebuggingVisualizerOption getDebuggingVisualizerOptionChoice() {
-        return this.visualizerOptionsCombobox.getItem();
-    }
+  public void chooseDebuggingVisualizerOption(final DebuggingVisualizerOption option) {
+    this.visualizerOptionsCombobox.setItem(option);
+  }
 
-    public void chooseDebuggingVisualizerOption(final DebuggingVisualizerOption option) {
-        this.visualizerOptionsCombobox.setItem(option);
-    }
+  public void setLoadingDepthText(@NotNull final String loadingDepth) {
+    this.loadingDepthField.setText(loadingDepth);
+  }
 
-    public void setLoadingDepthText(@NotNull final String loadingDepth) {
-        this.loadingDepthField.setText(loadingDepth);
-    }
+  @NotNull public String getLoadingDepthText() {
+    return loadingDepthField.getText();
+  }
 
-    @NotNull
-    public String getLoadingDepthText() {
-        return loadingDepthField.getText();
-    }
+  public void setSavedDebugStepsText(@NotNull final String loadingDepth) {
+    this.savedDebugStepsField.setText(loadingDepth);
+  }
 
-    public void setSavedDebugStepsText(@NotNull final String loadingDepth) {
-        this.savedDebugStepsField.setText(loadingDepth);
-    }
+  @NotNull public String getSavedDebugStepsText() {
+    return savedDebugStepsField.getText();
+  }
 
-    @NotNull
-    public String getSavedDebugStepsText() {
-        return savedDebugStepsField.getText();
-    }
+  public void setColoredDiffValue(final boolean coloredDiffValue) {
+    this.coloredDiffCheckBox.setSelected(coloredDiffValue);
+  }
 
-    public void setColoredDiffValue(final boolean coloredDiffValue) {
-        this.coloredDiffCheckBox.setSelected(coloredDiffValue);
-    }
-
-    public boolean getColoredDiffValue() {
-        return coloredDiffCheckBox.isSelected();
-    }
+  public boolean getColoredDiffValue() {
+    return coloredDiffCheckBox.isSelected();
+  }
 }
