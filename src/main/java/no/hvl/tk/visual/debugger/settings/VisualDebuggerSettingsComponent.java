@@ -6,6 +6,7 @@ import com.intellij.openapi.ui.ComponentValidator;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.FormBuilder;
@@ -23,18 +24,20 @@ public class VisualDebuggerSettingsComponent {
     private final JBTextField visualizationDepthField = new JBTextField();
     private final JBTextField loadingDepthField = new JBTextField();
     private final JBTextField savedDebugStepsField = new JBTextField();
+    private final JBCheckBox coloredDiffCheckBox = new JBCheckBox();
     private final ComboBox<DebuggingVisualizerOption> visualizerOptionsCombobox =
             new ComboBox<>(DebuggingVisualizerOption.values());
 
 
     public VisualDebuggerSettingsComponent(final Disposable disposable) {
         this.myMainPanel = FormBuilder.createFormBuilder()
-                                         .addLabeledComponent(new JBLabel("Choose visualizer: "), this.visualizerOptionsCombobox, 1, false)
-                                      .addLabeledComponent(new JBLabel("Initial visualization depth: "), this.visualizationDepthField, 0, false)
-                                      .addLabeledComponent(new JBLabel("Loading depth: "), this.loadingDepthField, 5, false)
-                                      .addLabeledComponent(new JBLabel("Number of debug history steps: "), this.savedDebugStepsField, 3, false)
-                                      .addComponentFillVertically(new JPanel(), 0)
-                                      .getPanel();
+                .addLabeledComponent(new JBLabel("Choose visualizer: "), this.visualizerOptionsCombobox, 1, false)
+                .addLabeledComponent(new JBLabel("Initial visualization depth: "), this.visualizationDepthField, 2, false)
+                .addLabeledComponent(new JBLabel("Loading depth: "), this.loadingDepthField, 3, false)
+                .addLabeledComponent(new JBLabel("Number of debug history steps: "), this.savedDebugStepsField, 4, false)
+                .addLabeledComponent(new JBLabel("Color debug changes: "), this.coloredDiffCheckBox, 5, false)
+                .addComponentFillVertically(new JPanel(), 0)
+                .getPanel();
 
         this.addInputFieldValidators(disposable);
     }
@@ -45,7 +48,7 @@ public class VisualDebuggerSettingsComponent {
             @Override
             protected void textChanged(@NotNull final DocumentEvent e) {
                 ComponentValidator.getInstance(VisualDebuggerSettingsComponent.this.visualizationDepthField)
-                                  .ifPresent(ComponentValidator::revalidate);
+                        .ifPresent(ComponentValidator::revalidate);
             }
         });
 
@@ -54,7 +57,7 @@ public class VisualDebuggerSettingsComponent {
             @Override
             protected void textChanged(@NotNull final DocumentEvent e) {
                 ComponentValidator.getInstance(VisualDebuggerSettingsComponent.this.loadingDepthField)
-                                  .ifPresent(ComponentValidator::revalidate);
+                        .ifPresent(ComponentValidator::revalidate);
             }
         });
 
@@ -127,5 +130,13 @@ public class VisualDebuggerSettingsComponent {
     @NotNull
     public String getSavedDebugStepsText() {
         return savedDebugStepsField.getText();
+    }
+
+    public void setColoredDiffValue(final boolean coloredDiffValue) {
+        this.coloredDiffCheckBox.setSelected(coloredDiffValue);
+    }
+
+    public boolean getColoredDiffValue() {
+        return coloredDiffCheckBox.isSelected();
     }
 }

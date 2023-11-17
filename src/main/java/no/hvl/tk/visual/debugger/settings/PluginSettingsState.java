@@ -23,6 +23,8 @@ public class PluginSettingsState implements PersistentStateComponent<PluginSetti
     private Integer loadingDepth = 5;
     private Integer savedDebugSteps = 3;
 
+    private boolean coloredDiff = true;
+
     public static PluginSettingsState getInstance() {
         return ApplicationManager.getApplication().getService(PluginSettingsState.class);
     }
@@ -71,6 +73,14 @@ public class PluginSettingsState implements PersistentStateComponent<PluginSetti
     }
 
     public UIConfig getUIConfig() {
-        return new UIConfig(this.savedDebugSteps);
+        return new UIConfig(this.savedDebugSteps, this.coloredDiff);
+    }
+
+    public boolean isColoredDiff() {
+        return coloredDiff;
+    }
+
+    public void setColoredDiff(boolean coloredDiff) {
+        this.coloredDiff = coloredDiff;
     }
 }

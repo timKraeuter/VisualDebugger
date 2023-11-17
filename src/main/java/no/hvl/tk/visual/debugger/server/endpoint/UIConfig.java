@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.diagnostic.Logger;
 
-public record UIConfig(Integer savedDebugSteps) {
+public record UIConfig(Integer savedDebugSteps, boolean coloredDiff) {
     private static final Logger LOGGER = Logger.getInstance(UIConfig.class);
 
     public String serialize() {
