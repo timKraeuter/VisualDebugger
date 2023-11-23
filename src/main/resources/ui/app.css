@@ -77,6 +77,19 @@ body,
   color: #333333;
 }
 
+.icon-edit {
+  box-sizing: border-box;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1.2em;
+}
+
+.icon-edit::before {
+  content: "\e806";
+  display: inline-block;
+  line-height: 1.2em;
+}
+
 .icon-keyboard {
   box-sizing: border-box;
   cursor: pointer;
@@ -117,4 +130,41 @@ body,
 .keybindings-dialog .binding {
   padding: 5px 10px;
   font-family: monospace;
+}
+
+.marker {
+  background-color: rgb(128, 128, 128);
+  color: white;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.marker-added::before {
+  font-family: "Font Awesome 5 Free Solid", serif;
+  line-height: 1.2em;
+  content: "\e807";
+  display: inline-block;
+}
+
+.marker.marker-added {
+  background: #54B415;
+}
+
+.marker-changed::before {
+  font-family: "Font Awesome 5 Free Solid", serif;
+  font-size: 0.85em;
+  content: "\e806";
+  display: inline-block;
+}
+
+.marker.marker-changed {
+  background: #ef944e;
+}
+
+.pjs-buttons-active:hover {
+  background-color: #fbdbc0;
 }
