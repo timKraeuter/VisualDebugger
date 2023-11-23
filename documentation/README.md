@@ -63,7 +63,8 @@ contain the object and its children. The UI will merge this information with the
 The fields `fileName` and `line` are not needed.
 
 `config` is expected after a connection has been initialized or the configuration has changed.
-It contains how many debugging steps should be saved in the history of the UI using the field `savedDebugSteps` inside `content`.  
+It contains how many debugging steps should be saved in the history of the UI using the field `savedDebugSteps` inside `content`.
+Furthermore, it contains if additions and changes should be highlighted in a boolean field `coloredDiff` (see class `UIConfig`).
 
 #### Outgoing WebSocket messages
 
