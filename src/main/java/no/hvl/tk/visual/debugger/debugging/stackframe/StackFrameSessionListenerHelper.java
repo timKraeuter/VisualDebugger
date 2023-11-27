@@ -31,13 +31,13 @@ public class StackFrameSessionListenerHelper {
       }
 
       @Override
-      public com.sun.jdi.Value next() {
+      public Value next() {
         return invokeSimple(thread, i, "next");
       }
     };
   }
 
-  static com.sun.jdi.Value invokeSimple(ThreadReference thread, ObjectReference r, String name) {
+  static Value invokeSimple(ThreadReference thread, ObjectReference r, String name) {
     try {
       return r.invokeMethod(
           thread, r.referenceType().methodsByName(name).get(0), Collections.emptyList(), 0);

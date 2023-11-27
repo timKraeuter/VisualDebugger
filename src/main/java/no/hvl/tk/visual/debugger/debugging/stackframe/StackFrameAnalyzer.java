@@ -2,6 +2,9 @@ package no.hvl.tk.visual.debugger.debugging.stackframe;
 
 import static no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionListenerHelper.*;
 
+import com.intellij.debugger.engine.evaluation.EvaluateException;
+import com.intellij.debugger.jdi.LocalVariableProxyImpl;
+import com.intellij.debugger.jdi.StackFrameProxyImpl;
 import com.intellij.openapi.diagnostic.Logger;
 import com.sun.jdi.*;
 import java.util.*;
@@ -11,61 +14,59 @@ import no.hvl.tk.visual.debugger.domain.PrimitiveTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class StackFrameAnalyzer {
+
   private static final Logger LOGGER = Logger.getInstance(StackFrameAnalyzer.class);
   private static final String KEY = "key";
   private static final String VALUE = "value";
 
-  private final StackFrame stackFrame;
-  private final ThreadReference thread;
+  private final StackFrameProxyImpl stackFrame;
   private final DebuggingInfoVisualizer debuggingVisualizer;
   private final int loadingDepth;
 
   private final Set<Long> seenObjectIds;
-  /*
-  Converting actual heap objects requires running code on the suspended VM thread.
-  However, once we start running code on the thread, we can no longer read frame locals.
-  Therefore, we have to convert all heap objects at the very end.
-  */
-  private final Map<ODObject, ObjectReference> rootObjects = new TreeMap<>();
 
   public StackFrameAnalyzer(
-      final StackFrame stackFrame,
-      final ThreadReference thread,
+      final StackFrameProxyImpl stackFrame,
       final DebuggingInfoVisualizer debuggingVisualizer,
       final int loadingDepth) {
     this.stackFrame = stackFrame;
-    this.thread = thread;
     this.debuggingVisualizer = debuggingVisualizer;
     this.loadingDepth = loadingDepth;
     this.seenObjectIds = new HashSet<>();
   }
 
-  /** Use a default loading depth of 10. */
-  public StackFrameAnalyzer(
+  /**
+   * Use for testing only!.
+   */
+  protected StackFrameAnalyzer(
       final StackFrame stackFrame,
-      final ThreadReference thread,
       final DebuggingInfoVisualizer debuggingVisualizer) {
-    this(stackFrame, thread, debuggingVisualizer, 10);
+    this(new StackFrameProxyImpl(null, stackFrame, 0), debuggingVisualizer, 10);
+  }
+
+  /**
+   * Use for testing only!.
+   */
+  protected StackFrameAnalyzer(
+      final StackFrame stackFrame,
+      final DebuggingInfoVisualizer debuggingVisualizer,
+      final int loadingDepth) {
+    this(new StackFrameProxyImpl(null, stackFrame, 0), debuggingVisualizer, loadingDepth);
   }
 
   public void analyze() {
 
-    this.gatherThisObject(this.stackFrame);
-    this.gatherVariablesInScope(this.stackFrame);
+    try {
+      this.gatherThisObject(this.stackFrame);
+      this.gatherVariablesInScope(this.stackFrame);
 
-    this.convertObjects();
-
-    this.seenObjectIds.clear();
+      this.seenObjectIds.clear();
+    } catch (EvaluateException e) {
+      throw new RuntimeException(e);
+    }
   }
 
-  private void convertObjects() {
-    this.rootObjects.forEach(
-        (odObject, obRef) ->
-            // No parents at root
-            this.exploreObject(obRef, odObject, null, "", loadingDepth));
-  }
-
-  private void gatherThisObject(final StackFrame stackFrame) {
+  private void gatherThisObject(final StackFrameProxyImpl stackFrame) throws EvaluateException {
     final ObjectReference thisObjectReference = stackFrame.thisObject();
     if (thisObjectReference == null) {
       LOGGER.warn("this object was null!");
@@ -76,17 +77,16 @@ public class StackFrameAnalyzer {
         new ODObject(
             thisObjectReference.uniqueID(), thisObjectReference.referenceType().name(), "this");
 
-    this.rootObjects.put(thisObject, thisObjectReference);
+    this.exploreObject(thisObjectReference, thisObject, null, "", loadingDepth);
   }
 
-  private void gatherVariablesInScope(final StackFrame stackFrame) {
-    try {
+  private void gatherVariablesInScope(final StackFrameProxyImpl stackFrame)
+      throws EvaluateException {
       // All visible variables in the stack frame.
-      final List<LocalVariable> methodVariables = stackFrame.visibleVariables();
-      methodVariables.forEach(localVariable -> this.gatherVariable(localVariable, stackFrame));
-    } catch (final AbsentInformationException e) {
-      // OK
-    }
+      final List<LocalVariableProxyImpl> methodVariables = stackFrame.visibleVariables();
+      for (LocalVariableProxyImpl localVariable : methodVariables) {
+        this.gatherVariable(localVariable, stackFrame);
+      }
   }
 
   private void exploreObject(
@@ -109,7 +109,6 @@ public class StackFrameAnalyzer {
           objectType,
           parentIfExists,
           linkTypeIfExists,
-          true,
           remainingDepthToBeExplored);
       return;
     }
@@ -126,7 +125,7 @@ public class StackFrameAnalyzer {
       return;
     }
     if ((implementsInterface(objectReference, "java.util.List")
-            || implementsInterface(objectReference, "java.util.Set"))
+        || implementsInterface(objectReference, "java.util.Set"))
         && isInternalPackage(objectType)
         && !this.seenObjectIds.contains(objectReference.uniqueID())) {
       this.seenObjectIds.add(objectReference.uniqueID());
@@ -174,12 +173,12 @@ public class StackFrameAnalyzer {
           fieldValueEntry.getKey().typeName(),
           odObject,
           fieldName,
-          true,
           remainingDepthToBeExplored - 1);
     }
   }
 
-  @NotNull private List<Field> getNonStaticFields(final ObjectReference objectReference) {
+  @NotNull
+  private List<Field> getNonStaticFields(final ObjectReference objectReference) {
     return objectReference.referenceType().allFields().stream()
         .filter(field -> !field.isStatic())
         .toList();
@@ -210,7 +209,6 @@ public class StackFrameAnalyzer {
           value == null ? "" : value.type().name(),
           newParent,
           newParent.equals(parentIfExists) ? linkTypeIfExists : variableName,
-          true,
           remainingDepthToBeExplored);
     }
   }
@@ -245,7 +243,7 @@ public class StackFrameAnalyzer {
             linkTypeIfExists,
             this.isPrimitiveOrEmptyListOrSet(collectionRef));
 
-    final Iterator<Value> iterator = getIterator(this.thread, collectionRef);
+    final Iterator<Value> iterator = getIterator(getThreadReference(), collectionRef);
     int i = 0;
     while (iterator.hasNext()) {
       final Value value = iterator.next();
@@ -258,14 +256,13 @@ public class StackFrameAnalyzer {
           newParent.equals(parentIfExists)
               ? linkTypeIfExists
               : obName, // link type is just the index in case of root collections.
-          true,
           remainingDepthToBeExplored);
       i++;
     }
   }
 
   private boolean isPrimitiveOrEmptyListOrSet(final ObjectReference collectionRef) {
-    final Iterator<Value> iterator = getIterator(this.thread, collectionRef);
+    final Iterator<Value> iterator = getIterator(getThreadReference(), collectionRef);
     Value next = null;
     while (iterator.hasNext() && next == null) {
       next = iterator.next();
@@ -278,7 +275,8 @@ public class StackFrameAnalyzer {
         || PrimitiveTypes.isNonBoxedPrimitiveType(collectionContentType);
   }
 
-  @NotNull private ODObject findCollectionParent(
+  @NotNull
+  private ODObject findCollectionParent(
       final String name,
       final ObjectReference collectionRef,
       final String objectType,
@@ -302,7 +300,8 @@ public class StackFrameAnalyzer {
     return newParent;
   }
 
-  @NotNull private ODObject createParentIfNeededForCollection(
+  @NotNull
+  private ODObject createParentIfNeededForCollection(
       final ObjectReference obRef,
       final ODObject parentIfExists,
       final String obName,
@@ -327,13 +326,13 @@ public class StackFrameAnalyzer {
     final ODObject parent =
         this.createParentIfNeededForCollection(mapRef, parentIfExists, name, objectType);
     final ObjectReference entrySet =
-        (ObjectReference) invokeSimple(this.thread, mapRef, "entrySet");
-    final Iterator<Value> iterator = getIterator(this.thread, entrySet);
+        (ObjectReference) invokeSimple(getThreadReference(), mapRef, "entrySet");
+    final Iterator<Value> iterator = getIterator(getThreadReference(), entrySet);
     int i = 0;
     while (iterator.hasNext()) {
       final ObjectReference entry = (ObjectReference) iterator.next();
-      final Value keyValue = invokeSimple(this.thread, entry, "getKey");
-      final Value valueValue = invokeSimple(this.thread, entry, "getValue");
+      final Value keyValue = invokeSimple(getThreadReference(), entry, "getKey");
+      final Value valueValue = invokeSimple(getThreadReference(), entry, "getValue");
 
       final ODObject entryObject =
           new ODObject(entry.uniqueID(), entry.referenceType().name(), String.valueOf(i));
@@ -349,7 +348,6 @@ public class StackFrameAnalyzer {
             keyValue.type() == null ? "" : keyValue.type().name(),
             entryObject,
             KEY,
-            true,
             remainingDepthToBeExplored);
       }
       if (valueValue != null) {
@@ -359,14 +357,18 @@ public class StackFrameAnalyzer {
             valueValue.type() == null ? "" : valueValue.type().name(),
             entryObject,
             VALUE,
-            true,
             remainingDepthToBeExplored);
       }
       i++;
     }
   }
 
-  private void gatherVariable(final LocalVariable localVariable, final StackFrame stackFrame) {
+  private ThreadReference getThreadReference() {
+    return stackFrame.threadProxy().getThreadReference();
+  }
+
+  private void gatherVariable(final LocalVariableProxyImpl localVariable, final StackFrameProxyImpl stackFrame)
+      throws EvaluateException {
     final Value variableValue = stackFrame.getValue(localVariable);
     final String variableName = localVariable.name();
     final String variableType = localVariable.typeName();
@@ -375,9 +377,8 @@ public class StackFrameAnalyzer {
         variableName,
         variableType,
         null,
-        null,
-        false,
-        0); // depth setting doesnt matter
+        "",
+        loadingDepth);
   }
 
   private void convertValue(
@@ -386,7 +387,6 @@ public class StackFrameAnalyzer {
       final String variableType,
       final ODObject parentIfExists,
       final String linkTypeIfExists,
-      final boolean loadingObjectsPhase,
       int remainingDepthToBeExplored) {
     if (variableValue instanceof BooleanValue booleanValue) {
       final String value = String.valueOf(booleanValue.value());
@@ -442,12 +442,8 @@ public class StackFrameAnalyzer {
     }
 
     final ODObject odObject = new ODObject(obj.uniqueID(), variableType, variableName);
-    if (loadingObjectsPhase) {
-      this.exploreObject(
-          obj, odObject, parentIfExists, linkTypeIfExists, remainingDepthToBeExplored);
-    } else {
-      this.rootObjects.put(odObject, obj);
-    }
+    this.exploreObject(
+        obj, odObject, parentIfExists, linkTypeIfExists, remainingDepthToBeExplored);
   }
 
   private void addVariableToDiagram(

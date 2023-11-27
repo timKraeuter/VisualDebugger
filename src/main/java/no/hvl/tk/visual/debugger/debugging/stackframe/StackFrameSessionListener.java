@@ -1,7 +1,7 @@
 package no.hvl.tk.visual.debugger.debugging.stackframe;
 
-import com.intellij.debugger.engine.SuspendContext;
-import com.intellij.debugger.engine.jdi.ThreadReferenceProxy;
+import com.intellij.debugger.engine.JavaStackFrame;
+import com.intellij.debugger.jdi.StackFrameProxyImpl;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.ui.RunnerLayoutUi;
@@ -15,16 +15,10 @@ import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
-import com.intellij.xdebugger.frame.XStackFrame;
-import com.sun.jdi.IncompatibleThreadStateException;
-import com.sun.jdi.StackFrame;
-import com.sun.jdi.ThreadReference;
 import java.awt.*;
-import java.util.Optional;
 import javax.swing.*;
 import no.hvl.tk.visual.debugger.DebugProcessListener;
 import no.hvl.tk.visual.debugger.SharedState;
-import no.hvl.tk.visual.debugger.debugging.stackframe.exceptions.StackFrameAnalyzerException;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.WebSocketDebuggingVisualizer;
@@ -40,13 +34,10 @@ public class StackFrameSessionListener implements XDebugSessionListener {
   private static final String TOOLBAR_ACTION =
       "VisualDebugger.VisualizerToolbar"; // has to match with plugin.xml
 
-  private static final int SUFFIX_LENGTH = ".java".length();
-
   private JPanel userInterface;
 
   private final XDebugSession debugSession;
   private DebuggingInfoVisualizer debuggingVisualizer;
-  private ThreadReference thread;
 
   public StackFrameSessionListener(@NotNull XDebugProcess debugProcess) {
     this.debugSession = debugProcess.getSession();
@@ -86,12 +77,12 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     if (!SharedState.isDebuggingActive()) {
       return;
     }
-    StackFrame stackFrame = this.getCorrectStackFrame(this.debugSession);
+    JavaStackFrame currentStackFrame = (JavaStackFrame) debugSession.getCurrentStackFrame();
+    StackFrameProxyImpl stackFrame = currentStackFrame.getStackFrameProxy();
 
     StackFrameAnalyzer stackFrameAnalyzer =
         new StackFrameAnalyzer(
             stackFrame,
-            this.thread,
             this.debuggingVisualizer,
             PluginSettingsState.getInstance().getLoadingDepth());
     stackFrameAnalyzer.analyze();
@@ -170,62 +161,6 @@ public class StackFrameSessionListener implements XDebugSessionListener {
       }
     }
     return this.debuggingVisualizer;
-  }
-
-  private StackFrame getCorrectStackFrame(XDebugSession debugSession) {
-    SuspendContext sc = (SuspendContext) debugSession.getSuspendContext();
-    ThreadReferenceProxy scThread = sc.getThread();
-    if (scThread == null) {
-      throw new StackFrameAnalyzerException("Suspend context thread was unexpectedly nulL!");
-    }
-
-    this.thread = scThread.getThreadReference();
-    try {
-      final Optional<StackFrame> first =
-          this.thread.frames().stream().filter(this::isCorrectStackFrame).findFirst();
-      if (first.isPresent()) {
-        return first.get();
-      }
-    } catch (IncompatibleThreadStateException e) {
-      LOGGER.error(e);
-      throw new StackFrameAnalyzerException("Correct stack frame for debugging not found!", e);
-    }
-    throw new StackFrameAnalyzerException(
-        String.format(
-            "Correct stack frame for debugging not found! "
-                + "Looking for stack frame with the type \"%s\" but"
-                + " only found the following stack frames \"%s\".",
-            this.getCurrentStackFrameType(), this.getGivenStackFrames()));
-  }
-
-  @NotNull private java.util.List<String> getGivenStackFrames() {
-    try {
-      return this.thread.frames().stream()
-          .map(stackFrame -> stackFrame.location().declaringType().name())
-          .toList();
-    } catch (IncompatibleThreadStateException e) {
-      LOGGER.error(e);
-      throw new StackFrameAnalyzerException("Correct stack frame for debugging not found!", e);
-    }
-  }
-
-  private boolean isCorrectStackFrame(StackFrame stackFrame) {
-    final String wantedTypeName = this.getCurrentStackFrameType();
-
-    final String typeName = stackFrame.location().declaringType().name();
-
-    return typeName.contains(wantedTypeName);
-  }
-
-  @NotNull private String getCurrentStackFrameType() {
-    final XStackFrame currentStackFrame = this.debugSession.getCurrentStackFrame();
-    if (currentStackFrame == null || currentStackFrame.getSourcePosition() == null) {
-      throw new StackFrameAnalyzerException(
-          "Current stack frame or source position was unexpectedly nulL!");
-    }
-    final String canonicalName = currentStackFrame.getSourcePosition().getFile().getName();
-    // cut the .java
-    return canonicalName.substring(0, canonicalName.length() - SUFFIX_LENGTH);
   }
 
   public void reprintDiagram() {
