@@ -1,39 +1,46 @@
 package no.hvl.tk.visual.debugger.debugging.visualization;
 
+import com.intellij.debugger.jdi.StackFrameProxyImpl;
 import com.intellij.openapi.diagnostic.Logger;
+import com.sun.jdi.ObjectReference;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import no.hvl.tk.visual.debugger.SharedState;
+import no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameAnalyzer;
 import no.hvl.tk.visual.debugger.domain.*;
 import no.hvl.tk.visual.debugger.settings.PluginSettingsState;
 
 public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisualizer {
+
   private static final Logger LOGGER = Logger.getInstance(DebuggingInfoVisualizerBase.class);
 
   private ObjectDiagram previousDiagram;
   private Set<ODObject> previousRootObjects;
   private final Map<String, ODObject> objectMap;
-  private final Set<Long> manuallyExploredObjects;
+  private final Map<String, ObjectReference> objectRefMap;
 
   protected ObjectDiagram diagram;
   private Set<ODObject> rootObjects;
 
   private String fileName;
   private Integer line;
+  private StackFrameProxyImpl stackframe;
 
   protected DebuggingInfoVisualizerBase() {
     this.diagram = new ObjectDiagram();
     this.previousDiagram = new ObjectDiagram();
     this.objectMap = new HashMap<>();
     this.rootObjects = new HashSet<>();
-    manuallyExploredObjects = new HashSet<>();
+    this.objectRefMap = new HashMap<>();
   }
 
   @Override
-  public void addMetadata(String fileName, Integer line) {
+  public void addMetadata(String fileName, Integer line, StackFrameProxyImpl stackframe) {
     this.fileName = fileName;
     this.line = line;
+    this.stackframe = stackframe;
   }
 
   @Override
@@ -59,8 +66,10 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
   }
 
   @Override
-  public void addObject(final ODObject object, boolean root) {
+  public void addObject(final ODObject object, boolean root, ObjectReference objectReference) {
     this.diagram.addObject(object);
+    // TODO: when to clear this map?
+    this.objectRefMap.put(object.getId(), objectReference);
     if (root) {
       this.rootObjects.add(object);
     }
@@ -91,31 +100,31 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
 
   @Override
   public void sessionStopped() {
-    this.manuallyExploredObjects.clear();
+    SharedState.getManuallyExploredObjects().clear();
   }
 
   @Override
   public ObjectDiagram getObjectWithChildrenFromPreviousDiagram(String objectId) {
-    final ObjectDiagram objectDiagram = new ObjectDiagram();
+    DebuggingInfoCollector infoCollector = new DebuggingInfoCollector();
     final ODObject odObject = this.objectMap.get(objectId);
-    if (odObject != null) {
-      manuallyExploredObjects.add(odObject.getIdAsLong());
-      objectDiagram.addObject(odObject);
-      odObject
-          .getLinks()
-          .forEach(
-              odLink -> {
-                final ODObject linkedObject = odLink.getTo();
-                objectDiagram.addObject(linkedObject);
-                objectDiagram.addLink(odLink);
-              });
+    ObjectReference objectReference = this.objectRefMap.get(objectId);
+    if (odObject != null && objectReference != null) {
+      infoCollector.addObject(odObject, true, null);
+
+      SharedState.getManuallyExploredObjects().add(odObject.getIdAsLong());
+
+      // Explore the object --> Should explore one level deeper but not duplicate the attributes!
+      new StackFrameAnalyzer(stackframe,
+          infoCollector, 1, new HashSet<>()).exploreObject(objectReference, odObject, null, "", 1);
+
     } else {
       LOGGER.warn(
           String.format("Object with id \"%s\" does not exist in the object diagram!", objectId));
     }
-    return objectDiagram;
+    return infoCollector.diagram;
   }
 
+  // TODO: Should not be needed anymore at the end.
   protected ObjectDiagram getDiagramWithDepth() {
     return this.getDiagramWithDepth(PluginSettingsState.getInstance().getVisualisationDepth());
   }
@@ -138,7 +147,7 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
     if (seenObjects.contains(odObject)) {
       return;
     }
-    if (depth <= 0 && !manuallyExploredObjects.contains(odObject.getIdAsLong())) {
+    if (depth <= 0 && !SharedState.getManuallyExploredObjects().contains(odObject.getIdAsLong())) {
       return;
     }
     seenObjects.add(odObject);
@@ -154,12 +163,16 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
             });
   }
 
-  /** Returns the file name of the file where the debugger has stopped or null. */
+  /**
+   * Returns the file name of the file where the debugger has stopped or null.
+   */
   public String getFileNameIfExists() {
     return fileName;
   }
 
-  /** Returns the line in the file where the debugger has stopped or null. */
+  /**
+   * Returns the line in the file where the debugger has stopped or null.
+   */
   public int getLineIfExists() {
     return line;
   }

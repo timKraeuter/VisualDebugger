@@ -4,7 +4,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.google.common.collect.Sets;
-import no.hvl.tk.visual.debugger.debugging.DebuggingInfoCollector;
 import no.hvl.tk.visual.debugger.domain.ODLink;
 import no.hvl.tk.visual.debugger.domain.ODObject;
 import no.hvl.tk.visual.debugger.domain.ODPrimitiveRootValue;
@@ -43,7 +42,7 @@ class DebuggingInfoVisualizerBaseTest {
 
     final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
     debuggingInfoCollector.setDiagram(diagram);
-    debuggingInfoCollector.addObject(person1, true);
+    debuggingInfoCollector.addObject(person1, true, null);
 
     final ObjectDiagram diagramWithDepth = debuggingInfoCollector.getDiagramWithDepth(42);
 
@@ -58,7 +57,7 @@ class DebuggingInfoVisualizerBaseTest {
 
     final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
     debuggingInfoCollector.setDiagram(diagram);
-    debuggingInfoCollector.addObject(person1, true);
+    debuggingInfoCollector.addObject(person1, true, null);
 
     debuggingInfoCollector.resetDiagram();
     final ObjectDiagram person1Diagram =
@@ -100,7 +99,7 @@ class DebuggingInfoVisualizerBaseTest {
 
     final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
     debuggingInfoCollector.setDiagram(diagram);
-    debuggingInfoCollector.addObject(person1, true);
+    debuggingInfoCollector.addObject(person1, true, null);
 
     final ObjectDiagram diagramWithDepth0 = debuggingInfoCollector.getDiagramWithDepth(0);
 

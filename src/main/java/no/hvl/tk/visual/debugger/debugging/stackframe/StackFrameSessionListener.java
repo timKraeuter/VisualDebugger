@@ -84,13 +84,14 @@ public class StackFrameSessionListener implements XDebugSessionListener {
         new StackFrameAnalyzer(
             stackFrame,
             this.debuggingVisualizer,
-            PluginSettingsState.getInstance().getLoadingDepth());
+            PluginSettingsState.getInstance().getLoadingDepth(),
+            SharedState.getManuallyExploredObjects());
     stackFrameAnalyzer.analyze();
 
     if (debugSession.getCurrentPosition() != null) {
       String fileName = debugSession.getCurrentPosition().getFile().getNameWithoutExtension();
       int line = debugSession.getCurrentPosition().getLine() + 1;
-      debuggingVisualizer.addMetadata(fileName, line);
+      debuggingVisualizer.addMetadata(fileName, line, stackFrame);
     }
     this.debuggingVisualizer.finishVisualization();
   }

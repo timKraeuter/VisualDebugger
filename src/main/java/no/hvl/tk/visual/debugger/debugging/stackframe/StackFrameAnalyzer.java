@@ -18,6 +18,7 @@ public class StackFrameAnalyzer {
   private static final Logger LOGGER = Logger.getInstance(StackFrameAnalyzer.class);
   private static final String KEY = "key";
   private static final String VALUE = "value";
+  private final Set<Long> manuallyExploredObjects;
 
   private final StackFrameProxyImpl stackFrame;
   private final DebuggingInfoVisualizer debuggingVisualizer;
@@ -28,10 +29,13 @@ public class StackFrameAnalyzer {
   public StackFrameAnalyzer(
       final StackFrameProxyImpl stackFrame,
       final DebuggingInfoVisualizer debuggingVisualizer,
-      final int loadingDepth) {
+      final int loadingDepth,
+      final Set<Long> manuallyExploredObjects) {
     this.stackFrame = stackFrame;
     this.debuggingVisualizer = debuggingVisualizer;
     this.loadingDepth = loadingDepth;
+    // TODO: do something with manually explored!
+    this.manuallyExploredObjects = manuallyExploredObjects;
     this.seenObjectIds = new HashSet<>();
   }
 
@@ -41,7 +45,7 @@ public class StackFrameAnalyzer {
   protected StackFrameAnalyzer(
       final StackFrame stackFrame,
       final DebuggingInfoVisualizer debuggingVisualizer) {
-    this(new StackFrameProxyImpl(null, stackFrame, 0), debuggingVisualizer, 10);
+    this(new StackFrameProxyImpl(null, stackFrame, 0), debuggingVisualizer, 10, new HashSet<>());
   }
 
   /**
@@ -51,7 +55,7 @@ public class StackFrameAnalyzer {
       final StackFrame stackFrame,
       final DebuggingInfoVisualizer debuggingVisualizer,
       final int loadingDepth) {
-    this(new StackFrameProxyImpl(null, stackFrame, 0), debuggingVisualizer, loadingDepth);
+    this(new StackFrameProxyImpl(null, stackFrame, 0), debuggingVisualizer, loadingDepth, new HashSet<>());
   }
 
   public void analyze() {
@@ -89,7 +93,7 @@ public class StackFrameAnalyzer {
       }
   }
 
-  private void exploreObject(
+  public void exploreObject(
       final ObjectReference objectReference,
       final ODObject odObject,
       final ODObject parentIfExists,
@@ -160,7 +164,7 @@ public class StackFrameAnalyzer {
     if (this.seenObjectIds.contains(objectReference.uniqueID())) {
       return;
     }
-    this.debuggingVisualizer.addObject(odObject, parentIfExists == null);
+    this.debuggingVisualizer.addObject(odObject, parentIfExists == null, objectReference);
     this.seenObjectIds.add(objectReference.uniqueID());
 
     // Load fields
@@ -288,10 +292,10 @@ public class StackFrameAnalyzer {
     if (primitiveOrEmpty) {
       newParent = new ODObject(collectionRef.uniqueID(), objectType, name);
       if (parentIfExists != null) {
-        this.debuggingVisualizer.addObject(newParent, false);
+        this.debuggingVisualizer.addObject(newParent, false, collectionRef);
         this.debuggingVisualizer.addLinkToObject(parentIfExists, newParent, linkTypeIfExists);
       } else {
-        this.debuggingVisualizer.addObject(newParent, true);
+        this.debuggingVisualizer.addObject(newParent, true, collectionRef);
       }
     } else {
       newParent =
@@ -311,7 +315,7 @@ public class StackFrameAnalyzer {
       parent = parentIfExists;
     } else {
       parent = new ODObject(obRef.uniqueID(), objectType, obName);
-      this.debuggingVisualizer.addObject(parent, true);
+      this.debuggingVisualizer.addObject(parent, true, obRef);
     }
     return parent;
   }
@@ -337,7 +341,7 @@ public class StackFrameAnalyzer {
       final ODObject entryObject =
           new ODObject(entry.uniqueID(), entry.referenceType().name(), String.valueOf(i));
 
-      this.debuggingVisualizer.addObject(entryObject, false);
+      this.debuggingVisualizer.addObject(entryObject, false, entry);
       this.debuggingVisualizer.addLinkToObject(
           parent, entryObject, i + (parentIfExists != null ? linkTypeIfExists : ""));
 

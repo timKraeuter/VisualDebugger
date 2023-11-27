@@ -9,7 +9,7 @@ import com.google.common.collect.Sets;
 import com.sun.jdi.Value;
 import java.util.*;
 import java.util.stream.Collectors;
-import no.hvl.tk.visual.debugger.debugging.DebuggingInfoCollector;
+import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoCollector;
 import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.*;
 import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.value.IntegerValueMock;
 import no.hvl.tk.visual.debugger.domain.*;
@@ -55,7 +55,7 @@ class StackFrameAnalyzerTest {
     final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
     final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector);
+        new StackFrameAnalyzer(stackFrameMock, debuggingInfoCollector);
 
     // When
     stackFrameAnalyzer.analyze();
@@ -113,7 +113,7 @@ class StackFrameAnalyzerTest {
     final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
     final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector);
+        new StackFrameAnalyzer(stackFrameMock, debuggingInfoCollector);
 
     // When
     stackFrameAnalyzer.analyze();
@@ -153,7 +153,7 @@ class StackFrameAnalyzerTest {
     final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
     final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector);
+        new StackFrameAnalyzer(stackFrameMock, debuggingInfoCollector);
 
     // When
     stackFrameAnalyzer.analyze();
@@ -195,7 +195,7 @@ class StackFrameAnalyzerTest {
     final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
     final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector);
+        new StackFrameAnalyzer(stackFrameMock, debuggingInfoCollector);
 
     // When
     stackFrameAnalyzer.analyze();
@@ -238,7 +238,7 @@ class StackFrameAnalyzerTest {
     final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
     final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector);
+        new StackFrameAnalyzer(stackFrameMock, debuggingInfoCollector);
 
     // When
     stackFrameAnalyzer.analyze();
@@ -290,7 +290,7 @@ class StackFrameAnalyzerTest {
     final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
     final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector);
+        new StackFrameAnalyzer(stackFrameMock, debuggingInfoCollector);
 
     // When
     stackFrameAnalyzer.analyze();
@@ -315,7 +315,7 @@ class StackFrameAnalyzerTest {
     final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
     final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector);
+        new StackFrameAnalyzer(stackFrameMock, debuggingInfoCollector);
 
     // When
     stackFrameAnalyzer.analyze();
@@ -355,7 +355,7 @@ class StackFrameAnalyzerTest {
     final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
     final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector);
+        new StackFrameAnalyzer(stackFrameMock, debuggingInfoCollector);
 
     // When
     stackFrameAnalyzer.analyze();
@@ -421,7 +421,7 @@ class StackFrameAnalyzerTest {
     final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
     final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector);
+        new StackFrameAnalyzer(stackFrameMock, debuggingInfoCollector);
 
     // When
     stackFrameAnalyzer.analyze();
@@ -504,7 +504,7 @@ class StackFrameAnalyzerTest {
     final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
     final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector);
+        new StackFrameAnalyzer(stackFrameMock, debuggingInfoCollector);
 
     // When
     stackFrameAnalyzer.analyze();
@@ -572,7 +572,7 @@ class StackFrameAnalyzerTest {
     final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
     final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector);
+        new StackFrameAnalyzer(stackFrameMock, debuggingInfoCollector);
 
     // When
     stackFrameAnalyzer.analyze();
@@ -641,7 +641,7 @@ class StackFrameAnalyzerTest {
     final DebuggingInfoCollector debuggingInfoCollector = new DebuggingInfoCollector();
 
     final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector);
+        new StackFrameAnalyzer(stackFrameMock, debuggingInfoCollector);
 
     // When
     stackFrameAnalyzer.analyze();
@@ -698,7 +698,7 @@ class StackFrameAnalyzerTest {
     final DebuggingInfoCollector debuggingInfoCollector1 = new DebuggingInfoCollector();
     // Check depth 0 (only two root objects)
     final StackFrameAnalyzer stackFrameAnalyzerDepth0 =
-        new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector1, 0);
+        new StackFrameAnalyzer(stackFrameMock, debuggingInfoCollector1, 0);
     stackFrameAnalyzerDepth0.analyze();
     assertThat(debuggingInfoCollector1.getCurrentDiagram().getObjects().size(), is(2));
     assertThat(debuggingInfoCollector1.getCurrentDiagram().getLinks().size(), is(0));
@@ -706,7 +706,7 @@ class StackFrameAnalyzerTest {
     // Check depth 1 (only two root objects + 4 at depth1.)
     final DebuggingInfoCollector debuggingInfoCollector2 = new DebuggingInfoCollector();
     final StackFrameAnalyzer stackFrameAnalyzerDepth1 =
-        new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector2, 1);
+        new StackFrameAnalyzer(stackFrameMock, debuggingInfoCollector2, 1);
     stackFrameAnalyzerDepth1.analyze();
     assertThat(debuggingInfoCollector2.getCurrentDiagram().getObjects().size(), is(6));
     assertThat(debuggingInfoCollector2.getCurrentDiagram().getLinks().size(), is(4));
@@ -714,7 +714,7 @@ class StackFrameAnalyzerTest {
     // Check depth 2 (only two root objects + 4 at depth1 + 1 at depth2)
     final DebuggingInfoCollector debuggingInfoCollector3 = new DebuggingInfoCollector();
     final StackFrameAnalyzer stackFrameAnalyzerDepth2 =
-        new StackFrameAnalyzer(stackFrameMock, null, debuggingInfoCollector3, 2);
+        new StackFrameAnalyzer(stackFrameMock, debuggingInfoCollector3, 2);
     stackFrameAnalyzerDepth2.analyze();
     assertThat(debuggingInfoCollector3.getCurrentDiagram().getObjects().size(), is(7));
     assertThat(debuggingInfoCollector3.getCurrentDiagram().getLinks().size(), is(5));

@@ -1,13 +1,15 @@
 package no.hvl.tk.visual.debugger.debugging.visualization;
 
+import com.intellij.debugger.jdi.StackFrameProxyImpl;
+import com.sun.jdi.ObjectReference;
 import no.hvl.tk.visual.debugger.domain.ODObject;
 import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 
 public interface DebuggingInfoVisualizer {
 
-  void addMetadata(String fileName, Integer line);
+  void addMetadata(String fileName, Integer line, StackFrameProxyImpl stackFrame);
 
-  void addObject(ODObject object, boolean root);
+  void addObject(ODObject object, boolean root, ObjectReference objectReference);
 
   ObjectDiagram getObjectWithChildrenFromPreviousDiagram(String objectId);
 

@@ -1,8 +1,10 @@
-package no.hvl.tk.visual.debugger.debugging;
+package no.hvl.tk.visual.debugger.debugging.visualization;
 
-import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizerBase;
 import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 
+/**
+ * Only collects the diagram and ignores everything else.
+ */
 public class DebuggingInfoCollector extends DebuggingInfoVisualizerBase {
   @Override
   public void finishVisualization() {}

@@ -9,6 +9,8 @@ import org.glassfish.tyrus.server.Server;
 
 public class SharedState {
 
+  private static final Set<Long> manuallyExploredObjects = new HashSet<>();
+
   private SharedState() {}
 
   // UI / Debug API related
@@ -104,5 +106,9 @@ public class SharedState {
 
   public static void setDebugLine(Integer lastDebugLine) {
     SharedState.debugLine = lastDebugLine;
+  }
+
+  public static Set<Long> getManuallyExploredObjects() {
+    return manuallyExploredObjects;
   }
 }

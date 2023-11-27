@@ -215,7 +215,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
   }
 
   private static boolean isPrimitive(final ODObject object) {
-    // Nodes attached to the link must not have have any more links.
+    // Nodes attached to the link must not have any more links.
     // Key and value are then attributes i.e. primitive.
     return !object.getLinks().isEmpty()
         && object.getLinks().stream().anyMatch(odLink -> odLink.getTo().getLinks().isEmpty());
