@@ -23,7 +23,6 @@ import no.hvl.tk.visual.debugger.debugging.stackframe.exceptions.StackFrameAnaly
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.WebSocketDebuggingVisualizer;
-import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 import no.hvl.tk.visual.debugger.settings.PluginSettingsState;
 import org.jetbrains.annotations.NotNull;
 

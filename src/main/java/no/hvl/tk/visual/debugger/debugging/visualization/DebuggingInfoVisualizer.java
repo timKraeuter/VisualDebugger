@@ -1,6 +1,5 @@
 package no.hvl.tk.visual.debugger.debugging.visualization;
 
-import com.intellij.debugger.jdi.StackFrameProxyImpl;
 import no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameAnalyzer;
 import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 
