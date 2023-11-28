@@ -17,9 +17,11 @@ A preprint of my *research paper* about the visual debugger can be found [here](
 # Features
 
 1. The debugger **highlights changes** by computing a diff using [object-diagram-js-differ](https://github.com/timKraeuter/object-diagram-js-differ):
+
    ![PNG showing a diff](https://github.com/timKraeuter/object-diagram-js/blob/master/documentation/diff.png)
 
-2. The debugger saves the **debugging history** such that a user can step back in the UI:
+3. The debugger saves the **debugging history** such that a user can step back in the UI:
+
    ![Gif showing the history feature](https://github.com/timKraeuter/object-diagram-js/blob/master/documentation/steps.gif)
 
 # Citation
