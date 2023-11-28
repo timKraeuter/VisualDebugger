@@ -54,8 +54,7 @@ public class VisualDebuggingAPIEndpoint {
     final DebuggingInfoVisualizer debuggingInfoVisualizer =
         SharedState.getDebugListener().getOrCreateDebuggingInfoVisualizer();
     try {
-      final ObjectDiagram diagram =
-          debuggingInfoVisualizer.getObjectWithChildren(objectId);
+      final ObjectDiagram diagram = debuggingInfoVisualizer.getObjectWithChildren(objectId);
       return new DebuggingWSMessage(
               DebuggingMessageType.LOAD_CHILDREN, DiagramToXMLConverter.toXml(diagram))
           .serialize();

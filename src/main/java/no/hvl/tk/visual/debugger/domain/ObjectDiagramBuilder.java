@@ -35,7 +35,8 @@ public class ObjectDiagramBuilder {
     return this;
   }
 
-  public ObjectDiagramBuilder addLinkToObject(final ODObject from, final ODObject to, final String linkType) {
+  public ObjectDiagramBuilder addLinkToObject(
+      final ODObject from, final ODObject to, final String linkType) {
     final ODLink linkToAdd = new ODLink(from, to, linkType);
     from.addLink(linkToAdd);
     this.diagram.addLink(linkToAdd);

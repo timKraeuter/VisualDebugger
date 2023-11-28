@@ -8,15 +8,13 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.Value;
 import java.util.List;
 
-public class StackFrameProxyImplAdapter implements
-    IStackFrame {
+public class StackFrameProxyImplAdapter implements IStackFrame {
 
   private final StackFrameProxyImpl stackFrameProxy;
 
   public StackFrameProxyImplAdapter(StackFrameProxyImpl stackFrameProxy) {
     this.stackFrameProxy = stackFrameProxy;
   }
-
 
   @Override
   public ObjectReference thisObject() throws EvaluateException {

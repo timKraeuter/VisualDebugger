@@ -17,9 +17,7 @@ import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.tyrus.server.Server;
 
-/**
- * Sends visualization information through websocket.
- */
+/** Sends visualization information through websocket. */
 public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
   private static final Logger LOGGER = Logger.getInstance(WebSocketDebuggingVisualizer.class);
@@ -38,19 +36,26 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     final String diagramXML = DiagramToXMLConverter.toXml(diagram);
     SharedState.setLastDiagramXML(diagramXML);
 
-    final String message = new DebuggingWSMessage(DebuggingMessageType.NEXT_DEBUG_STEP, diagramXML,
-        SharedState.getDebugFileName(), SharedState.getDebugLine()).serialize();
-    SharedState.getWebsocketClients().forEach(clientSession ->
-        // If one client fails no more messages are sent. We should change this.
-        VisualDebuggingAPIServerStarter.sendMessageToClient(clientSession, message));
+    final String message =
+        new DebuggingWSMessage(
+                DebuggingMessageType.NEXT_DEBUG_STEP,
+                diagramXML,
+                SharedState.getDebugFileName(),
+                SharedState.getDebugLine())
+            .serialize();
+    SharedState.getWebsocketClients()
+        .forEach(
+            clientSession ->
+                // If one client fails no more messages are sent. We should change this.
+                VisualDebuggingAPIServerStarter.sendMessageToClient(clientSession, message));
   }
 
   @Override
   public void debuggingActivated() {
     WebSocketDebuggingVisualizer.startDebugAPIServerIfNeeded();
     WebSocketDebuggingVisualizer.startUIServerIfNeeded();
-    final var uiButton = new JButton(
-        String.format("Launch user interface (%s)", ServerConstants.UI_SERVER_URL));
+    final var uiButton =
+        new JButton(String.format("Launch user interface (%s)", ServerConstants.UI_SERVER_URL));
     uiButton.addActionListener(e -> WebSocketDebuggingVisualizer.launchUIInBrowser());
     this.debugUI.add(uiButton);
   }
@@ -64,23 +69,25 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
   }
 
   private static void startDebugAPIServerIfNeeded() {
-    ClassloaderUtil.runWithContextClassloader(() -> {
-      if (SharedState.getDebugAPIServer() == null) {
-        final Server server = VisualDebuggingAPIServerStarter.runNewServer();
-        SharedState.setDebugAPIServer(server);
-      }
-      return null; // needed because of generic method.
-    });
+    ClassloaderUtil.runWithContextClassloader(
+        () -> {
+          if (SharedState.getDebugAPIServer() == null) {
+            final Server server = VisualDebuggingAPIServerStarter.runNewServer();
+            SharedState.setDebugAPIServer(server);
+          }
+          return null; // needed because of generic method.
+        });
   }
 
   private static void startUIServerIfNeeded() {
-    ClassloaderUtil.runWithContextClassloader(() -> {
-      if (SharedState.getUiServer() == null) {
-        final HttpServer server = UIServerStarter.runNewServer();
-        SharedState.setUIServer(server);
-      }
-      return null; // needed because of generic method.
-    });
+    ClassloaderUtil.runWithContextClassloader(
+        () -> {
+          if (SharedState.getUiServer() == null) {
+            final HttpServer server = UIServerStarter.runNewServer();
+            SharedState.setUIServer(server);
+          }
+          return null; // needed because of generic method.
+        });
   }
 
   @Override

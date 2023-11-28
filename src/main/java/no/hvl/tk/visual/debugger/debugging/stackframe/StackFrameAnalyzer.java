@@ -42,20 +42,13 @@ public class StackFrameAnalyzer {
     this.objectRefMap = builder.getObjectRefMap();
   }
 
-  /**
-   * Used for testing.
-   */
-  protected StackFrameAnalyzer(
-      final IStackFrame stackFrame) {
+  /** Used for testing. */
+  protected StackFrameAnalyzer(final IStackFrame stackFrame) {
     this(stackFrame, 10, new HashSet<>());
   }
 
-  /**
-   * Used for testing.
-   */
-  protected StackFrameAnalyzer(
-      final IStackFrame stackFrame,
-      final int loadingDepth) {
+  /** Used for testing. */
+  protected StackFrameAnalyzer(final IStackFrame stackFrame, final int loadingDepth) {
     this(stackFrame, loadingDepth, new HashSet<>());
   }
 
@@ -98,8 +91,7 @@ public class StackFrameAnalyzer {
     this.exploreObject(thisObjectReference, thisObject, null, "", loadingDepth);
   }
 
-  private void analyzeVariablesInScope(final IStackFrame stackFrame)
-      throws EvaluateException {
+  private void analyzeVariablesInScope(final IStackFrame stackFrame) throws EvaluateException {
     // All visible variables in the stack frame.
     final List<LocalVariableProxyImpl> methodVariables = stackFrame.visibleVariables();
     for (LocalVariableProxyImpl localVariable : methodVariables) {
@@ -143,7 +135,7 @@ public class StackFrameAnalyzer {
       return;
     }
     if ((implementsInterface(objectReference, "java.util.List")
-        || implementsInterface(objectReference, "java.util.Set"))
+            || implementsInterface(objectReference, "java.util.Set"))
         && isInternalPackage(objectType)
         && !this.seenObjectIds.contains(objectReference.uniqueID())) {
       this.seenObjectIds.add(objectReference.uniqueID());
@@ -200,16 +192,14 @@ public class StackFrameAnalyzer {
   }
 
   private boolean objectNotManuallyExplored(ODObject odObject) {
-    return !manuallyExploredObjects.contains(
-        odObject.getId());
+    return !manuallyExploredObjects.contains(odObject.getId());
   }
 
   private boolean parentNotManuallyExplored(ODObject parentIfExists) {
     return parentIfExists != null && objectNotManuallyExplored(parentIfExists);
   }
 
-  @NotNull
-  private List<Field> getNonStaticFields(final ObjectReference objectReference) {
+  @NotNull private List<Field> getNonStaticFields(final ObjectReference objectReference) {
     return objectReference.referenceType().allFields().stream()
         .filter(field -> !field.isStatic())
         .toList();
@@ -306,8 +296,7 @@ public class StackFrameAnalyzer {
         || PrimitiveTypes.isNonBoxedPrimitiveType(collectionContentType);
   }
 
-  @NotNull
-  private ODObject findCollectionParent(
+  @NotNull private ODObject findCollectionParent(
       final String name,
       final ObjectReference collectionRef,
       final String objectType,
@@ -319,7 +308,8 @@ public class StackFrameAnalyzer {
     if (primitiveOrEmpty) {
       newParent = new ODObject(collectionRef.uniqueID(), objectType, name);
       if (parentIfExists != null) {
-        this.builder.addObject(newParent, collectionRef)
+        this.builder
+            .addObject(newParent, collectionRef)
             .addLinkToObject(parentIfExists, newParent, linkTypeIfExists);
       } else {
         this.builder.addObject(newParent, collectionRef);
@@ -331,8 +321,7 @@ public class StackFrameAnalyzer {
     return newParent;
   }
 
-  @NotNull
-  private ODObject createParentIfNeededForCollection(
+  @NotNull private ODObject createParentIfNeededForCollection(
       final ObjectReference obRef,
       final ODObject parentIfExists,
       final String obName,
@@ -368,7 +357,8 @@ public class StackFrameAnalyzer {
       final ODObject entryObject =
           new ODObject(entry.uniqueID(), entry.referenceType().name(), String.valueOf(i));
 
-      this.builder.addObject(entryObject, entry)
+      this.builder
+          .addObject(entryObject, entry)
           .addLinkToObject(
               parent, entryObject, i + (parentIfExists != null ? linkTypeIfExists : ""));
 
@@ -399,18 +389,12 @@ public class StackFrameAnalyzer {
   }
 
   private void analyzeVariable(
-      final LocalVariableProxyImpl localVariable,
-      final IStackFrame stackFrame) throws EvaluateException {
+      final LocalVariableProxyImpl localVariable, final IStackFrame stackFrame)
+      throws EvaluateException {
     final Value variableValue = stackFrame.getValue(localVariable);
     final String variableName = localVariable.name();
     final String variableType = localVariable.typeName();
-    this.convertValue(
-        variableValue,
-        variableName,
-        variableType,
-        null,
-        "",
-        loadingDepth);
+    this.convertValue(variableValue, variableName, variableType, null, "", loadingDepth);
   }
 
   private void convertValue(
@@ -474,8 +458,7 @@ public class StackFrameAnalyzer {
     }
 
     final ODObject odObject = new ODObject(obj.uniqueID(), variableType, variableName);
-    this.exploreObject(
-        obj, odObject, parentIfExists, linkTypeIfExists, remainingDepthToBeExplored);
+    this.exploreObject(obj, odObject, parentIfExists, linkTypeIfExists, remainingDepthToBeExplored);
   }
 
   private void addVariableToDiagram(
@@ -484,8 +467,7 @@ public class StackFrameAnalyzer {
       final String value,
       final ODObject parentIfExists) {
     if (parentIfExists != null) {
-      this.builder.addAttributeToObject(
-          parentIfExists, variableName, value, variableType);
+      this.builder.addAttributeToObject(parentIfExists, variableName, value, variableType);
     } else {
       this.builder.addPrimitiveRootValue(variableName, variableType, value);
     }

@@ -52,8 +52,7 @@ class StackFrameAnalyzerTest {
     final String charVarName = "aChar";
     StackFrameMockHelper.addLocalCharVariable(stackFrameMock, charVarName, 'a');
 
-    final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock);
+    final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock);
 
     // When
     ObjectDiagram diagram = stackFrameAnalyzer.analyze();
@@ -89,9 +88,7 @@ class StackFrameAnalyzerTest {
         new ODPrimitiveRootValue(charVarName, "java.lang.Char", "'a'");
     primitiveVars.add(charValue);
 
-    assertThat(
-        diagram.getPrimitiveRootValues(),
-        equalTo(primitiveVars));
+    assertThat(diagram.getPrimitiveRootValues(), equalTo(primitiveVars));
   }
 
   @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -108,17 +105,14 @@ class StackFrameAnalyzerTest {
     StackFrameMockHelper.addAttributeToObject(
         objRefMock, "price", IntegerValueMock.TYPE_NAME, new IntegerValueMock(25));
 
-    final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock);
+    final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock);
 
     // When
     ObjectDiagram diagram = stackFrameAnalyzer.analyze();
 
     // Then
     assertThat(diagram.getObjects().size(), is(2));
-    final ODObject productObject =
-        this.findObjectWithVarNameIfExists(
-            diagram, variableName);
+    final ODObject productObject = this.findObjectWithVarNameIfExists(diagram, variableName);
 
     assertThat(productObject.getAttributeValues().size(), is(2));
     assertThat(
@@ -146,22 +140,18 @@ class StackFrameAnalyzerTest {
     StackFrameMockHelper.addAttributeToObject(
         material, "price", "Integer", new IntegerValueMock(10));
 
-    final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock);
+    final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock);
 
     // When
     ObjectDiagram diagram = stackFrameAnalyzer.analyze();
 
     // Then
     assertThat(diagram.getObjects().size(), is(3));
-    final ODObject productObject =
-        this.findObjectWithVarNameIfExists(diagram, productName);
+    final ODObject productObject = this.findObjectWithVarNameIfExists(diagram, productName);
 
     assertThat(productObject.getLinks().size(), is(1));
 
-    final ODObject materialObject =
-        this.findObjectWithVarNameIfExists(
-            diagram, childFieldName);
+    final ODObject materialObject = this.findObjectWithVarNameIfExists(diagram, childFieldName);
     assertThat(productObject.getLinks().stream().findFirst().get().getTo(), is(materialObject));
 
     assertThat(materialObject.getAttributeValues().size(), is(2));
@@ -186,31 +176,26 @@ class StackFrameAnalyzerTest {
     final String map = "map";
     StackFrameMockHelper.createMap(stackFrameMock, map, Maps.newHashMap());
 
-    final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock);
+    final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock);
 
     // When
     ObjectDiagram diagram = stackFrameAnalyzer.analyze();
 
     // Then
     assertThat(diagram.getObjects().size(), is(5));
-    final ODObject intArrayObject =
-        this.findObjectWithVarNameIfExists(diagram, intArray);
+    final ODObject intArrayObject = this.findObjectWithVarNameIfExists(diagram, intArray);
     assertThat(intArrayObject.getAttributeValues().size(), is(0));
     assertThat(intArrayObject.getLinks().size(), is(0));
 
-    final ODObject intSetObject =
-        this.findObjectWithVarNameIfExists(diagram, intSet);
+    final ODObject intSetObject = this.findObjectWithVarNameIfExists(diagram, intSet);
     assertThat(intSetObject.getAttributeValues().size(), is(0));
     assertThat(intSetObject.getLinks().size(), is(0));
 
-    final ODObject intListObject =
-        this.findObjectWithVarNameIfExists(diagram, intList);
+    final ODObject intListObject = this.findObjectWithVarNameIfExists(diagram, intList);
     assertThat(intListObject.getAttributeValues().size(), is(0));
     assertThat(intListObject.getLinks().size(), is(0));
 
-    final ODObject mapObject =
-        this.findObjectWithVarNameIfExists(diagram, map);
+    final ODObject mapObject = this.findObjectWithVarNameIfExists(diagram, map);
     assertThat(mapObject.getAttributeValues().size(), is(0));
     assertThat(mapObject.getLinks().size(), is(0));
   }
@@ -227,16 +212,14 @@ class StackFrameAnalyzerTest {
     mapContent.put(new IntegerValueMock(4), new IntegerValueMock(4));
     StackFrameMockHelper.createMap(stackFrameMock, mapVarName, mapContent);
 
-    final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock);
+    final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock);
 
     // When
     ObjectDiagram diagram = stackFrameAnalyzer.analyze();
 
     // Then
     assertThat(diagram.getObjects().size(), is(6));
-    final ODObject mapObject =
-        this.findObjectWithVarNameIfExists(diagram, mapVarName);
+    final ODObject mapObject = this.findObjectWithVarNameIfExists(diagram, mapVarName);
     assertThat(mapObject.getAttributeValues().size(), is(0));
     assertThat(mapObject.getLinks().size(), is(4));
     assertThat(
@@ -277,16 +260,14 @@ class StackFrameAnalyzerTest {
         Lists.newArrayList(
             new IntegerValueMock(1), new IntegerValueMock(2), new IntegerValueMock(3)));
 
-    final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock);
+    final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock);
 
     // When
     ObjectDiagram diagram = stackFrameAnalyzer.analyze();
 
     // Then
     assertThat(diagram.getObjects().size(), is(2));
-    final ODObject listObject =
-        this.findObjectWithVarNameIfExists(diagram, list);
+    final ODObject listObject = this.findObjectWithVarNameIfExists(diagram, list);
     this.checkIntArrayOrList(listObject);
   }
 
@@ -300,16 +281,14 @@ class StackFrameAnalyzerTest {
         set,
         Sets.newHashSet(new IntegerValueMock(5), new IntegerValueMock(6), new IntegerValueMock(7)));
 
-    final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock);
+    final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock);
 
     // When
     ObjectDiagram diagram = stackFrameAnalyzer.analyze();
 
     // Then
     assertThat(diagram.getObjects().size(), is(2));
-    final ODObject setObject =
-        this.findObjectWithVarNameIfExists(diagram, set);
+    final ODObject setObject = this.findObjectWithVarNameIfExists(diagram, set);
     this.checkIntegerSet(setObject);
   }
 
@@ -338,16 +317,14 @@ class StackFrameAnalyzerTest {
         Lists.newArrayList(
             new IntegerValueMock(1), new IntegerValueMock(2), new IntegerValueMock(3)));
 
-    final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock);
+    final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock);
 
     // When
     ObjectDiagram diagram = stackFrameAnalyzer.analyze();
 
     // Then
     assertThat(diagram.getObjects().size(), is(2));
-    final ODObject intArrayObject =
-        this.findObjectWithVarNameIfExists(diagram, intArray);
+    final ODObject intArrayObject = this.findObjectWithVarNameIfExists(diagram, intArray);
     this.checkIntArrayOrList(intArrayObject);
   }
 
@@ -402,8 +379,7 @@ class StackFrameAnalyzerTest {
     mapContent.put(new IntegerValueMock(4), ObjectReferenceMock.create("Material"));
     StackFrameMockHelper.createMap(stackFrameMock, mapVarName, mapContent);
 
-    final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock);
+    final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock);
 
     // When
     ObjectDiagram diagram = stackFrameAnalyzer.analyze();
@@ -417,8 +393,7 @@ class StackFrameAnalyzerTest {
     this.checkCollectionObjWithName(objArray, diagram);
 
     // Check map
-    final ODObject mapObject =
-        this.findObjectWithVarNameIfExists(diagram, mapVarName);
+    final ODObject mapObject = this.findObjectWithVarNameIfExists(diagram, mapVarName);
     // 4 links to the 4 map entries
     assertThat(mapObject.getLinks().size(), is(4));
     List<ODObject> mapEntries = mapObject.getLinks().stream().map(ODLink::getTo).toList();
@@ -437,9 +412,7 @@ class StackFrameAnalyzerTest {
 
   private void checkCollectionObjWithName(
       final String collectionName, final ObjectDiagram diagram) {
-    final ODObject objArrayObject =
-        this.findObjectWithVarNameIfExists(
-            diagram, collectionName);
+    final ODObject objArrayObject = this.findObjectWithVarNameIfExists(diagram, collectionName);
     assertThat(objArrayObject.getLinks().size(), is(3));
     // All objects have the type "Material".
     assertThat(
@@ -483,8 +456,7 @@ class StackFrameAnalyzerTest {
     final String intList = "intList";
     StackFrameMockHelper.addChildObject(thisObj, intList, listObjectReferenceMock);
 
-    final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock);
+    final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock);
 
     // When
     ObjectDiagram diagram = stackFrameAnalyzer.analyze();
@@ -492,17 +464,13 @@ class StackFrameAnalyzerTest {
     // Then
     assertThat(diagram.getObjects().size(), is(4));
     assertThat(diagram.getLinks().size(), is(3));
-    final ODObject thisObject =
-        diagram.getObjects().stream().findFirst().get();
+    final ODObject thisObject = diagram.getObjects().stream().findFirst().get();
 
     assertThat(thisObject.getLinks().size(), is(3));
 
-    final ODObject intArrayObject =
-        this.findObjectWithVarNameIfExists(diagram, intArray);
-    final ODObject intSetObject =
-        this.findObjectWithVarNameIfExists(diagram, intSet);
-    final ODObject intListObject =
-        this.findObjectWithVarNameIfExists(diagram, intList);
+    final ODObject intArrayObject = this.findObjectWithVarNameIfExists(diagram, intArray);
+    final ODObject intSetObject = this.findObjectWithVarNameIfExists(diagram, intSet);
+    final ODObject intListObject = this.findObjectWithVarNameIfExists(diagram, intList);
     assertThat(
         thisObject.getLinks().stream().map(ODLink::getTo).collect(Collectors.toSet()),
         is(Sets.newHashSet(intArrayObject, intSetObject, intListObject)));
@@ -549,8 +517,7 @@ class StackFrameAnalyzerTest {
     final String arrayMaterials = "arrayMaterials";
     StackFrameMockHelper.addChildObject(thisObj, arrayMaterials, arrayRefMock);
 
-    final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock);
+    final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock);
 
     // When
     ObjectDiagram diagram = stackFrameAnalyzer.analyze();
@@ -558,8 +525,7 @@ class StackFrameAnalyzerTest {
     // Then
     assertThat(diagram.getObjects().size(), is(10));
     assertThat(diagram.getLinks().size(), is(9));
-    final ODObject thisObject =
-        this.findObjectWithVarNameIfExists(diagram, "this");
+    final ODObject thisObject = this.findObjectWithVarNameIfExists(diagram, "this");
 
     assertThat(thisObject.getLinks().size(), is(9));
     assertThat(
@@ -580,9 +546,7 @@ class StackFrameAnalyzerTest {
     return foundObject.orElse(null);
   }
 
-  /**
-   * This situation lead to a bug. This test is to ensure this bug stays dead.
-   */
+  /** This situation lead to a bug. This test is to ensure this bug stays dead. */
   @Test
   void nullInCollectionAndArrayBugTest() {
     // Given
@@ -618,8 +582,7 @@ class StackFrameAnalyzerTest {
     mapContent.put(new IntegerValueMock(4), ObjectReferenceMock.create("Material"));
     StackFrameMockHelper.createMap(stackFrameMock, mapVarName, mapContent);
 
-    final StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(stackFrameMock);
+    final StackFrameAnalyzer stackFrameAnalyzer = new StackFrameAnalyzer(stackFrameMock);
 
     // When
     ObjectDiagram diagram = stackFrameAnalyzer.analyze();
@@ -627,8 +590,7 @@ class StackFrameAnalyzerTest {
     // Then
     assertThat(diagram.getObjects().size(), is(10));
     assertThat(diagram.getLinks().size(), is(8));
-    final ODObject thisObject =
-        this.findObjectWithVarNameIfExists(diagram, "this");
+    final ODObject thisObject = this.findObjectWithVarNameIfExists(diagram, "this");
 
     assertThat(thisObject.getLinks().size(), is(3));
     assertThat(
@@ -674,22 +636,19 @@ class StackFrameAnalyzerTest {
     StackFrameMockHelper.createChildObject(child, "childChild", "Product");
 
     // Check depth 0 (only two root objects)
-    final StackFrameAnalyzer stackFrameAnalyzerDepth0 =
-        new StackFrameAnalyzer(stackFrameMock, 0);
+    final StackFrameAnalyzer stackFrameAnalyzerDepth0 = new StackFrameAnalyzer(stackFrameMock, 0);
     ObjectDiagram diagram1 = stackFrameAnalyzerDepth0.analyze();
     assertThat(diagram1.getObjects().size(), is(2));
     assertThat(diagram1.getLinks().size(), is(0));
 
     // Check depth 1 (only two root objects + 4 at depth1.)
-    final StackFrameAnalyzer stackFrameAnalyzerDepth1 =
-        new StackFrameAnalyzer(stackFrameMock, 1);
+    final StackFrameAnalyzer stackFrameAnalyzerDepth1 = new StackFrameAnalyzer(stackFrameMock, 1);
     ObjectDiagram diagram2 = stackFrameAnalyzerDepth1.analyze();
     assertThat(diagram2.getObjects().size(), is(6));
     assertThat(diagram2.getLinks().size(), is(4));
 
     // Check depth 2 (only two root objects + 4 at depth1 + 1 at depth2)
-    final StackFrameAnalyzer stackFrameAnalyzerDepth2 =
-        new StackFrameAnalyzer(stackFrameMock, 2);
+    final StackFrameAnalyzer stackFrameAnalyzerDepth2 = new StackFrameAnalyzer(stackFrameMock, 2);
     ObjectDiagram diagram3 = stackFrameAnalyzerDepth2.analyze();
     assertThat(diagram3.getObjects().size(), is(7));
     assertThat(diagram3.getLinks().size(), is(5));

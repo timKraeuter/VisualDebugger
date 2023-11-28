@@ -95,8 +95,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     this.debuggingVisualizer.doVisualization(stackFrameAnalyzer.analyze());
   }
 
-  @NotNull
-  private StackFrameProxyImpl getStackFrameProxy() {
+  @NotNull private StackFrameProxyImpl getStackFrameProxy() {
     JavaStackFrame currentStackFrame = (JavaStackFrame) debugSession.getCurrentStackFrame();
     if (currentStackFrame == null) {
       throw new StackFrameAnalyzerException("Current stack frame could not be found!");
