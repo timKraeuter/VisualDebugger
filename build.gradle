@@ -16,35 +16,33 @@ repositories {
 
 dependencies {
     // https://mvnrepository.com/artifact/net.sourceforge.plantuml/plantuml
-    implementation group: 'net.sourceforge.plantuml', name: 'plantuml', version: '1.2021.5'
+    implementation group: 'net.sourceforge.plantuml', name: 'plantuml', version: '1.2023.10'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
     // Websocket server and server container dependencies
     // https://mvnrepository.com/artifact/jakarta.websocket/jakarta.websocket-api
-    compileOnly group: 'jakarta.websocket', name: 'jakarta.websocket-api', version: '2.0.0'
+    compileOnly group: 'jakarta.websocket', name: 'jakarta.websocket-api', version: '2.1.1'
     // https://mvnrepository.com/artifact/org.glassfish.tyrus/tyrus-server
-    implementation group: 'org.glassfish.tyrus', name: 'tyrus-server', version: '2.0.0'
+    implementation group: 'org.glassfish.tyrus', name: 'tyrus-server', version: '2.1.4'
     // https://mvnrepository.com/artifact/org.glassfish.tyrus/tyrus-container-grizzly-server
-    implementation group: 'org.glassfish.tyrus', name: 'tyrus-container-grizzly-server', version: '2.0.0'
+    implementation group: 'org.glassfish.tyrus', name: 'tyrus-container-grizzly-server', version: '2.1.4'
 
 
     // XML-marshalling not part of jdk (from 11) anymore.
-    // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
-    implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
+    // https://mvnrepository.com/artifact/jakarta.xml.bind/jakarta.xml.bind-api
+    implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '4.0.1'
     // https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-core
-    implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '3.0.1'
+    implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '4.0.4'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.0'
     testImplementation 'org.mockito:mockito-core:5.7.0'
 
 
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
     // https://mvnrepository.com/artifact/org.junit.platform/junit-platform-launcher
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.0'
-
-
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.1'
 
     errorprone("com.google.errorprone:error_prone_core:2.16")
 }

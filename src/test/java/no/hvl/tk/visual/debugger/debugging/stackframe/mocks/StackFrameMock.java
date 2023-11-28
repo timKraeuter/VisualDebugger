@@ -19,10 +19,12 @@ public class StackFrameMock implements IStackFrame {
     this.thisObj = thisObj;
   }
 
+  @Override
   public ObjectReference thisObject() {
     return thisObj;
   }
 
+  @Override
   public List<LocalVariableProxyImpl> visibleVariables() {
     return new ArrayList<>(localVars.keySet());
   }
