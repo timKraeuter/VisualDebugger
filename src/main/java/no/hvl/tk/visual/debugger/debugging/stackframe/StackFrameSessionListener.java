@@ -19,9 +19,11 @@ import java.awt.*;
 import javax.swing.*;
 import no.hvl.tk.visual.debugger.DebugProcessListener;
 import no.hvl.tk.visual.debugger.SharedState;
+import no.hvl.tk.visual.debugger.debugging.stackframe.exceptions.StackFrameAnalyzerException;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.WebSocketDebuggingVisualizer;
+import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 import no.hvl.tk.visual.debugger.settings.PluginSettingsState;
 import org.jetbrains.annotations.NotNull;
 
@@ -77,23 +79,31 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     if (!SharedState.isDebuggingActive()) {
       return;
     }
-    JavaStackFrame currentStackFrame = (JavaStackFrame) debugSession.getCurrentStackFrame();
-    StackFrameProxyImpl stackFrame = currentStackFrame.getStackFrameProxy();
+    StackFrameProxyImpl stackFrame = getStackFrameProxy();
 
     StackFrameAnalyzer stackFrameAnalyzer =
         new StackFrameAnalyzer(
             stackFrame,
-            this.debuggingVisualizer,
-            PluginSettingsState.getInstance().getLoadingDepth(),
+            PluginSettingsState.getInstance().getVisualisationDepth(),
             SharedState.getManuallyExploredObjects());
-    stackFrameAnalyzer.analyze();
 
     if (debugSession.getCurrentPosition() != null) {
       String fileName = debugSession.getCurrentPosition().getFile().getNameWithoutExtension();
       int line = debugSession.getCurrentPosition().getLine() + 1;
-      debuggingVisualizer.addMetadata(fileName, line, stackFrame);
+      debuggingVisualizer.addMetadata(fileName, line, stackFrameAnalyzer);
     }
-    this.debuggingVisualizer.finishVisualization();
+
+    this.debuggingVisualizer.doVisualization(stackFrameAnalyzer.analyze());
+  }
+
+  @NotNull
+  private StackFrameProxyImpl getStackFrameProxy() {
+    JavaStackFrame currentStackFrame = (JavaStackFrame) debugSession.getCurrentStackFrame();
+    if (currentStackFrame == null) {
+      throw new StackFrameAnalyzerException("Current stack frame could not be found!");
+    }
+
+    return currentStackFrame.getStackFrameProxy();
   }
 
   private void initUIIfNeeded() {
@@ -165,6 +175,6 @@ public class StackFrameSessionListener implements XDebugSessionListener {
   }
 
   public void reprintDiagram() {
-    this.debuggingVisualizer.reprintPreviousDiagram();
+    this.debuggingVisualizer.reprintDiagram();
   }
 }

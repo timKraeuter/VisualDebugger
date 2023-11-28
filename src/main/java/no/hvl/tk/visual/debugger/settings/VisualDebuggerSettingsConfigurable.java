@@ -48,7 +48,6 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
     return this.visualizerOptionChanged(settings)
         || isModified(
             settingsComponent.getVisualizationDepthText(), settings.getVisualisationDepth())
-        || isModified(settingsComponent.getLoadingDepthText(), settings.getLoadingDepth())
         || isModified(settingsComponent.getSavedDebugStepsText(), settings.getSavedDebugSteps())
         || settingsComponent.getColoredDiffValue() != settings.isColoredDiff();
   }
@@ -69,9 +68,6 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
 
     final int newDepth = Integer.parseInt(this.settingsComponent.getVisualizationDepthText());
     VisualDebuggerSettingsConfigurable.changedDepthAndRestartDebuggerIfNeeded(settings, newDepth);
-
-    final int newLoadingDepth = Integer.parseInt(this.settingsComponent.getLoadingDepthText());
-    settings.setLoadingDepth(newLoadingDepth);
 
     final int newDebugSteps = Integer.parseInt(this.settingsComponent.getSavedDebugStepsText());
     settings.setSavedDebugSteps(newDebugSteps);
@@ -101,7 +97,6 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
   public void reset() {
     final PluginSettingsState settings = PluginSettingsState.getInstance();
     this.settingsComponent.setVisualizationDepthText(settings.getVisualisationDepth().toString());
-    this.settingsComponent.setLoadingDepthText(settings.getLoadingDepth().toString());
     this.settingsComponent.setSavedDebugStepsText(settings.getSavedDebugSteps().toString());
     this.settingsComponent.chooseDebuggingVisualizerOption(settings.getVisualizerOption());
     this.settingsComponent.setColoredDiffValue(settings.isColoredDiff());

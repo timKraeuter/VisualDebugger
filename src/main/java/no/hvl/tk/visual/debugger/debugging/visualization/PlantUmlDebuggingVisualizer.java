@@ -33,11 +33,10 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
   }
 
   @Override
-  public void finishVisualization() {
+  public void doVisualizationFurther(ObjectDiagram diagram) {
     final var plantUMLString =
-        PlantUmlDebuggingVisualizer.toPlantUMLString(this.getDiagramWithDepth());
+        PlantUmlDebuggingVisualizer.toPlantUMLString(diagram);
     SharedState.setLastPlantUMLDiagram(plantUMLString);
-    this.resetDiagram();
     try {
       final byte[] pngData = PlantUmlDebuggingVisualizer.toImage(plantUMLString, FileFormat.PNG);
       this.addImageToUI(pngData);

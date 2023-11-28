@@ -21,7 +21,6 @@ public class VisualDebuggerSettingsComponent {
 
   private final JPanel myMainPanel;
   private final JBTextField visualizationDepthField = new JBTextField();
-  private final JBTextField loadingDepthField = new JBTextField();
   private final JBTextField savedDebugStepsField = new JBTextField();
   private final JBCheckBox coloredDiffCheckBox = new JBCheckBox();
   private final ComboBox<DebuggingVisualizerOption> visualizerOptionsCombobox =
@@ -37,7 +36,6 @@ public class VisualDebuggerSettingsComponent {
                 this.visualizationDepthField,
                 2,
                 false)
-            .addLabeledComponent(new JBLabel("Loading depth: "), this.loadingDepthField, 3, false)
             .addLabeledComponent(
                 new JBLabel("Number of debug history steps: "), this.savedDebugStepsField, 4, false)
             .addLabeledComponent(
@@ -61,22 +59,6 @@ public class VisualDebuggerSettingsComponent {
               protected void textChanged(@NotNull final DocumentEvent e) {
                 ComponentValidator.getInstance(
                         VisualDebuggerSettingsComponent.this.visualizationDepthField)
-                    .ifPresent(ComponentValidator::revalidate);
-              }
-            });
-
-    new ComponentValidator(disposable)
-        .withValidator(
-            () -> validateNumberField(VisualDebuggerSettingsComponent.this.loadingDepthField))
-        .installOn(this.loadingDepthField);
-    this.loadingDepthField
-        .getDocument()
-        .addDocumentListener(
-            new DocumentAdapter() {
-              @Override
-              protected void textChanged(@NotNull final DocumentEvent e) {
-                ComponentValidator.getInstance(
-                        VisualDebuggerSettingsComponent.this.loadingDepthField)
                     .ifPresent(ComponentValidator::revalidate);
               }
             });
@@ -135,14 +117,6 @@ public class VisualDebuggerSettingsComponent {
 
   public void chooseDebuggingVisualizerOption(final DebuggingVisualizerOption option) {
     this.visualizerOptionsCombobox.setItem(option);
-  }
-
-  public void setLoadingDepthText(@NotNull final String loadingDepth) {
-    this.loadingDepthField.setText(loadingDepth);
-  }
-
-  @NotNull public String getLoadingDepthText() {
-    return loadingDepthField.getText();
   }
 
   public void setSavedDebugStepsText(@NotNull final String loadingDepth) {

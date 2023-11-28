@@ -1,39 +1,22 @@
 package no.hvl.tk.visual.debugger.debugging.visualization;
 
 import com.intellij.debugger.jdi.StackFrameProxyImpl;
-import com.sun.jdi.ObjectReference;
-import no.hvl.tk.visual.debugger.domain.ODObject;
+import no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameAnalyzer;
 import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 
 public interface DebuggingInfoVisualizer {
 
-  void addMetadata(String fileName, Integer line, StackFrameProxyImpl stackFrame);
+  void doVisualization(ObjectDiagram diagram);
 
-  void addObject(ODObject object, boolean root, ObjectReference objectReference);
+  void reprintDiagram();
 
-  ObjectDiagram getObjectWithChildrenFromPreviousDiagram(String objectId);
+  void addMetadata(String fileName, Integer line, StackFrameAnalyzer stackFrame);
 
-  void addAttributeToObject(ODObject object, String fieldName, String fieldValue, String fieldType);
-
-  void addLinkToObject(ODObject from, ODObject to, String linkType);
-
-  void addPrimitiveRootValue(String variableName, String type, String value);
-
-  void finishVisualization();
+  ObjectDiagram getObjectWithChildren(String objectId);
 
   void debuggingActivated();
 
   void debuggingDeactivated();
-
-  ObjectDiagram getCurrentDiagram();
-
-  /**
-   * Saves the current diagram as the previous diagram. Resets the current diagram to an empty
-   * diagram.
-   */
-  void resetDiagram();
-
-  void reprintPreviousDiagram();
 
   void sessionStopped();
 }

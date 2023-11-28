@@ -33,10 +33,10 @@ public class ODObject implements Comparable<ODObject> {
     this.links = new HashSet<>();
   }
 
-  /** Returns a read-only sorted list of this objects attributes. */
+  /** Returns a sorted list of the objects attributes. */
   public List<ODAttributeValue> getAttributeValues() {
     this.attributeValues.sort(Comparator.comparing(ODAttributeValue::getName));
-    return Collections.unmodifiableList(attributeValues);
+    return attributeValues;
   }
 
   /** Returns a read-only set of this objects links. */

@@ -17,7 +17,6 @@ public class PluginSettingsState implements PersistentStateComponent<PluginSetti
 
   private DebuggingVisualizerOption visualizerOption = DebuggingVisualizerOption.WEB_UI;
   private Integer visualisationDepth = 0;
-  private Integer loadingDepth = 5;
   private Integer savedDebugSteps = 3;
 
   private boolean coloredDiff = true;
@@ -50,14 +49,6 @@ public class PluginSettingsState implements PersistentStateComponent<PluginSetti
 
   public void setVisualisationDepth(final Integer visualisationDepth) {
     this.visualisationDepth = visualisationDepth;
-  }
-
-  public Integer getLoadingDepth() {
-    return loadingDepth;
-  }
-
-  public void setLoadingDepth(Integer loadingDepth) {
-    this.loadingDepth = loadingDepth;
   }
 
   public Integer getSavedDebugSteps() {
