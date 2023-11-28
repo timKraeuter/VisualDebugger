@@ -4,7 +4,6 @@ import static no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionLi
 
 import com.intellij.debugger.engine.evaluation.EvaluateException;
 import com.intellij.debugger.jdi.LocalVariableProxyImpl;
-import com.intellij.debugger.jdi.StackFrameProxyImpl;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
 import com.sun.jdi.*;
@@ -24,7 +23,7 @@ public class StackFrameAnalyzer {
   private final Set<String> manuallyExploredObjects;
   private final Map<String, Pair<ODObject, ObjectReference>> objectRefMap;
 
-  private final StackFrameProxyImpl stackFrame;
+  private final IStackFrame stackFrame;
   private final int loadingDepth;
 
   private final Set<Long> seenObjectIds;
@@ -32,7 +31,7 @@ public class StackFrameAnalyzer {
   private ObjectDiagramBuilder builder;
 
   public StackFrameAnalyzer(
-      final StackFrameProxyImpl stackFrame,
+      final IStackFrame stackFrame,
       final int loadingDepth,
       final Set<String> manuallyExploredObjects) {
     this.stackFrame = stackFrame;
@@ -44,20 +43,20 @@ public class StackFrameAnalyzer {
   }
 
   /**
-   * Use for testing only!.
+   * Used for testing.
    */
   protected StackFrameAnalyzer(
-      final StackFrame stackFrame) {
-    this(new StackFrameProxyImpl(null, stackFrame, 0), 10, new HashSet<>());
+      final IStackFrame stackFrame) {
+    this(stackFrame, 10, new HashSet<>());
   }
 
   /**
-   * Use for testing only!.
+   * Used for testing.
    */
   protected StackFrameAnalyzer(
-      final StackFrame stackFrame,
+      final IStackFrame stackFrame,
       final int loadingDepth) {
-    this(new StackFrameProxyImpl(null, stackFrame, 0), loadingDepth, new HashSet<>());
+    this(stackFrame, loadingDepth, new HashSet<>());
   }
 
   public ObjectDiagram analyze() {
@@ -85,7 +84,7 @@ public class StackFrameAnalyzer {
     return builder.build();
   }
 
-  private void analyzeThisObject(final StackFrameProxyImpl stackFrame) throws EvaluateException {
+  private void analyzeThisObject(final IStackFrame stackFrame) throws EvaluateException {
     final ObjectReference thisObjectReference = stackFrame.thisObject();
     if (thisObjectReference == null) {
       LOGGER.warn("this object was null!");
@@ -99,12 +98,12 @@ public class StackFrameAnalyzer {
     this.exploreObject(thisObjectReference, thisObject, null, "", loadingDepth);
   }
 
-  private void analyzeVariablesInScope(final StackFrameProxyImpl stackFrame)
+  private void analyzeVariablesInScope(final IStackFrame stackFrame)
       throws EvaluateException {
     // All visible variables in the stack frame.
     final List<LocalVariableProxyImpl> methodVariables = stackFrame.visibleVariables();
     for (LocalVariableProxyImpl localVariable : methodVariables) {
-      this.gatherVariable(localVariable, stackFrame);
+      this.analyzeVariable(localVariable, stackFrame);
     }
   }
 
@@ -399,9 +398,9 @@ public class StackFrameAnalyzer {
     return stackFrame.threadProxy().getThreadReference();
   }
 
-  private void gatherVariable(final LocalVariableProxyImpl localVariable,
-      final StackFrameProxyImpl stackFrame)
-      throws EvaluateException {
+  private void analyzeVariable(
+      final LocalVariableProxyImpl localVariable,
+      final IStackFrame stackFrame) throws EvaluateException {
     final Value variableValue = stackFrame.getValue(localVariable);
     final String variableName = localVariable.name();
     final String variableType = localVariable.typeName();

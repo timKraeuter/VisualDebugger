@@ -1,69 +1,46 @@
 package no.hvl.tk.visual.debugger.debugging.stackframe.mocks;
 
+import com.intellij.debugger.jdi.LocalVariableProxyImpl;
+import com.intellij.debugger.jdi.ThreadReferenceProxyImpl;
 import com.sun.jdi.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import no.hvl.tk.visual.debugger.debugging.stackframe.IStackFrame;
+import org.mockito.Mockito;
 
-public class StackFrameMock implements StackFrame {
+public class StackFrameMock implements IStackFrame {
 
   private final ObjectReference thisObj;
-  private final Map<LocalVariable, Value> localVars = new HashMap<>();
+  private final Map<LocalVariableProxyImpl, Value> localVars = new HashMap<>();
 
   public StackFrameMock(ObjectReference thisObj) {
     this.thisObj = thisObj;
   }
 
-  @Override
-  public Location location() {
-    return null;
-  }
-
-  @Override
-  public ThreadReference thread() {
-    return null;
-  }
-
-  @Nullable @Override
   public ObjectReference thisObject() {
     return thisObj;
   }
 
-  @NotNull @Override
-  public List<LocalVariable> visibleVariables() {
+  public List<LocalVariableProxyImpl> visibleVariables() {
     return new ArrayList<>(localVars.keySet());
   }
 
-  @Nullable @Override
-  public LocalVariable visibleVariableByName(String name) {
-    return null;
-  }
-
   @Override
-  public Value getValue(LocalVariable variable) {
-    return this.localVars.get(variable);
+  public Value getValue(LocalVariableProxyImpl localVariable) {
+    return this.localVars.get(localVariable);
   }
 
-  @NotNull @Override
-  public Map<LocalVariable, Value> getValues(List<? extends LocalVariable> variables) {
-    return localVars;
-  }
-
-  @Override
   public void setValue(LocalVariable variable, Value value) {
-    this.localVars.put(variable, value);
-  }
-
-  @NotNull @Override
-  public List<Value> getArgumentValues() {
-    throw new UnsupportedOperationException("tbd");
+    LocalVariableProxyImpl mock = Mockito.mock(LocalVariableProxyImpl.class);
+    Mockito.when(mock.name()).thenReturn(variable.name());
+    Mockito.when(mock.typeName()).thenReturn(variable.typeName());
+    this.localVars.put(mock, value);
   }
 
   @Override
-  public VirtualMachine virtualMachine() {
-    return null;
+  public ThreadReferenceProxyImpl threadProxy() {
+    return Mockito.mock(ThreadReferenceProxyImpl.class);
   }
 }

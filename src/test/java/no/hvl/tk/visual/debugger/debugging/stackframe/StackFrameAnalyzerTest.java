@@ -1,5 +1,6 @@
 package no.hvl.tk.visual.debugger.debugging.stackframe;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -12,7 +13,6 @@ import java.util.stream.Collectors;
 import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.*;
 import no.hvl.tk.visual.debugger.debugging.stackframe.mocks.value.IntegerValueMock;
 import no.hvl.tk.visual.debugger.domain.*;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -91,7 +91,7 @@ class StackFrameAnalyzerTest {
 
     assertThat(
         diagram.getPrimitiveRootValues(),
-        CoreMatchers.equalTo(primitiveVars));
+        equalTo(primitiveVars));
   }
 
   @SuppressWarnings("OptionalGetWithoutIsPresent")

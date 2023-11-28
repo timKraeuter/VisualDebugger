@@ -82,7 +82,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
 
     StackFrameAnalyzer stackFrameAnalyzer =
         new StackFrameAnalyzer(
-            stackFrame,
+            new StackFrameProxyImplAdapter(stackFrame),
             PluginSettingsState.getInstance().getVisualisationDepth(),
             SharedState.getManuallyExploredObjects());
 
