@@ -23,19 +23,17 @@ public class DownloadHandler implements CefDownloadHandler {
       CefBrowser browser,
       CefDownloadItem downloadItem,
       String suggestedName,
-      CefBeforeDownloadCallback callback) {
-  }
+      CefBeforeDownloadCallback callback) {}
 
   @Override
   public void onDownloadUpdated(
-      CefBrowser browser,
-      CefDownloadItem downloadItem,
-      CefDownloadItemCallback callback) {
+      CefBrowser browser, CefDownloadItem downloadItem, CefDownloadItemCallback callback) {
     if (downloadItem.isComplete()) {
       // TODO: Download XML or SVG
-      NotificationGroup notificationGroup = NotificationGroupManager.getInstance()
-          .getNotificationGroup("Download Debugger Diagram");
-      notificationGroup.createNotification("Download completed to x.", MessageType.INFO)
+      NotificationGroup notificationGroup =
+          NotificationGroupManager.getInstance().getNotificationGroup("Download Debugger Diagram");
+      notificationGroup
+          .createNotification("Download completed to x.", MessageType.INFO)
           .notify(project);
     }
   }
