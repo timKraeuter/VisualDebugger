@@ -1,9 +1,7 @@
 package no.hvl.tk.visual.debugger.debugging.visualization;
 
-import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
-import java.net.URI;
-import java.net.URISyntaxException;
+import com.intellij.ui.jcef.JBCefBrowser;
 import javax.swing.*;
 import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
@@ -54,18 +52,10 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
   public void debuggingActivated() {
     WebSocketDebuggingVisualizer.startDebugAPIServerIfNeeded();
     WebSocketDebuggingVisualizer.startUIServerIfNeeded();
-    final var uiButton =
-        new JButton(String.format("Launch user interface (%s)", ServerConstants.UI_SERVER_URL));
-    uiButton.addActionListener(e -> WebSocketDebuggingVisualizer.launchUIInBrowser());
-    this.debugUI.add(uiButton);
-  }
 
-  private static void launchUIInBrowser() {
-    try {
-      BrowserUtil.browse(new URI(ServerConstants.UI_SERVER_URL));
-    } catch (final URISyntaxException ex) {
-      LOGGER.error(ex);
-    }
+    JBCefBrowser browser = new JBCefBrowser(ServerConstants.UI_SERVER_URL);
+    browser.setPageBackgroundColor("white");
+    debugUI.add(browser.getComponent());
   }
 
   private static void startDebugAPIServerIfNeeded() {
