@@ -1,9 +1,11 @@
 package no.hvl.tk.visual.debugger.debugging.visualization;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.jcef.JBCefBrowser;
 import javax.swing.*;
 import no.hvl.tk.visual.debugger.SharedState;
+import no.hvl.tk.visual.debugger.debugging.visualization.web.DownloadHandler;
 import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 import no.hvl.tk.visual.debugger.server.ServerConstants;
 import no.hvl.tk.visual.debugger.server.UIServerStarter;
@@ -20,9 +22,11 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
   private static final Logger LOGGER = Logger.getInstance(WebSocketDebuggingVisualizer.class);
 
+  private final Project project;
   private final JPanel debugUI;
 
-  public WebSocketDebuggingVisualizer(final JPanel userInterface) {
+  public WebSocketDebuggingVisualizer(Project project, final JPanel userInterface) {
+    this.project = project;
     this.debugUI = userInterface;
   }
 
@@ -54,6 +58,7 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     WebSocketDebuggingVisualizer.startUIServerIfNeeded();
 
     JBCefBrowser browser = new JBCefBrowser(ServerConstants.UI_SERVER_URL);
+    browser.getJBCefClient().addDownloadHandler(new DownloadHandler(project), browser.getCefBrowser());
     browser.setPageBackgroundColor("white");
     debugUI.add(browser.getComponent());
   }

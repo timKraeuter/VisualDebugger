@@ -8,6 +8,7 @@ import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Key;
@@ -37,10 +38,12 @@ public class StackFrameSessionListener implements XDebugSessionListener {
 
   private JPanel userInterface;
 
+  private final Project project;
   private final XDebugSession debugSession;
   private DebuggingInfoVisualizer debuggingVisualizer;
 
-  public StackFrameSessionListener(@NotNull XDebugProcess debugProcess) {
+  public StackFrameSessionListener(Project project, @NotNull XDebugProcess debugProcess) {
+    this.project = project;
     this.debugSession = debugProcess.getSession();
     debugProcess
         .getProcessHandler()
@@ -160,12 +163,12 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     if (this.debuggingVisualizer == null) {
       switch (PluginSettingsState.getInstance().getVisualizerOption()) {
         case WEB_UI -> this.debuggingVisualizer =
-            new WebSocketDebuggingVisualizer(this.userInterface);
+            new WebSocketDebuggingVisualizer(project, this.userInterface);
         case EMBEDDED -> this.debuggingVisualizer =
             new PlantUmlDebuggingVisualizer(this.userInterface);
         default -> {
           LOGGER.warn("Unrecognized debugging visualizer chosen. Defaulting to web visualizer!");
-          this.debuggingVisualizer = new WebSocketDebuggingVisualizer(this.userInterface);
+          this.debuggingVisualizer = new WebSocketDebuggingVisualizer(project, this.userInterface);
         }
       }
     }
