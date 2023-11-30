@@ -1,15 +1,14 @@
-package no.hvl.tk.visual.debugger.debugging.visualization.web;
+package no.hvl.tk.visual.debugger.debugging.visualization.jcef;
 
-import com.intellij.notification.NotificationGroup;
-import com.intellij.notification.NotificationGroupManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.MessageType;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import no.hvl.tk.visual.debugger.ui.VisualDebuggerNotifications;
 import org.cef.browser.CefBrowser;
 import org.cef.callback.CefBeforeDownloadCallback;
 import org.cef.callback.CefDownloadItem;
@@ -17,11 +16,13 @@ import org.cef.callback.CefDownloadItemCallback;
 import org.cef.handler.CefDownloadHandler;
 import org.jetbrains.annotations.NotNull;
 
-public class WebDownloadHandler implements CefDownloadHandler {
+public class JCefDownloadHandler implements CefDownloadHandler {
+
+  private static final Logger LOGGER = Logger.getInstance(JCefDownloadHandler.class);
 
   private final Project project;
 
-  public WebDownloadHandler(Project project) {
+  public JCefDownloadHandler(Project project) {
     this.project = project;
   }
 
@@ -32,34 +33,26 @@ public class WebDownloadHandler implements CefDownloadHandler {
       String suggestedName,
       CefBeforeDownloadCallback callback) {
 
-    String destinationDir = saveFile(downloadItem, suggestedName);
+    String filePath = saveFile(downloadItem, suggestedName);
 
-    notifyUser(destinationDir);
+    VisualDebuggerNotifications.notifyDownloadCompleteUser(filePath);
   }
 
-  private void notifyUser(String destinationDir) {
-    NotificationGroup notificationGroup =
-        NotificationGroupManager.getInstance().getNotificationGroup("Download Debugger Diagram");
-    String content = String.format("<a href=\"%s\">%s</a>", destinationDir, destinationDir);
-    notificationGroup
-        .createNotification(content, MessageType.INFO)
-        .setTitle("Download complete.")
-        .notify(project);
-  }
-
-  @NotNull private String saveFile(CefDownloadItem downloadItem, String suggestedName) {
+  @NotNull
+  private String saveFile(CefDownloadItem downloadItem, String suggestedName) {
     String content = getFileContentFromURL(downloadItem.getURL());
 
     String filePath = this.getDestinationDir() + File.separator + suggestedName;
     try {
       Files.writeString(Path.of(filePath), content);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      LOGGER.error(e);
     }
     return filePath;
   }
 
-  @NotNull private static String getFileContentFromURL(String url) {
+  @NotNull
+  private static String getFileContentFromURL(String url) {
     String encodingPrefix = "UTF-8,";
     int contentStart = url.indexOf(encodingPrefix) + encodingPrefix.length();
     String dataUTF8 = url.substring(contentStart);
@@ -68,7 +61,9 @@ public class WebDownloadHandler implements CefDownloadHandler {
 
   @Override
   public void onDownloadUpdated(
-      CefBrowser browser, CefDownloadItem downloadItem, CefDownloadItemCallback callback) {}
+      CefBrowser browser, CefDownloadItem downloadItem, CefDownloadItemCallback callback) {
+    // NO OP
+  }
 
   private String getDestinationDir() {
     return project.getBasePath();

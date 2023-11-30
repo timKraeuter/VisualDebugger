@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="16"
+   height="16"
+   viewBox="2.0000007 1.0000005 15.999999 16"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="icon_2.svg"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="22.588761"
+     inkscape:cx="18.217024"
+     inkscape:cy="13.922853"
+     inkscape:window-width="1920"
+     inkscape:window-height="1137"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <g
+     id="g1"
+     transform="matrix(1.1370976,0,0,1.1370976,0.9033055,-0.1370971)">
+    <title
+       id="title1">Layer 1</title>
+    <path
+       id="svg_1"
+       d="m 12.424734,10.15385 v 0.53846 c 0,0.37369 -0.06443,0.73015 -0.156,1.07692 H 14 v 1.61539 H 11.435266 C 10.634557,14.36031 9.4258211,15 8.0610903,15 6.6963594,15 5.4876406,14.36031 4.6869097,13.38462 H 2 v -1.61539 h 1.8534497 c -0.091634,-0.34677 -0.156,-0.70323 -0.156,-1.07692 V 10.15385 H 2 V 8.53846 H 3.6974497 V 7.46154 c 0,-0.18416 0.032734,-0.35969 0.055646,-0.53846 H 2 V 5.30769 H 4.3072691 C 4.724,4.60446 5.3327291,4.03262 6.0669097,3.65462 L 4.5341806,2.14262 5.6916406,1 7.8909097,3.17108 C 7.9487291,3.16892 7.9421806,3.16031 8,3.16031 c 0.020734,0 0.099271,0.00861 0.12,0.00969 L 10.308354,1 l 1.157469,1.14262 -1.4890887,1.47 c 0.7690887,0.37584 1.4061767,0.966 1.8381767,1.69507 H 14 v 1.61539 h -1.630911 c 0.02289,0.17877 0.05558,0.3543 0.05558,0.53846 V 8.53846 H 14 v 1.61539 z M 6.2,7 V 8.5 H 9.8 V 7 Z m 0,3 v 1.5 H 9.8 V 10 Z"
+       fill-rule="evenodd"
+       fill-opacity="0.7"
+       fill="#62b543"
+       style="stroke-width:1.00001" />
+    <g
+       id="svg_7">
+      <g
+         id="svg_5">
+        <path
+           id="svg_6"
+           pointer-events="all"
+           fill="#000000"
+           d="m 10.61738,12.11917 c -0.49,0.39 -1.15,0.63 -1.76,0.63 -1.64,0 -2.83,-1.36 -2.83,-2.82 0,-1.67 1.34,-2.86 2.82,-2.86 1.46,0 2.81,1.17 2.81,2.86 0,0.67 -0.22,1.26 -0.62,1.77 l 0.08,0.09 0.62,0.11 2.17,2.19 c 0.12,0.13 0.06,0.46 -0.2,0.71 -0.26,0.24 -0.55,0.35 -0.71,0.21 l -2.18,-2.19 -0.1,-0.61 z m -1.8,0 c 1.28,0 2.23,-1.03 2.23,-2.2 0,-1.18 -0.95,-2.22 -2.2,-2.22 -1.21,0 -2.21,1 -2.21,2.22 0,1.16 0.96,2.2 2.18,2.2 z" />
+      </g>
+    </g>
+  </g>
+</svg>

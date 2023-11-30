@@ -31,21 +31,21 @@
     <group id="VisualDebugger.VisualizerToolbar" popup="false">
       <action
         id="VisualDebugger.SettingsAction"
-        class="no.hvl.tk.visual.debugger.actions.settings.SettingsAction"
+        class="no.hvl.tk.visual.debugger.ui.actions.settings.SettingsAction"
         text="Change Settings"
         description="Change the visual debugger settings"
         icon="/icons/settings.svg"
       />
       <action
         id="VisualDebugger.PrintAction"
-        class="no.hvl.tk.visual.debugger.actions.print.PrintAction"
+        class="no.hvl.tk.visual.debugger.ui.actions.print.PrintAction"
         text="Print"
         description="Print diagram"
         icon="/icons/print.svg"
       />
       <action
         id="VisualDebugger.StopAction"
-        class="no.hvl.tk.visual.debugger.actions.stop.StopAction"
+        class="no.hvl.tk.visual.debugger.ui.actions.stop.StopAction"
         text="Stop Debugger"
         description="Stop the visual debugger"
         icon="/icons/stop.svg"
@@ -59,7 +59,7 @@
       id="no.hvl.tk.visualDebugger.settings" displayName="Visual Debugger Settings"/>
     <applicationService
       serviceImplementation="no.hvl.tk.visual.debugger.settings.PluginSettingsState"/>
-    <notificationGroup id="Download Debugger Diagram"
+    <notificationGroup id="VisualDebugger.NotifyDownload"
       displayType="BALLOON"/>
   </extensions>
 

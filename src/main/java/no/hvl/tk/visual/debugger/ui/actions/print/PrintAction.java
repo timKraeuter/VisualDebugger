@@ -1,4 +1,4 @@
-package no.hvl.tk.visual.debugger.actions.print;
+package no.hvl.tk.visual.debugger.ui.actions.print;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
