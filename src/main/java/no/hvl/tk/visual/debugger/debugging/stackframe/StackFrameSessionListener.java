@@ -165,7 +165,8 @@ public class StackFrameSessionListener implements XDebugSessionListener {
             new PlantUmlDebuggingVisualizer(this.userInterface);
         default -> {
           LOGGER.warn("Unrecognized debugging visualizer chosen. Defaulting to web visualizer!");
-          this.debuggingVisualizer = new WebSocketDebuggingVisualizer(debugSession.getProject(), this.userInterface);
+          this.debuggingVisualizer =
+              new WebSocketDebuggingVisualizer(debugSession.getProject(), this.userInterface);
         }
       }
     }

@@ -47,11 +47,10 @@ public class WebDownloadHandler implements CefDownloadHandler {
         .notify(project);
   }
 
-  @NotNull
-  private String saveFile(CefDownloadItem downloadItem, String suggestedName) {
+  @NotNull private String saveFile(CefDownloadItem downloadItem, String suggestedName) {
     String content = getFileContentFromURL(downloadItem.getURL());
 
-    String filePath = this.getDestinationDir()  + File.separator + suggestedName;
+    String filePath = this.getDestinationDir() + File.separator + suggestedName;
     try {
       Files.writeString(Path.of(filePath), content);
     } catch (IOException e) {
@@ -60,8 +59,7 @@ public class WebDownloadHandler implements CefDownloadHandler {
     return filePath;
   }
 
-  @NotNull
-  private static String getFileContentFromURL(String url) {
+  @NotNull private static String getFileContentFromURL(String url) {
     String encodingPrefix = "UTF-8,";
     int contentStart = url.indexOf(encodingPrefix) + encodingPrefix.length();
     String dataUTF8 = url.substring(contentStart);
@@ -70,8 +68,7 @@ public class WebDownloadHandler implements CefDownloadHandler {
 
   @Override
   public void onDownloadUpdated(
-      CefBrowser browser, CefDownloadItem downloadItem, CefDownloadItemCallback callback) {
-  }
+      CefBrowser browser, CefDownloadItem downloadItem, CefDownloadItemCallback callback) {}
 
   private String getDestinationDir() {
     return project.getBasePath();
