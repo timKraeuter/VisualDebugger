@@ -58,7 +58,6 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     WebSocketDebuggingVisualizer.startUIServerIfNeeded();
 
     JBCefBrowser browser = new JBCefBrowser(ServerConstants.UI_SERVER_URL);
-    System.out.println(project);
     browser
         .getJBCefClient()
         .addDownloadHandler(new WebDownloadHandler(project), browser.getCefBrowser());
