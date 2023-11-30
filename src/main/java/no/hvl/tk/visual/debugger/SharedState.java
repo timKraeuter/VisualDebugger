@@ -27,6 +27,8 @@ public class SharedState {
   private static Integer debugLine;
 
   private static boolean debuggingActive = false;
+
+  private static boolean embeddedBrowserActive = false;
   private static StackFrameSessionListener debugSessionListener;
 
   /** Last plant UML diagram input needed for the print function. */
@@ -110,5 +112,13 @@ public class SharedState {
 
   public static Set<String> getManuallyExploredObjects() {
     return manuallyExploredObjects;
+  }
+
+  public static boolean isEmbeddedBrowserActive() {
+    return embeddedBrowserActive;
+  }
+
+  public static void setEmbeddedBrowserActive(boolean embeddedBrowserActive) {
+    SharedState.embeddedBrowserActive = embeddedBrowserActive;
   }
 }

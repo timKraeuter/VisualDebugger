@@ -59,6 +59,10 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     WebSocketDebuggingVisualizer.startDebugAPIServerIfNeeded();
     WebSocketDebuggingVisualizer.startUIServerIfNeeded();
 
+    initUI();
+  }
+
+  private void initUI() {
     final var uiButton =
         new JButton(String.format("Launch browser (%s)", ServerConstants.UI_SERVER_URL));
     uiButton.addActionListener(e -> BrowserUtil.browse(ServerConstants.UI_SERVER_URL));
@@ -71,17 +75,26 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
           this.debugUI.remove(openEmbeddedBrowserButton);
           this.debugUI.add(closeEmbeddedBrowserButton);
           launchEmbeddedBrowser();
-          this.debugUI.revalidate();
         });
-    this.debugUI.add(openEmbeddedBrowserButton);
+    if (SharedState.isEmbeddedBrowserActive()) {
+      this.debugUI.add(closeEmbeddedBrowserButton);
+      launchEmbeddedBrowser();
+    } else {
+      this.debugUI.add(openEmbeddedBrowserButton);
+    }
 
     closeEmbeddedBrowserButton.addActionListener(
         e -> {
-          this.debugUI.remove(browser.getComponent());
+          closeEmbeddedBrowser();
           this.debugUI.remove(closeEmbeddedBrowserButton);
           this.debugUI.add(openEmbeddedBrowserButton);
           this.debugUI.revalidate();
         });
+  }
+
+  private void closeEmbeddedBrowser() {
+    this.debugUI.remove(browser.getComponent());
+    SharedState.setEmbeddedBrowserActive(false);
   }
 
   private void launchEmbeddedBrowser() {
@@ -94,6 +107,8 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     }
     browser.loadURL(ServerConstants.UI_SERVER_URL);
     debugUI.add(browser.getComponent(), 0);
+    SharedState.setEmbeddedBrowserActive(true);
+    this.debugUI.revalidate();
   }
 
   private static void startDebugAPIServerIfNeeded() {
