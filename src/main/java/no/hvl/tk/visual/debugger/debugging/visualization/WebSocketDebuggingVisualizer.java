@@ -18,9 +18,7 @@ import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.tyrus.server.Server;
 
-/**
- * Sends visualization information through websocket.
- */
+/** Sends visualization information through websocket. */
 public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
   private static final Logger LOGGER = Logger.getInstance(WebSocketDebuggingVisualizer.class);
@@ -44,10 +42,10 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
     final String message =
         new DebuggingWSMessage(
-            DebuggingMessageType.NEXT_DEBUG_STEP,
-            diagramXML,
-            SharedState.getDebugFileName(),
-            SharedState.getDebugLine())
+                DebuggingMessageType.NEXT_DEBUG_STEP,
+                diagramXML,
+                SharedState.getDebugFileName(),
+                SharedState.getDebugLine())
             .serialize();
     SharedState.getWebsocketClients()
         .forEach(
