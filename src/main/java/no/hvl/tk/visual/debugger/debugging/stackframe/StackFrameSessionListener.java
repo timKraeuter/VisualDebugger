@@ -21,8 +21,8 @@ import no.hvl.tk.visual.debugger.debugging.stackframe.exceptions.StackFrameAnaly
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.WebSocketDebuggingVisualizer;
-import no.hvl.tk.visual.debugger.ui.VisualDebuggerIcons;
 import no.hvl.tk.visual.debugger.settings.PluginSettingsState;
+import no.hvl.tk.visual.debugger.ui.VisualDebuggerIcons;
 import org.jetbrains.annotations.NotNull;
 
 public class StackFrameSessionListener implements XDebugSessionListener {
@@ -127,11 +127,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     final RunnerLayoutUi ui = this.debugSession.getUI();
     final var content =
         ui.createContent(
-            CONTENT_ID,
-            uiContainer,
-            "Visual Debugger",
-            VisualDebuggerIcons.VD_ICON,
-            null);
+            CONTENT_ID, uiContainer, "Visual Debugger", VisualDebuggerIcons.VD_ICON, null);
     content.setCloseable(false);
     UIUtil.invokeLaterIfNeeded(() -> ui.addContent(content));
     LOGGER.debug("UI initialized!");

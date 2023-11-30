@@ -38,8 +38,7 @@ public class JCefDownloadHandler implements CefDownloadHandler {
     VisualDebuggerNotifications.notifyDownloadCompleteUser(filePath);
   }
 
-  @NotNull
-  private String saveFile(CefDownloadItem downloadItem, String suggestedName) {
+  @NotNull private String saveFile(CefDownloadItem downloadItem, String suggestedName) {
     String content = getFileContentFromURL(downloadItem.getURL());
 
     String filePath = this.getDestinationDir() + File.separator + suggestedName;
@@ -51,8 +50,7 @@ public class JCefDownloadHandler implements CefDownloadHandler {
     return filePath;
   }
 
-  @NotNull
-  private static String getFileContentFromURL(String url) {
+  @NotNull private static String getFileContentFromURL(String url) {
     String encodingPrefix = "UTF-8,";
     int contentStart = url.indexOf(encodingPrefix) + encodingPrefix.length();
     String dataUTF8 = url.substring(contentStart);
