@@ -1,9 +1,9 @@
 <idea-plugin>
-    <id>no.hvl.tk.visualDebugger</id>
-    <name>Visual Debugger</name>
-    <vendor email="tim.kraeuterr@gmail.com" url="https://timkraeuter.github.io//">Tim Kräuter</vendor>
+  <id>no.hvl.tk.visualDebugger</id>
+  <name>Visual Debugger</name>
+  <vendor email="tim.kraeuterr@gmail.com" url="https://timkraeuter.github.io//">Tim Kräuter</vendor>
 
-    <description><![CDATA[
+  <description><![CDATA[
     This plugin visualizes the variables during a debugging session as a UML object diagram.
     The plugin is used alongside normal debugging. Set a breakpoint for debugging and start the debugging as usual in the IDE.
     The plugin will automatically create a visual debugging toolbar in the debug window, shown in the screenshot.
@@ -17,49 +17,52 @@
     Printing an SVG-File when using the embedded visualization can be done from the IDE using the print icon in the plugin toolbar.
     ]]></description>
 
-    <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
-         on how to target different products -->
-    <depends>com.intellij.modules.platform</depends>
-    <depends>com.intellij.modules.java</depends>
+  <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
+       on how to target different products -->
+  <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.java</depends>
 
-    <projectListeners>
-        <listener class="no.hvl.tk.visual.debugger.DebugProcessListener"
-                  topic="com.intellij.xdebugger.XDebuggerManagerListener"/>
-    </projectListeners>
+  <projectListeners>
+    <listener class="no.hvl.tk.visual.debugger.DebugProcessListener"
+      topic="com.intellij.xdebugger.XDebuggerManagerListener"/>
+  </projectListeners>
 
-    <actions>
-        <group id="VisualDebugger.VisualizerToolbar" popup="false">
-            <action
-                    id="VisualDebugger.SettingsAction"
-                    class="no.hvl.tk.visual.debugger.actions.settings.SettingsAction"
-                    text="Change Settings"
-                    description="Change the visual debugger settings"
-                    icon="/icons/settings.svg"
-            />
-            <action
-                    id="VisualDebugger.PrintAction"
-                    class="no.hvl.tk.visual.debugger.actions.print.PrintAction"
-                    text="Print"
-                    description="Print diagram"
-                    icon="/icons/print.svg"
-            />
-            <action
-                    id="VisualDebugger.StopAction"
-                    class="no.hvl.tk.visual.debugger.actions.stop.StopAction"
-                    text="Stop Debugger"
-                    description="Stop the visual debugger"
-                    icon="/icons/stop.svg"
-            />
-        </group>
-    </actions>
+  <actions>
+    <group id="VisualDebugger.VisualizerToolbar" popup="false">
+      <action
+        id="VisualDebugger.SettingsAction"
+        class="no.hvl.tk.visual.debugger.ui.actions.settings.SettingsAction"
+        text="Change Settings"
+        description="Change the visual debugger settings"
+        icon="/icons/settings.svg"
+      />
+      <action
+        id="VisualDebugger.PrintAction"
+        class="no.hvl.tk.visual.debugger.ui.actions.print.PrintAction"
+        text="Print"
+        description="Print diagram"
+        icon="/icons/print.svg"
+      />
+      <action
+        id="VisualDebugger.StopAction"
+        class="no.hvl.tk.visual.debugger.ui.actions.stop.StopAction"
+        text="Stop Debugger"
+        description="Stop the visual debugger"
+        icon="/icons/stop.svg"
+      />
+    </group>
+  </actions>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <projectConfigurable parentId="tools"
-                             instance="no.hvl.tk.visual.debugger.settings.VisualDebuggerSettingsConfigurable"
-                             id="no.hvl.tk.visualDebugger.settings" displayName="Visual Debugger Settings"/>
-        <applicationService serviceImplementation="no.hvl.tk.visual.debugger.settings.PluginSettingsState"/>
-    </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <projectConfigurable parentId="tools"
+      instance="no.hvl.tk.visual.debugger.settings.VisualDebuggerSettingsConfigurable"
+      id="no.hvl.tk.visualDebugger.settings" displayName="Visual Debugger Settings"/>
+    <applicationService
+      serviceImplementation="no.hvl.tk.visual.debugger.settings.PluginSettingsState"/>
+    <notificationGroup id="VisualDebugger.NotifyDownload"
+      displayType="BALLOON"/>
+  </extensions>
 
-    <actions>
-    </actions>
+  <actions>
+  </actions>
 </idea-plugin>

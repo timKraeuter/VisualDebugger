@@ -9,7 +9,6 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Key;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.XDebugProcess;
@@ -17,13 +16,13 @@ import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
 import java.awt.*;
 import javax.swing.*;
-import no.hvl.tk.visual.debugger.DebugProcessListener;
 import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.stackframe.exceptions.StackFrameAnalyzerException;
 import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
 import no.hvl.tk.visual.debugger.debugging.visualization.WebSocketDebuggingVisualizer;
 import no.hvl.tk.visual.debugger.settings.PluginSettingsState;
+import no.hvl.tk.visual.debugger.ui.VisualDebuggerIcons;
 import org.jetbrains.annotations.NotNull;
 
 public class StackFrameSessionListener implements XDebugSessionListener {
@@ -128,11 +127,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     final RunnerLayoutUi ui = this.debugSession.getUI();
     final var content =
         ui.createContent(
-            CONTENT_ID,
-            uiContainer,
-            "Visual Debugger",
-            IconLoader.getIcon("/icons/icon_16x16.png", DebugProcessListener.class),
-            null);
+            CONTENT_ID, uiContainer, "Visual Debugger", VisualDebuggerIcons.VD_ICON, null);
     content.setCloseable(false);
     UIUtil.invokeLaterIfNeeded(() -> ui.addContent(content));
     LOGGER.debug("UI initialized!");
@@ -160,12 +155,13 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     if (this.debuggingVisualizer == null) {
       switch (PluginSettingsState.getInstance().getVisualizerOption()) {
         case WEB_UI -> this.debuggingVisualizer =
-            new WebSocketDebuggingVisualizer(this.userInterface);
+            new WebSocketDebuggingVisualizer(debugSession.getProject(), this.userInterface);
         case EMBEDDED -> this.debuggingVisualizer =
             new PlantUmlDebuggingVisualizer(this.userInterface);
         default -> {
           LOGGER.warn("Unrecognized debugging visualizer chosen. Defaulting to web visualizer!");
-          this.debuggingVisualizer = new WebSocketDebuggingVisualizer(this.userInterface);
+          this.debuggingVisualizer =
+              new WebSocketDebuggingVisualizer(debugSession.getProject(), this.userInterface);
         }
       }
     }
