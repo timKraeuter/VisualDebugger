@@ -17,12 +17,12 @@ The **embedded visualizer** uses [PlantUML](https://plantuml.com/) to visualize 
 the [PlantUML Smetana project](https://plantuml.com/smetana02) such that a local installation of DOT is not required.
 Since PlantUML generates images, no user interaction is possible.
 
-Consequently, we have implemented a **browser visualizer** which supports user interaction, i.e., exploring the generated object diagram similar to the exploration in the variables view in the IDE.
-The browser visualization is based on the object-diagram modeler ([source](https://github.com/timKraeuter/object-diagram-modeler), [demo](https://timkraeuter.com/object-diagram-modeler/)).
+Consequently, we have implemented a **browser visualizer** that supports user interaction, i.e., exploring the generated object diagram similar to the exploration in the variables view in the IDE.
+The browser visualization is based on the object-diagram modeler ([source](https://github.com/timKraeuter/object-diagram-js), [demo](https://timkraeuter.com/object-diagram-js/)).
 
 ## Browser visualizer
 
-The browser visualizer makes use of WebSocket to update the connected clients/browser whenever the debugging variables
+The browser visualizer makes use of WebSocket to update the connected clients/browsers whenever the debugging variables
 change. An overview of the architecture is shown in the following picture.
 
 ![Architecture picture showing the plugin connecting to the browser using WebSocket](./pictures/VD-architecture.svg)
@@ -49,7 +49,7 @@ content which is a string conforming to the [XML schema for object diagrams](./a
 ```json
 {
   "type": "nextDebugStep",
-  "content": "xml data here...",
+  "content": "XML data here...",
   "fileName": "PartsListTest",
   "line": "12"
 }
