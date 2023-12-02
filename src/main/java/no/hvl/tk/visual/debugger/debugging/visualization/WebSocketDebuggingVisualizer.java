@@ -2,11 +2,10 @@ package no.hvl.tk.visual.debugger.debugging.visualization;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import com.intellij.ui.jcef.JBCefBrowser;
 import javax.swing.*;
 import no.hvl.tk.visual.debugger.SharedState;
-import no.hvl.tk.visual.debugger.debugging.visualization.jcef.JCefDownloadHandler;
+import no.hvl.tk.visual.debugger.debugging.visualization.cef.SimpleDownloadHandler;
 import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 import no.hvl.tk.visual.debugger.server.ServerConstants;
 import no.hvl.tk.visual.debugger.server.UIServerStarter;
@@ -23,12 +22,10 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
   private static final Logger LOGGER = Logger.getInstance(WebSocketDebuggingVisualizer.class);
 
-  private final Project project;
   private JBCefBrowser browser;
   private final JPanel debugUI;
 
-  public WebSocketDebuggingVisualizer(Project project, final JPanel userInterface) {
-    this.project = project;
+  public WebSocketDebuggingVisualizer(final JPanel userInterface) {
     this.debugUI = userInterface;
   }
 
@@ -102,7 +99,7 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
       browser = new JBCefBrowser();
       browser
           .getJBCefClient()
-          .addDownloadHandler(new JCefDownloadHandler(project), browser.getCefBrowser());
+          .addDownloadHandler(new SimpleDownloadHandler(), browser.getCefBrowser());
       browser.setPageBackgroundColor("white");
     }
     browser.loadURL(ServerConstants.UI_SERVER_URL);

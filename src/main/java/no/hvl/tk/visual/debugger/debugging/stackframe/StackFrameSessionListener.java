@@ -155,13 +155,13 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     if (this.debuggingVisualizer == null) {
       switch (PluginSettingsState.getInstance().getVisualizerOption()) {
         case WEB_UI -> this.debuggingVisualizer =
-            new WebSocketDebuggingVisualizer(debugSession.getProject(), this.userInterface);
+            new WebSocketDebuggingVisualizer(this.userInterface);
         case EMBEDDED -> this.debuggingVisualizer =
             new PlantUmlDebuggingVisualizer(this.userInterface);
         default -> {
           LOGGER.warn("Unrecognized debugging visualizer chosen. Defaulting to web visualizer!");
           this.debuggingVisualizer =
-              new WebSocketDebuggingVisualizer(debugSession.getProject(), this.userInterface);
+              new WebSocketDebuggingVisualizer(this.userInterface);
         }
       }
     }
