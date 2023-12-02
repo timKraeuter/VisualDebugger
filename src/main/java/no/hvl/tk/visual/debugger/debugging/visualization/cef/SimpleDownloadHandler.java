@@ -4,10 +4,9 @@ import no.hvl.tk.visual.debugger.ui.VisualDebuggerNotifications;
 import org.cef.browser.CefBrowser;
 import org.cef.callback.CefBeforeDownloadCallback;
 import org.cef.callback.CefDownloadItem;
-import org.cef.callback.CefDownloadItemCallback;
-import org.cef.handler.CefDownloadHandler;
+import org.cef.handler.CefDownloadHandlerAdapter;
 
-public class SimpleDownloadHandler implements CefDownloadHandler {
+public class SimpleDownloadHandler extends CefDownloadHandlerAdapter {
 
   @Override
   public void onBeforeDownload(
@@ -17,11 +16,5 @@ public class SimpleDownloadHandler implements CefDownloadHandler {
       CefBeforeDownloadCallback callback) {
     VisualDebuggerNotifications.notifyDownloadStarted(suggestedName);
     callback.Continue("", true);
-  }
-
-  @Override
-  public void onDownloadUpdated(
-      CefBrowser browser, CefDownloadItem downloadItem, CefDownloadItemCallback callback) {
-    // NO OP
   }
 }
