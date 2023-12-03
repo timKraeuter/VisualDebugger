@@ -13,7 +13,8 @@ public class VisualDebuggerNotifications {
 
   public static void notifyDownloadStarted(String suggestedName) {
     NOTIFICATION_GROUP
-        .createNotification(String.format("Download of %s started.", suggestedName), MessageType.INFO)
+        .createNotification(
+            String.format("Download of %s started.", suggestedName), MessageType.INFO)
         .setIcon(VisualDebuggerIcons.VD_ICON)
         .setImportant(false)
         .notify(null);
