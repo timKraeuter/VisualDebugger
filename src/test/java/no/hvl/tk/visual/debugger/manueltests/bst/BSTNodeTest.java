@@ -1,6 +1,7 @@
 package no.hvl.tk.visual.debugger.manueltests.bst;
 
-import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
 
 class BSTNodeTest {
@@ -13,6 +14,6 @@ class BSTNodeTest {
     root.insert(60);
     root.insert(80);
     String treeAsString = root.toString();
-    Assertions.assertEquals("30, 50, 60, 70, 80", treeAsString);
+    assertEquals("30, 50, 60, 70, 80", treeAsString);
   }
 }
