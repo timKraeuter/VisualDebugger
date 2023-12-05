@@ -13,8 +13,8 @@ class BSTNodeTest {
     root.insert(60);
     root.insert(80);
     root.setValue(49);
-    String treeAsString = root.toString();
-    assertEquals("30, 49, 60, 70, 80", treeAsString);
     root.insert(99);
+    String treeAsString = root.toString();
+    assertEquals("30, 49, 60, 70, 80, 99", treeAsString);
   }
 }
