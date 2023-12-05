@@ -83,7 +83,8 @@ public class StackFrameSessionListener implements XDebugSessionListener {
         new StackFrameAnalyzer(
             new StackFrameProxyImplAdapter(stackFrame),
             PluginSettingsState.getInstance().getVisualisationDepth(),
-            SharedState.getManuallyExploredObjects());
+            SharedState.getManuallyExploredObjects(),
+            PluginSettingsState.getInstance().isShowNullValues());
 
     if (debugSession.getCurrentPosition() != null) {
       String fileName = debugSession.getCurrentPosition().getFile().getNameWithoutExtension();

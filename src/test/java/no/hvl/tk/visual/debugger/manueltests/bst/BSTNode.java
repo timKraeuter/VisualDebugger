@@ -25,15 +25,12 @@ public class BSTNode {
     this.left.insert(newValue);
   }
 
-
   public static void main(String[] args) {
     BSTNode root = new BSTNode(50);
-    root.insert(70);
     root.insert(30);
-    root.insert(20);
-    root.insert(40);
-    root.insert(80);
+    root.insert(70);
     root.insert(60);
+    root.insert(80);
     System.out.println(root);
   }
 }

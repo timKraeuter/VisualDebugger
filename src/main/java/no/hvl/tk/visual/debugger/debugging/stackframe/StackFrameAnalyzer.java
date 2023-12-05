@@ -21,6 +21,7 @@ public class StackFrameAnalyzer {
   private static final String KEY = "key";
   private static final String VALUE = "value";
   private final Set<String> manuallyExploredObjects;
+  private final boolean showNullValues;
   private final Map<String, Pair<ODObject, ObjectReference>> objectRefMap;
 
   private final IStackFrame stackFrame;
@@ -33,10 +34,12 @@ public class StackFrameAnalyzer {
   public StackFrameAnalyzer(
       final IStackFrame stackFrame,
       final int loadingDepth,
-      final Set<String> manuallyExploredObjects) {
+      final Set<String> manuallyExploredObjects,
+      boolean showNullValues) {
     this.stackFrame = stackFrame;
     this.loadingDepth = loadingDepth;
     this.manuallyExploredObjects = manuallyExploredObjects;
+    this.showNullValues = showNullValues;
     this.seenObjectIds = new HashSet<>();
     this.builder = new ObjectDiagramBuilder();
     this.objectRefMap = builder.getObjectRefMap();
@@ -44,12 +47,12 @@ public class StackFrameAnalyzer {
 
   /** Used for testing. */
   protected StackFrameAnalyzer(final IStackFrame stackFrame) {
-    this(stackFrame, 10, new HashSet<>());
+    this(stackFrame, 10, new HashSet<>(), true);
   }
 
   /** Used for testing. */
   protected StackFrameAnalyzer(final IStackFrame stackFrame, final int loadingDepth) {
-    this(stackFrame, loadingDepth, new HashSet<>());
+    this(stackFrame, loadingDepth, new HashSet<>(), true);
   }
 
   public ObjectDiagram analyze() {
@@ -453,7 +456,9 @@ public class StackFrameAnalyzer {
     }
     final ObjectReference obj = (ObjectReference) variableValue;
     if (obj == null) {
-      this.addVariableToDiagram(variableName, variableType, "null", parentIfExists);
+      if (showNullValues) {
+        this.addVariableToDiagram(variableName, variableType, "null", parentIfExists);
+      }
       return;
     }
 

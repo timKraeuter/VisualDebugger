@@ -23,6 +23,7 @@ public class VisualDebuggerSettingsComponent {
   private final JBTextField visualizationDepthField = new JBTextField();
   private final JBTextField savedDebugStepsField = new JBTextField();
   private final JBCheckBox coloredDiffCheckBox = new JBCheckBox();
+  private final JBCheckBox showNullValuesCheckBox = new JBCheckBox();
   private final ComboBox<DebuggingVisualizerOption> visualizerOptionsCombobox =
       new ComboBox<>(DebuggingVisualizerOption.values());
 
@@ -37,9 +38,12 @@ public class VisualDebuggerSettingsComponent {
                 2,
                 false)
             .addLabeledComponent(
-                new JBLabel("Number of debug history steps: "), this.savedDebugStepsField, 4, false)
+                new JBLabel("Number of debug history steps: "), this.savedDebugStepsField, 3, false)
             .addLabeledComponent(
-                new JBLabel("Color debug changes: "), this.coloredDiffCheckBox, 5, false)
+                new JBLabel("Color debug changes: "), this.coloredDiffCheckBox, 4, false)
+            .addSeparator(5)
+            .addLabeledComponent(
+                new JBLabel("Show null values: "), this.showNullValuesCheckBox, 6, false)
             .addComponentFillVertically(new JPanel(), 0)
             .getPanel();
 
@@ -133,5 +137,13 @@ public class VisualDebuggerSettingsComponent {
 
   public boolean getColoredDiffValue() {
     return coloredDiffCheckBox.isSelected();
+  }
+
+  public void setShowNullValues(final boolean coloredDiffValue) {
+    this.showNullValuesCheckBox.setSelected(coloredDiffValue);
+  }
+
+  public boolean getShowNullValues() {
+    return showNullValuesCheckBox.isSelected();
   }
 }

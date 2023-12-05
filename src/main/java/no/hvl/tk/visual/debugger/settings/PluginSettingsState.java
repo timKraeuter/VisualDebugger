@@ -21,6 +21,8 @@ public class PluginSettingsState implements PersistentStateComponent<PluginSetti
 
   private boolean coloredDiff = true;
 
+  private boolean showNullValues = false;
+
   public static PluginSettingsState getInstance() {
     return ApplicationManager.getApplication().getService(PluginSettingsState.class);
   }
@@ -69,5 +71,13 @@ public class PluginSettingsState implements PersistentStateComponent<PluginSetti
 
   public void setColoredDiff(boolean coloredDiff) {
     this.coloredDiff = coloredDiff;
+  }
+
+  public boolean isShowNullValues() {
+    return showNullValues;
+  }
+
+  public void setShowNullValues(boolean showNullValues) {
+    this.showNullValues = showNullValues;
   }
 }

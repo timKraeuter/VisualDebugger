@@ -49,7 +49,8 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
         || isModified(
             settingsComponent.getVisualizationDepthText(), settings.getVisualisationDepth())
         || isModified(settingsComponent.getSavedDebugStepsText(), settings.getSavedDebugSteps())
-        || settingsComponent.getColoredDiffValue() != settings.isColoredDiff();
+        || settingsComponent.getColoredDiffValue() != settings.isColoredDiff()
+        || settingsComponent.getShowNullValues() != settings.isShowNullValues();
   }
 
   private boolean visualizerOptionChanged(final PluginSettingsState settings) {
@@ -73,6 +74,8 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
     settings.setSavedDebugSteps(newDebugSteps);
 
     settings.setColoredDiff(settingsComponent.getColoredDiffValue());
+
+    settings.setShowNullValues(settingsComponent.getShowNullValues());
 
     sendUpdatedConfig();
   }
@@ -100,6 +103,7 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
     this.settingsComponent.setSavedDebugStepsText(settings.getSavedDebugSteps().toString());
     this.settingsComponent.chooseDebuggingVisualizerOption(settings.getVisualizerOption());
     this.settingsComponent.setColoredDiffValue(settings.isColoredDiff());
+    this.settingsComponent.setShowNullValues(settings.isShowNullValues());
   }
 
   @Override
