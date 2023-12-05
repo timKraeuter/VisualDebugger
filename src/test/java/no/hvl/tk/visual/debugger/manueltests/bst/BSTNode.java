@@ -1,36 +1,33 @@
 package no.hvl.tk.visual.debugger.manueltests.bst;
 
-public class BSTNode<T extends Comparable<T>> {
-  private final T value;
-  private BSTNode<T> left;
-  private BSTNode<T> right;
+public class BSTNode {
+  private final int value;
+  private BSTNode left;
+  private BSTNode right;
 
-  public BSTNode(T value) {
+  public BSTNode(int value) {
     this.value = value;
   }
 
-  public void insert(T newValue) {
-    if (greater(newValue)) {
+  public void insert(int newValue) {
+    if (newValue > value) {
       if (this.right == null) {
-        this.right = new BSTNode<>(newValue);
+        this.right = new BSTNode(newValue);
         return;
       }
       this.right.insert(newValue);
       return;
     }
     if (this.left == null) {
-      this.left = new BSTNode<>(newValue);
+      this.left = new BSTNode(newValue);
       return;
     }
     this.left.insert(newValue);
   }
 
-  private boolean greater(T newValue) {
-    return newValue.compareTo(value) > 0;
-  }
 
   public static void main(String[] args) {
-    BSTNode<Integer> root = new BSTNode<>(50);
+    BSTNode root = new BSTNode(50);
     root.insert(70);
     root.insert(30);
     root.insert(20);
