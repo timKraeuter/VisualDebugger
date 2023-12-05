@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public class BSTNode {
 
-  private final int value;
+  private int value;
   private BSTNode left;
   private BSTNode right;
 
@@ -45,5 +45,9 @@ public class BSTNode {
     if (right != null) {
       this.right.addValuesInOrder(values);
     }
+  }
+
+  public void setValue(int newValue) {
+    this.value = newValue;
   }
 }
