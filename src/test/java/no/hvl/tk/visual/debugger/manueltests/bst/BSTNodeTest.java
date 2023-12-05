@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 class BSTNodeTest {
-
   @Test
   void insertTest() {
     BSTNode root = new BSTNode(50);
