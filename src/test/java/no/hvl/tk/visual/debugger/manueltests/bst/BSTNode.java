@@ -1,6 +1,11 @@
 package no.hvl.tk.visual.debugger.manueltests.bst;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class BSTNode {
+
   private final int value;
   private BSTNode left;
   private BSTNode right;
@@ -25,12 +30,20 @@ public class BSTNode {
     this.left.insert(newValue);
   }
 
-  public static void main(String[] args) {
-    BSTNode root = new BSTNode(50);
-    root.insert(30);
-    root.insert(70);
-    root.insert(60);
-    root.insert(80);
-    System.out.println(root);
+  @Override
+  public String toString() {
+    List<Integer> values = new ArrayList<>();
+    this.addValuesInOrder(values);
+    return values.stream().map(Object::toString).collect(Collectors.joining(", "));
+  }
+
+  private void addValuesInOrder(List<Integer> values) {
+    if (left != null) {
+      this.left.addValuesInOrder(values);
+    }
+    values.add(value);
+    if (right != null) {
+      this.right.addValuesInOrder(values);
+    }
   }
 }
