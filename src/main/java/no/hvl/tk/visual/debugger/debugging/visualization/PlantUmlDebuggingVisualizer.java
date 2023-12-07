@@ -18,6 +18,7 @@ import no.hvl.tk.visual.debugger.domain.ODAttributeValue;
 import no.hvl.tk.visual.debugger.domain.ODLink;
 import no.hvl.tk.visual.debugger.domain.ODObject;
 import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
+import no.hvl.tk.visual.debugger.ui.CopyPlantUMLDialog;
 
 public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
   private static final Logger LOGGER = Logger.getInstance(PlantUmlDebuggingVisualizer.class);
@@ -46,7 +47,9 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
   @Override
   public void debuggingActivated() {
-    // NOOP
+    final var printDiagram = new JButton("Copy diagram");
+    printDiagram.addActionListener(e -> new CopyPlantUMLDialog().show());
+    this.pluginUI.add(printDiagram, BorderLayout.SOUTH);
   }
 
   @Override
@@ -58,7 +61,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     final var input = new ByteArrayInputStream(pngData);
     final var imageIcon = new ImageIcon(ImageIO.read(input));
 
-    if (this.imgLabel == null || this.pluginUI.getComponents().length == 0) {
+    if (this.imgLabel == null) {
       this.createImageAndAddToUI(imageIcon);
     } else {
       this.imgLabel.setIcon(imageIcon);
@@ -69,8 +72,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
   private void createImageAndAddToUI(final ImageIcon imageIcon) {
     this.imgLabel = new JLabel(imageIcon);
     final var scrollPane = new JBScrollPane(this.imgLabel);
-    this.pluginUI.setLayout(new BorderLayout());
-    this.pluginUI.add(scrollPane, BorderLayout.CENTER);
+    this.pluginUI.add(scrollPane);
   }
 
   static String toPlantUMLString(final ObjectDiagram objectDiagram) {

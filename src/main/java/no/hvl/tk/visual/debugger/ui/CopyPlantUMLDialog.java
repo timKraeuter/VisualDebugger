@@ -1,4 +1,4 @@
-package no.hvl.tk.visual.debugger.ui.actions.print;
+package no.hvl.tk.visual.debugger.ui;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -12,13 +12,13 @@ import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
 import org.jetbrains.annotations.Nullable;
 
-public class PrintDialog extends DialogWrapper {
-  private static final Logger LOGGER = Logger.getInstance(PrintDialog.class);
+public class CopyPlantUMLDialog extends DialogWrapper {
+  private static final Logger LOGGER = Logger.getInstance(CopyPlantUMLDialog.class);
 
-  public PrintDialog() {
+  public CopyPlantUMLDialog() {
     super(true);
     this.init();
-    this.setTitle("Visual Debugger Diagram Print");
+    this.setTitle("Copy PlantUML Diagram");
   }
 
   @Override
@@ -29,7 +29,7 @@ public class PrintDialog extends DialogWrapper {
     final var plantUMLStringLabel = new JLabel("PlantUML-Input:");
     final var plantUMLStringButton = new JButton("Copy");
     plantUMLStringButton.addActionListener(
-        actionEvent -> PrintDialog.copyToClipBoard(SharedState.getLastPlantUMLDiagram()));
+        actionEvent -> CopyPlantUMLDialog.copyToClipBoard(SharedState.getLastPlantUMLDiagram()));
     plantUMLStringLabel.setLabelFor(plantUMLStringButton);
 
     dialogPanel.add(plantUMLStringLabel);
@@ -48,7 +48,7 @@ public class PrintDialog extends DialogWrapper {
     } else {
       final var svgCopyButton = new JButton("Copy");
       svgCopyButton.addActionListener(
-          actionEvent -> PrintDialog.copyToClipBoard(PrintDialog.getSVGData()));
+          actionEvent -> CopyPlantUMLDialog.copyToClipBoard(CopyPlantUMLDialog.getSVGData()));
       svgLabel.setLabelFor(svgCopyButton);
       dialogPanel.add(svgCopyButton, c2);
     }

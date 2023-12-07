@@ -31,22 +31,22 @@
     <group id="VisualDebugger.VisualizerToolbar" popup="false">
       <action
         id="VisualDebugger.SettingsAction"
-        class="no.hvl.tk.visual.debugger.ui.actions.settings.SettingsAction"
+        class="no.hvl.tk.visual.debugger.ui.actions.settings.OpenSettingsAction"
         text="Change Settings"
         description="Change the visual debugger settings"
         icon="/icons/settings.svg"
       />
       <action
-        id="VisualDebugger.PrintAction"
-        class="no.hvl.tk.visual.debugger.ui.actions.print.PrintAction"
-        text="Print"
-        description="Print diagram"
-        icon="/icons/print.svg"
+        id="VisualDebugger.OpenBrowserAction"
+        class="no.hvl.tk.visual.debugger.ui.actions.browser.OpenBrowserAction"
+        text="Open in Browser"
+        description="Open in Browser"
+        icon="/icons/browser.svg"
       />
       <action
         id="VisualDebugger.StopAction"
-        class="no.hvl.tk.visual.debugger.ui.actions.stop.StopAction"
-        text="Stop Debugger"
+        class="no.hvl.tk.visual.debugger.ui.actions.stop.StopVisualDebuggerAction"
+        text="Stop Visual Debugger"
         description="Stop the visual debugger"
         icon="/icons/stop.svg"
       />

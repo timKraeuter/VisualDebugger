@@ -109,6 +109,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
       return;
     }
     this.userInterface = new JPanel();
+    userInterface.setLayout(new BorderLayout());
     this.getOrCreateDebuggingInfoVisualizer(); // make sure visualizer is initialized
     if (!SharedState.isDebuggingActive()) {
       this.resetUIAndAddActivateDebuggingButton();
@@ -136,7 +137,8 @@ public class StackFrameSessionListener implements XDebugSessionListener {
 
   public void resetUIAndAddActivateDebuggingButton() {
     this.userInterface.removeAll();
-    this.userInterface.setLayout(new FlowLayout());
+    SharedState.setEmbeddedBrowserActive(false);
+    userInterface.setLayout(new BorderLayout());
 
     final var activateButton = new JButton("Activate visual debugger");
     activateButton.addActionListener(
@@ -146,7 +148,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
           this.debuggingVisualizer.debuggingActivated();
           this.userInterface.revalidate();
         });
-    this.userInterface.add(activateButton);
+    this.userInterface.add(activateButton, BorderLayout.NORTH);
 
     this.userInterface.revalidate();
     this.userInterface.repaint();

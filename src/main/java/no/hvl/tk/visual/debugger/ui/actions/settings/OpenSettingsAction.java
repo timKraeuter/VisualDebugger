@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project;
 import no.hvl.tk.visual.debugger.settings.VisualDebuggerSettingsConfigurable;
 import org.jetbrains.annotations.NotNull;
 
-public class SettingsAction extends AnAction {
+public class OpenSettingsAction extends AnAction {
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {

@@ -3,6 +3,7 @@ package no.hvl.tk.visual.debugger.debugging.visualization;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.jcef.JBCefBrowser;
+import java.awt.BorderLayout;
 import javax.swing.*;
 import no.hvl.tk.visual.debugger.SharedState;
 import no.hvl.tk.visual.debugger.debugging.visualization.cef.SimpleDownloadHandler;
@@ -60,47 +61,28 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
   }
 
   private void initUI() {
-    final var uiButton =
+    final var launchEmbeddedBrowserButton = new JButton("Launch embedded browser (experimental)");
+    final var launchBrowserButton =
         new JButton(String.format("Launch browser (%s)", ServerConstants.UI_SERVER_URL));
-    uiButton.addActionListener(e -> BrowserUtil.browse(ServerConstants.UI_SERVER_URL));
-    this.debugUI.add(uiButton);
-
-    final var openEmbeddedBrowserButton = new JButton("Launch embedded browser (experimental)");
-    final var closeEmbeddedBrowserButton = new JButton("Close embedded browser");
-    openEmbeddedBrowserButton.addActionListener(
+    launchEmbeddedBrowserButton.addActionListener(
         e -> {
-          this.debugUI.remove(openEmbeddedBrowserButton);
-          this.debugUI.add(closeEmbeddedBrowserButton);
+          this.debugUI.remove(launchEmbeddedBrowserButton);
+          this.debugUI.remove(launchBrowserButton);
           launchEmbeddedBrowser();
         });
+    launchBrowserButton.addActionListener(e -> BrowserUtil.browse(ServerConstants.UI_SERVER_URL));
     if (SharedState.isEmbeddedBrowserActive()) {
-      this.debugUI.add(closeEmbeddedBrowserButton);
       launchEmbeddedBrowser();
     } else {
-      this.debugUI.add(openEmbeddedBrowserButton);
+      this.debugUI.add(launchEmbeddedBrowserButton, BorderLayout.NORTH);
+      this.debugUI.add(launchBrowserButton, BorderLayout.SOUTH);
     }
-
-    closeEmbeddedBrowserButton.addActionListener(
-        e -> {
-          closeEmbeddedBrowser();
-          this.debugUI.remove(closeEmbeddedBrowserButton);
-          this.debugUI.add(openEmbeddedBrowserButton);
-          this.debugUI.revalidate();
-        });
-  }
-
-  private void closeEmbeddedBrowser() {
-    this.debugUI.remove(browser.getComponent());
-    SharedState.setEmbeddedBrowserActive(false);
   }
 
   private void launchEmbeddedBrowser() {
     if (browser == null) {
       browser = new JBCefBrowser();
-      browser
-          .getJBCefClient()
-          .getCefClient()
-          .addDownloadHandler(new SimpleDownloadHandler());
+      browser.getJBCefClient().getCefClient().addDownloadHandler(new SimpleDownloadHandler());
       browser.setPageBackgroundColor("white");
     }
     browser.loadURL(ServerConstants.UI_SERVER_URL);

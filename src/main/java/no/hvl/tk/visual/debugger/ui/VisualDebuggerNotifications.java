@@ -19,4 +19,14 @@ public class VisualDebuggerNotifications {
         .setImportant(false)
         .notify(null);
   }
+
+  public static void notifyServerNotRunning() {
+    NOTIFICATION_GROUP
+        .createNotification(
+            "Browser Visualizer is currently not running. You can start it in the Visual Debugger panel.",
+            MessageType.INFO)
+        .setIcon(VisualDebuggerIcons.VD_ICON)
+        .setImportant(false)
+        .notify(null);
+  }
 }
