@@ -12,7 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 class VisualDebuggerSettingsComponentTest {
 
   @ParameterizedTest
-  @ValueSource(strings = {"a", "", "-1", "-2"})
+  @ValueSource(strings = {"a", "", "-1", "1.1", "1,1"})
   void validateDepthField(String input) {
     addJBTextFieldWorkaround();
     JBTextField textField = new JBTextField(input);

@@ -12,7 +12,6 @@ import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.FormBuilder;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,7 +85,7 @@ public class VisualDebuggerSettingsComponent {
 
   @Nullable static ValidationInfo validateNumberField(JBTextField depthField) {
     final String enteredDepth = depthField.getText();
-    if (StringUtil.isEmpty(enteredDepth) || !StringUtils.isNumeric(enteredDepth)) {
+    if (StringUtil.isEmpty(enteredDepth) || !StringUtil.isNotNegativeNumber(enteredDepth)) {
       return new ValidationInfo(
           VisualDebuggerSettingsComponent.NUMBER_GREATER_EQUALS_0, depthField);
     }
