@@ -99,7 +99,8 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
       browser = new JBCefBrowser();
       browser
           .getJBCefClient()
-          .addDownloadHandler(new SimpleDownloadHandler(), browser.getCefBrowser());
+          .getCefClient()
+          .addDownloadHandler(new SimpleDownloadHandler());
       browser.setPageBackgroundColor("white");
     }
     browser.loadURL(ServerConstants.UI_SERVER_URL);
