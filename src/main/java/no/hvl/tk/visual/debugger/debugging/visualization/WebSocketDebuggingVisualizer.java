@@ -85,7 +85,7 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
       browser.getJBCefClient().getCefClient().addDownloadHandler(new SimpleDownloadHandler());
       browser.setPageBackgroundColor("white");
     }
-    browser.loadURL(ServerConstants.UI_SERVER_URL);
+    browser.loadURL(ServerConstants.UI_SERVER_URL_EMBEDDED);
     debugUI.add(browser.getComponent(), 0);
     SharedState.setEmbeddedBrowserActive(true);
     this.debugUI.revalidate();
