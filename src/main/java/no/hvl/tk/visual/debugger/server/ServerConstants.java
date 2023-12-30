@@ -10,7 +10,8 @@ public class ServerConstants {
   public static final String UI_SERVER_URL =
       String.format("http://%s:%s", ServerConstants.HOST_NAME, ServerConstants.UI_SERVER_PORT);
   public static final String UI_SERVER_URL_EMBEDDED =
-          String.format("http://%s:%s?embedded=true", ServerConstants.HOST_NAME, ServerConstants.UI_SERVER_PORT);
+      String.format(
+          "http://%s:%s?embedded=true", ServerConstants.HOST_NAME, ServerConstants.UI_SERVER_PORT);
 
   private ServerConstants() {
     // Only constants in this class
