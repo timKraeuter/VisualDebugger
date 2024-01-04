@@ -38,7 +38,7 @@ body,
   opacity: 0.4;
 }
 
-.pjs-buttons-active:hover,
+.ojs-buttons-active:hover,
 .previous-state button:hover,
 .next-state button:hover,
 .bottom-buttons a:hover {
@@ -73,22 +73,9 @@ body,
   margin: 0;
 }
 
-.icon-image {
-  box-sizing: border-box;
-  cursor: pointer;
-  font-size: 18px;
-  line-height: 1.2em;
-}
-
 .icon-image::before {
   content: "\e807";
   display: inline-block;
-}
-
-.icon-download {
-  box-sizing: border-box;
-  cursor: pointer;
-  font-size: 18px;
 }
 
 .icon-download::before {
@@ -96,22 +83,9 @@ body,
   display: inline-block;
 }
 
-.icon-edit {
-  box-sizing: border-box;
-  cursor: pointer;
-  font-size: 18px;
-}
-
 .icon-edit::before {
   content: "\e806";
   display: inline-block;
-}
-
-.icon-keyboard {
-  box-sizing: border-box;
-  cursor: pointer;
-  font-size: 18px;
-  line-height: 1.2em;
 }
 
 .icon-keyboard::before {
@@ -120,22 +94,9 @@ body,
   line-height: 1.2em;
 }
 
-.icon-resize-full {
-  box-sizing: border-box;
-  cursor: pointer;
-  font-size: 18px;
-}
-
 .icon-resize-full::before {
   content: "\e801";
   display: inline-block;
-}
-
-.icon-question {
-  box-sizing: border-box;
-  cursor: pointer;
-  font-size: 18px;
-  line-height: 1.2em;
 }
 
 .icon-question::before {
@@ -146,8 +107,8 @@ body,
 .keybindings {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(auto-fill, 1fr);
   grid-row-gap: 10px;
+  align-items: center;
 }
 
 .binding {
