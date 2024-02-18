@@ -1,55 +1,50 @@
-package no.hvl.tk.visual.debugger.domain;
+package no.hvl.tk.visual.debugger.domain
 
-import com.intellij.openapi.util.Pair;
-import com.sun.jdi.ObjectReference;
-import java.util.HashMap;
-import java.util.Map;
+import com.intellij.openapi.util.Pair
+import com.sun.jdi.ObjectReference
 
-public class ObjectDiagramBuilder {
+class ObjectDiagramBuilder {
+  private val objectRefMap: MutableMap<String, Pair<ODObject, ObjectReference>> = HashMap()
 
-  private final Map<String, Pair<ODObject, ObjectReference>> objectRefMap;
+  private val diagram = ObjectDiagram()
 
-  private final ObjectDiagram diagram;
-
-  public ObjectDiagramBuilder() {
-    this.objectRefMap = new HashMap<>();
-    this.diagram = new ObjectDiagram();
+  fun getObjectRefMap(): Map<String, Pair<ODObject, ObjectReference>> {
+    return objectRefMap
   }
 
-  public Map<String, Pair<ODObject, ObjectReference>> getObjectRefMap() {
-    return objectRefMap;
+  fun addObject(`object`: ODObject, objectReference: ObjectReference): ObjectDiagramBuilder {
+    diagram.addObject(`object`)
+    objectRefMap[`object`.id] = Pair.create(`object`, objectReference)
+    return this
   }
 
-  public ObjectDiagramBuilder addObject(final ODObject object, ObjectReference objectReference) {
-    this.diagram.addObject(object);
-    this.objectRefMap.put(object.getId(), Pair.create(object, objectReference));
-    return this;
+  fun addAttributeToObject(
+      `object`: ODObject,
+      fieldName: String?,
+      fieldValue: String?,
+      fieldType: String?
+  ): ObjectDiagramBuilder {
+    `object`.addAttribute(ODAttributeValue(fieldName, fieldType, fieldValue))
+    return this
   }
 
-  public ObjectDiagramBuilder addAttributeToObject(
-      final ODObject object,
-      final String fieldName,
-      final String fieldValue,
-      final String fieldType) {
-    object.addAttribute(new ODAttributeValue(fieldName, fieldType, fieldValue));
-    return this;
+  fun addLinkToObject(from: ODObject, to: ODObject?, linkType: String?): ObjectDiagramBuilder {
+    val linkToAdd = ODLink(from, to, linkType)
+    from.addLink(linkToAdd)
+    diagram.addLink(linkToAdd)
+    return this
   }
 
-  public ObjectDiagramBuilder addLinkToObject(
-      final ODObject from, final ODObject to, final String linkType) {
-    final ODLink linkToAdd = new ODLink(from, to, linkType);
-    from.addLink(linkToAdd);
-    this.diagram.addLink(linkToAdd);
-    return this;
+  fun addPrimitiveRootValue(
+      variableName: String?,
+      type: String?,
+      value: String?
+  ): ObjectDiagramBuilder {
+    diagram.addPrimitiveRootValue(ODPrimitiveRootValue(variableName, type, value))
+    return this
   }
 
-  public ObjectDiagramBuilder addPrimitiveRootValue(
-      final String variableName, final String type, final String value) {
-    this.diagram.addPrimitiveRootValue(new ODPrimitiveRootValue(variableName, type, value));
-    return this;
-  }
-
-  public ObjectDiagram build() {
-    return this.diagram;
+  fun build(): ObjectDiagram {
+    return this.diagram
   }
 }
