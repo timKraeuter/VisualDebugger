@@ -42,8 +42,8 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
         new DebuggingWSMessage(
                 DebuggingMessageType.NEXT_DEBUG_STEP,
                 diagramXML,
-            SharedState.debugFileName,
-            SharedState.debugLine)
+                SharedState.debugFileName,
+                SharedState.debugLine)
             .serialize();
     SharedState.getWebsocketClients()
         .forEach(
