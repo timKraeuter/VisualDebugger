@@ -1,60 +1,68 @@
-package no.hvl.tk.visual.debugger.server.endpoint
+package no.hvl.tk.visual.debugger.server.endpoint;
 
-import com.intellij.openapi.diagnostic.Logger
-import jakarta.websocket.OnClose
-import jakarta.websocket.OnMessage
-import jakarta.websocket.OnOpen
-import jakarta.websocket.Session
-import jakarta.websocket.server.ServerEndpoint
-import no.hvl.tk.visual.debugger.SharedState
-import no.hvl.tk.visual.debugger.SharedState.addWebsocketClient
-import no.hvl.tk.visual.debugger.SharedState.removeWebsocketClient
-import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter.sendMessageToClient
-import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter.sendUIConfig
-import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingMessageType
-import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingWSMessage
-import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter.toXml
+import static no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter.sendUIConfig;
+
+import com.intellij.openapi.diagnostic.Logger;
+import jakarta.websocket.OnClose;
+import jakarta.websocket.OnMessage;
+import jakarta.websocket.OnOpen;
+import jakarta.websocket.Session;
+import jakarta.websocket.server.ServerEndpoint;
+import no.hvl.tk.visual.debugger.SharedState;
+import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
+import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
+import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter;
+import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingMessageType;
+import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingWSMessage;
+import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
 
 @ServerEndpoint("/debug")
-object VisualDebuggingAPIEndpoint {
-  private val LOGGER = Logger.getInstance(VisualDebuggingAPIEndpoint::class.java)
+public class VisualDebuggingAPIEndpoint {
+  private static final Logger LOGGER = Logger.getInstance(VisualDebuggingAPIEndpoint.class);
+
+  public VisualDebuggingAPIEndpoint() {
+    // Needs public constructor.
+  }
 
   @OnOpen
-  fun onOpen(session: Session) {
-    LOGGER.info(String.format("Websocket session with id \"%s\" opened.", session.id))
-    addWebsocketClient(session)
+  public static void onOpen(final Session session) {
+    LOGGER.info(String.format("Websocket session with id \"%s\" opened.", session.getId()));
+    SharedState.addWebsocketClient(session);
 
-    sendUIConfig(session)
+    sendUIConfig(session);
 
     // Send the last diagram xml to the newly connected client.
-    val debugMessage =
-        DebuggingWSMessage(
+    final DebuggingWSMessage debugMessage =
+        new DebuggingWSMessage(
             DebuggingMessageType.NEXT_DEBUG_STEP,
             SharedState.lastDiagramXML,
             SharedState.debugFileName,
-            SharedState.debugLine)
-    sendMessageToClient(session, debugMessage.serialize())
+            SharedState.debugLine);
+    VisualDebuggingAPIServerStarter.sendMessageToClient(session, debugMessage.serialize());
   }
 
   @OnClose
-  fun onClose(session: Session) {
-    LOGGER.info(String.format("Websocket session with id \"%s\" closed.", session.id))
-    removeWebsocketClient(session)
+  public static void onClose(final Session session) {
+    LOGGER.info(String.format("Websocket session with id \"%s\" closed.", session.getId()));
+    SharedState.removeWebsocketClient(session);
   }
 
   @OnMessage
-  fun handleTextMessage(objectId: String?): String {
-    LOGGER.debug(String.format("New websocket message with content \"%s\" received.", objectId))
+  public static String handleTextMessage(final String objectId) {
+    LOGGER.debug(String.format("New websocket message with content \"%s\" received.", objectId));
 
-    val debuggingInfoVisualizer = SharedState.debugListener!!.getOrCreateDebuggingInfoVisualizer()
+    final DebuggingInfoVisualizer debuggingInfoVisualizer =
+        SharedState.debugListener.getOrCreateDebuggingInfoVisualizer();
     try {
-      val diagram = debuggingInfoVisualizer.getObjectWithChildren(objectId)
-      return DebuggingWSMessage(DebuggingMessageType.LOAD_CHILDREN, toXml(diagram)).serialize()
-    } catch (e: NumberFormatException) {
-      return DebuggingWSMessage(
+      final ObjectDiagram diagram = debuggingInfoVisualizer.getObjectWithChildren(objectId);
+      return new DebuggingWSMessage(
+              DebuggingMessageType.LOAD_CHILDREN, DiagramToXMLConverter.toXml(diagram))
+          .serialize();
+    } catch (NumberFormatException e) {
+      return new DebuggingWSMessage(
               DebuggingMessageType.ERROR,
               String.format("Object id \"%s\" is not a number!", objectId))
-          .serialize()
+          .serialize();
     }
   }
 }

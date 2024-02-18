@@ -1,14 +1,19 @@
-package no.hvl.tk.visual.debugger.server
+package no.hvl.tk.visual.debugger.server;
 
-object ServerConstants {
-  const val HOST_NAME: String = "localhost"
-  const val VISUAL_DEBUGGING_API_SERVER_PORT: Int = 8071
+public class ServerConstants {
+  public static final String HOST_NAME = "localhost";
+  public static final int VISUAL_DEBUGGING_API_SERVER_PORT = 8071;
 
-  const val STATIC_RESOURCE_PATH: String = "/ui/"
-  const val UI_SERVER_PORT: Int = 8070
+  public static final String STATIC_RESOURCE_PATH = "/ui/";
+  public static final int UI_SERVER_PORT = 8070;
 
-  @JvmField val UI_SERVER_URL: String = String.format("http://%s:%s", HOST_NAME, UI_SERVER_PORT)
-  @JvmField
-  val UI_SERVER_URL_EMBEDDED: String =
-      String.format("http://%s:%s?embedded=true", HOST_NAME, UI_SERVER_PORT)
+  public static final String UI_SERVER_URL =
+      String.format("http://%s:%s", ServerConstants.HOST_NAME, ServerConstants.UI_SERVER_PORT);
+  public static final String UI_SERVER_URL_EMBEDDED =
+      String.format(
+          "http://%s:%s?embedded=true", ServerConstants.HOST_NAME, ServerConstants.UI_SERVER_PORT);
+
+  private ServerConstants() {
+    // Only constants in this class
+  }
 }
