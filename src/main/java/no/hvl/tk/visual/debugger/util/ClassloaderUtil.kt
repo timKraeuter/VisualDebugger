@@ -1,18 +1,14 @@
-package no.hvl.tk.visual.debugger.util;
+package no.hvl.tk.visual.debugger.util
 
-public class ClassloaderUtil {
-  private ClassloaderUtil() {
-    // only util methods
-  }
-
-  public static <V> V runWithContextClassloader(final Executable<V> executable) {
-    final ClassLoader current = Thread.currentThread().getContextClassLoader();
-    try {
-      Thread.currentThread().setContextClassLoader(executable.getClass().getClassLoader());
-      // code working with ServiceLoader here
-      return executable.run();
-    } finally {
-      Thread.currentThread().setContextClassLoader(current);
+object ClassloaderUtil {
+    @JvmStatic
+    fun <V> runWithContextClassloader(executable: Executable<V>): V {
+        val current = Thread.currentThread().contextClassLoader
+        try {
+            Thread.currentThread().contextClassLoader = executable.javaClass.classLoader
+            return executable.run()
+        } finally {
+            Thread.currentThread().contextClassLoader = current
+        }
     }
-  }
 }

@@ -1,5 +1,5 @@
-package no.hvl.tk.visual.debugger.util;
+package no.hvl.tk.visual.debugger.util
 
-public interface Executable<V> {
-  V run();
+interface Executable<V> {
+    fun run(): V
 }

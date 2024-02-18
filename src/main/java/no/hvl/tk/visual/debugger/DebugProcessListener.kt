@@ -1,16 +1,12 @@
-package no.hvl.tk.visual.debugger;
+package no.hvl.tk.visual.debugger
 
-import com.intellij.xdebugger.XDebugProcess;
-import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.XDebuggerManagerListener;
-import no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionListener;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.xdebugger.XDebugProcess
+import com.intellij.xdebugger.XDebuggerManagerListener
+import no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionListener
 
-public class DebugProcessListener implements XDebuggerManagerListener {
-
-  @Override
-  public void processStarted(@NotNull final XDebugProcess debugProcess) {
-    final XDebugSession debugSession = debugProcess.getSession();
-    debugSession.addSessionListener(new StackFrameSessionListener(debugProcess));
-  }
+class DebugProcessListener : XDebuggerManagerListener {
+    override fun processStarted(debugProcess: XDebugProcess) {
+        val debugSession = debugProcess.session
+        debugSession.addSessionListener(StackFrameSessionListener(debugProcess))
+    }
 }

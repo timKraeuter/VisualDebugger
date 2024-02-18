@@ -1,13 +1,9 @@
-package no.hvl.tk.visual.debugger.ui;
+package no.hvl.tk.visual.debugger.ui
 
-import com.intellij.openapi.util.IconLoader;
-import javax.swing.Icon;
+import com.intellij.openapi.util.IconLoader.getIcon
+import javax.swing.Icon
 
-public class VisualDebuggerIcons {
-  private VisualDebuggerIcons() {
-    // Only constants
-  }
-
-  public static final Icon VD_ICON =
-      IconLoader.getIcon("icons/icon.svg", VisualDebuggerIcons.class);
+object VisualDebuggerIcons {
+    @JvmField
+    val VD_ICON: Icon = getIcon("icons/icon.svg", VisualDebuggerIcons::class.java)
 }
