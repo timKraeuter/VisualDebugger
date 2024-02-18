@@ -1,46 +1,40 @@
-package no.hvl.tk.visual.debugger.debugging.visualization;
+package no.hvl.tk.visual.debugger.debugging.visualization
 
-import no.hvl.tk.visual.debugger.SharedState;
-import no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameAnalyzer;
-import no.hvl.tk.visual.debugger.domain.*;
+import no.hvl.tk.visual.debugger.SharedState
+import no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameAnalyzer
+import no.hvl.tk.visual.debugger.domain.ObjectDiagram
 
-public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisualizer {
+abstract class DebuggingInfoVisualizerBase protected constructor() : DebuggingInfoVisualizer {
+    private var diagram: ObjectDiagram
+    private var analyzer: StackFrameAnalyzer? = null
 
-  private ObjectDiagram diagram;
-  private StackFrameAnalyzer analyzer;
+    init {
+        this.diagram = ObjectDiagram()
+    }
 
-  protected DebuggingInfoVisualizerBase() {
-    this.diagram = new ObjectDiagram();
-  }
+    override fun addMetadata(fileName: String, line: Int, stackFrameAnalyzer: StackFrameAnalyzer) {
+        SharedState.debugLine = line
+        SharedState.debugFileName = fileName
+        this.analyzer = stackFrameAnalyzer
+    }
 
-  @Override
-  public void addMetadata(String fileName, Integer line, StackFrameAnalyzer stackFrameAnalyzer) {
-    SharedState.debugLine = line;
-    SharedState.debugFileName = fileName;
-    this.analyzer = stackFrameAnalyzer;
-  }
+    override fun reprintDiagram() {
+        this.doVisualizationFurther(diagram)
+    }
 
-  @Override
-  public void reprintDiagram() {
-    this.doVisualizationFurther(diagram);
-  }
+    protected abstract fun doVisualizationFurther(diagram: ObjectDiagram)
 
-  protected abstract void doVisualizationFurther(ObjectDiagram diagram);
+    override fun sessionStopped() {
+        SharedState.manuallyExploredObjects.clear()
+    }
 
-  @Override
-  public void sessionStopped() {
-    SharedState.manuallyExploredObjects.clear();
-  }
+    override fun getObjectWithChildren(objectId: String): ObjectDiagram {
+        SharedState.manuallyExploredObjects.add(objectId)
+        return analyzer!!.getChildren(objectId)
+    }
 
-  @Override
-  public ObjectDiagram getObjectWithChildren(String objectID) {
-    SharedState.manuallyExploredObjects.add(objectID);
-    return analyzer.getChildren(objectID);
-  }
-
-  @Override
-  public void doVisualization(ObjectDiagram diagram) {
-    this.diagram = diagram;
-    this.doVisualizationFurther(diagram);
-  }
+    override fun doVisualization(diagram: ObjectDiagram) {
+        this.diagram = diagram
+        this.doVisualizationFurther(diagram)
+    }
 }

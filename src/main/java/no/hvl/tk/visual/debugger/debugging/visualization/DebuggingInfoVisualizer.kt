@@ -1,21 +1,20 @@
-package no.hvl.tk.visual.debugger.debugging.visualization;
+package no.hvl.tk.visual.debugger.debugging.visualization
 
-import no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameAnalyzer;
-import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
+import no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameAnalyzer
+import no.hvl.tk.visual.debugger.domain.ObjectDiagram
 
-public interface DebuggingInfoVisualizer {
+interface DebuggingInfoVisualizer {
+  fun doVisualization(diagram: ObjectDiagram)
 
-  void doVisualization(ObjectDiagram diagram);
+  fun reprintDiagram()
 
-  void reprintDiagram();
+  fun addMetadata(fileName: String, line: Int, stackFrameAnalyzer: StackFrameAnalyzer)
 
-  void addMetadata(String fileName, Integer line, StackFrameAnalyzer stackFrame);
+  fun getObjectWithChildren(objectId: String): ObjectDiagram
 
-  ObjectDiagram getObjectWithChildren(String objectId);
+  fun debuggingActivated()
 
-  void debuggingActivated();
+  fun debuggingDeactivated()
 
-  void debuggingDeactivated();
-
-  void sessionStopped();
+  fun sessionStopped()
 }

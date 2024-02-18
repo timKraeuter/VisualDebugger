@@ -6,7 +6,8 @@ import org.glassfish.grizzly.http.server.HttpServer
 import org.glassfish.tyrus.server.Server
 
 object SharedState {
-  @JvmField val manuallyExploredObjects: Set<String> = HashSet()
+  @JvmField
+  var manuallyExploredObjects: MutableSet<String> = HashSet()
 
   // UI / Debug API related
   @JvmStatic

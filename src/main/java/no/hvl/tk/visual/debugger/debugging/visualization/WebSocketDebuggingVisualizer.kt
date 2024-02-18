@@ -1,139 +1,137 @@
-package no.hvl.tk.visual.debugger.debugging.visualization;
+package no.hvl.tk.visual.debugger.debugging.visualization
 
-import com.intellij.ide.BrowserUtil;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.ui.jcef.JBCefBrowser;
-import java.awt.BorderLayout;
-import javax.swing.*;
-import no.hvl.tk.visual.debugger.SharedState;
-import no.hvl.tk.visual.debugger.debugging.visualization.cef.SimpleDownloadHandler;
-import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
-import no.hvl.tk.visual.debugger.server.ServerConstants;
-import no.hvl.tk.visual.debugger.server.UIServerStarter;
-import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter;
-import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingMessageType;
-import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingWSMessage;
-import no.hvl.tk.visual.debugger.util.ClassloaderUtil;
-import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
-import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.tyrus.server.Server;
+import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.ui.jcef.JBCefBrowser
+import jakarta.websocket.Session
+import java.awt.BorderLayout
+import java.util.function.Consumer
+import javax.swing.JButton
+import javax.swing.JPanel
+import no.hvl.tk.visual.debugger.SharedState
+import no.hvl.tk.visual.debugger.SharedState.getWebsocketClients
+import no.hvl.tk.visual.debugger.SharedState.setUIServer
+import no.hvl.tk.visual.debugger.SharedState.uiServer
+import no.hvl.tk.visual.debugger.debugging.visualization.cef.SimpleDownloadHandler
+import no.hvl.tk.visual.debugger.domain.ObjectDiagram
+import no.hvl.tk.visual.debugger.server.ServerConstants
+import no.hvl.tk.visual.debugger.server.UIServerStarter
+import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter
+import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter.sendMessageToClient
+import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingMessageType
+import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingWSMessage
+import no.hvl.tk.visual.debugger.util.ClassloaderUtil.runWithContextClassloader
+import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter.toXml
 
 /** Sends visualization information through websocket. */
-public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
+class WebSocketDebuggingVisualizer(private val debugUI: JPanel) : DebuggingInfoVisualizerBase() {
+  private var browser: JBCefBrowser? = null
 
-  private static final Logger LOGGER = Logger.getInstance(WebSocketDebuggingVisualizer.class);
-
-  private JBCefBrowser browser;
-  private final JPanel debugUI;
-
-  public WebSocketDebuggingVisualizer(final JPanel userInterface) {
-    this.debugUI = userInterface;
-  }
-
-  @Override
-  public void doVisualizationFurther(ObjectDiagram diagram) {
+  public override fun doVisualizationFurther(diagram: ObjectDiagram) {
     if (SharedState.debugAPIServer == null) {
-      return;
+      return
     }
-    final String diagramXML = DiagramToXMLConverter.toXml(diagram);
-    SharedState.lastDiagramXML = diagramXML;
+    val diagramXML = toXml(diagram)
+    SharedState.lastDiagramXML = diagramXML
 
-    final String message =
-        new DebuggingWSMessage(
+    val message =
+        DebuggingWSMessage(
                 DebuggingMessageType.NEXT_DEBUG_STEP,
                 diagramXML,
                 SharedState.debugFileName,
                 SharedState.debugLine)
-            .serialize();
-    SharedState.getWebsocketClients()
+            .serialize()
+    getWebsocketClients()
         .forEach(
-            clientSession ->
-                // If one client fails no more messages are sent. We should change this.
-                VisualDebuggingAPIServerStarter.sendMessageToClient(clientSession, message));
+            Consumer { clientSession: Session?
+              -> // If one client fails no more messages are sent. We should change this.
+              sendMessageToClient(clientSession!!, message)
+            })
   }
 
-  @Override
-  public void debuggingActivated() {
-    WebSocketDebuggingVisualizer.startDebugAPIServerIfNeeded();
-    WebSocketDebuggingVisualizer.startUIServerIfNeeded();
+  override fun debuggingActivated() {
+    startDebugAPIServerIfNeeded()
+    startUIServerIfNeeded()
 
-    initUI();
+    initUI()
   }
 
-  private void initUI() {
-    final var launchEmbeddedBrowserButton = new JButton("Launch embedded browser (experimental)");
-    final var launchBrowserButton =
-        new JButton(String.format("Launch browser (%s)", ServerConstants.UI_SERVER_URL));
-    launchEmbeddedBrowserButton.addActionListener(
-        e -> {
-          this.debugUI.remove(launchEmbeddedBrowserButton);
-          this.debugUI.remove(launchBrowserButton);
-          launchEmbeddedBrowser();
-        });
-    launchBrowserButton.addActionListener(e -> BrowserUtil.browse(ServerConstants.UI_SERVER_URL));
+  private fun initUI() {
+    val launchEmbeddedBrowserButton = JButton("Launch embedded browser (experimental)")
+    val launchBrowserButton =
+        JButton(String.format("Launch browser (%s)", ServerConstants.UI_SERVER_URL))
+    launchEmbeddedBrowserButton.addActionListener {
+      debugUI.remove(launchEmbeddedBrowserButton)
+      debugUI.remove(launchBrowserButton)
+      launchEmbeddedBrowser()
+    }
+    launchBrowserButton.addActionListener {
+      BrowserUtil.browse(ServerConstants.UI_SERVER_URL)
+    }
     if (SharedState.embeddedBrowserActive) {
-      launchEmbeddedBrowser();
+      launchEmbeddedBrowser()
     } else {
-      this.debugUI.add(launchEmbeddedBrowserButton, BorderLayout.NORTH);
-      this.debugUI.add(launchBrowserButton, BorderLayout.SOUTH);
+      debugUI.add(launchEmbeddedBrowserButton, BorderLayout.NORTH)
+      debugUI.add(launchBrowserButton, BorderLayout.SOUTH)
     }
   }
 
-  private void launchEmbeddedBrowser() {
+  private fun launchEmbeddedBrowser() {
     if (browser == null) {
-      browser = new JBCefBrowser();
-      browser.getJBCefClient().getCefClient().addDownloadHandler(new SimpleDownloadHandler());
-      browser.setPageBackgroundColor("white");
+      browser = JBCefBrowser()
+      browser!!.jbCefClient.cefClient.addDownloadHandler(SimpleDownloadHandler())
+      browser!!.setPageBackgroundColor("white")
     }
-    browser.loadURL(ServerConstants.UI_SERVER_URL_EMBEDDED);
-    debugUI.add(browser.getComponent(), 0);
-    SharedState.embeddedBrowserActive = true;
-    this.debugUI.revalidate();
+    browser!!.loadURL(ServerConstants.UI_SERVER_URL_EMBEDDED)
+    debugUI.add(browser!!.component, 0)
+    SharedState.embeddedBrowserActive = true
+    debugUI.revalidate()
   }
 
-  private static void startDebugAPIServerIfNeeded() {
-    ClassloaderUtil.runWithContextClassloader(
-        () -> {
-          if (SharedState.debugAPIServer == null) {
-            final Server server = VisualDebuggingAPIServerStarter.runNewServer();
-            SharedState.debugAPIServer = server;
-          }
-          return null; // needed because of generic method.
-        });
+  override fun debuggingDeactivated() {
+    stopUIServerIfNeeded()
+    stopDebugAPIServerIfNeeded()
   }
 
-  private static void startUIServerIfNeeded() {
-    ClassloaderUtil.runWithContextClassloader(
-        () -> {
-          if (SharedState.getUiServer() == null) {
-            final HttpServer server = UIServerStarter.runNewServer();
-            SharedState.setUIServer(server);
-          }
-          return null; // needed because of generic method.
-        });
-  }
+  companion object {
+    private val LOGGER = Logger.getInstance(WebSocketDebuggingVisualizer::class.java)
 
-  @Override
-  public void debuggingDeactivated() {
-    stopUIServerIfNeeded();
-    stopDebugAPIServerIfNeeded();
-  }
-
-  private static void stopUIServerIfNeeded() {
-    final HttpServer server = SharedState.getUiServer();
-    if (server != null) {
-      server.shutdownNow();
-      LOGGER.info("UI server stopped.");
-      SharedState.setUIServer(null);
+    private fun startDebugAPIServerIfNeeded() {
+      runWithContextClassloader<Any?> {
+        if (SharedState.debugAPIServer == null) {
+          val server = VisualDebuggingAPIServerStarter.runNewServer()
+          SharedState.debugAPIServer = server
+        }
+        null // needed because of generic method.
+      }
     }
-  }
 
-  private static void stopDebugAPIServerIfNeeded() {
-    final Server server = SharedState.debugAPIServer;
-    if (server != null) {
-      server.stop();
-      LOGGER.info("Debug API server stopped.");
-      SharedState.debugAPIServer = null;
+    private fun startUIServerIfNeeded() {
+      runWithContextClassloader<Any?> {
+        if (uiServer == null) {
+          val server = UIServerStarter.runNewServer()
+          setUIServer(server)
+        }
+        null // needed because of generic method.
+      }
+    }
+
+    private fun stopUIServerIfNeeded() {
+      val server = uiServer
+      if (server != null) {
+        server.shutdownNow()
+        LOGGER.info("UI server stopped.")
+        setUIServer(null)
+      }
+    }
+
+    private fun stopDebugAPIServerIfNeeded() {
+      val server = SharedState.debugAPIServer
+      if (server != null) {
+        server.stop()
+        LOGGER.info("Debug API server stopped.")
+        SharedState.debugAPIServer = null
+      }
     }
   }
 }
