@@ -1,148 +1,129 @@
-package no.hvl.tk.visual.debugger.settings;
+package no.hvl.tk.visual.debugger.settings
 
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.ui.ComboBox;
-import com.intellij.openapi.ui.ComponentValidator;
-import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.DocumentAdapter;
-import com.intellij.ui.components.JBCheckBox;
-import com.intellij.ui.components.JBLabel;
-import com.intellij.ui.components.JBTextField;
-import com.intellij.util.ui.FormBuilder;
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.ui.ComponentValidator
+import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.ui.DocumentAdapter
+import com.intellij.ui.components.JBCheckBox
+import com.intellij.ui.components.JBLabel
+import com.intellij.ui.components.JBTextField
+import com.intellij.util.ui.FormBuilder
+import java.util.function.Supplier
+import javax.swing.JComponent
+import javax.swing.JPanel
+import javax.swing.event.DocumentEvent
 
-public class VisualDebuggerSettingsComponent {
-  static final String NUMBER_GREATER_EQUALS_0 = "Must be a number greater or equal to 0.";
+class VisualDebuggerSettingsComponent(disposable: Disposable) {
+  val panel: JPanel
+  private val visualizationDepthField = JBTextField()
+  private val savedDebugStepsField = JBTextField()
+  private val coloredDiffCheckBox = JBCheckBox()
+  private val showNullValuesCheckBox = JBCheckBox()
+  private val visualizerOptionsCombobox = ComboBox(DebuggingVisualizerOption.entries.toTypedArray())
 
-  private final JPanel myMainPanel;
-  private final JBTextField visualizationDepthField = new JBTextField();
-  private final JBTextField savedDebugStepsField = new JBTextField();
-  private final JBCheckBox coloredDiffCheckBox = new JBCheckBox();
-  private final JBCheckBox showNullValuesCheckBox = new JBCheckBox();
-  private final ComboBox<DebuggingVisualizerOption> visualizerOptionsCombobox =
-      new ComboBox<>(DebuggingVisualizerOption.values());
-
-  public VisualDebuggerSettingsComponent(final Disposable disposable) {
-    this.myMainPanel =
+  init {
+    this.panel =
         FormBuilder.createFormBuilder()
             .addLabeledComponent(
-                new JBLabel("Choose visualizer: "), this.visualizerOptionsCombobox, 1, false)
+                JBLabel("Choose visualizer: "), this.visualizerOptionsCombobox, 1, false)
             .addLabeledComponent(
-                new JBLabel("Initial visualization depth: "),
-                this.visualizationDepthField,
-                2,
-                false)
+                JBLabel("Initial visualization depth: "), this.visualizationDepthField, 2, false)
             .addLabeledComponent(
-                new JBLabel("Number of debug history steps: "), this.savedDebugStepsField, 3, false)
+                JBLabel("Number of debug history steps: "), this.savedDebugStepsField, 3, false)
             .addLabeledComponent(
-                new JBLabel("Color debug changes: "), this.coloredDiffCheckBox, 4, false)
+                JBLabel("Color debug changes: "), this.coloredDiffCheckBox, 4, false)
             .addSeparator(5)
             .addLabeledComponent(
-                new JBLabel("Show null values: "), this.showNullValuesCheckBox, 6, false)
-            .addComponentFillVertically(new JPanel(), 0)
-            .getPanel();
+                JBLabel("Show null values: "), this.showNullValuesCheckBox, 6, false)
+            .addComponentFillVertically(JPanel(), 0)
+            .panel
 
-    this.addInputFieldValidators(disposable);
+    this.addInputFieldValidators(disposable)
   }
 
-  private void addInputFieldValidators(final Disposable disposable) {
-    new ComponentValidator(disposable)
+  private fun addInputFieldValidators(disposable: Disposable) {
+    ComponentValidator(disposable)
         .withValidator(
-            () -> validateNumberField(VisualDebuggerSettingsComponent.this.visualizationDepthField))
-        .installOn(this.visualizationDepthField);
-    this.visualizationDepthField
-        .getDocument()
-        .addDocumentListener(
-            new DocumentAdapter() {
-              @Override
-              protected void textChanged(@NotNull final DocumentEvent e) {
-                ComponentValidator.getInstance(
-                        VisualDebuggerSettingsComponent.this.visualizationDepthField)
-                    .ifPresent(ComponentValidator::revalidate);
-              }
-            });
+            Supplier {
+              validateNumberField(this@VisualDebuggerSettingsComponent.visualizationDepthField)
+            })
+        .installOn(this.visualizationDepthField)
+    visualizationDepthField.document.addDocumentListener(
+        object : DocumentAdapter() {
+          override fun textChanged(e: DocumentEvent) {
+            ComponentValidator.getInstance(
+                    this@VisualDebuggerSettingsComponent.visualizationDepthField)
+                .ifPresent { obj: ComponentValidator -> obj.revalidate() }
+          }
+        })
 
-    new ComponentValidator(disposable)
+    ComponentValidator(disposable)
         .withValidator(
-            () -> validateNumberField(VisualDebuggerSettingsComponent.this.savedDebugStepsField))
-        .installOn(this.savedDebugStepsField);
-    this.savedDebugStepsField
-        .getDocument()
-        .addDocumentListener(
-            new DocumentAdapter() {
-              @Override
-              protected void textChanged(@NotNull final DocumentEvent e) {
-                ComponentValidator.getInstance(
-                        VisualDebuggerSettingsComponent.this.savedDebugStepsField)
-                    .ifPresent(ComponentValidator::revalidate);
-              }
-            });
+            Supplier {
+              validateNumberField(this@VisualDebuggerSettingsComponent.savedDebugStepsField)
+            })
+        .installOn(this.savedDebugStepsField)
+    savedDebugStepsField.document.addDocumentListener(
+        object : DocumentAdapter() {
+          override fun textChanged(e: DocumentEvent) {
+            ComponentValidator.getInstance(
+                    this@VisualDebuggerSettingsComponent.savedDebugStepsField)
+                .ifPresent { obj: ComponentValidator -> obj.revalidate() }
+          }
+        })
   }
 
-  @Nullable static ValidationInfo validateNumberField(JBTextField depthField) {
-    final String enteredDepth = depthField.getText();
-    if (StringUtil.isEmpty(enteredDepth) || !StringUtil.isNotNegativeNumber(enteredDepth)) {
-      return new ValidationInfo(
-          VisualDebuggerSettingsComponent.NUMBER_GREATER_EQUALS_0, depthField);
+  val preferredFocusedComponent: JComponent
+    get() = this.visualizationDepthField
+
+  var visualizationDepthText: String
+    get() = visualizationDepthField.text
+    set(visualizationDepth) {
+      visualizationDepthField.text = visualizationDepth
     }
-    int depth = Integer.parseInt(enteredDepth);
-    if (depth < 0) {
-      return new ValidationInfo(
-          VisualDebuggerSettingsComponent.NUMBER_GREATER_EQUALS_0, depthField);
+
+  val debuggingVisualizerOptionChoice: DebuggingVisualizerOption
+    get() = visualizerOptionsCombobox.item
+
+  fun chooseDebuggingVisualizerOption(option: DebuggingVisualizerOption) {
+    visualizerOptionsCombobox.item = option
+  }
+
+  var savedDebugStepsText: String
+    get() = savedDebugStepsField.text
+    set(loadingDepth) {
+      savedDebugStepsField.text = loadingDepth
     }
-    // Means everything is ok.
-    return null;
-  }
 
-  public JPanel getPanel() {
-    return this.myMainPanel;
-  }
+  var coloredDiffValue: Boolean
+    get() = coloredDiffCheckBox.isSelected
+    set(coloredDiffValue) {
+      coloredDiffCheckBox.isSelected = coloredDiffValue
+    }
 
-  public JComponent getPreferredFocusedComponent() {
-    return this.visualizationDepthField;
-  }
+  var showNullValues: Boolean
+    get() = showNullValuesCheckBox.isSelected
+    set(coloredDiffValue) {
+      showNullValuesCheckBox.isSelected = coloredDiffValue
+    }
 
-  @NotNull public String getVisualizationDepthText() {
-    return this.visualizationDepthField.getText();
-  }
+  companion object {
+    const val NUMBER_GREATER_EQUALS_0: String = "Must be a number greater or equal to 0."
 
-  public void setVisualizationDepthText(@NotNull final String visualizationDepth) {
-    this.visualizationDepthField.setText(visualizationDepth);
-  }
-
-  public DebuggingVisualizerOption getDebuggingVisualizerOptionChoice() {
-    return this.visualizerOptionsCombobox.getItem();
-  }
-
-  public void chooseDebuggingVisualizerOption(final DebuggingVisualizerOption option) {
-    this.visualizerOptionsCombobox.setItem(option);
-  }
-
-  public void setSavedDebugStepsText(@NotNull final String loadingDepth) {
-    this.savedDebugStepsField.setText(loadingDepth);
-  }
-
-  @NotNull public String getSavedDebugStepsText() {
-    return savedDebugStepsField.getText();
-  }
-
-  public void setColoredDiffValue(final boolean coloredDiffValue) {
-    this.coloredDiffCheckBox.setSelected(coloredDiffValue);
-  }
-
-  public boolean getColoredDiffValue() {
-    return coloredDiffCheckBox.isSelected();
-  }
-
-  public void setShowNullValues(final boolean coloredDiffValue) {
-    this.showNullValuesCheckBox.setSelected(coloredDiffValue);
-  }
-
-  public boolean getShowNullValues() {
-    return showNullValuesCheckBox.isSelected();
+    @JvmStatic
+    fun validateNumberField(depthField: JBTextField): ValidationInfo? {
+      val enteredDepth = depthField.text
+      if (StringUtil.isEmpty(enteredDepth) || !StringUtil.isNotNegativeNumber(enteredDepth)) {
+        return ValidationInfo(NUMBER_GREATER_EQUALS_0, depthField)
+      }
+      val depth = enteredDepth.toInt()
+      if (depth < 0) {
+        return ValidationInfo(NUMBER_GREATER_EQUALS_0, depthField)
+      }
+      // Means everything is ok.
+      return null
+    }
   }
 }

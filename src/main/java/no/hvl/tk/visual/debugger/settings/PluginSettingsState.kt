@@ -1,83 +1,39 @@
-package no.hvl.tk.visual.debugger.settings;
+package no.hvl.tk.visual.debugger.settings
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.util.xmlb.XmlSerializerUtil;
-import no.hvl.tk.visual.debugger.server.endpoint.UIConfig;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.util.xmlb.XmlSerializerUtil
+import no.hvl.tk.visual.debugger.server.endpoint.UIConfig
 
 /** Persistently saved settings of the plugin. */
 @State(
     name = "no.hvl.tk.visual.debugger.settings.AppSettingsState",
-    storages = {@Storage("visualDebuggerPluginSettings.xml")})
-public class PluginSettingsState implements PersistentStateComponent<PluginSettingsState> {
+    storages = [Storage("visualDebuggerPluginSettings.xml")])
+class PluginSettingsState : PersistentStateComponent<PluginSettingsState?> {
+  @JvmField var visualizerOption: DebuggingVisualizerOption = DebuggingVisualizerOption.WEB_UI
+  @JvmField var visualisationDepth: Int = 0
+  @JvmField var savedDebugSteps: Int = 3
 
-  private DebuggingVisualizerOption visualizerOption = DebuggingVisualizerOption.WEB_UI;
-  private Integer visualisationDepth = 0;
-  private Integer savedDebugSteps = 3;
+  var isColoredDiff: Boolean = true
 
-  private boolean coloredDiff = true;
+  var isShowNullValues: Boolean = false
 
-  private boolean showNullValues = false;
-
-  public static PluginSettingsState getInstance() {
-    return ApplicationManager.getApplication().getService(PluginSettingsState.class);
+  override fun getState(): PluginSettingsState {
+    return this
   }
 
-  @Nullable @Override
-  public PluginSettingsState getState() {
-    return this;
+  override fun loadState(state: PluginSettingsState) {
+    XmlSerializerUtil.copyBean(state, this)
   }
 
-  @Override
-  public void loadState(@NotNull final PluginSettingsState state) {
-    XmlSerializerUtil.copyBean(state, this);
-  }
+  val uIConfig: UIConfig
+    get() = UIConfig(this.savedDebugSteps, this.isColoredDiff)
 
-  public DebuggingVisualizerOption getVisualizerOption() {
-    return this.visualizerOption;
-  }
-
-  public void setVisualizerOption(final DebuggingVisualizerOption visualizerOption) {
-    this.visualizerOption = visualizerOption;
-  }
-
-  public Integer getVisualisationDepth() {
-    return this.visualisationDepth;
-  }
-
-  public void setVisualisationDepth(final Integer visualisationDepth) {
-    this.visualisationDepth = visualisationDepth;
-  }
-
-  public Integer getSavedDebugSteps() {
-    return savedDebugSteps;
-  }
-
-  public void setSavedDebugSteps(Integer savedDebugSteps) {
-    this.savedDebugSteps = savedDebugSteps;
-  }
-
-  public UIConfig getUIConfig() {
-    return new UIConfig(this.savedDebugSteps, this.coloredDiff);
-  }
-
-  public boolean isColoredDiff() {
-    return coloredDiff;
-  }
-
-  public void setColoredDiff(boolean coloredDiff) {
-    this.coloredDiff = coloredDiff;
-  }
-
-  public boolean isShowNullValues() {
-    return showNullValues;
-  }
-
-  public void setShowNullValues(boolean showNullValues) {
-    this.showNullValues = showNullValues;
+  companion object {
+    @JvmStatic
+    val settings: PluginSettingsState
+      get() = ApplicationManager.getApplication().getService(PluginSettingsState::class.java)
   }
 }

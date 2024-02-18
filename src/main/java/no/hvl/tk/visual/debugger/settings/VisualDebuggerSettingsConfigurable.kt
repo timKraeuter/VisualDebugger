@@ -1,119 +1,102 @@
-package no.hvl.tk.visual.debugger.settings;
+package no.hvl.tk.visual.debugger.settings
 
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.options.SearchableConfigurable;
-import com.intellij.openapi.util.Disposer;
-import jakarta.websocket.Session;
-import javax.swing.*;
-import no.hvl.tk.visual.debugger.SharedState;
-import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.options.SearchableConfigurable
+import com.intellij.openapi.util.Disposer
+import javax.swing.JComponent
+import no.hvl.tk.visual.debugger.SharedState
+import no.hvl.tk.visual.debugger.SharedState.getWebsocketClients
+import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter
+import no.hvl.tk.visual.debugger.settings.PluginSettingsState.Companion.settings
+import org.jetbrains.annotations.Nls
 
-public class VisualDebuggerSettingsConfigurable implements SearchableConfigurable {
+class VisualDebuggerSettingsConfigurable : SearchableConfigurable {
+  private var settingsComponent: VisualDebuggerSettingsComponent? = null
+  private var settingsDisposable: Disposable? = null
 
-  private VisualDebuggerSettingsComponent settingsComponent;
-  private @Nullable Disposable settingsDisposable = null;
-
-  @Override
-  public @NotNull String getId() {
-    return "no.hvl.tk.visualDebugger.settings";
+  override fun getId(): String {
+    return "no.hvl.tk.visualDebugger.settings"
   }
 
-  @Nls(capitalization = Nls.Capitalization.Title)
-  @Override
-  public String getDisplayName() {
-    return "Visual Debugger Settings";
+  override fun getDisplayName(): @Nls(capitalization = Nls.Capitalization.Title) String {
+    return "Visual Debugger Settings"
   }
 
-  @Override
-  public JComponent getPreferredFocusedComponent() {
-    return this.settingsComponent.getPreferredFocusedComponent();
+  override fun getPreferredFocusedComponent(): JComponent {
+    return settingsComponent!!.preferredFocusedComponent
   }
 
-  @Nullable @Override
-  public JComponent createComponent() {
+  override fun createComponent(): JComponent {
     if (settingsDisposable != null) {
-      Disposer.dispose(settingsDisposable);
+      Disposer.dispose(settingsDisposable!!)
     }
-    settingsDisposable = Disposer.newDisposable();
-    this.settingsComponent = new VisualDebuggerSettingsComponent(settingsDisposable);
-    return this.settingsComponent.getPanel();
+    settingsDisposable = Disposer.newDisposable()
+    this.settingsComponent = VisualDebuggerSettingsComponent(settingsDisposable!!)
+    return settingsComponent!!.panel
   }
 
-  @Override
-  public boolean isModified() {
-    final PluginSettingsState settings = PluginSettingsState.getInstance();
-    return this.visualizerOptionChanged(settings)
-        || isModified(
-            settingsComponent.getVisualizationDepthText(), settings.getVisualisationDepth())
-        || isModified(settingsComponent.getSavedDebugStepsText(), settings.getSavedDebugSteps())
-        || settingsComponent.getColoredDiffValue() != settings.isColoredDiff()
-        || settingsComponent.getShowNullValues() != settings.isShowNullValues();
+  override fun isModified(): Boolean {
+    return (this.visualizerOptionChanged(settings) ||
+        isModified(settingsComponent!!.visualizationDepthText, settings.visualisationDepth) ||
+        isModified(settingsComponent!!.savedDebugStepsText, settings.savedDebugSteps) ||
+        (settingsComponent!!.coloredDiffValue != settings.isColoredDiff) ||
+        (settingsComponent!!.showNullValues != settings.isShowNullValues))
   }
 
-  private boolean visualizerOptionChanged(final PluginSettingsState settings) {
-    return settings.getVisualizerOption()
-        != this.settingsComponent.getDebuggingVisualizerOptionChoice();
+  private fun visualizerOptionChanged(settings: PluginSettingsState): Boolean {
+    return settings.visualizerOption != settingsComponent!!.debuggingVisualizerOptionChoice
   }
 
-  private boolean isModified(String newDepthText, Integer currentDepth) {
-    return !newDepthText.equals(currentDepth.toString());
+  private fun isModified(newDepthText: String, currentDepth: Int): Boolean {
+    return newDepthText != currentDepth.toString()
   }
 
-  @Override
-  public void apply() {
-    final PluginSettingsState settings = PluginSettingsState.getInstance();
-    settings.setVisualizerOption(this.settingsComponent.getDebuggingVisualizerOptionChoice());
+  override fun apply() {
+    settings.visualizerOption = settingsComponent!!.debuggingVisualizerOptionChoice
 
-    final int newDepth = Integer.parseInt(this.settingsComponent.getVisualizationDepthText());
-    VisualDebuggerSettingsConfigurable.changedDepthAndRestartDebuggerIfNeeded(settings, newDepth);
+    val newDepth = settingsComponent!!.visualizationDepthText.toInt()
+    changedDepthAndRestartDebuggerIfNeeded(settings, newDepth)
 
-    final int newDebugSteps = Integer.parseInt(this.settingsComponent.getSavedDebugStepsText());
-    settings.setSavedDebugSteps(newDebugSteps);
+    val newDebugSteps = settingsComponent!!.savedDebugStepsText.toInt()
+    settings.savedDebugSteps = newDebugSteps
 
-    settings.setColoredDiff(settingsComponent.getColoredDiffValue());
+    settings.isColoredDiff = settingsComponent!!.coloredDiffValue
 
-    settings.setShowNullValues(settingsComponent.getShowNullValues());
+    settings.isShowNullValues = settingsComponent!!.showNullValues
 
-    sendUpdatedConfig();
+    sendUpdatedConfig()
   }
 
-  private void sendUpdatedConfig() {
-    for (Session client : SharedState.getWebsocketClients()) {
-      VisualDebuggingAPIServerStarter.sendUIConfig(client);
+  private fun sendUpdatedConfig() {
+    for (client in getWebsocketClients()) {
+      VisualDebuggingAPIServerStarter.sendUIConfig(client)
     }
   }
 
-  private static void changedDepthAndRestartDebuggerIfNeeded(
-      final PluginSettingsState settings, final int newDepth) {
-    if (newDepth != settings.getVisualisationDepth()) {
-      settings.setVisualisationDepth(newDepth);
-      if (SharedState.debugListener != null) {
-        SharedState.debugListener.reprintDiagram();
-      }
-    }
+  override fun reset() {
+    settingsComponent!!.visualizationDepthText = settings.visualisationDepth.toString()
+    settingsComponent!!.savedDebugStepsText = settings.savedDebugSteps.toString()
+    settingsComponent!!.chooseDebuggingVisualizerOption(settings.visualizerOption)
+    settingsComponent!!.coloredDiffValue = settings.isColoredDiff
+    settingsComponent!!.showNullValues = settings.isShowNullValues
   }
 
-  @Override
-  public void reset() {
-    final PluginSettingsState settings = PluginSettingsState.getInstance();
-    this.settingsComponent.setVisualizationDepthText(settings.getVisualisationDepth().toString());
-    this.settingsComponent.setSavedDebugStepsText(settings.getSavedDebugSteps().toString());
-    this.settingsComponent.chooseDebuggingVisualizerOption(settings.getVisualizerOption());
-    this.settingsComponent.setColoredDiffValue(settings.isColoredDiff());
-    this.settingsComponent.setShowNullValues(settings.isShowNullValues());
-  }
-
-  @Override
-  public void disposeUIResources() {
+  override fun disposeUIResources() {
     if (settingsDisposable == null) {
-      return;
+      return
     }
-    Disposer.dispose(settingsDisposable);
-    settingsDisposable = null;
+    Disposer.dispose(settingsDisposable!!)
+    settingsDisposable = null
 
-    this.settingsComponent = null;
+    this.settingsComponent = null
+  }
+}
+
+private fun changedDepthAndRestartDebuggerIfNeeded(settings: PluginSettingsState, newDepth: Int) {
+  if (newDepth != settings.visualisationDepth) {
+    settings.visualisationDepth = newDepth
+    if (SharedState.debugListener != null) {
+      SharedState.debugListener!!.reprintDiagram()
+    }
   }
 }

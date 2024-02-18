@@ -82,9 +82,9 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     StackFrameAnalyzer stackFrameAnalyzer =
         new StackFrameAnalyzer(
             new StackFrameProxyImplAdapter(stackFrame),
-            PluginSettingsState.getInstance().getVisualisationDepth(),
+            PluginSettingsState.getSettings().visualisationDepth,
             SharedState.manuallyExploredObjects,
-            PluginSettingsState.getInstance().isShowNullValues());
+            PluginSettingsState.getSettings().isShowNullValues());
 
     if (debugSession.getCurrentPosition() != null) {
       String fileName = debugSession.getCurrentPosition().getFile().getNameWithoutExtension();
@@ -156,7 +156,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
 
   @NotNull public DebuggingInfoVisualizer getOrCreateDebuggingInfoVisualizer() {
     if (this.debuggingVisualizer == null) {
-      switch (PluginSettingsState.getInstance().getVisualizerOption()) {
+      switch (PluginSettingsState.getSettings().visualizerOption) {
         case WEB_UI -> this.debuggingVisualizer =
             new WebSocketDebuggingVisualizer(this.userInterface);
         case EMBEDDED -> this.debuggingVisualizer =

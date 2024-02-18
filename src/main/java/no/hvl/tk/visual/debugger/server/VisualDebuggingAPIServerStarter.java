@@ -62,7 +62,7 @@ public class VisualDebuggingAPIServerStarter {
    * @param client client
    */
   public static void sendUIConfig(Session client) {
-    UIConfig uiConfig = PluginSettingsState.getInstance().getUIConfig();
+    UIConfig uiConfig = PluginSettingsState.getSettings().getUIConfig();
     final DebuggingWSMessage configMessage =
         new DebuggingWSMessage(DebuggingMessageType.CONFIG, uiConfig.serialize());
 
