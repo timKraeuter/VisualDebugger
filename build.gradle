@@ -79,6 +79,13 @@ spotless {
         googleJavaFormat()
         formatAnnotations()
     }
+    kotlin {
+        // by default the target is every '.kt' and '.kts` file in the java sourcesets
+        ktfmt()    // has its own section below
+    }
+    kotlinGradle {
+        ktfmt() // or ktfmt() or prettier()
+    }
 }
 
 jacocoTestReport {

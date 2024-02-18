@@ -6,58 +6,50 @@ import org.glassfish.grizzly.http.server.HttpServer
 import org.glassfish.tyrus.server.Server
 
 object SharedState {
-    @JvmField
-    val manuallyExploredObjects: Set<String> = HashSet()
+  @JvmField val manuallyExploredObjects: Set<String> = HashSet()
 
-    // UI / Debug API related
-    @JvmStatic
-    var uiServer: HttpServer? = null
-        private set
-    @JvmField
-    var debugAPIServer: Server? = null
+  // UI / Debug API related
+  @JvmStatic
+  var uiServer: HttpServer? = null
+    private set
 
-    /** All currently connected websocket client which will get updated.  */
-    private val websocketClients: MutableSet<Session> = HashSet()
+  @JvmField var debugAPIServer: Server? = null
 
-    /** Last diagram XML for newly connecting clients.  */
-    @JvmField
-    var lastDiagramXML: String = ""
+  /** All currently connected websocket client which will get updated. */
+  private val websocketClients: MutableSet<Session> = HashSet()
 
-    @JvmField
-    var debugFileName: String? = null
-    @JvmField
-    var debugLine: Int? = null
+  /** Last diagram XML for newly connecting clients. */
+  @JvmField var lastDiagramXML: String = ""
 
-    @JvmField
-    var debuggingActive: Boolean = false
+  @JvmField var debugFileName: String? = null
+  @JvmField var debugLine: Int? = null
 
-    @JvmField
-    var embeddedBrowserActive: Boolean = false
+  @JvmField var debuggingActive: Boolean = false
 
-    @JvmField
-    var debugListener: StackFrameSessionListener? = null
+  @JvmField var embeddedBrowserActive: Boolean = false
 
-    /** Last plant UML diagram input needed for the print function.  */
-    @JvmField
-    var lastPlantUMLDiagram: String = ""
+  @JvmField var debugListener: StackFrameSessionListener? = null
 
-    @JvmStatic
-    fun getWebsocketClients(): Set<Session> {
-        return websocketClients
-    }
+  /** Last plant UML diagram input needed for the print function. */
+  @JvmField var lastPlantUMLDiagram: String = ""
 
-    @JvmStatic
-    fun addWebsocketClient(clientSession: Session) {
-        websocketClients.add(clientSession)
-    }
+  @JvmStatic
+  fun getWebsocketClients(): Set<Session> {
+    return websocketClients
+  }
 
-    @JvmStatic
-    fun removeWebsocketClient(clientSession: Session) {
-        websocketClients.remove(clientSession)
-    }
+  @JvmStatic
+  fun addWebsocketClient(clientSession: Session) {
+    websocketClients.add(clientSession)
+  }
 
-    @JvmStatic
-    fun setUIServer(server: HttpServer?) {
-        uiServer = server
-    }
+  @JvmStatic
+  fun removeWebsocketClient(clientSession: Session) {
+    websocketClients.remove(clientSession)
+  }
+
+  @JvmStatic
+  fun setUIServer(server: HttpServer?) {
+    uiServer = server
+  }
 }

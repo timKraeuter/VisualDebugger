@@ -5,11 +5,11 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import no.hvl.tk.visual.debugger.SharedState
 
 class StopVisualDebuggerAction : AnAction() {
-    override fun actionPerformed(e: AnActionEvent) {
-        SharedState.debuggingActive = false
-        SharedState.debugListener?.let {
-            it.getOrCreateDebuggingInfoVisualizer().debuggingDeactivated()
-            it.resetUIAndAddActivateDebuggingButton()
-        }
+  override fun actionPerformed(e: AnActionEvent) {
+    SharedState.debuggingActive = false
+    SharedState.debugListener?.let {
+      it.getOrCreateDebuggingInfoVisualizer().debuggingDeactivated()
+      it.resetUIAndAddActivateDebuggingButton()
     }
+  }
 }

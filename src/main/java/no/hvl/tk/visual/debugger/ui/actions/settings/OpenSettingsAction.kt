@@ -7,9 +7,9 @@ import com.intellij.openapi.options.ShowSettingsUtil
 import no.hvl.tk.visual.debugger.settings.VisualDebuggerSettingsConfigurable
 
 class OpenSettingsAction : AnAction() {
-    override fun actionPerformed(e: AnActionEvent) {
-        val project = e.getData(CommonDataKeys.PROJECT)
-        ShowSettingsUtil.getInstance()
-            .showSettingsDialog(project, VisualDebuggerSettingsConfigurable::class.java)
-    }
+  override fun actionPerformed(e: AnActionEvent) {
+    val project = e.getData(CommonDataKeys.PROJECT)
+    ShowSettingsUtil.getInstance()
+        .showSettingsDialog(project, VisualDebuggerSettingsConfigurable::class.java)
+  }
 }
