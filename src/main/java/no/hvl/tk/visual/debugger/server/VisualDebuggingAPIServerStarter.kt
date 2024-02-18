@@ -1,42 +1,37 @@
-package no.hvl.tk.visual.debugger.server;
+package no.hvl.tk.visual.debugger.server
 
-import com.intellij.openapi.diagnostic.Logger;
-import jakarta.websocket.Session;
-import java.io.IOException;
-import java.util.HashMap;
-import no.hvl.tk.visual.debugger.server.endpoint.UIConfig;
-import no.hvl.tk.visual.debugger.server.endpoint.VisualDebuggingAPIEndpoint;
-import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingMessageType;
-import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingWSMessage;
-import no.hvl.tk.visual.debugger.settings.PluginSettingsState;
-import org.glassfish.tyrus.server.Server;
+import com.intellij.openapi.diagnostic.Logger
+import jakarta.websocket.Session
+import java.io.IOException
+import no.hvl.tk.visual.debugger.server.endpoint.VisualDebuggingAPIEndpoint
+import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingMessageType
+import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingWSMessage
+import no.hvl.tk.visual.debugger.settings.PluginSettingsState.Companion.settings
+import org.glassfish.tyrus.server.Server
 
 /**
- * This class can start a websocket server which runs an API which provides the client with live
- * debug data. See {@link VisualDebuggingAPIEndpoint} for the Endpoint.
+ * This class can start a websocket server which runs an API that provides the client with live
+ * debug data. See [VisualDebuggingAPIEndpoint] for the Endpoint.
  */
-public class VisualDebuggingAPIServerStarter {
-  private static final Logger LOGGER = Logger.getInstance(VisualDebuggingAPIServerStarter.class);
+object VisualDebuggingAPIServerStarter {
+  private val LOGGER = Logger.getInstance(VisualDebuggingAPIServerStarter::class.java)
 
-  private VisualDebuggingAPIServerStarter() {
-    // Only helper methods.
-  }
-
-  public static Server runNewServer() {
-    final Server server =
-        new Server(
+  @JvmStatic
+  fun runNewServer(): Server? {
+    val server =
+        Server(
             ServerConstants.HOST_NAME,
             ServerConstants.VISUAL_DEBUGGING_API_SERVER_PORT,
             "",
-            new HashMap<>(),
-            VisualDebuggingAPIEndpoint.class);
+            HashMap(),
+            VisualDebuggingAPIEndpoint::class.java)
     try {
-      server.start();
-      LOGGER.info("Debug API server started successfully.");
-      return server;
-    } catch (final Exception e) {
-      LOGGER.error(e);
-      return null;
+      server.start()
+      LOGGER.info("Debug API server started successfully.")
+      return server
+    } catch (e: Exception) {
+      LOGGER.error(e)
+      return null
     }
   }
 
@@ -46,14 +41,13 @@ public class VisualDebuggingAPIServerStarter {
    * @param client client.
    * @param message message for the client.
    */
-  public static void sendMessageToClient(final Session client, final String message) {
-    if (client != null) {
+  @JvmStatic
+  fun sendMessageToClient(client: Session, message: String) {
       try {
-        client.getBasicRemote().sendText(message);
-      } catch (final IOException e) {
-        LOGGER.error(e);
+        client.basicRemote.sendText(message)
+      } catch (e: IOException) {
+        LOGGER.error(e)
       }
-    }
   }
 
   /**
@@ -61,11 +55,11 @@ public class VisualDebuggingAPIServerStarter {
    *
    * @param client client
    */
-  public static void sendUIConfig(Session client) {
-    UIConfig uiConfig = PluginSettingsState.getSettings().getUIConfig();
-    final DebuggingWSMessage configMessage =
-        new DebuggingWSMessage(DebuggingMessageType.CONFIG, uiConfig.serialize());
+  @JvmStatic
+  fun sendUIConfig(client: Session) {
+    val uiConfig = settings.uIConfig
+    val configMessage = DebuggingWSMessage(DebuggingMessageType.CONFIG, uiConfig.serialize())
 
-    sendMessageToClient(client, configMessage.serialize());
+    sendMessageToClient(client, configMessage.serialize())
   }
 }
