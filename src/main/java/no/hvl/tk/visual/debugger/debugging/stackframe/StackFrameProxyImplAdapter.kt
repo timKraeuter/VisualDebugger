@@ -1,38 +1,29 @@
-package no.hvl.tk.visual.debugger.debugging.stackframe;
+package no.hvl.tk.visual.debugger.debugging.stackframe
 
-import com.intellij.debugger.engine.evaluation.EvaluateException;
-import com.intellij.debugger.jdi.LocalVariableProxyImpl;
-import com.intellij.debugger.jdi.StackFrameProxyImpl;
-import com.intellij.debugger.jdi.ThreadReferenceProxyImpl;
-import com.sun.jdi.ObjectReference;
-import com.sun.jdi.Value;
-import java.util.List;
+import com.intellij.debugger.engine.evaluation.EvaluateException
+import com.intellij.debugger.jdi.LocalVariableProxyImpl
+import com.intellij.debugger.jdi.StackFrameProxyImpl
+import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
+import com.sun.jdi.ObjectReference
+import com.sun.jdi.Value
 
-public class StackFrameProxyImplAdapter implements IStackFrame {
-
-  private final StackFrameProxyImpl stackFrameProxy;
-
-  public StackFrameProxyImplAdapter(StackFrameProxyImpl stackFrameProxy) {
-    this.stackFrameProxy = stackFrameProxy;
+class StackFrameProxyImplAdapter(private val stackFrameProxy: StackFrameProxyImpl) : IStackFrame {
+  @Throws(EvaluateException::class)
+  override fun thisObject(): ObjectReference {
+    return stackFrameProxy.thisObject()!!
   }
 
-  @Override
-  public ObjectReference thisObject() throws EvaluateException {
-    return stackFrameProxy.thisObject();
+  @Throws(EvaluateException::class)
+  override fun visibleVariables(): List<LocalVariableProxyImpl> {
+    return stackFrameProxy.visibleVariables()
   }
 
-  @Override
-  public List<LocalVariableProxyImpl> visibleVariables() throws EvaluateException {
-    return stackFrameProxy.visibleVariables();
+  @Throws(EvaluateException::class)
+  override fun getValue(localVariable: LocalVariableProxyImpl): Value {
+    return stackFrameProxy.getValue(localVariable)
   }
 
-  @Override
-  public Value getValue(LocalVariableProxyImpl localVariable) throws EvaluateException {
-    return stackFrameProxy.getValue(localVariable);
-  }
-
-  @Override
-  public ThreadReferenceProxyImpl threadProxy() {
-    return stackFrameProxy.threadProxy();
+  override fun threadProxy(): ThreadReferenceProxyImpl {
+    return stackFrameProxy.threadProxy()
   }
 }

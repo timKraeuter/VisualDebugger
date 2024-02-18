@@ -7,13 +7,13 @@ import org.cef.callback.CefDownloadItem
 import org.cef.handler.CefDownloadHandlerAdapter
 
 class SimpleDownloadHandler : CefDownloadHandlerAdapter() {
-    override fun onBeforeDownload(
-        browser: CefBrowser,
-        downloadItem: CefDownloadItem,
-        suggestedName: String,
-        callback: CefBeforeDownloadCallback
-    ) {
-        notifyDownloadStarted(suggestedName)
-        callback.Continue("", true)
-    }
+  override fun onBeforeDownload(
+      browser: CefBrowser,
+      downloadItem: CefDownloadItem,
+      suggestedName: String,
+      callback: CefBeforeDownloadCallback
+  ) {
+    notifyDownloadStarted(suggestedName)
+    callback.Continue("", true)
+  }
 }

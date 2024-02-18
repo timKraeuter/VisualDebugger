@@ -1,67 +1,71 @@
-package no.hvl.tk.visual.debugger.debugging.stackframe;
+package no.hvl.tk.visual.debugger.debugging.stackframe
 
-import com.sun.jdi.*;
-import java.util.*;
+import com.sun.jdi.*
+import java.util.*
 
-public class StackFrameSessionListenerHelper {
-  private static final String[] INTERNAL_PACKAGES = {
-    "java.",
-    "javax.",
-    "sun.",
-    "jdk.",
-    "com.sun.",
-    "com.intellij.",
-    "org.junit.",
-    "jh61b.junit.",
-    "jh61b.",
-  };
+object StackFrameSessionListenerHelper {
+  private val INTERNAL_PACKAGES =
+      arrayOf(
+          "java.",
+          "javax.",
+          "sun.",
+          "jdk.",
+          "com.sun.",
+          "com.intellij.",
+          "org.junit.",
+          "jh61b.junit.",
+          "jh61b.",
+      )
 
-  private StackFrameSessionListenerHelper() {}
-
-  static Iterator<Value> getIterator(ThreadReference thread, ObjectReference obj) {
-    ObjectReference i = (ObjectReference) invokeSimple(thread, obj, "iterator");
-    return new Iterator<>() {
-      @Override
-      public boolean hasNext() {
-        BooleanValue hasNext = (BooleanValue) invokeSimple(thread, i, "hasNext");
-        if (hasNext == null) {
-          return false;
-        }
-        return hasNext.value();
+  @JvmStatic
+  fun getIterator(thread: ThreadReference?, obj: ObjectReference?): Iterator<Value?> {
+    val i = invokeSimple(thread, obj, "iterator") as ObjectReference?
+    return object : MutableIterator<Value?> {
+      override fun hasNext(): Boolean {
+        val hasNext = invokeSimple(thread, i, "hasNext") as BooleanValue? ?: return false
+        return hasNext.value()
       }
 
-      @Override
-      public Value next() {
-        return invokeSimple(thread, i, "next");
+      override fun next(): Value? {
+        return invokeSimple(thread, i, "next")!!
       }
-    };
-  }
 
-  static Value invokeSimple(ThreadReference thread, ObjectReference r, String name) {
-    try {
-      return r.invokeMethod(
-          thread, r.referenceType().methodsByName(name).get(0), Collections.emptyList(), 0);
-    } catch (Exception e) {
-      return null;
+      override fun remove() {
+        throw UnsupportedOperationException("Should not be invoked!")
+      }
     }
   }
 
-  static boolean implementsInterface(ObjectReference obj, String iface) {
-    if (obj.referenceType() instanceof ClassType classType) {
-      Queue<InterfaceType> queue = new ArrayDeque<>(classType.interfaces());
+  @JvmStatic
+  fun invokeSimple(thread: ThreadReference?, r: ObjectReference?, name: String?): Value? {
+    return try {
+      r!!.invokeMethod(thread, r.referenceType().methodsByName(name)[0], emptyList(), 0)
+    } catch (e: Exception) {
+      null
+    }
+  }
+
+  @JvmStatic
+  fun implementsInterface(obj: ObjectReference, iface: String): Boolean {
+    if (obj.referenceType() is ClassType) {
+      val classType = obj.referenceType() as ClassType
+      val queue: Queue<InterfaceType> = ArrayDeque<InterfaceType>(classType.interfaces())
       while (!queue.isEmpty()) {
-        InterfaceType t = queue.poll();
-        if (t.name().equals(iface)) {
-          return true;
+        val t = queue.poll()
+        if (t.name() == iface) {
+          return true
         }
-        queue.addAll(t.superinterfaces());
+        queue.addAll(t.superinterfaces())
       }
     }
-    return false;
+    return false
   }
 
   // input format: [package.]ClassName:lineno or [package.]ClassName
-  static boolean isInternalPackage(final String name) {
-    return Arrays.stream(INTERNAL_PACKAGES).anyMatch(name::startsWith);
+  @JvmStatic
+  fun isInternalPackage(name: String): Boolean {
+    return Arrays.stream(INTERNAL_PACKAGES).anyMatch { prefix: String? ->
+      name.startsWith(prefix!!)
+    }
   }
 }

@@ -65,9 +65,7 @@ class WebSocketDebuggingVisualizer(private val debugUI: JPanel) : DebuggingInfoV
       debugUI.remove(launchBrowserButton)
       launchEmbeddedBrowser()
     }
-    launchBrowserButton.addActionListener {
-      BrowserUtil.browse(ServerConstants.UI_SERVER_URL)
-    }
+    launchBrowserButton.addActionListener { BrowserUtil.browse(ServerConstants.UI_SERVER_URL) }
     if (SharedState.embeddedBrowserActive) {
       launchEmbeddedBrowser()
     } else {

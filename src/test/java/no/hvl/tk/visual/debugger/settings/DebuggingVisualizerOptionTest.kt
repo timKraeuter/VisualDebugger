@@ -1,16 +1,16 @@
-package no.hvl.tk.visual.debugger.settings;
+package no.hvl.tk.visual.debugger.settings
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import org.hamcrest.CoreMatchers
+import org.hamcrest.MatcherAssert
+import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Test;
-
-class DebuggingVisualizerOptionTest {
-
+internal class DebuggingVisualizerOptionTest {
   @Test
-  void testToString() {
-    assertThat(
-        DebuggingVisualizerOption.EMBEDDED.toString(), is("Embedded visualizer (no interaction)"));
-    assertThat(DebuggingVisualizerOption.WEB_UI.toString(), is("Browser visualizer"));
+  fun testToString() {
+    MatcherAssert.assertThat(
+        DebuggingVisualizerOption.EMBEDDED.toString(),
+        CoreMatchers.`is`("Embedded visualizer (no interaction)"))
+    MatcherAssert.assertThat(
+        DebuggingVisualizerOption.WEB_UI.toString(), CoreMatchers.`is`("Browser visualizer"))
   }
 }

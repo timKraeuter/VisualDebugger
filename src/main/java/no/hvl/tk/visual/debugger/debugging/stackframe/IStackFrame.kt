@@ -1,19 +1,17 @@
-package no.hvl.tk.visual.debugger.debugging.stackframe;
+package no.hvl.tk.visual.debugger.debugging.stackframe
 
-import com.intellij.debugger.engine.evaluation.EvaluateException;
-import com.intellij.debugger.jdi.LocalVariableProxyImpl;
-import com.intellij.debugger.jdi.ThreadReferenceProxyImpl;
-import com.sun.jdi.ObjectReference;
-import com.sun.jdi.Value;
-import java.util.List;
+import com.intellij.debugger.engine.evaluation.EvaluateException
+import com.intellij.debugger.jdi.LocalVariableProxyImpl
+import com.intellij.debugger.jdi.ThreadReferenceProxyImpl
+import com.sun.jdi.ObjectReference
+import com.sun.jdi.Value
 
-public interface IStackFrame {
+interface IStackFrame {
+  @Throws(EvaluateException::class) fun thisObject(): ObjectReference
 
-  ObjectReference thisObject() throws EvaluateException;
+  @Throws(EvaluateException::class) fun visibleVariables(): List<LocalVariableProxyImpl>
 
-  List<LocalVariableProxyImpl> visibleVariables() throws EvaluateException;
+  @Throws(EvaluateException::class) fun getValue(localVariable: LocalVariableProxyImpl): Value
 
-  Value getValue(LocalVariableProxyImpl localVariable) throws EvaluateException;
-
-  ThreadReferenceProxyImpl threadProxy();
+  fun threadProxy(): ThreadReferenceProxyImpl?
 }

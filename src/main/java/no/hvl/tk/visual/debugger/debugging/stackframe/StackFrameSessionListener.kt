@@ -1,176 +1,164 @@
-package no.hvl.tk.visual.debugger.debugging.stackframe;
+package no.hvl.tk.visual.debugger.debugging.stackframe
 
-import com.intellij.debugger.engine.JavaStackFrame;
-import com.intellij.debugger.jdi.StackFrameProxyImpl;
-import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessListener;
-import com.intellij.execution.ui.RunnerLayoutUi;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import com.intellij.openapi.util.Key;
-import com.intellij.util.ui.UIUtil;
-import com.intellij.xdebugger.XDebugProcess;
-import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.XDebugSessionListener;
-import java.awt.*;
-import javax.swing.*;
-import no.hvl.tk.visual.debugger.SharedState;
-import no.hvl.tk.visual.debugger.debugging.stackframe.exceptions.StackFrameAnalyzerException;
-import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer;
-import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer;
-import no.hvl.tk.visual.debugger.debugging.visualization.WebSocketDebuggingVisualizer;
-import no.hvl.tk.visual.debugger.settings.PluginSettingsState;
-import no.hvl.tk.visual.debugger.ui.VisualDebuggerIcons;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.debugger.engine.JavaStackFrame
+import com.intellij.debugger.jdi.StackFrameProxyImpl
+import com.intellij.execution.process.ProcessEvent
+import com.intellij.execution.process.ProcessListener
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.ui.SimpleToolWindowPanel
+import com.intellij.openapi.util.Key
+import com.intellij.util.ui.UIUtil
+import com.intellij.xdebugger.XDebugProcess
+import com.intellij.xdebugger.XDebugSession
+import com.intellij.xdebugger.XDebugSessionListener
+import java.awt.BorderLayout
+import javax.swing.JButton
+import javax.swing.JPanel
+import no.hvl.tk.visual.debugger.SharedState
+import no.hvl.tk.visual.debugger.debugging.stackframe.exceptions.StackFrameAnalyzerException
+import no.hvl.tk.visual.debugger.debugging.visualization.DebuggingInfoVisualizer
+import no.hvl.tk.visual.debugger.debugging.visualization.PlantUmlDebuggingVisualizer
+import no.hvl.tk.visual.debugger.debugging.visualization.WebSocketDebuggingVisualizer
+import no.hvl.tk.visual.debugger.settings.DebuggingVisualizerOption
+import no.hvl.tk.visual.debugger.settings.PluginSettingsState.Companion.settings
+import no.hvl.tk.visual.debugger.ui.VisualDebuggerIcons
 
-public class StackFrameSessionListener implements XDebugSessionListener {
+class StackFrameSessionListener(debugProcess: XDebugProcess) : XDebugSessionListener {
+  private var userInterface: JPanel? = null
 
-  private static final Logger LOGGER = Logger.getInstance(StackFrameSessionListener.class);
+  private val debugSession: XDebugSession = debugProcess.session
+  private var debuggingVisualizer: DebuggingInfoVisualizer? = null
 
-  // UI constants
-  private static final String CONTENT_ID = "no.hvl.tk.VisualDebugger";
-  private static final String TOOLBAR_ACTION =
-      "VisualDebugger.VisualizerToolbar"; // has to match with plugin.xml
+  init {
+    debugProcess.processHandler.addProcessListener(
+        object : ProcessListener {
+          override fun startNotified(event: ProcessEvent) {
+            this@StackFrameSessionListener.initUIIfNeeded()
+          }
 
-  private JPanel userInterface;
+          override fun processTerminated(event: ProcessEvent) {
+            // not relevant
+          }
 
-  private final XDebugSession debugSession;
-  private DebuggingInfoVisualizer debuggingVisualizer;
-
-  public StackFrameSessionListener(@NotNull XDebugProcess debugProcess) {
-    this.debugSession = debugProcess.getSession();
-    debugProcess
-        .getProcessHandler()
-        .addProcessListener(
-            new ProcessListener() {
-              @Override
-              public void startNotified(@NotNull ProcessEvent event) {
-                StackFrameSessionListener.this.initUIIfNeeded();
-              }
-
-              @Override
-              public void processTerminated(@NotNull ProcessEvent event) {
-                // not relevant
-              }
-
-              @Override
-              public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
-                // not relevant
-              }
-            });
-    SharedState.debugListener = this;
+          override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+            // not relevant
+          }
+        })
+    SharedState.debugListener = this
   }
 
-  @Override
-  public void sessionStopped() {
-    this.debuggingVisualizer.sessionStopped();
+  override fun sessionStopped() {
+    debuggingVisualizer!!.sessionStopped()
   }
 
-  @Override
-  public void sessionPaused() {
-    this.startVisualDebugging();
+  override fun sessionPaused() {
+    this.startVisualDebugging()
   }
 
-  private void startVisualDebugging() {
+  private fun startVisualDebugging() {
     if (!SharedState.debuggingActive) {
-      return;
+      return
     }
-    StackFrameProxyImpl stackFrame = getStackFrameProxy();
+    val stackFrame = stackFrameProxy
 
-    StackFrameAnalyzer stackFrameAnalyzer =
-        new StackFrameAnalyzer(
-            new StackFrameProxyImplAdapter(stackFrame),
-            PluginSettingsState.getSettings().visualisationDepth,
+    val stackFrameAnalyzer =
+        StackFrameAnalyzer(
+            StackFrameProxyImplAdapter(stackFrame),
+            settings.visualisationDepth,
             SharedState.manuallyExploredObjects,
-            PluginSettingsState.getSettings().isShowNullValues());
+            settings.isShowNullValues)
 
-    if (debugSession.getCurrentPosition() != null) {
-      String fileName = debugSession.getCurrentPosition().getFile().getNameWithoutExtension();
-      int line = debugSession.getCurrentPosition().getLine() + 1;
-      debuggingVisualizer.addMetadata(fileName, line, stackFrameAnalyzer);
+    if (debugSession.currentPosition != null) {
+      val fileName = debugSession.currentPosition!!.file.nameWithoutExtension
+      val line = debugSession.currentPosition!!.line + 1
+      debuggingVisualizer!!.addMetadata(fileName, line, stackFrameAnalyzer)
     }
 
-    this.debuggingVisualizer.doVisualization(stackFrameAnalyzer.analyze());
+    debuggingVisualizer!!.doVisualization(stackFrameAnalyzer.analyze())
   }
 
-  @NotNull private StackFrameProxyImpl getStackFrameProxy() {
-    JavaStackFrame currentStackFrame = (JavaStackFrame) debugSession.getCurrentStackFrame();
-    if (currentStackFrame == null) {
-      throw new StackFrameAnalyzerException("Current stack frame could not be found!");
+  private val stackFrameProxy: StackFrameProxyImpl
+    get() {
+      val currentStackFrame =
+          debugSession.currentStackFrame as JavaStackFrame?
+              ?: throw StackFrameAnalyzerException("Current stack frame could not be found!")
+
+      return currentStackFrame.stackFrameProxy
     }
 
-    return currentStackFrame.getStackFrameProxy();
-  }
-
-  private void initUIIfNeeded() {
+  private fun initUIIfNeeded() {
     if (this.userInterface != null) {
-      return;
+      return
     }
-    this.userInterface = new JPanel();
-    userInterface.setLayout(new BorderLayout());
-    this.getOrCreateDebuggingInfoVisualizer(); // make sure visualizer is initialized
+    this.userInterface = JPanel()
+    userInterface!!.layout = BorderLayout()
+    this.getOrCreateDebuggingInfoVisualizer() // make sure visualizer is initialized
     if (!SharedState.debuggingActive) {
-      this.resetUIAndAddActivateDebuggingButton();
+      this.resetUIAndAddActivateDebuggingButton()
     } else {
-      this.debuggingVisualizer.debuggingActivated();
+      debuggingVisualizer!!.debuggingActivated()
     }
-    final var uiContainer = new SimpleToolWindowPanel(false, true);
+    val uiContainer = SimpleToolWindowPanel(false, true)
 
-    final var actionManager = ActionManager.getInstance();
-    final var actionToolbar =
+    val actionManager = ActionManager.getInstance()
+    val actionToolbar =
         actionManager.createActionToolbar(
-            TOOLBAR_ACTION, (DefaultActionGroup) actionManager.getAction(TOOLBAR_ACTION), false);
-    actionToolbar.setTargetComponent(this.userInterface);
-    uiContainer.setToolbar(actionToolbar.getComponent());
-    uiContainer.setContent(this.userInterface);
+            TOOLBAR_ACTION, (actionManager.getAction(TOOLBAR_ACTION) as DefaultActionGroup), false)
+    actionToolbar.targetComponent = userInterface
+    uiContainer.toolbar = actionToolbar.component
+    uiContainer.setContent(userInterface!!)
 
-    final RunnerLayoutUi ui = this.debugSession.getUI();
-    final var content =
+    val ui = debugSession.ui
+    val content =
         ui.createContent(
-            CONTENT_ID, uiContainer, "Visual Debugger", VisualDebuggerIcons.VD_ICON, null);
-    content.setCloseable(false);
-    UIUtil.invokeLaterIfNeeded(() -> ui.addContent(content));
-    LOGGER.debug("UI initialized!");
+            CONTENT_ID, uiContainer, "Visual Debugger", VisualDebuggerIcons.VD_ICON, null)
+    content.isCloseable = false
+    UIUtil.invokeLaterIfNeeded { ui.addContent(content) }
+    LOGGER.debug("UI initialized!")
   }
 
-  public void resetUIAndAddActivateDebuggingButton() {
-    this.userInterface.removeAll();
-    SharedState.embeddedBrowserActive = false;
-    userInterface.setLayout(new BorderLayout());
+  fun resetUIAndAddActivateDebuggingButton() {
+    userInterface!!.removeAll()
+    SharedState.embeddedBrowserActive = false
+    userInterface!!.layout = BorderLayout()
 
-    final var activateButton = new JButton("Activate visual debugger");
-    activateButton.addActionListener(
-        actionEvent -> {
-          SharedState.debuggingActive = true;
-          this.userInterface.remove(activateButton);
-          this.debuggingVisualizer.debuggingActivated();
-          this.userInterface.revalidate();
-        });
-    this.userInterface.add(activateButton, BorderLayout.NORTH);
+    val activateButton = JButton("Activate visual debugger")
+    activateButton.addActionListener {
+      SharedState.debuggingActive = true
+      userInterface!!.remove(activateButton)
+      debuggingVisualizer!!.debuggingActivated()
+      userInterface!!.revalidate()
+    }
+    userInterface!!.add(activateButton, BorderLayout.NORTH)
 
-    this.userInterface.revalidate();
-    this.userInterface.repaint();
+    userInterface!!.revalidate()
+    userInterface!!.repaint()
   }
 
-  @NotNull public DebuggingInfoVisualizer getOrCreateDebuggingInfoVisualizer() {
+  fun getOrCreateDebuggingInfoVisualizer(): DebuggingInfoVisualizer {
     if (this.debuggingVisualizer == null) {
-      switch (PluginSettingsState.getSettings().visualizerOption) {
-        case WEB_UI -> this.debuggingVisualizer =
-            new WebSocketDebuggingVisualizer(this.userInterface);
-        case EMBEDDED -> this.debuggingVisualizer =
-            new PlantUmlDebuggingVisualizer(this.userInterface);
-        default -> {
-          LOGGER.warn("Unrecognized debugging visualizer chosen. Defaulting to web visualizer!");
-          this.debuggingVisualizer = new WebSocketDebuggingVisualizer(this.userInterface);
-        }
+      when (settings.visualizerOption) {
+        DebuggingVisualizerOption.WEB_UI ->
+            this.debuggingVisualizer = WebSocketDebuggingVisualizer(userInterface!!)
+        DebuggingVisualizerOption.EMBEDDED ->
+            this.debuggingVisualizer = PlantUmlDebuggingVisualizer(userInterface!!)
       }
     }
-    return this.debuggingVisualizer;
+    return debuggingVisualizer!!
   }
 
-  public void reprintDiagram() {
-    this.debuggingVisualizer.reprintDiagram();
+  fun reprintDiagram() {
+    debuggingVisualizer!!.reprintDiagram()
+  }
+
+  companion object {
+    private val LOGGER = Logger.getInstance(StackFrameSessionListener::class.java)
+
+    // UI constants
+    private const val CONTENT_ID = "no.hvl.tk.VisualDebugger"
+    private const val TOOLBAR_ACTION =
+        "VisualDebugger.VisualizerToolbar" // has to match with plugin.xml
   }
 }

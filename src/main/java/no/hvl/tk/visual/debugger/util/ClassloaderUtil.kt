@@ -1,7 +1,6 @@
 package no.hvl.tk.visual.debugger.util
 
 object ClassloaderUtil {
-  @JvmStatic
   fun <V> runWithContextClassloader(executable: Executable<V>): V {
     val current = Thread.currentThread().contextClassLoader
     try {
