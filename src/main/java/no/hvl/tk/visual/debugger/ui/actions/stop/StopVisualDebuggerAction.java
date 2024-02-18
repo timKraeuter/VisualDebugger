@@ -9,8 +9,8 @@ public class StopVisualDebuggerAction extends AnAction {
 
   @Override
   public void actionPerformed(@NotNull final AnActionEvent e) {
-    SharedState.setDebuggingActive(false);
-    SharedState.getDebugListener().getOrCreateDebuggingInfoVisualizer().debuggingDeactivated();
-    SharedState.getDebugListener().resetUIAndAddActivateDebuggingButton();
+    SharedState.debuggingActive = false;
+    SharedState.debugListener.getOrCreateDebuggingInfoVisualizer().debuggingDeactivated();
+    SharedState.debugListener.resetUIAndAddActivateDebuggingButton();
   }
 }

@@ -32,18 +32,18 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
   @Override
   public void doVisualizationFurther(ObjectDiagram diagram) {
-    if (SharedState.getDebugAPIServer() == null) {
+    if (SharedState.debugAPIServer == null) {
       return;
     }
     final String diagramXML = DiagramToXMLConverter.toXml(diagram);
-    SharedState.setLastDiagramXML(diagramXML);
+    SharedState.lastDiagramXML = diagramXML;
 
     final String message =
         new DebuggingWSMessage(
                 DebuggingMessageType.NEXT_DEBUG_STEP,
                 diagramXML,
-                SharedState.getDebugFileName(),
-                SharedState.getDebugLine())
+            SharedState.debugFileName,
+            SharedState.debugLine)
             .serialize();
     SharedState.getWebsocketClients()
         .forEach(
@@ -71,7 +71,7 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
           launchEmbeddedBrowser();
         });
     launchBrowserButton.addActionListener(e -> BrowserUtil.browse(ServerConstants.UI_SERVER_URL));
-    if (SharedState.isEmbeddedBrowserActive()) {
+    if (SharedState.embeddedBrowserActive) {
       launchEmbeddedBrowser();
     } else {
       this.debugUI.add(launchEmbeddedBrowserButton, BorderLayout.NORTH);
@@ -87,16 +87,16 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     }
     browser.loadURL(ServerConstants.UI_SERVER_URL_EMBEDDED);
     debugUI.add(browser.getComponent(), 0);
-    SharedState.setEmbeddedBrowserActive(true);
+    SharedState.embeddedBrowserActive = true;
     this.debugUI.revalidate();
   }
 
   private static void startDebugAPIServerIfNeeded() {
     ClassloaderUtil.runWithContextClassloader(
         () -> {
-          if (SharedState.getDebugAPIServer() == null) {
+          if (SharedState.debugAPIServer == null) {
             final Server server = VisualDebuggingAPIServerStarter.runNewServer();
-            SharedState.setDebugAPIServer(server);
+            SharedState.debugAPIServer = server;
           }
           return null; // needed because of generic method.
         });
@@ -129,11 +129,11 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
   }
 
   private static void stopDebugAPIServerIfNeeded() {
-    final Server server = SharedState.getDebugAPIServer();
+    final Server server = SharedState.debugAPIServer;
     if (server != null) {
       server.stop();
       LOGGER.info("Debug API server stopped.");
-      SharedState.setDebugAPIServer(null);
+      SharedState.debugAPIServer = null;
     }
   }
 }

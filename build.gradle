@@ -1,10 +1,11 @@
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '1.16.1'
-    id "org.sonarqube" version "4.4.1.3373"
+    id 'org.jetbrains.kotlin.jvm'
+    id 'org.jetbrains.intellij' version '1.17.1'
+    id 'org.sonarqube' version '4.4.1.3373'
     id 'jacoco'
-    id "net.ltgt.errorprone" version "3.1.0"
-    id "com.diffplug.spotless" version "6.23.3"
+    id 'net.ltgt.errorprone' version '3.1.0'
+    id 'com.diffplug.spotless' version '6.23.3'
 }
 
 group 'no.hvl.tk'
@@ -45,6 +46,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.1'
 
     errorprone("com.google.errorprone:error_prone_core:2.16")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 intellij {
@@ -101,4 +103,7 @@ sonar {
 tasks.compileTestJava {
     // Ignore manuel tests.
     options.errorprone.excludedPaths = ".*/manueltests/.*"
+}
+kotlin {
+    jvmToolchain(17)
 }

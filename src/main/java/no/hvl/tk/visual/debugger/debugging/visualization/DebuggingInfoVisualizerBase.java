@@ -15,8 +15,8 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
 
   @Override
   public void addMetadata(String fileName, Integer line, StackFrameAnalyzer stackFrameAnalyzer) {
-    SharedState.setDebugLine(line);
-    SharedState.setDebugFileName(fileName);
+    SharedState.debugLine = line;
+    SharedState.debugFileName = fileName;
     this.analyzer = stackFrameAnalyzer;
   }
 
@@ -29,12 +29,12 @@ public abstract class DebuggingInfoVisualizerBase implements DebuggingInfoVisual
 
   @Override
   public void sessionStopped() {
-    SharedState.getManuallyExploredObjects().clear();
+    SharedState.manuallyExploredObjects.clear();
   }
 
   @Override
   public ObjectDiagram getObjectWithChildren(String objectID) {
-    SharedState.getManuallyExploredObjects().add(objectID);
+    SharedState.manuallyExploredObjects.add(objectID);
     return analyzer.getChildren(objectID);
   }
 

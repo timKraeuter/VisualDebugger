@@ -35,9 +35,9 @@ public class VisualDebuggingAPIEndpoint {
     final DebuggingWSMessage debugMessage =
         new DebuggingWSMessage(
             DebuggingMessageType.NEXT_DEBUG_STEP,
-            SharedState.getLastDiagramXML(),
-            SharedState.getDebugFileName(),
-            SharedState.getDebugLine());
+            SharedState.lastDiagramXML,
+            SharedState.debugFileName,
+            SharedState.debugLine);
     VisualDebuggingAPIServerStarter.sendMessageToClient(session, debugMessage.serialize());
   }
 
@@ -52,7 +52,7 @@ public class VisualDebuggingAPIEndpoint {
     LOGGER.debug(String.format("New websocket message with content \"%s\" received.", objectId));
 
     final DebuggingInfoVisualizer debuggingInfoVisualizer =
-        SharedState.getDebugListener().getOrCreateDebuggingInfoVisualizer();
+        SharedState.debugListener.getOrCreateDebuggingInfoVisualizer();
     try {
       final ObjectDiagram diagram = debuggingInfoVisualizer.getObjectWithChildren(objectId);
       return new DebuggingWSMessage(

@@ -1,124 +1,63 @@
-package no.hvl.tk.visual.debugger;
+package no.hvl.tk.visual.debugger
 
-import jakarta.websocket.Session;
-import java.util.HashSet;
-import java.util.Set;
-import no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionListener;
-import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.tyrus.server.Server;
+import jakarta.websocket.Session
+import no.hvl.tk.visual.debugger.debugging.stackframe.StackFrameSessionListener
+import org.glassfish.grizzly.http.server.HttpServer
+import org.glassfish.tyrus.server.Server
 
-public class SharedState {
+object SharedState {
+    @JvmField
+    val manuallyExploredObjects: Set<String> = HashSet()
 
-  private static final Set<String> manuallyExploredObjects = new HashSet<>();
+    // UI / Debug API related
+    @JvmStatic
+    var uiServer: HttpServer? = null
+        private set
+    @JvmField
+    var debugAPIServer: Server? = null
 
-  private SharedState() {}
+    /** All currently connected websocket client which will get updated.  */
+    private val websocketClients: MutableSet<Session> = HashSet()
 
-  // UI / Debug API related
-  private static HttpServer uiServer;
-  private static Server debugAPIServer;
+    /** Last diagram XML for newly connecting clients.  */
+    @JvmField
+    var lastDiagramXML: String = ""
 
-  /** All currently connected websocket client which will get updated. */
-  private static final Set<Session> websocketClients = new HashSet<>();
+    @JvmField
+    var debugFileName: String? = null
+    @JvmField
+    var debugLine: Int? = null
 
-  /** Last diagram XML for newly connecting clients. */
-  private static String lastDiagramXML = "";
+    @JvmField
+    var debuggingActive: Boolean = false
 
-  private static String debugFileName;
-  private static Integer debugLine;
+    @JvmField
+    var embeddedBrowserActive: Boolean = false
 
-  private static boolean debuggingActive = false;
+    @JvmField
+    var debugListener: StackFrameSessionListener? = null
 
-  private static boolean embeddedBrowserActive = false;
-  private static StackFrameSessionListener debugSessionListener;
+    /** Last plant UML diagram input needed for the print function.  */
+    @JvmField
+    var lastPlantUMLDiagram: String = ""
 
-  /** Last plant UML diagram input needed for the print function. */
-  private static String lastPlantUMLDiagram = "";
+    @JvmStatic
+    fun getWebsocketClients(): Set<Session> {
+        return websocketClients
+    }
 
-  public static String getLastPlantUMLDiagram() {
-    return lastPlantUMLDiagram;
-  }
+    @JvmStatic
+    fun addWebsocketClient(clientSession: Session) {
+        websocketClients.add(clientSession)
+    }
 
-  public static void setLastPlantUMLDiagram(final String diagram) {
-    lastPlantUMLDiagram = diagram;
-  }
+    @JvmStatic
+    fun removeWebsocketClient(clientSession: Session) {
+        websocketClients.remove(clientSession)
+    }
 
-  public static boolean isDebuggingActive() {
-    return debuggingActive;
-  }
-
-  public static void setDebuggingActive(final boolean debuggingActive) {
-    SharedState.debuggingActive = debuggingActive;
-  }
-
-  public static StackFrameSessionListener getDebugListener() {
-    return debugSessionListener;
-  }
-
-  public static void setDebugListener(final StackFrameSessionListener debugSessionListener) {
-    SharedState.debugSessionListener = debugSessionListener;
-  }
-
-  public static Server getDebugAPIServer() {
-    return debugAPIServer;
-  }
-
-  public static void setDebugAPIServer(final Server debugAPIServer) {
-    SharedState.debugAPIServer = debugAPIServer;
-  }
-
-  public static Set<Session> getWebsocketClients() {
-    return websocketClients;
-  }
-
-  public static void addWebsocketClient(final Session clientSession) {
-    websocketClients.add(clientSession);
-  }
-
-  public static void removeWebsocketClient(final Session clientSession) {
-    websocketClients.remove(clientSession);
-  }
-
-  public static String getLastDiagramXML() {
-    return lastDiagramXML;
-  }
-
-  public static void setLastDiagramXML(final String diagramXML) {
-    SharedState.lastDiagramXML = diagramXML;
-  }
-
-  public static void setUIServer(final HttpServer server) {
-    SharedState.uiServer = server;
-  }
-
-  public static HttpServer getUiServer() {
-    return uiServer;
-  }
-
-  public static String getDebugFileName() {
-    return debugFileName;
-  }
-
-  public static Integer getDebugLine() {
-    return debugLine;
-  }
-
-  public static void setDebugFileName(String lastDebugFileName) {
-    SharedState.debugFileName = lastDebugFileName;
-  }
-
-  public static void setDebugLine(Integer lastDebugLine) {
-    SharedState.debugLine = lastDebugLine;
-  }
-
-  public static Set<String> getManuallyExploredObjects() {
-    return manuallyExploredObjects;
-  }
-
-  public static boolean isEmbeddedBrowserActive() {
-    return embeddedBrowserActive;
-  }
-
-  public static void setEmbeddedBrowserActive(boolean embeddedBrowserActive) {
-    SharedState.embeddedBrowserActive = embeddedBrowserActive;
-  }
+    @JvmStatic
+    fun setUIServer(server: HttpServer?) {
+        uiServer = server
+    }
 }

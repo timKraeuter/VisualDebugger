@@ -60,7 +60,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
                 // not relevant
               }
             });
-    SharedState.setDebugListener(this);
+    SharedState.debugListener = this;
   }
 
   @Override
@@ -74,7 +74,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
   }
 
   private void startVisualDebugging() {
-    if (!SharedState.isDebuggingActive()) {
+    if (!SharedState.debuggingActive) {
       return;
     }
     StackFrameProxyImpl stackFrame = getStackFrameProxy();
@@ -83,7 +83,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
         new StackFrameAnalyzer(
             new StackFrameProxyImplAdapter(stackFrame),
             PluginSettingsState.getInstance().getVisualisationDepth(),
-            SharedState.getManuallyExploredObjects(),
+            SharedState.manuallyExploredObjects,
             PluginSettingsState.getInstance().isShowNullValues());
 
     if (debugSession.getCurrentPosition() != null) {
@@ -111,7 +111,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     this.userInterface = new JPanel();
     userInterface.setLayout(new BorderLayout());
     this.getOrCreateDebuggingInfoVisualizer(); // make sure visualizer is initialized
-    if (!SharedState.isDebuggingActive()) {
+    if (!SharedState.debuggingActive) {
       this.resetUIAndAddActivateDebuggingButton();
     } else {
       this.debuggingVisualizer.debuggingActivated();
@@ -137,13 +137,13 @@ public class StackFrameSessionListener implements XDebugSessionListener {
 
   public void resetUIAndAddActivateDebuggingButton() {
     this.userInterface.removeAll();
-    SharedState.setEmbeddedBrowserActive(false);
+    SharedState.embeddedBrowserActive = false;
     userInterface.setLayout(new BorderLayout());
 
     final var activateButton = new JButton("Activate visual debugger");
     activateButton.addActionListener(
         actionEvent -> {
-          SharedState.setDebuggingActive(true);
+          SharedState.debuggingActive = true;
           this.userInterface.remove(activateButton);
           this.debuggingVisualizer.debuggingActivated();
           this.userInterface.revalidate();

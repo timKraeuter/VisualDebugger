@@ -90,8 +90,8 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
       final PluginSettingsState settings, final int newDepth) {
     if (newDepth != settings.getVisualisationDepth()) {
       settings.setVisualisationDepth(newDepth);
-      if (SharedState.getDebugListener() != null) {
-        SharedState.getDebugListener().reprintDiagram();
+      if (SharedState.debugListener != null) {
+        SharedState.debugListener.reprintDiagram();
       }
     }
   }

@@ -29,7 +29,7 @@ public class CopyPlantUMLDialog extends DialogWrapper {
     final var plantUMLStringLabel = new JLabel("PlantUML-Input:");
     final var plantUMLStringButton = new JButton("Copy");
     plantUMLStringButton.addActionListener(
-        actionEvent -> CopyPlantUMLDialog.copyToClipBoard(SharedState.getLastPlantUMLDiagram()));
+        actionEvent -> CopyPlantUMLDialog.copyToClipBoard(SharedState.lastPlantUMLDiagram));
     plantUMLStringLabel.setLabelFor(plantUMLStringButton);
 
     dialogPanel.add(plantUMLStringLabel);
@@ -41,7 +41,7 @@ public class CopyPlantUMLDialog extends DialogWrapper {
     c2.gridy = 1;
     dialogPanel.add(svgLabel, c2);
 
-    if (SharedState.getLastPlantUMLDiagram().isEmpty()) {
+    if (SharedState.lastPlantUMLDiagram.isEmpty()) {
       final var noDiagramLabel = new JLabel("No diagram loaded.");
       svgLabel.setLabelFor(noDiagramLabel);
       dialogPanel.add(noDiagramLabel, c2);
@@ -64,7 +64,7 @@ public class CopyPlantUMLDialog extends DialogWrapper {
   private static String getSVGData() {
     try {
       return new String(
-          PlantUmlDebuggingVisualizer.toImage(SharedState.getLastPlantUMLDiagram(), FileFormat.SVG),
+          PlantUmlDebuggingVisualizer.toImage(SharedState.lastPlantUMLDiagram, FileFormat.SVG),
           StandardCharsets.UTF_8);
     } catch (final IOException e) {
       LOGGER.error(e);
