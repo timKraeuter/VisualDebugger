@@ -52,7 +52,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
 
               @Override
               public void processTerminated(@NotNull ProcessEvent event) {
-                // not relevant
+                SharedState.setLastDiagramXML("");
               }
 
               @Override
