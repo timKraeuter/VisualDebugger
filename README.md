@@ -8,8 +8,9 @@
 
 # Visual Debugger IntelliJ Plugin
 
-Repository for the [Visual Debugger IntelliJ plugin](https://plugins.jetbrains.com/plugin/16851-visual-debugger).
-- A short documentation of the plugin can be found [here](./documentation/README.md).
+This is the repository for the [Visual Debugger IntelliJ plugin](https://plugins.jetbrains.com/plugin/16851-visual-debugger).
+- A **demo** is available on [YouTube](https://www.youtube.com/watch?v=LsAMTnLxWJw).
+- A short plugin documentation for developers can be found [here](./documentation/README.md).
 - The browser-based UI for the plugin can be found [here](https://github.com/timKraeuter/object-diagram-modeler/tree/master/debugger).
 
 A preprint of my *research paper* about the Visual Debugger can be found [here](https://github.com/timKraeuter/ICSME-2022/blob/main/visual-debugger.pdf).
@@ -27,4 +28,4 @@ A preprint of my *research paper* about the Visual Debugger can be found [here](
 # Citation
 [![DOI](https://zenodo.org/badge/359495483.svg)](https://zenodo.org/doi/10.5281/zenodo.10018177)
 
-You can cite the Visual Debugger tool in your papers using the DOI above.
+Using the DOI above, you can cite the Visual Debugger tool in your publications.
