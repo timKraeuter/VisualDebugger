@@ -10,7 +10,7 @@ public class DiagramToJSONConverter {
 
   private static final Logger LOGGER = Logger.getInstance(DiagramToJSONConverter.class);
 
-  public static ObjectMapper mapper = createJacksonMapper();
+  private static final ObjectMapper mapper = createJacksonMapper();
 
   private DiagramToJSONConverter() {}
 
@@ -31,5 +31,9 @@ public class DiagramToJSONConverter {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     return objectMapper;
+  }
+
+  public static ObjectMapper getMapper() {
+    return mapper;
   }
 }
