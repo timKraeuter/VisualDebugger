@@ -8,12 +8,6 @@ public record ODPrimitiveRootValue(
     @JsonProperty String variableName, @JsonProperty String type, @JsonProperty String value)
     implements Comparable<ODPrimitiveRootValue> {
 
-  public ODPrimitiveRootValue(final String variableName, final String type, final String value) {
-    this.variableName = variableName;
-    this.type = type;
-    this.value = value;
-  }
-
   @Override
   public int compareTo(@NotNull final ODPrimitiveRootValue other) {
     final int varNameComparison = this.variableName().compareTo(other.variableName());
