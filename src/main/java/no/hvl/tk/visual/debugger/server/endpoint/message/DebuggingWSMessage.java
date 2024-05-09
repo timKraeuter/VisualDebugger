@@ -1,8 +1,8 @@
 package no.hvl.tk.visual.debugger.server.endpoint.message;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import static no.hvl.tk.visual.debugger.util.DiagramToJSONConverter.mapper;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.diagnostic.Logger;
 
 public class DebuggingWSMessage {
@@ -45,13 +45,11 @@ public class DebuggingWSMessage {
   }
 
   public String serialize() {
-    final ObjectMapper mapper = new ObjectMapper();
-    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     try {
       return mapper.writeValueAsString(this);
     } catch (final JsonProcessingException e) {
       LOGGER.error(e);
-      return "JsonProcessingException: " + e;
+      return "JsonProcessingException";
     }
   }
 }
