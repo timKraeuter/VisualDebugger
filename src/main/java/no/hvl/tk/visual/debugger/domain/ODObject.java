@@ -20,7 +20,6 @@ public class ODObject implements Comparable<ODObject> {
   /** All attributes of this object. */
   @JsonProperty private final List<ODAttributeValue> attributeValues;
 
-  // TODO: Check if this is used. Not used in tests.
   /** All links coming from this object. */
   @JsonIdentityReference(alwaysAsId = true)
   @JsonProperty
