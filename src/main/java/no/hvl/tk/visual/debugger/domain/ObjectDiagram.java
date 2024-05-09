@@ -1,21 +1,18 @@
 package no.hvl.tk.visual.debugger.domain;
 
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@XmlRootElement
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ObjectDiagram {
-  @XmlElement(name = "object")
-  private final Set<ODObject> objects;
+  @JsonProperty private final Set<ODObject> objects;
 
-  @XmlElement(name = "link")
-  private final Set<ODLink> links;
+  @JsonProperty private final Set<ODLink> links;
 
-  @XmlElement(name = "primitiveRootValue")
-  private final Set<ODPrimitiveRootValue> primitiveRootValues;
+  @JsonProperty private final Set<ODPrimitiveRootValue> primitiveRootValues;
 
   public ObjectDiagram() {
     this.objects = new LinkedHashSet<>();

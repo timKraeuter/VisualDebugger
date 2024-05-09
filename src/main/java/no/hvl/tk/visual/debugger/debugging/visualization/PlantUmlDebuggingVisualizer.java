@@ -113,8 +113,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
             primitiveRootValue ->
                 stringBuilder.append(
                     String.format(
-                        "%s=%s%n",
-                        primitiveRootValue.getVariableName(), primitiveRootValue.getValue())));
+                        "%s=%s%n", primitiveRootValue.variableName(), primitiveRootValue.value())));
     stringBuilder.append("}\n");
   }
 

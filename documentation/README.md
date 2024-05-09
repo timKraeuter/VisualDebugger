@@ -37,19 +37,19 @@ for example, together with Eclipse IDE. The source code for the UI can be found 
 
 ### Visual Debugging API
 
-The object diagram is transferred using XML conforming to the schema defined in `api/objectDiagram.xsd`.
+The object diagram is transferred using JSON.
 You can find an implementation of the Visual Debugging API in the class `VisualDebuggingAPIEndpoint`.
 From the point of view of the UI, the following messages are transferred.
 
 #### Incoming WebSocket messages
 
 The UI expects incoming messages to have a specific JSON format. It has a type (`nextDebugStep`, `loadChildren`, or `config`) and a
-content which is a string conforming to the [XML schema for object diagrams](./api/objectDiagram.xsd).
+content which JSON conforming to the ObjectDiagram class.
 
 ```json
 {
   "type": "nextDebugStep",
-  "content": "XML data here...",
+  "content": "JSON data here...",
   "fileName": "PartsListTest",
   "line": "12"
 }

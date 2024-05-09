@@ -1,15 +1,15 @@
 package no.hvl.tk.visual.debugger.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
-import jakarta.xml.bind.annotation.XmlAttribute;
 import java.util.StringJoiner;
 
 /** Represents the attribute value of an object in an object diagram. */
 public class ODAttributeValue {
 
-  @XmlAttribute private final String name;
-  @XmlAttribute private final String type;
-  @XmlAttribute private final String value;
+  @JsonProperty private final String name;
+  @JsonProperty private final String type;
+  @JsonProperty private final String value;
 
   public ODAttributeValue(final String attributeName, final String type, final String value) {
     this.name = attributeName;

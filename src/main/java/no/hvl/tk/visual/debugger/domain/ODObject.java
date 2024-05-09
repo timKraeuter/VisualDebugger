@@ -1,28 +1,28 @@
 package no.hvl.tk.visual.debugger.domain;
 
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlID;
-import jakarta.xml.bind.annotation.XmlIDREF;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.util.*;
 import org.jetbrains.annotations.NotNull;
 
 /** Represents an object in an object diagram. */
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class ODObject implements Comparable<ODObject> {
 
   public static final String OBJECT_ID_PREFIX = "Object_";
   private final long id;
 
-  @XmlAttribute private final String type;
-  @XmlAttribute private final String variableName;
+  @JsonProperty private final String type;
+  @JsonProperty private final String variableName;
 
   /** All attributes of this object. */
-  @XmlElement(name = "attributeValue")
-  private final List<ODAttributeValue> attributeValues;
+  @JsonProperty private final List<ODAttributeValue> attributeValues;
 
   /** All links coming from this object. */
-  @XmlIDREF
-  @XmlElement(name = "link")
+  @JsonIdentityReference(alwaysAsId = true)
+  @JsonProperty
   private final Set<ODLink> links;
 
   public ODObject(final long id, final String type, final String variableName) {
@@ -97,8 +97,7 @@ public class ODObject implements Comparable<ODObject> {
     return Long.hashCode(this.id);
   }
 
-  @XmlID
-  @XmlAttribute
+  @JsonProperty
   public String getId() {
     return OBJECT_ID_PREFIX + this.id;
   }

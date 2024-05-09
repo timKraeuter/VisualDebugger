@@ -75,8 +75,12 @@ public class StackFrameAnalyzer {
     odObject.getAttributeValues().clear();
     ObjectReference objectReference = objectAndReference.getSecond();
 
+    // Force further exploration of the object.
+    this.seenObjectIds.clear();
     this.exploreObject(objectReference, odObject, null, "", 1);
 
+    // Remember new object references for future exploration.
+    this.objectRefMap.putAll(builder.getObjectRefMap());
     return builder.build();
   }
 

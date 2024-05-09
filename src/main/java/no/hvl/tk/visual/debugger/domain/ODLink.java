@@ -1,21 +1,27 @@
 package no.hvl.tk.visual.debugger.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.google.common.base.Objects;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlID;
-import jakarta.xml.bind.annotation.XmlIDREF;
 import java.util.StringJoiner;
 import org.jetbrains.annotations.NotNull;
 
 /** Represents a link between two objects in an object diagram. */
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class ODLink implements Comparable<ODLink> {
 
   /** Name of the association this link is typed in. */
-  @XmlAttribute private final String type;
+  @JsonProperty private final String type;
 
-  @XmlIDREF @XmlAttribute private final ODObject from;
+  @JsonIdentityReference(alwaysAsId = true)
+  @JsonProperty
+  private final ODObject from;
 
-  @XmlIDREF @XmlAttribute private final ODObject to;
+  @JsonIdentityReference(alwaysAsId = true)
+  @JsonProperty
+  private final ODObject to;
 
   public ODLink(final ODObject from, final ODObject to, final String type) {
     this.from = from;
@@ -75,8 +81,7 @@ public class ODLink implements Comparable<ODLink> {
     return Objects.hashCode(this.type, this.from, this.to);
   }
 
-  @XmlID
-  @XmlAttribute
+  @JsonProperty
   public String getId() {
     return "Link_"
         + this.from.getId()

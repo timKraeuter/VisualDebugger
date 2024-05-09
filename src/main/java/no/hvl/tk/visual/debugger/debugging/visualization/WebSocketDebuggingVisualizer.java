@@ -14,7 +14,7 @@ import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter;
 import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingMessageType;
 import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingWSMessage;
 import no.hvl.tk.visual.debugger.util.ClassloaderUtil;
-import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
+import no.hvl.tk.visual.debugger.util.DiagramToJSONConverter;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.tyrus.server.Server;
 
@@ -35,13 +35,13 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     if (SharedState.getDebugAPIServer() == null) {
       return;
     }
-    final String diagramXML = DiagramToXMLConverter.toXml(diagram);
-    SharedState.setLastDiagramXML(diagramXML);
+    final String diagramJSON = DiagramToJSONConverter.toJSON(diagram);
+    SharedState.setLastDiagramJSON(diagramJSON);
 
     final String message =
         new DebuggingWSMessage(
                 DebuggingMessageType.NEXT_DEBUG_STEP,
-                diagramXML,
+                diagramJSON,
                 SharedState.getDebugFileName(),
                 SharedState.getDebugLine())
             .serialize();
