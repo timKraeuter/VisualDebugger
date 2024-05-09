@@ -76,7 +76,7 @@ public class StackFrameAnalyzer {
     ObjectReference objectReference = objectAndReference.getSecond();
 
     // Force further exploration of the object.
-    this.seenObjectIds.remove(objectReference.uniqueID());
+    this.seenObjectIds.clear();
     this.exploreObject(objectReference, odObject, null, "", 1);
 
     // Remember new object references for future exploration.
