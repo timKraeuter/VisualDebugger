@@ -28,13 +28,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.glassfish.tyrus/tyrus-container-grizzly-server
     implementation group: 'org.glassfish.tyrus', name: 'tyrus-container-grizzly-server', version: '2.1.4'
 
-
-    // XML-marshalling not part of jdk (from 11) anymore.
-    // https://mvnrepository.com/artifact/jakarta.xml.bind/jakarta.xml.bind-api
-    implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '4.0.1'
-    // https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-core
-    implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '4.0.4'
-
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.0'
     testImplementation 'org.mockito:mockito-core:5.7.0'

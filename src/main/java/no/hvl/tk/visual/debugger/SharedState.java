@@ -20,8 +20,8 @@ public class SharedState {
   /** All currently connected websocket client which will get updated. */
   private static final Set<Session> websocketClients = new HashSet<>();
 
-  /** Last diagram XML for newly connecting clients. */
-  private static String lastDiagramXML = "";
+  /** Last diagram JSON for newly connecting clients. */
+  private static String lastDiagramJSON = "";
 
   private static String debugFileName;
   private static Integer debugLine;
@@ -78,12 +78,12 @@ public class SharedState {
     websocketClients.remove(clientSession);
   }
 
-  public static String getLastDiagramXML() {
-    return lastDiagramXML;
+  public static String getLastDiagramJSON() {
+    return lastDiagramJSON;
   }
 
-  public static void setLastDiagramXML(final String diagramXML) {
-    SharedState.lastDiagramXML = diagramXML;
+  public static void setLastDiagramJSON(final String diagramJSON) {
+    SharedState.lastDiagramJSON = diagramJSON;
   }
 
   public static void setUIServer(final HttpServer server) {

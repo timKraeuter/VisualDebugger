@@ -20,11 +20,11 @@ class ODPrimitiveRootValueTest {
     assertThat(value1, is(not("123")));
 
     final ODPrimitiveRootValue valueWithDifferentName =
-        new ODPrimitiveRootValue("name1", value1.getType(), value1.getValue());
+        new ODPrimitiveRootValue("name1", value1.type(), value1.value());
     final ODPrimitiveRootValue valueWithDifferentType =
-        new ODPrimitiveRootValue(value1.getVariableName(), "type1", value1.getValue());
+        new ODPrimitiveRootValue(value1.variableName(), "type1", value1.value());
     final ODPrimitiveRootValue valueWithDifferentValue =
-        new ODPrimitiveRootValue(value1.getVariableName(), value1.getType(), "value1");
+        new ODPrimitiveRootValue(value1.variableName(), value1.type(), "value1");
 
     assertThat(value1, is(not(valueWithDifferentName)));
     assertThat(value1, is(not(valueWithDifferentType)));

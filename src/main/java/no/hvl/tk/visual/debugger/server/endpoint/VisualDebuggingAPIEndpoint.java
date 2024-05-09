@@ -14,7 +14,7 @@ import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 import no.hvl.tk.visual.debugger.server.VisualDebuggingAPIServerStarter;
 import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingMessageType;
 import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingWSMessage;
-import no.hvl.tk.visual.debugger.util.DiagramToXMLConverter;
+import no.hvl.tk.visual.debugger.util.DiagramToJSONConverter;
 
 @ServerEndpoint("/debug")
 public class VisualDebuggingAPIEndpoint {
@@ -31,11 +31,11 @@ public class VisualDebuggingAPIEndpoint {
 
     sendUIConfig(session);
 
-    // Send the last diagram xml to the newly connected client.
+    // Send the last diagram JSON to the newly connected client.
     final DebuggingWSMessage debugMessage =
         new DebuggingWSMessage(
             DebuggingMessageType.NEXT_DEBUG_STEP,
-            SharedState.getLastDiagramXML(),
+            SharedState.getLastDiagramJSON(),
             SharedState.getDebugFileName(),
             SharedState.getDebugLine());
     VisualDebuggingAPIServerStarter.sendMessageToClient(session, debugMessage.serialize());
@@ -56,7 +56,7 @@ public class VisualDebuggingAPIEndpoint {
     try {
       final ObjectDiagram diagram = debuggingInfoVisualizer.getObjectWithChildren(objectId);
       return new DebuggingWSMessage(
-              DebuggingMessageType.LOAD_CHILDREN, DiagramToXMLConverter.toXml(diagram))
+              DebuggingMessageType.LOAD_CHILDREN, DiagramToJSONConverter.toJSON(diagram))
           .serialize();
     } catch (NumberFormatException e) {
       return new DebuggingWSMessage(
