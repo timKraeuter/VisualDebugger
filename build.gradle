@@ -24,7 +24,7 @@ repositories {
 dependencies {
     intellijPlatform {
         instrumentationTools()
-        intellijIdeaUltimate('2024.2')
+        intellijIdeaCommunity('2024.2')
         bundledPlugin('com.intellij.java')
     }
 
@@ -95,7 +95,7 @@ sonar {
         property 'sonar.projectKey', 'timKraeuter_VisualDebugger'
         property 'sonar.organization', 'timkraeuter'
         property 'sonar.host.url', 'https://sonarcloud.io'
-        property 'sonar.exclusions', '**/mocks/**'
+        property 'sonar.exclusions', '**/mocks/**/*'
     }
 }
 
