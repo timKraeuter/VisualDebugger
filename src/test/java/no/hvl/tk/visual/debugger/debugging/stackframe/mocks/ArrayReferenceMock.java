@@ -63,8 +63,7 @@ public class ArrayReferenceMock implements ArrayReference {
   }
 
   @Override
-  public void setValues(
-      final int i, final List<? extends Value> list, final int i1, final int i2) {
+  public void setValues(final int i, final List<? extends Value> list, final int i1, final int i2) {
     // Irrelevant
   }
 
