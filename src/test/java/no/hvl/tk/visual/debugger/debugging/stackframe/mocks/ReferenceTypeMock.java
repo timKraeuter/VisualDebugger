@@ -277,7 +277,9 @@ public class ReferenceTypeMock implements ReferenceType, ClassType {
   }
 
   @Override
-  public void setValue(final Field field, final Value value) {}
+  public void setValue(final Field field, final Value value) {
+    // Irrelevant
+  }
 
   @Override
   public Value invokeMethod(

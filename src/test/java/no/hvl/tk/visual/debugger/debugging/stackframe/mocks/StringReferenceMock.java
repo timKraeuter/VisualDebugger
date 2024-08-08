@@ -44,7 +44,9 @@ public class StringReferenceMock implements StringReference {
   }
 
   @Override
-  public void setValue(Field field, Value value) {}
+  public void setValue(Field field, Value value) {
+    // Irrelevant
+  }
 
   @Override
   public Value invokeMethod(
