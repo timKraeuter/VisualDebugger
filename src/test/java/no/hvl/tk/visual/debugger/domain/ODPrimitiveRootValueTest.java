@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 class ODPrimitiveRootValueTest {
@@ -34,8 +33,7 @@ class ODPrimitiveRootValueTest {
     final Set<ODPrimitiveRootValue> values =
         Sets.newHashSet(
             value1, valueWithDifferentName, valueWithDifferentType, valueWithDifferentValue);
-    final List<ODPrimitiveRootValue> sortedValues =
-        values.stream().sorted().collect(Collectors.toList());
+    final List<ODPrimitiveRootValue> sortedValues = values.stream().sorted().toList();
 
     assertThat(
         sortedValues,
