@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.intellij.platform' version '2.0.0'
     id 'org.sonarqube' version '5.1.0.4882'
     id 'jacoco'
-    id 'net.ltgt.errorprone' version '3.1.0'
+    id 'net.ltgt.errorprone' version '4.0.1'
     id 'com.diffplug.spotless' version '6.25.0'
 }
 
@@ -91,6 +91,7 @@ sonar {
         property 'sonar.projectKey', 'timKraeuter_VisualDebugger'
         property 'sonar.organization', 'timkraeuter'
         property 'sonar.host.url', 'https://sonarcloud.io'
+        property 'sonar.exclusions', '**/mocks/**'
     }
 }
 
