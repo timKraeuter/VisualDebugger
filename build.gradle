@@ -1,14 +1,14 @@
 plugins {
     id 'java'
-    id("org.jetbrains.intellij.platform") version "2.0.0"
-    id "org.sonarqube" version "4.4.1.3373" // Check update
+    id 'org.jetbrains.intellij.platform' version '2.0.0'
+    id 'org.sonarqube' version '5.1.0.4882'
     id 'jacoco'
-    id "net.ltgt.errorprone" version "3.1.0" // Check update
-    id "com.diffplug.spotless" version "6.25.0"  // Check update
+    id 'net.ltgt.errorprone' version '3.1.0'
+    id 'com.diffplug.spotless' version '6.25.0'
 }
 
 group 'no.hvl.tk'
-version '2.3.1'
+version '2.3.2'
 
 repositories {
     mavenCentral()
@@ -20,8 +20,8 @@ repositories {
 dependencies {
     intellijPlatform {
         instrumentationTools()
-        intellijIdeaUltimate("2024.2")
-        bundledPlugin("com.intellij.java")
+        intellijIdeaUltimate('2024.2')
+        bundledPlugin('com.intellij.java')
     }
 
     // https://mvnrepository.com/artifact/net.sourceforge.plantuml/plantuml
@@ -46,23 +46,23 @@ dependencies {
     // https://mvnrepository.com/artifact/org.junit.platform/junit-platform-launcher
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.1'
 
-    errorprone("com.google.errorprone:error_prone_core:2.16")
+    errorprone('com.google.errorprone:error_prone_core:2.16')
 }
 
 patchPluginXml {
-    changeNotes = """Fix loading children not working bug and internal improvements."""
+    changeNotes = '''Fix loading children not working bug and internal improvements.'''
 }
 
 test {
     useJUnitPlatform()
     jacoco {
         includeNoLocationClasses = true
-        excludes = ["jdk.internal.*"]
+        excludes = ['jdk.internal.*']
     }
 }
 
 tasks.runIde {
-    jvmArgs("--add-exports", "java.base/jdk.internal.vm=ALL-UNNAMED")
+    jvmArgs('--add-exports', 'java.base/jdk.internal.vm=ALL-UNNAMED')
 }
 
 tasks.named('sonar').configure {
@@ -89,13 +89,13 @@ jacocoTestCoverageVerification {
 
 sonar {
     properties {
-        property "sonar.projectKey", "timKraeuter_VisualDebugger"
-        property "sonar.organization", "timkraeuter"
-        property "sonar.host.url", "https://sonarcloud.io"
+        property 'sonar.projectKey', 'timKraeuter_VisualDebugger'
+        property 'sonar.organization', 'timkraeuter'
+        property 'sonar.host.url', 'https://sonarcloud.io'
     }
 }
 
 tasks.compileTestJava {
     // Ignore manuel tests.
-    options.errorprone.excludedPaths = ".*/manueltests/.*"
+    options.errorprone.excludedPaths = '.*/manueltests/.*'
 }
