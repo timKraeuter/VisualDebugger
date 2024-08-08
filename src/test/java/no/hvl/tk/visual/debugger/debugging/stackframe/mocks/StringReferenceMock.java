@@ -53,10 +53,14 @@ public class StringReferenceMock implements StringReference {
   }
 
   @Override
-  public void disableCollection() {}
+  public void disableCollection() {
+    // Irrelevant
+  }
 
   @Override
-  public void enableCollection() {}
+  public void enableCollection() {
+    // Irrelevant
+  }
 
   @Override
   public boolean isCollected() {

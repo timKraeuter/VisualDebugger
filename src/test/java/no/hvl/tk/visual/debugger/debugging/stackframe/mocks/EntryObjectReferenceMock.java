@@ -55,13 +55,19 @@ public class EntryObjectReferenceMock implements ObjectReference {
   }
 
   @Override
-  public void setValue(final Field field, final Value value) {}
+  public void setValue(final Field field, final Value value) {
+    // Irrelevant
+  }
 
   @Override
-  public void disableCollection() {}
+  public void disableCollection() {
+    // Irrelevant
+  }
 
   @Override
-  public void enableCollection() {}
+  public void enableCollection() {
+    // Irrelevant
+  }
 
   @Override
   public boolean isCollected() {

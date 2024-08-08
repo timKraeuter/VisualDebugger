@@ -53,14 +53,20 @@ public class ArrayReferenceMock implements ArrayReference {
   }
 
   @Override
-  public void setValue(final int i, final Value value) {}
+  public void setValue(final int i, final Value value) {
+    // Irrelevant
+  }
 
   @Override
-  public void setValues(final List<? extends Value> list) {}
+  public void setValues(final List<? extends Value> list) {
+    // Irrelevant
+  }
 
   @Override
   public void setValues(
-      final int i, final List<? extends Value> list, final int i1, final int i2) {}
+      final int i, final List<? extends Value> list, final int i1, final int i2) {
+    // Irrelevant
+  }
 
   @Override
   public Value getValue(final Field field) {
@@ -73,7 +79,9 @@ public class ArrayReferenceMock implements ArrayReference {
   }
 
   @Override
-  public void setValue(final Field field, final Value value) {}
+  public void setValue(final Field field, final Value value) {
+    // Irrelevant
+  }
 
   @Override
   public Value invokeMethod(
@@ -85,10 +93,14 @@ public class ArrayReferenceMock implements ArrayReference {
   }
 
   @Override
-  public void disableCollection() {}
+  public void disableCollection() {
+    // Irrelevant
+  }
 
   @Override
-  public void enableCollection() {}
+  public void enableCollection() {
+    // Irrelevant
+  }
 
   @Override
   public boolean isCollected() {

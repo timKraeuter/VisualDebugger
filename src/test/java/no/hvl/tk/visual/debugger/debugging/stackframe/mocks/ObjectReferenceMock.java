@@ -114,11 +114,19 @@ public class ObjectReferenceMock<E extends Value> implements ObjectReference, It
     return null;
   }
 
-  @Override
-  public void disableCollection() {}
+  public void setItMapSource(final Map<E, E> itMapSource) {
+    this.itMapSource = itMapSource;
+  }
 
   @Override
-  public void enableCollection() {}
+  public void disableCollection() {
+    // Irrelevant
+  }
+
+  @Override
+  public void enableCollection() {
+    // Irrelevant
+  }
 
   @Override
   public boolean isCollected() {
@@ -153,9 +161,5 @@ public class ObjectReferenceMock<E extends Value> implements ObjectReference, It
   @Override
   public VirtualMachine virtualMachine() {
     return null;
-  }
-
-  public void setItMapSource(final Map<E, E> itMapSource) {
-    this.itMapSource = itMapSource;
   }
 }
