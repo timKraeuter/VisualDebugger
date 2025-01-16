@@ -8,7 +8,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '2.3.4'
+version '2.3.5'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -53,8 +53,8 @@ dependencies {
 }
 
 patchPluginXml {
-    changeNotes = '''Update to 2024.3'''
-    untilBuild.set("243.*")
+    changeNotes = '''Update to 2025.1'''
+    untilBuild.set("251.*")
 }
 
 test {
