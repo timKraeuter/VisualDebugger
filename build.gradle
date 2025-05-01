@@ -53,8 +53,8 @@ dependencies {
 }
 
 patchPluginXml {
-    changeNotes = '''Update to 2025.1'''
-    untilBuild.set("251.*")
+    changeNotes = '''Update to 2025.2'''
+    untilBuild.set("252.*")
 }
 
 test {
