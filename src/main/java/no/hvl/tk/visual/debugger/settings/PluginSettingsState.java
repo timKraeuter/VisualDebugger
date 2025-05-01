@@ -24,6 +24,9 @@ public class PluginSettingsState implements PersistentStateComponent<PluginSetti
   private boolean showNullValues = false;
 
   public static PluginSettingsState getInstance() {
+    if (ApplicationManager.getApplication() == null) {
+      return new PluginSettingsState();
+    }
     return ApplicationManager.getApplication().getService(PluginSettingsState.class);
   }
 

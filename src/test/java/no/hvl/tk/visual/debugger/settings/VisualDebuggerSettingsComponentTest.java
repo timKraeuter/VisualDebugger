@@ -14,16 +14,9 @@ class VisualDebuggerSettingsComponentTest {
   @ParameterizedTest
   @ValueSource(strings = {"a", "", "-1", "1.1", "1,1"})
   void validateDepthField(String input) {
-    addJBTextFieldWorkaround();
     JBTextField textField = new JBTextField(input);
     ValidationInfo validationInfo = VisualDebuggerSettingsComponent.validateNumberField(textField);
     assertNotNull(validationInfo);
     assertThat(validationInfo.message, is(VisualDebuggerSettingsComponent.NUMBER_GREATER_EQUALS_0));
-  }
-
-  private static void addJBTextFieldWorkaround() {
-    // Workaround to avoid an error in the new JBTextField code since there is no real UI in the
-    // test.
-    System.setProperty("hidpi", "false");
   }
 }
