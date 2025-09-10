@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'org.jetbrains.intellij.platform' version '2.5.0'
-    id 'org.sonarqube' version '5.1.0.4882'
+    id 'org.sonarqube' version '6.3.1.5724'
     id 'jacoco'
     id 'net.ltgt.errorprone' version '4.0.1'
     id 'com.diffplug.spotless' version '6.25.0'
@@ -31,7 +31,7 @@ dependencies {
     // https://mvnrepository.com/artifact/net.sourceforge.plantuml/plantuml
     implementation group: 'net.sourceforge.plantuml', name: 'plantuml', version: '1.2023.10'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.14.0'
 
     // Websocket server and server container dependencies
     // https://mvnrepository.com/artifact/jakarta.websocket/jakarta.websocket-api
