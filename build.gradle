@@ -3,8 +3,8 @@ plugins {
     id 'org.jetbrains.intellij.platform' version '2.5.0'
     id 'org.sonarqube' version '6.3.1.5724'
     id 'jacoco'
-    id 'net.ltgt.errorprone' version '4.0.1'
-    id 'com.diffplug.spotless' version '6.25.0'
+    id 'net.ltgt.errorprone' version '4.3.0'
+    id 'com.diffplug.spotless' version '7.2.1'
 }
 
 group 'no.hvl.tk'
