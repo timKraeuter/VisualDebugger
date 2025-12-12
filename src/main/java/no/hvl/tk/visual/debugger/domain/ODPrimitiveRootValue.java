@@ -16,7 +16,9 @@ public record ODPrimitiveRootValue(
       return varNameComparison;
     }
     // Null-safe since values could be null.
-    final int valueComparison = Objects.compare(this.value(), other.value(), Comparator.nullsFirst(Comparator.naturalOrder()));
+    final int valueComparison =
+        Objects.compare(
+            this.value(), other.value(), Comparator.nullsFirst(Comparator.naturalOrder()));
     if (valueComparison != 0) {
       return valueComparison;
     }
