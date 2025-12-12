@@ -98,7 +98,6 @@ sonar {
         property 'sonar.projectKey', 'timKraeuter_VisualDebugger'
         property 'sonar.organization', 'timkraeuter'
         property 'sonar.host.url', 'https://sonarcloud.io'
-        property 'sonar.scanner.skipJreProvisioning', 'true' // Fixes a crash with the new sonar version
     }
 }
 
