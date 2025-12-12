@@ -31,15 +31,15 @@ dependencies {
     // https://mvnrepository.com/artifact/net.sourceforge.plantuml/plantuml
     implementation group: 'net.sourceforge.plantuml', name: 'plantuml', version: '1.2023.10'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.14.0'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.20.0'
 
     // Websocket server and server container dependencies
     // https://mvnrepository.com/artifact/jakarta.websocket/jakarta.websocket-api
-    compileOnly group: 'jakarta.websocket', name: 'jakarta.websocket-api', version: '2.1.1'
+    compileOnly group: 'jakarta.websocket', name: 'jakarta.websocket-api', version: '2.2.0'
     // https://mvnrepository.com/artifact/org.glassfish.tyrus/tyrus-server
-    implementation group: 'org.glassfish.tyrus', name: 'tyrus-server', version: '2.2.0'
+    implementation group: 'org.glassfish.tyrus', name: 'tyrus-server', version: '2.2.1'
     // https://mvnrepository.com/artifact/org.glassfish.tyrus/tyrus-container-grizzly-server
-    implementation group: 'org.glassfish.tyrus', name: 'tyrus-container-grizzly-server', version: '2.2.0'
+    implementation group: 'org.glassfish.tyrus', name: 'tyrus-container-grizzly-server', version: '2.2.1'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.0'
@@ -49,12 +49,13 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.1'
 
-    errorprone('com.google.errorprone:error_prone_core:2.16')
+    // https://mvnrepository.com/artifact/com.google.errorprone/error_prone_core
+    errorprone('com.google.errorprone:error_prone_core:2.45.0')
 }
 
 patchPluginXml {
-    changeNotes = '''Update to 2025.2'''
-    untilBuild.set("252.*")
+    changeNotes = '''Update to 2025.3'''
+    untilBuild.set("253.*")
 }
 
 test {

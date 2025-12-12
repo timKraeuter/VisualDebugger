@@ -177,7 +177,7 @@ public class PlantUmlDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
   private static void doPrimitiveMapVisualisation(
       final StringBuilder stringBuilder,
-      final HashSet<ODObject> ignoredObjects,
+      final Set<ODObject> ignoredObjects,
       final ODObject object) {
     stringBuilder.append(
         String.format(
