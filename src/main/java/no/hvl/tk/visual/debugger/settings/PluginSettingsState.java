@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public class PluginSettingsState implements PersistentStateComponent<PluginSettingsState> {
 
   private DebuggingVisualizerOption visualizerOption = DebuggingVisualizerOption.WEB_UI;
-  private Integer visualisationDepth = 0;
+  private Integer visualisationDepth = 3;
   private Integer savedDebugSteps = 3;
 
   private boolean coloredDiff = true;

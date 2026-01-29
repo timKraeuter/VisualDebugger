@@ -8,7 +8,7 @@ plugins {
 }
 
 group 'no.hvl.tk'
-version '2.3.7'
+version '2.3.8'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -29,7 +29,7 @@ dependencies {
     }
 
     // https://mvnrepository.com/artifact/net.sourceforge.plantuml/plantuml
-    implementation group: 'net.sourceforge.plantuml', name: 'plantuml', version: '1.2023.10'
+    implementation group: 'net.sourceforge.plantuml', name: 'plantuml', version: '1.2025.2'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.20.0'
 
@@ -37,15 +37,15 @@ dependencies {
     // https://mvnrepository.com/artifact/jakarta.websocket/jakarta.websocket-api
     compileOnly group: 'jakarta.websocket', name: 'jakarta.websocket-api', version: '2.2.0'
     // https://mvnrepository.com/artifact/org.glassfish.tyrus/tyrus-server
-    implementation group: 'org.glassfish.tyrus', name: 'tyrus-server', version: '2.2.1'
+    implementation group: 'org.glassfish.tyrus', name: 'tyrus-server', version: '2.2.2'
     // https://mvnrepository.com/artifact/org.glassfish.tyrus/tyrus-container-grizzly-server
-    implementation group: 'org.glassfish.tyrus', name: 'tyrus-container-grizzly-server', version: '2.2.1'
+    implementation group: 'org.glassfish.tyrus', name: 'tyrus-container-grizzly-server', version: '2.2.2'
 
     testImplementation 'junit:junit:4.13.2' // Needed for test execution in IntelliJ Platform
     testImplementation 'org.junit.jupiter:junit-jupiter-api:6.0.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:6.0.1'
     testImplementation 'org.hamcrest:hamcrest:3.0'
-    testImplementation 'org.mockito:mockito-core:5.7.0'
+    testImplementation 'org.mockito:mockito-core:5.21.0'
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:6.0.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.0.1'
@@ -55,7 +55,7 @@ dependencies {
 }
 
 patchPluginXml {
-    changeNotes = '''Update to 2025.3'''
+    changeNotes = '''Update internal dependencies'''
     untilBuild.set("253.*")
 }
 
