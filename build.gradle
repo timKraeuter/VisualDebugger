@@ -29,7 +29,7 @@ dependencies {
     }
 
     // https://mvnrepository.com/artifact/net.sourceforge.plantuml/plantuml
-    implementation group: 'net.sourceforge.plantuml', name: 'plantuml', version: '1.2025.2'
+    implementation group: 'net.sourceforge.plantuml', name: 'plantuml', version: '1.2026.1'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.20.0'
 
