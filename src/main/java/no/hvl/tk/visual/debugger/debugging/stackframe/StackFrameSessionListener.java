@@ -4,16 +4,15 @@ import com.intellij.debugger.engine.JavaStackFrame;
 import com.intellij.debugger.jdi.StackFrameProxyImpl;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessListener;
-import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.Key;
-import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebugSessionListener;
+import com.intellij.xdebugger.impl.XDebugSessionImpl;
 import java.awt.*;
 import javax.swing.*;
 import no.hvl.tk.visual.debugger.SharedState;
@@ -126,12 +125,20 @@ public class StackFrameSessionListener implements XDebugSessionListener {
     uiContainer.setToolbar(actionToolbar.getComponent());
     uiContainer.setContent(this.userInterface);
 
-    final RunnerLayoutUi ui = this.debugSession.getUI();
-    final var content =
-        ui.createContent(
-            CONTENT_ID, uiContainer, "Visual Debugger", VisualDebuggerIcons.VD_ICON, null);
-    content.setCloseable(false);
-    UIUtil.invokeLaterIfNeeded(() -> ui.addContent(content));
+    ((XDebugSessionImpl) this.debugSession)
+        .runWhenUiReady(
+            ui -> {
+              final var content =
+                  ui.createContent(
+                      CONTENT_ID,
+                      uiContainer,
+                      "Visual Debugger",
+                      VisualDebuggerIcons.VD_ICON,
+                      null);
+              content.setCloseable(false);
+              ui.addContent(content);
+              return null;
+            });
     LOGGER.debug("UI initialized!");
   }
 

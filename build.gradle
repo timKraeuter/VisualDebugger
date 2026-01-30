@@ -24,7 +24,7 @@ repositories {
 dependencies {
     intellijPlatform {
         instrumentationTools()
-        intellijIdea("2025.2")
+        intellijIdea("261.19799.20")
         bundledPlugin('com.intellij.java')
     }
 
