@@ -26,7 +26,7 @@ public class VisualDebuggingAPIServerStarter {
     final Server server =
         new Server(
             ServerConstants.HOST_NAME,
-            ServerConstants.VISUAL_DEBUGGING_API_SERVER_PORT,
+            ServerConstants.getApiServerPort(),
             "",
             new HashMap<>(),
             VisualDebuggingAPIEndpoint.class);

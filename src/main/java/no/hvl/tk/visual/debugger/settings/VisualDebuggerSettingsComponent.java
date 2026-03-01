@@ -17,12 +17,15 @@ import org.jetbrains.annotations.Nullable;
 
 public class VisualDebuggerSettingsComponent {
   static final String NUMBER_GREATER_EQUALS_0 = "Must be a number greater or equal to 0.";
+  static final String PORT_VALIDATION_MESSAGE = "Must be a number between 1024 and 65535.";
 
   private final JPanel myMainPanel;
   private final JBTextField visualizationDepthField = new JBTextField();
   private final JBTextField savedDebugStepsField = new JBTextField();
   private final JBCheckBox coloredDiffCheckBox = new JBCheckBox();
   private final JBCheckBox showNullValuesCheckBox = new JBCheckBox();
+  private final JBTextField uiServerPortField = new JBTextField();
+  private final JBTextField apiServerPortField = new JBTextField();
   private final ComboBox<DebuggingVisualizerOption> visualizerOptionsCombobox =
       new ComboBox<>(DebuggingVisualizerOption.values());
 
@@ -43,6 +46,10 @@ public class VisualDebuggerSettingsComponent {
             .addSeparator(5)
             .addLabeledComponent(
                 new JBLabel("Show null values: "), this.showNullValuesCheckBox, 6, false)
+            .addSeparator(7)
+            .addLabeledComponent(new JBLabel("UI server port: "), this.uiServerPortField, 8, false)
+            .addLabeledComponent(
+                new JBLabel("WebSocket API server port: "), this.apiServerPortField, 9, false)
             .addComponentFillVertically(new JPanel(), 0)
             .getPanel();
 
@@ -81,6 +88,38 @@ public class VisualDebuggerSettingsComponent {
                     .ifPresent(ComponentValidator::revalidate);
               }
             });
+
+    new ComponentValidator(disposable)
+        .withValidator(
+            () -> validatePortField(VisualDebuggerSettingsComponent.this.uiServerPortField))
+        .installOn(this.uiServerPortField);
+    this.uiServerPortField
+        .getDocument()
+        .addDocumentListener(
+            new DocumentAdapter() {
+              @Override
+              protected void textChanged(@NotNull final DocumentEvent e) {
+                ComponentValidator.getInstance(
+                        VisualDebuggerSettingsComponent.this.uiServerPortField)
+                    .ifPresent(ComponentValidator::revalidate);
+              }
+            });
+
+    new ComponentValidator(disposable)
+        .withValidator(
+            () -> validatePortField(VisualDebuggerSettingsComponent.this.apiServerPortField))
+        .installOn(this.apiServerPortField);
+    this.apiServerPortField
+        .getDocument()
+        .addDocumentListener(
+            new DocumentAdapter() {
+              @Override
+              protected void textChanged(@NotNull final DocumentEvent e) {
+                ComponentValidator.getInstance(
+                        VisualDebuggerSettingsComponent.this.apiServerPortField)
+                    .ifPresent(ComponentValidator::revalidate);
+              }
+            });
   }
 
   @Nullable static ValidationInfo validateNumberField(JBTextField depthField) {
@@ -93,6 +132,19 @@ public class VisualDebuggerSettingsComponent {
     if (depth < 0) {
       return new ValidationInfo(
           VisualDebuggerSettingsComponent.NUMBER_GREATER_EQUALS_0, depthField);
+    }
+    // Means everything is ok.
+    return null;
+  }
+
+  @Nullable static ValidationInfo validatePortField(JBTextField portField) {
+    final String enteredPort = portField.getText();
+    if (StringUtil.isEmpty(enteredPort) || !StringUtil.isNotNegativeNumber(enteredPort)) {
+      return new ValidationInfo(VisualDebuggerSettingsComponent.PORT_VALIDATION_MESSAGE, portField);
+    }
+    int port = Integer.parseInt(enteredPort);
+    if (port < 1024 || port > 65535) {
+      return new ValidationInfo(VisualDebuggerSettingsComponent.PORT_VALIDATION_MESSAGE, portField);
     }
     // Means everything is ok.
     return null;
@@ -144,5 +196,21 @@ public class VisualDebuggerSettingsComponent {
 
   public boolean getShowNullValues() {
     return showNullValuesCheckBox.isSelected();
+  }
+
+  @NotNull public String getUiServerPortText() {
+    return uiServerPortField.getText();
+  }
+
+  public void setUiServerPortText(@NotNull final String port) {
+    this.uiServerPortField.setText(port);
+  }
+
+  @NotNull public String getApiServerPortText() {
+    return apiServerPortField.getText();
+  }
+
+  public void setApiServerPortText(@NotNull final String port) {
+    this.apiServerPortField.setText(port);
   }
 }

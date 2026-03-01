@@ -14,6 +14,6 @@ public class OpenBrowserAction extends AnAction {
     if (SharedState.getUiServer() == null || !SharedState.getUiServer().isStarted()) {
       VisualDebuggerNotifications.notifyServerNotRunning();
     }
-    BrowserUtil.browse(ServerConstants.UI_SERVER_URL);
+    BrowserUtil.browse(ServerConstants.getUiServerUrl());
   }
 }

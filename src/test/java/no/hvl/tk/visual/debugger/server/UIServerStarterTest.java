@@ -33,7 +33,7 @@ class ServerStarterTest {
     try {
       httpServer = UIServerStarter.runNewServer();
 
-      HttpGet request = new HttpGet(ServerConstants.UI_SERVER_URL);
+      HttpGet request = new HttpGet(ServerConstants.getUiServerUrl());
 
       CloseableHttpResponse response = HttpClientBuilder.create().build().execute(request);
 
@@ -51,8 +51,7 @@ class ServerStarterTest {
   void startAPIServerTest() throws Exception {
     final String API_SERVER_URL =
         String.format(
-            "ws://%s:%s/debug",
-            ServerConstants.HOST_NAME, ServerConstants.VISUAL_DEBUGGING_API_SERVER_PORT);
+            "ws://%s:%s/debug", ServerConstants.HOST_NAME, ServerConstants.getApiServerPort());
     Server websocketServer = null;
     try {
       websocketServer = VisualDebuggingAPIServerStarter.runNewServer();
