@@ -48,7 +48,6 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     SharedState.getWebsocketClients()
         .forEach(
             clientSession ->
-                // If one client fails no more messages are sent. We should change this.
                 VisualDebuggingAPIServerStarter.sendMessageToClient(clientSession, message));
   }
 
@@ -63,14 +62,15 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
   private void initUI() {
     final var launchEmbeddedBrowserButton = new JButton("Launch embedded browser (experimental)");
     final var launchBrowserButton =
-        new JButton(String.format("Launch browser (%s)", ServerConstants.UI_SERVER_URL));
+        new JButton(String.format("Launch browser (%s)", ServerConstants.getUiServerUrl()));
     launchEmbeddedBrowserButton.addActionListener(
         e -> {
           this.debugUI.remove(launchEmbeddedBrowserButton);
           this.debugUI.remove(launchBrowserButton);
           launchEmbeddedBrowser();
         });
-    launchBrowserButton.addActionListener(e -> BrowserUtil.browse(ServerConstants.UI_SERVER_URL));
+    launchBrowserButton.addActionListener(
+        e -> BrowserUtil.browse(ServerConstants.getUiServerUrl()));
     if (SharedState.isEmbeddedBrowserActive()) {
       launchEmbeddedBrowser();
     } else {
@@ -85,7 +85,7 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
       browser.getJBCefClient().getCefClient().addDownloadHandler(new SimpleDownloadHandler());
       browser.setPageBackgroundColor("white");
     }
-    browser.loadURL(ServerConstants.UI_SERVER_URL_EMBEDDED);
+    browser.loadURL(ServerConstants.getUiServerUrlEmbedded());
     debugUI.add(browser.getComponent(), 0);
     SharedState.setEmbeddedBrowserActive(true);
     this.debugUI.revalidate();
@@ -115,8 +115,18 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
   @Override
   public void debuggingDeactivated() {
+    // Close and clear all websocket client sessions before stopping servers.
+    SharedState.clearWebsocketClients();
+
     stopUIServerIfNeeded();
     stopDebugAPIServerIfNeeded();
+
+    // Dispose the embedded browser to release native CEF resources.
+    if (browser != null) {
+      browser.dispose();
+      browser = null;
+    }
+    SharedState.setEmbeddedBrowserActive(false);
   }
 
   private static void stopUIServerIfNeeded() {

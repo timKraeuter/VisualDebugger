@@ -50,7 +50,9 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
             settingsComponent.getVisualizationDepthText(), settings.getVisualisationDepth())
         || isModified(settingsComponent.getSavedDebugStepsText(), settings.getSavedDebugSteps())
         || settingsComponent.getColoredDiffValue() != settings.isColoredDiff()
-        || settingsComponent.getShowNullValues() != settings.isShowNullValues();
+        || settingsComponent.getShowNullValues() != settings.isShowNullValues()
+        || isPortModified(settingsComponent.getUiServerPortText(), settings.getUiServerPort())
+        || isPortModified(settingsComponent.getApiServerPortText(), settings.getApiServerPort());
   }
 
   private boolean visualizerOptionChanged(final PluginSettingsState settings) {
@@ -60,6 +62,10 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
 
   private boolean isModified(String newDepthText, Integer currentDepth) {
     return !newDepthText.equals(currentDepth.toString());
+  }
+
+  private boolean isPortModified(String newPortText, int currentPort) {
+    return !newPortText.equals(Integer.toString(currentPort));
   }
 
   @Override
@@ -76,6 +82,11 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
     settings.setColoredDiff(settingsComponent.getColoredDiffValue());
 
     settings.setShowNullValues(settingsComponent.getShowNullValues());
+
+    final int newUiPort = Integer.parseInt(this.settingsComponent.getUiServerPortText());
+    final int newApiPort = Integer.parseInt(this.settingsComponent.getApiServerPortText());
+    settings.setUiServerPort(newUiPort);
+    settings.setApiServerPort(newApiPort);
 
     sendUpdatedConfig();
   }
@@ -104,6 +115,8 @@ public class VisualDebuggerSettingsConfigurable implements SearchableConfigurabl
     this.settingsComponent.chooseDebuggingVisualizerOption(settings.getVisualizerOption());
     this.settingsComponent.setColoredDiffValue(settings.isColoredDiff());
     this.settingsComponent.setShowNullValues(settings.isShowNullValues());
+    this.settingsComponent.setUiServerPortText(Integer.toString(settings.getUiServerPort()));
+    this.settingsComponent.setApiServerPortText(Integer.toString(settings.getApiServerPort()));
   }
 
   @Override

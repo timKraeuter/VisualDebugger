@@ -23,6 +23,9 @@ public class PluginSettingsState implements PersistentStateComponent<PluginSetti
 
   private boolean showNullValues = false;
 
+  private int uiServerPort = 8070;
+  private int apiServerPort = 8071;
+
   public static PluginSettingsState getInstance() {
     if (ApplicationManager.getApplication() == null) {
       return new PluginSettingsState();
@@ -82,5 +85,21 @@ public class PluginSettingsState implements PersistentStateComponent<PluginSetti
 
   public void setShowNullValues(boolean showNullValues) {
     this.showNullValues = showNullValues;
+  }
+
+  public int getUiServerPort() {
+    return uiServerPort;
+  }
+
+  public void setUiServerPort(int uiServerPort) {
+    this.uiServerPort = uiServerPort;
+  }
+
+  public int getApiServerPort() {
+    return apiServerPort;
+  }
+
+  public void setApiServerPort(int apiServerPort) {
+    this.apiServerPort = apiServerPort;
   }
 }

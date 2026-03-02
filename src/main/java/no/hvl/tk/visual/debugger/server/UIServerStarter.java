@@ -15,7 +15,7 @@ public class UIServerStarter {
   public static HttpServer runNewServer() {
     final HttpServer server = new HttpServer();
     final NetworkListener networkListener =
-        new NetworkListener("UI", ServerConstants.HOST_NAME, ServerConstants.UI_SERVER_PORT);
+        new NetworkListener("UI", ServerConstants.HOST_NAME, ServerConstants.getUiServerPort());
     server.addListener(networkListener);
 
     server
