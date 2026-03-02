@@ -18,8 +18,8 @@ public class SharedState {
   private SharedState() {}
 
   // UI / Debug API related
-  private static volatile HttpServer uiServer;
-  private static volatile Server debugAPIServer;
+  private static HttpServer uiServer;
+  private static Server debugAPIServer;
 
   /** All currently connected websocket client which will get updated. */
   private static final Set<Session> websocketClients = ConcurrentHashMap.newKeySet();
@@ -33,7 +33,7 @@ public class SharedState {
   private static volatile boolean debuggingActive = false;
 
   private static volatile boolean embeddedBrowserActive = false;
-  private static volatile StackFrameSessionListener debugSessionListener;
+  private static StackFrameSessionListener debugSessionListener;
 
   /** Last plant UML diagram input needed for the print function. */
   private static volatile String lastPlantUMLDiagram = "";
