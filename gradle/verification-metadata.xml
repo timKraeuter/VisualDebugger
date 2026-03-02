@@ -3,6 +3,10 @@
    <configuration>
       <verify-metadata>true</verify-metadata>
       <verify-signatures>false</verify-signatures>
+      <trusted-artifacts>
+         <!-- IntelliJ IDE installers vary by platform; trust all variants -->
+         <trust group="idea" name="ideaIU" regex="true" file="ideaIU-.*"/>
+      </trusted-artifacts>
    </configuration>
    <components>
       <component group="bundledModule" name="intellij-platform-test-runtime" version="IU-252.23892.409">
