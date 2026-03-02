@@ -33,26 +33,28 @@ class VisualDebuggerSettingsComponentTest {
   // --- Port field validation ---
 
   @ParameterizedTest
-  @ValueSource(strings = {"a", "", "-1", "1.1", "1,1", "abc", "12.34"})
-  void validatePortFieldRejectsNonNumericInput(String input) {
-    JBTextField textField = new JBTextField(input);
-    ValidationInfo validationInfo = VisualDebuggerSettingsComponent.validatePortField(textField);
-    assertNotNull(validationInfo);
-    assertThat(validationInfo.message, is(VisualDebuggerSettingsComponent.PORT_VALIDATION_MESSAGE));
-  }
-
-  @ParameterizedTest
-  @ValueSource(strings = {"0", "1", "1023", "80", "443"})
-  void validatePortFieldRejectsPrivilegedPorts(String input) {
-    JBTextField textField = new JBTextField(input);
-    ValidationInfo validationInfo = VisualDebuggerSettingsComponent.validatePortField(textField);
-    assertNotNull(validationInfo);
-    assertThat(validationInfo.message, is(VisualDebuggerSettingsComponent.PORT_VALIDATION_MESSAGE));
-  }
-
-  @ParameterizedTest
-  @ValueSource(strings = {"65536", "70000", "99999"})
-  void validatePortFieldRejectsPortsAboveMax(String input) {
+  @ValueSource(
+      strings = {
+        // Non-numeric
+        "a",
+        "",
+        "-1",
+        "1.1",
+        "1,1",
+        "abc",
+        "12.34",
+        // Privileged ports (below 1024)
+        "0",
+        "1",
+        "1023",
+        "80",
+        "443",
+        // Above max (above 65535)
+        "65536",
+        "70000",
+        "99999"
+      })
+  void validatePortFieldRejectsInvalidPorts(String input) {
     JBTextField textField = new JBTextField(input);
     ValidationInfo validationInfo = VisualDebuggerSettingsComponent.validatePortField(textField);
     assertNotNull(validationInfo);
