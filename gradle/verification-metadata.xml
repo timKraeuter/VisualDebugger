@@ -4,7 +4,10 @@
       <verify-metadata>true</verify-metadata>
       <verify-signatures>false</verify-signatures>
       <trusted-artifacts>
-         <trust group="idea" name="ideaIU" file="ideaIU-.*" regex="true"/>
+         <!-- IntelliJ platform artifacts are extracted from the IDE installer and differ per OS -->
+         <trust group="idea" regex="true" file=".*"/>
+         <trust group="bundledModule" regex="true" file=".*"/>
+         <trust group="bundledPlugin" regex="true" file=".*"/>
       </trusted-artifacts>
    </configuration>
    <components>
