@@ -29,30 +29,23 @@ dependencies {
         bundledPlugin("com.intellij.java")
     }
 
-    // https://mvnrepository.com/artifact/net.sourceforge.plantuml/plantuml
-    implementation("net.sourceforge.plantuml:plantuml:1.2026.1")
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    implementation("org.apache.commons:commons-lang3:3.20.0")
+    implementation(libs.plantuml)
+    implementation(libs.commons.lang3)
+    implementation(libs.tyrus.server)
+    implementation(libs.tyrus.container.grizzly.server)
 
-    // Websocket server and server container dependencies
-    // https://mvnrepository.com/artifact/jakarta.websocket/jakarta.websocket-api
-    compileOnly("jakarta.websocket:jakarta.websocket-api:2.2.0")
-    // https://mvnrepository.com/artifact/org.glassfish.tyrus/tyrus-server
-    implementation("org.glassfish.tyrus:tyrus-server:2.2.2")
-    // https://mvnrepository.com/artifact/org.glassfish.tyrus/tyrus-container-grizzly-server
-    implementation("org.glassfish.tyrus:tyrus-container-grizzly-server:2.2.2")
+    compileOnly(libs.jakarta.websocket.api)
 
-    testImplementation("junit:junit:4.13.2") // Needed for test execution in IntelliJ Platform
-    testImplementation("org.junit.jupiter:junit-jupiter-api:6.0.3")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:6.0.3")
-    testImplementation("org.hamcrest:hamcrest:3.0")
-    testImplementation("org.mockito:mockito-core:5.22.0")
+    testImplementation(libs.junit4) // Needed for test execution in IntelliJ Platform
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.hamcrest)
+    testImplementation(libs.mockito.core)
 
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.0.3")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.3")
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 
-    // https://mvnrepository.com/artifact/com.google.errorprone/error_prone_core
-    errorprone("com.google.errorprone:error_prone_core:2.48.0")
+    errorprone(libs.errorprone.core)
 }
 
 intellijPlatform {
