@@ -2,7 +2,7 @@ import net.ltgt.gradle.errorprone.errorprone
 
 plugins {
     java
-    id("org.jetbrains.intellij.platform") version "2.11.0"
+    id("org.jetbrains.intellij.platform") version "2.13.1"
     id("org.sonarqube") version "7.2.2.6593"
     jacoco
     id("net.ltgt.errorprone") version "5.1.0"
@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "no.hvl.tk"
-version = "2.3.9"
+version = "2.4.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -52,7 +52,7 @@ intellijPlatform {
     pluginConfiguration {
         changeNotes.set("Update internal dependencies")
         ideaVersion {
-            untilBuild.set("253.*")
+            untilBuild.set("261.*")
         }
     }
 }
