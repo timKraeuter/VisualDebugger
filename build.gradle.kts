@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "no.hvl.tk"
-version = "2.4.0"
+version = "2.5.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
