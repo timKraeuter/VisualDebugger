@@ -9,7 +9,6 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import com.intellij.openapi.util.Key;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugSession;
@@ -46,18 +45,8 @@ public class StackFrameSessionListener implements XDebugSessionListener {
         .addProcessListener(
             new ProcessListener() {
               @Override
-              public void startNotified(@NotNull ProcessEvent event) {
-                StackFrameSessionListener.this.initUIIfNeeded();
-              }
-
-              @Override
               public void processTerminated(@NotNull ProcessEvent event) {
                 SharedState.setLastDiagramJSON("");
-              }
-
-              @Override
-              public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
-                // not relevant
               }
             });
     SharedState.setDebugListener(this);
@@ -70,6 +59,7 @@ public class StackFrameSessionListener implements XDebugSessionListener {
 
   @Override
   public void sessionPaused() {
+    this.initUIIfNeeded();
     this.startVisualDebugging();
   }
 
