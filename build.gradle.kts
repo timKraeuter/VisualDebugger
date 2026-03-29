@@ -13,7 +13,7 @@ group = "no.hvl.tk"
 version = "2.5.0"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
 }
 
 repositories {
