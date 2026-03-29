@@ -56,6 +56,9 @@ intellijPlatform {
             untilBuild.set("261.*")
         }
     }
+    // No IntelliJ GUI forms in this project; disable instrumentation to avoid
+    // Javac2 classpath issues with non-JBR JDK distributions.
+    instrumentCode = false
 }
 
 tasks.test {
@@ -83,14 +86,14 @@ spotless {
 }
 
 tasks.jacocoTestReport {
-    classDirectories.setFrom(tasks.instrumentCode)
+    classDirectories.setFrom(tasks.compileJava)
     reports {
         xml.required.set(true)
     }
 }
 
 tasks.jacocoTestCoverageVerification {
-    classDirectories.setFrom(tasks.instrumentCode)
+    classDirectories.setFrom(tasks.compileJava)
 }
 
 sonar {
