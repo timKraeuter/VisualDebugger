@@ -20,7 +20,7 @@
   <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
        on how to target different products -->
   <depends>com.intellij.modules.platform</depends>
-  <depends>com.intellij.modules.java</depends>
+  <depends>com.intellij.java</depends>
 
   <projectListeners>
     <listener class="no.hvl.tk.visual.debugger.DebugProcessListener"

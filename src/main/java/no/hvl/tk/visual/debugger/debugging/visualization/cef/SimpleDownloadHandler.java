@@ -9,12 +9,13 @@ import org.cef.handler.CefDownloadHandlerAdapter;
 public class SimpleDownloadHandler extends CefDownloadHandlerAdapter {
 
   @Override
-  public void onBeforeDownload(
+  public boolean onBeforeDownload(
       CefBrowser browser,
       CefDownloadItem downloadItem,
       String suggestedName,
       CefBeforeDownloadCallback callback) {
     VisualDebuggerNotifications.notifyDownloadStarted(suggestedName);
     callback.Continue("", true);
+    return true;
   }
 }
