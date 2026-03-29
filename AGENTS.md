@@ -4,7 +4,7 @@ Guidance for AI coding agents working in the `VisualDebugger` repository.
 
 ## Project Overview
 
-IntelliJ IDEA plugin (Java 21 / Gradle 9.3) that visualizes debugging variables as UML
+IntelliJ IDEA plugin (Java 25 / Gradle 9.4) that visualizes debugging variables as UML
 object diagrams. Supports browser-based WebSocket UI (object-diagram-js) and embedded
 PlantUML visualization. Listens to IntelliJ debugger events, analyzes JDI stack frames,
 builds object diagram domain models, and sends them to clients via WebSocket.
@@ -48,7 +48,7 @@ Formatting enforced by **Spotless** (Google Java Format). Static analysis via **
 ### Formatting Rules
 
 - **Google Java Format**: 2-space indentation, 100-char line width
-- **Java 21** source compatibility
+- **Java 25** source compatibility
 - Prefer modern Java: records, pattern matching for `instanceof`, switch expressions,
   text blocks, `var` declarations where type is obvious
 - Use `final` on method parameters and local variables where practical
@@ -139,7 +139,7 @@ src/main/resources/ui/                      # Bundled browser UI assets (generat
 
 ### Key Dependencies
 
-- **IntelliJ Platform SDK** (2025.2) — provides Logger, JDI, CEF browser, UI framework
+- **IntelliJ Platform SDK** (2026.1) — provides Logger, JDI, CEF browser, UI framework
 - **PlantUML** — embedded UML diagram rendering (Smetana layout, no Graphviz needed)
 - **Tyrus / Grizzly** — Jakarta WebSocket server implementation
 - **Jackson** (via IntelliJ) — JSON serialization with annotations
@@ -147,6 +147,6 @@ src/main/resources/ui/                      # Bundled browser UI assets (generat
 
 ## CI
 
-GitHub Actions on push/PR to any branch. Ubuntu runner, JDK 21 (Temurin), Gradle caching.
+GitHub Actions on push/PR to any branch. Ubuntu runner, JDK 25 (Temurin), Gradle caching.
 Runs `./gradlew check` (compile + spotless + error prone + tests). SonarCloud analysis
 runs conditionally when `SONAR_TOKEN` is available.
