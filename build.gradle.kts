@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "no.hvl.tk"
-version = "2.5.0"
+version = "2.5.1"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_25
@@ -55,6 +55,14 @@ intellijPlatform {
         ideaVersion {
             untilBuild.set("261.*")
         }
+    }
+    signing {
+        certificateChain = providers.environmentVariable("CERTIFICATE_CHAIN")
+        privateKey = providers.environmentVariable("PRIVATE_KEY")
+        password = providers.environmentVariable("PRIVATE_KEY_PASSWORD")
+    }
+    publishing {
+        token = providers.environmentVariable("PUBLISH_TOKEN")
     }
 }
 
