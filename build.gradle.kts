@@ -27,6 +27,7 @@ dependencies {
     intellijPlatform {
         intellijIdea("2026.1")
         bundledPlugin("com.intellij.java")
+        bundledModule("intellij.java.debugger.impl")
     }
 
     implementation(libs.plantuml)
