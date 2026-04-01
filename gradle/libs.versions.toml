@@ -7,7 +7,7 @@ junit4 = "4.13.2"
 junit-jupiter = "6.0.3"
 junit-platform = "6.0.3"
 hamcrest = "3.0"
-mockito = "5.22.0"
+mockito = "5.23.0"
 errorprone = "2.48.0"
 
 [libraries]
