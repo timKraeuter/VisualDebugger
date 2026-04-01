@@ -6,7 +6,7 @@ plugins {
     id("org.sonarqube") version "7.2.3.7755"
     jacoco
     id("net.ltgt.errorprone") version "5.1.0"
-    id("com.diffplug.spotless") version "8.2.1"
+    id("com.diffplug.spotless") version "8.4.0"
 }
 
 group = "no.hvl.tk"
