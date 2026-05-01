@@ -3,7 +3,7 @@ import net.ltgt.gradle.errorprone.errorprone
 plugins {
     java
     id("org.jetbrains.intellij.platform") version "2.13.1"
-    id("org.sonarqube") version "7.2.3.7755"
+    id("org.sonarqube") version "7.3.0.8198"
     jacoco
     id("net.ltgt.errorprone") version "5.1.0"
     id("com.diffplug.spotless") version "8.4.0"
