@@ -8,7 +8,7 @@ junit-jupiter = "6.0.3"
 junit-platform = "6.0.3"
 hamcrest = "3.0"
 mockito = "5.23.0"
-errorprone = "2.48.0"
+errorprone = "2.49.0"
 
 [libraries]
 plantuml = { module = "net.sourceforge.plantuml:plantuml", version.ref = "plantuml" }
