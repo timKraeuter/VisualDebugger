@@ -2,15 +2,15 @@ import net.ltgt.gradle.errorprone.errorprone
 
 plugins {
     java
-    id("org.jetbrains.intellij.platform") version "2.17.0"
-    id("org.sonarqube") version "7.3.0.8198"
+    id("org.jetbrains.intellij.platform") version "2.18.0"
+    id("org.sonarqube") version "7.3.1.8318"
     jacoco
     id("net.ltgt.errorprone") version "5.1.0"
     id("com.diffplug.spotless") version "8.8.0"
 }
 
 group = "no.hvl.tk"
-version = "2.5.2"
+version = "2.5.3"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_25
@@ -51,9 +51,10 @@ dependencies {
 
 intellijPlatform {
     pluginConfiguration {
-        changeNotes.set("Update internal dependencies")
+        changeNotes.set("Support IntelliJ 262 versions.")
         ideaVersion {
-            untilBuild.set("261.*")
+            // Unlimited upper bound so the plugin stays available on current and future IDEs.
+            untilBuild.set(provider { null })
         }
     }
     signing {
