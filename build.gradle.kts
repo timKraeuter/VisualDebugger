@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "no.hvl.tk"
-version = "2.5.2"
+version = "2.5.3"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_25
@@ -51,7 +51,7 @@ dependencies {
 
 intellijPlatform {
     pluginConfiguration {
-        changeNotes.set("Update internal dependencies")
+        changeNotes.set("Support IntelliJ 262 versions.")
         ideaVersion {
             // Unlimited upper bound so the plugin stays available on current and future IDEs.
             untilBuild.set(provider { null })
