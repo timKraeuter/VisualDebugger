@@ -53,7 +53,8 @@ intellijPlatform {
     pluginConfiguration {
         changeNotes.set("Update internal dependencies")
         ideaVersion {
-            untilBuild.set("261.*")
+            // Unlimited upper bound so the plugin stays available on current and future IDEs.
+            untilBuild.set(provider { null })
         }
     }
     signing {
