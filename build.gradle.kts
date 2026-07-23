@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "no.hvl.tk"
-version = "2.5.4"
+version = "2.5.5"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_25
@@ -53,7 +53,7 @@ dependencies {
 
 intellijPlatform {
     pluginConfiguration {
-        changeNotes.set("Support IntelliJ 262 versions.")
+        changeNotes.set("Fix diagram downloads (SVG/XML) from the embedded browser.")
         ideaVersion {
             // Unlimited upper bound so the plugin stays available on current and future IDEs.
             untilBuild.set(provider { null })
