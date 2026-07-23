@@ -2,7 +2,9 @@ package no.hvl.tk.visual.debugger.debugging.visualization;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.ui.jcef.JBCefApp;
 import com.intellij.ui.jcef.JBCefBrowser;
+import com.intellij.ui.jcef.JBCefClient;
 import java.awt.BorderLayout;
 import javax.swing.*;
 import no.hvl.tk.visual.debugger.SharedState;
@@ -24,6 +26,7 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
   private static final Logger LOGGER = Logger.getInstance(WebSocketDebuggingVisualizer.class);
 
   private JBCefBrowser browser;
+  private JBCefClient browserClient;
   private final JPanel debugUI;
 
   public WebSocketDebuggingVisualizer(final JPanel userInterface) {
@@ -81,8 +84,15 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
   private void launchEmbeddedBrowser() {
     if (browser == null) {
-      browser = new JBCefBrowser();
-      browser.getJBCefClient().getCefClient().addDownloadHandler(new SimpleDownloadHandler());
+      // The download handler must be registered on the client before the browser is created;
+      // otherwise JCEF never wires the native download callback and downloads are silently ignored.
+      browserClient = JBCefApp.getInstance().createClient();
+      browserClient.getCefClient().addDownloadHandler(new SimpleDownloadHandler());
+      browser =
+          JBCefBrowser.createBuilder()
+              .setClient(browserClient)
+              .setUrl(ServerConstants.getUiServerUrlEmbedded())
+              .build();
       browser.setPageBackgroundColor("white");
     }
     browser.loadURL(ServerConstants.getUiServerUrlEmbedded());
@@ -125,6 +135,11 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     if (browser != null) {
       browser.dispose();
       browser = null;
+    }
+    // The client is owned by us (passed explicitly to the builder), so dispose it too.
+    if (browserClient != null) {
+      browserClient.dispose();
+      browserClient = null;
     }
     SharedState.setEmbeddedBrowserActive(false);
   }
