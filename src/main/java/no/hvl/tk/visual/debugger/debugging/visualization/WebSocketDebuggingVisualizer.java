@@ -91,27 +91,21 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
   private void launchEmbeddedBrowser() {
     if (browser == null) {
-      LOGGER.info("Launching embedded browser and wiring the download bridge.");
       browserClient = JBCefApp.getInstance().createClient();
-      // Reserve a JS query slot before the browser is created. This is required because we create
-      // the JBCefJSQuery after the (eagerly created) browser has started; without a reserved pool
-      // JBCefJSQuery.create throws IllegalStateException.
+      // A JS query slot must be reserved before the browser is created; otherwise
+      // JBCefJSQuery.create throws IllegalStateException for an eagerly created browser.
       browserClient.setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, 1);
-
-      // The browser is created eagerly (createImmediately) and WITHOUT a URL so that the JS query
-      // message router and the load handler are both registered before the first page load.
-      // Otherwise the injected download bridge is not wired into the loaded frame.
       browser =
           JBCefBrowser.createBuilder().setClient(browserClient).setCreateImmediately(true).build();
       browser.setPageBackgroundColor("white");
 
-      // Bridge diagram downloads from the browser to the IDE. JCEF does not reliably raise a
-      // native download for the data: URLs used by the UI, so we intercept the click in JavaScript
-      // and save the file through a regular IDE save dialog instead.
+      // Bridge diagram downloads to the IDE. JCEF does not reliably raise a native download for the
+      // data: URLs used by the UI, so we intercept the click in JavaScript and save the file
+      // through a regular IDE save dialog instead.
       downloadQuery = JBCefJSQuery.create((JBCefBrowserBase) browser);
       downloadQuery.addHandler(
           message -> {
-            BrowserDownloadHandler.handleMessage(message, debugUI);
+            BrowserDownloadHandler.saveDownload(message, debugUI);
             return new JBCefJSQuery.Response("ok");
           });
       downloadInjectionScript =
@@ -126,16 +120,7 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
                 public void onLoadEnd(
                     final CefBrowser cefBrowser, final CefFrame frame, final int httpStatusCode) {
                   final String script = downloadInjectionScript;
-                  LOGGER.info(
-                      "Embedded browser load ended (mainFrame="
-                          + frame.isMain()
-                          + ", status="
-                          + httpStatusCode
-                          + ", url="
-                          + cefBrowser.getURL()
-                          + ").");
                   if (frame.isMain() && script != null) {
-                    LOGGER.info("Injecting download interceptor into the embedded browser.");
                     cefBrowser.executeJavaScript(script, cefBrowser.getURL(), 0);
                   }
                 }
