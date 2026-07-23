@@ -4,11 +4,13 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.jcef.JBCefApp;
 import com.intellij.ui.jcef.JBCefBrowser;
+import com.intellij.ui.jcef.JBCefBrowserBase;
 import com.intellij.ui.jcef.JBCefClient;
+import com.intellij.ui.jcef.JBCefJSQuery;
 import java.awt.BorderLayout;
 import javax.swing.*;
 import no.hvl.tk.visual.debugger.SharedState;
-import no.hvl.tk.visual.debugger.debugging.visualization.cef.SimpleDownloadHandler;
+import no.hvl.tk.visual.debugger.debugging.visualization.cef.BrowserDownloadHandler;
 import no.hvl.tk.visual.debugger.domain.ObjectDiagram;
 import no.hvl.tk.visual.debugger.server.ServerConstants;
 import no.hvl.tk.visual.debugger.server.UIServerStarter;
@@ -17,6 +19,9 @@ import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingMessageType;
 import no.hvl.tk.visual.debugger.server.endpoint.message.DebuggingWSMessage;
 import no.hvl.tk.visual.debugger.util.ClassloaderUtil;
 import no.hvl.tk.visual.debugger.util.DiagramToJSONConverter;
+import org.cef.browser.CefBrowser;
+import org.cef.browser.CefFrame;
+import org.cef.handler.CefLoadHandlerAdapter;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.tyrus.server.Server;
 
@@ -27,6 +32,8 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
   private JBCefBrowser browser;
   private JBCefClient browserClient;
+  private JBCefJSQuery downloadQuery;
+  private volatile String downloadInjectionScript;
   private final JPanel debugUI;
 
   public WebSocketDebuggingVisualizer(final JPanel userInterface) {
@@ -84,16 +91,40 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
 
   private void launchEmbeddedBrowser() {
     if (browser == null) {
-      // The download handler must be registered on the client before the browser is created;
-      // otherwise JCEF never wires the native download callback and downloads are silently ignored.
       browserClient = JBCefApp.getInstance().createClient();
-      browserClient.getCefClient().addDownloadHandler(new SimpleDownloadHandler());
+      // Register the load handler before the browser is created so the native callback is wired.
+      // On every page load we (re-)inject the JavaScript that intercepts the download buttons.
+      browserClient
+          .getCefClient()
+          .addLoadHandler(
+              new CefLoadHandlerAdapter() {
+                @Override
+                public void onLoadEnd(
+                    final CefBrowser cefBrowser, final CefFrame frame, final int httpStatusCode) {
+                  final String script = downloadInjectionScript;
+                  if (frame.isMain() && script != null) {
+                    cefBrowser.executeJavaScript(script, cefBrowser.getURL(), 0);
+                  }
+                }
+              });
       browser =
           JBCefBrowser.createBuilder()
               .setClient(browserClient)
               .setUrl(ServerConstants.getUiServerUrlEmbedded())
               .build();
       browser.setPageBackgroundColor("white");
+
+      // Bridge diagram downloads from the browser to the IDE. JCEF does not reliably raise a
+      // native download for the data: URLs used by the UI, so we intercept the click in JavaScript
+      // and save the file through a regular IDE save dialog instead.
+      downloadQuery = JBCefJSQuery.create((JBCefBrowserBase) browser);
+      downloadQuery.addHandler(
+          payload -> {
+            BrowserDownloadHandler.saveDownload(payload, debugUI);
+            return new JBCefJSQuery.Response("ok");
+          });
+      downloadInjectionScript =
+          BrowserDownloadHandler.buildInjectionScript(downloadQuery.inject("vdPayload"));
     }
     browser.loadURL(ServerConstants.getUiServerUrlEmbedded());
     debugUI.add(browser.getComponent(), 0);
@@ -132,6 +163,11 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     stopDebugAPIServerIfNeeded();
 
     // Dispose the embedded browser to release native CEF resources.
+    if (downloadQuery != null) {
+      downloadQuery.dispose();
+      downloadQuery = null;
+    }
+    downloadInjectionScript = null;
     if (browser != null) {
       browser.dispose();
       browser = null;
