@@ -93,6 +93,10 @@ public class WebSocketDebuggingVisualizer extends DebuggingInfoVisualizerBase {
     if (browser == null) {
       LOGGER.info("Launching embedded browser and wiring the download bridge.");
       browserClient = JBCefApp.getInstance().createClient();
+      // Reserve a JS query slot before the browser is created. This is required because we create
+      // the JBCefJSQuery after the (eagerly created) browser has started; without a reserved pool
+      // JBCefJSQuery.create throws IllegalStateException.
+      browserClient.setProperty(JBCefClient.Properties.JS_QUERY_POOL_SIZE, 1);
 
       // The browser is created eagerly (createImmediately) and WITHOUT a URL so that the JS query
       // message router and the load handler are both registered before the first page load.
