@@ -21,6 +21,7 @@
        on how to target different products -->
   <depends>com.intellij.modules.platform</depends>
   <depends>com.intellij.java</depends>
+  <depends>com.intellij.modules.jcef</depends>
 
   <projectListeners>
     <listener class="no.hvl.tk.visual.debugger.DebugProcessListener"
