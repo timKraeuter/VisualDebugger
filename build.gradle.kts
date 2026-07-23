@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "no.hvl.tk"
-version = "2.5.3"
+version = "2.5.4"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_25
@@ -25,9 +25,11 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        intellijIdea("2026.1")
+        intellijIdea("2026.2")
         bundledPlugin("com.intellij.java")
         bundledModule("intellij.java.debugger.impl")
+        bundledModule("intellij.platform.ui.jcef")
+        bundledModule("intellij.libraries.jcef")
     }
 
     implementation(libs.plantuml)
