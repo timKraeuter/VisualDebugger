@@ -2,7 +2,7 @@ import net.ltgt.gradle.errorprone.errorprone
 
 plugins {
     java
-    id("org.jetbrains.intellij.platform") version "2.18.0"
+    id("org.jetbrains.intellij.platform") version "2.18.1"
     id("org.sonarqube") version "7.3.1.8318"
     jacoco
     id("net.ltgt.errorprone") version "5.1.0"
